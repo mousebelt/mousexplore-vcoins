@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "outDir": "./build/",
+    "module": "commonjs",
+    "target": "es5",
+    "lib": [ "es2015" ],
+    "sourceMap": true
+  },
+  "include": [
+    "./src/**/*",
+    "./node_modules/types-ethereumjs-util/index.d.ts",
+    "./node_modules/web3/index.d.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
