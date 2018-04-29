@@ -1,0 +1,1 @@
+VCoin node projects for each node server.

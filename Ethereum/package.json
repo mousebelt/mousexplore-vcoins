@@ -1,0 +1,15 @@
+{
+  "name": "ethereum",
+  "version": "1.0.0",
+  "description": "ethereum node client",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Oleg Baturov",
+  "license": "ISC",
+  "dependencies": {
+    "ganache-cli": "^6.1.0",
+    "web3": "^1.0.0-beta.33"
+  }
+}
