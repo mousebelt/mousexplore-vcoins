@@ -1,0 +1,1 @@
+Stellar vcoin-node server
