@@ -23,14 +23,40 @@ query information (info, metrics, …) for humans and automation perform adminis
 ## installation of horizon and stella-core
 
 * install Go
->https://golang.org/doc/install     --- download tar file
->https://medium.com/@patdhlk/how-to-install-go-1-9-1-on-ubuntu-16-04-ee64c073cd79
+https://golang.org/doc/install
+https://medium.com/@patdhlk/how-to-install-go-1-9-1-on-ubuntu-16-04-ee64c073cd79
+
+>sudo curl -O https://storage.googleapis.com/golang/go1.10.2.linux-amd64.tar.gz
+>sudo tar -xvf go1.9.1.linux-amd64.tar.gz
+>sudo mv go /usr/local
+
 
 * install horizon 
->https://github.com/stellar/go/tree/master/services/horizon
+https://github.com/stellar/go/tree/master/services/horizon
+
+>sudo wget https://github.com/stellar/go/releases/download/horizon-v0.12.3/horizon-v0.12.3-linux-amd64.tar.gz
+>sudo tar -xvf horizon-v0.12.3-linux-amd64.tar.gz
+>sudo cp ./horizon-v0.12.3-linux-amd64/horizon /usr/bin/horizon
 
 * install pandoc
->https://github.com/jgm/pandoc/releases/tag/2.2
+https://github.com/jgm/pandoc/releases/tag/2.2
+
+>sudo wget https://github.com/jgm/pandoc/releases/download/2.2/pandoc-2.2-1-amd64.deb
+>sudo dpkg -i pandoc-2.2-1-amd64.deb
 
 * install stella-core
->https://github.com/stellar/stellar-core/blob/master/INSTALL.md
+https://github.com/stellar/stellar-core/blob/master/INSTALL.md
+
+>sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+>sudo apt-get update
+>sudo apt-get install git build-essential pkg-config autoconf automake libtool bison flex libpq-dev clang++-4.9 gcc-4.9 g++-4.9 cpp-4.9
+
+>git clone https://github.com/stellar/stellar-core.git
+>cd stellar-core
+>git submodule init
+>git submodule update
+>./autogen.sh.
+>./configure (If configure complains about compiler versions, try CXX=clang-3.5 ./configure or CXX=g++-4.9 ./configure or >similar, depending on your compiler.)
+>Type make or make -j (for aggressive parallel build)
+>Type make check to run tests.
+>Type make install to install.
