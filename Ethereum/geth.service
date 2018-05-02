@@ -1,0 +1,11 @@
+[Unit]
+Description=Geth
+ 
+[Service]
+Type=simple
+User=root
+Restart=always
+ExecStart=/usr/bin/geth --testnet --networkid=3 --rpcport 8555 --syncmode=fast --cache=1024 --rpcapi eth,web3,personal --rpc --ws --shh
+ 
+[Install]
+WantedBy=default.target

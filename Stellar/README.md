@@ -20,11 +20,17 @@ it is used by other systems (such as Horizon) to submit transactions (so may hav
 query information (info, metrics, …) for humans and automation perform administrative commands (schedule upgrades, change log levels, …)
 
 # Install node
-## installation
+## installation of horizon and stella-core
 
 * install Go
->https://golang.org/doc/install
+>https://golang.org/doc/install     --- download tar file
+>https://medium.com/@patdhlk/how-to-install-go-1-9-1-on-ubuntu-16-04-ee64c073cd79
+
 * install horizon 
 >https://github.com/stellar/go/tree/master/services/horizon
+
+* install pandoc
+>https://github.com/jgm/pandoc/releases/tag/2.2
+
 * install stella-core
 >https://github.com/stellar/stellar-core/blob/master/INSTALL.md
