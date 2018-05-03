@@ -60,3 +60,73 @@ https://github.com/stellar/stellar-core/blob/master/INSTALL.md
 >Type make or make -j (for aggressive parallel build)
 >Type make check to run tests.
 >Type make install to install.
+
+# install environment
+https://www.stellar.org/developers/horizon/reference/admin.html
+https://github.com/stellar/stellar-core/blob/master/docs/software/admin.md
+
+## horizon db initialize
+### install postgresql
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
+
+>sudo apt-get update
+>sudo apt-get install postgresql postgresql-contrib
+
+### create role of current system user
+
+>sudo adduser ubuntu
+
+enter postgres console and set password to user
+>sudo -u postgres psql
+>postgres=# ALTER USER ubuntu PASSWORD 'a';
+
+## stellar-core config
+https://github.com/stellar/stellar-core/blob/master/docs/software/testnet.md
+
+* Need to add db
+>createdb stellardb
+
+here do this if get error of some tables not exists.
+>stellar-core --newdb
+
+* add table using postgresql prompt if error exists of storestate
+>sudo -u postgres psql
+select db
+>postgres=#\c stellar                     
+>postgres=#CREATE TABLE storestate (statename CHARACTER(32) PRIMARY KEY,state TEXT);
+
+>cp config/stellar_core_standalone.cfg /usr/local/bin/stellar-core.cfg
+>stellar-core --forcescp
+>stellar-core
+
+This will run stellar-core server
+
+## horizon setup (not needed for apis?)
+### create empty database
+
+>createdb horizon_testnet
+>createdb core_testnet
+
+### set environment
+
+>export DATABASE_URL="postgres://ubuntu:a@localhost/horizon_testnet"
+>export STELLAR_CORE_DATABASE_URL="postgres://ubuntu:a@localhost/core_testnet"
+>export STELLAR_CORE_URL="http://localhost:11626"
+
+### db initialize 
+
+>horizon db init
+
+## run horizon
+>horizon 
+or
+>horizon serve
+
+
+
+# test API
+>node -e 'process.env.RUN_TYPE = "test"'
+
+## createAccount
+>node ./unittest/testAccount.js

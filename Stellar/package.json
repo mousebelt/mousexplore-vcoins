@@ -1,13 +1,14 @@
 {
-    "name": "stellar",
-    "version": "1.0.0",
-    "description": "stellar node client",
-    "main": "index.js",
-    "author": "Genji Sakamoto",
-    "scripts": {
-      "start": "node index.js"
-    },
-    "dependencies": {
-    }
+  "name": "stellar",
+  "version": "1.0.0",
+  "description": "stellar node client",
+  "main": "index.js",
+  "author": "Genji Sakamoto",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "request": "^2.85.0",
+    "stellar-sdk": "^0.8.0"
   }
-  
+}
