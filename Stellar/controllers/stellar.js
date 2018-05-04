@@ -127,3 +127,20 @@ exports.getTransactions = function(req, res) {
     server.transactions()
     .call().then(function(r){ console.log(r); });
 }
+
+exports.getLedgers = function(req, res) {
+    server.ledgers()
+    .call()
+    .then(function (ledgerResult) {
+        // page 1
+        console.log(ledgerResult.records)
+        return ledgerResult.next()
+    })
+    .then(function (ledgerResult) {
+        // page 2
+        console.log(ledgerResult.records)
+    })
+    .catch(function(err) {
+        console.log(err)
+    })
+}

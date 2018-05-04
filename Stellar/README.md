@@ -75,7 +75,9 @@ https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgres
 
 ### create role of current system user
 
->sudo adduser ubuntu
+>sudo -u postgres createuser --interactive
+>Enter name of role to add: ubuntu
+>Shall the new role be a superuser? (y/n) y
 
 enter postgres console and set password to user
 >sudo -u postgres psql
@@ -85,10 +87,8 @@ enter postgres console and set password to user
 https://github.com/stellar/stellar-core/blob/master/docs/software/testnet.md
 
 * Need to add db
->createdb stellardb
+>createdb stellar
 
-here do this if get error of some tables not exists.
->stellar-core --newdb
 
 * add table using postgresql prompt if error exists of storestate
 >sudo -u postgres psql
@@ -96,9 +96,13 @@ select db
 >postgres=#\c stellar                     
 >postgres=#CREATE TABLE storestate (statename CHARACTER(32) PRIMARY KEY,state TEXT);
 
->cp config/stellar_core_standalone.cfg /usr/local/bin/stellar-core.cfg
->stellar-core --forcescp
->stellar-core
+>sudo cp config/stellar_core_standalone.cfg /usr/local/bin/stellar-core.cfg
+>sudo stellar-core --forcescp
+
+here do this if get error of some tables not exists.
+>stellar-core --newdb
+
+>sudo stellar-core
 
 This will run stellar-core server
 
