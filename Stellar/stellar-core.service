@@ -5,7 +5,7 @@ Description=stellar-core
 Type=simple
 User=root
 Restart=always
-ExecStart=/usr/local/bin/stellar-core
+ExecStart=/usr/local/bin/stellar-core --conf /usr/local/bin/stellar-core.conf
  
 [Install]
 WantedBy=default.target
