@@ -121,9 +121,9 @@ exports.getUpdatedTransactions = function(req, res) {
 }
 
 exports.getTransactions = function(req, res) {
-    server.transactions()
-    .forAccount('3f53908cc5306ec31469f89b22da22a41feee5d439b93e652613fc667989bd17')
-    .call().then(function(r){ console.log(r); });
+    // server.transactions()
+    // .forAccount('3f53908cc5306ec31469f89b22da22a41feee5d439b93e652613fc667989bd17')
+    // .call().then(function(r){ console.log(r); });
     server.transactions()
     .call().then(function(r){ console.log(r); });
 }
@@ -133,12 +133,13 @@ exports.getLedgers = function(req, res) {
     .call()
     .then(function (ledgerResult) {
         // page 1
-        console.log(ledgerResult.records)
-        return ledgerResult.next()
+        console.log(ledgerResult)
+        // console.log(ledgerResult.records)
+        // return ledgerResult.next()
     })
     .then(function (ledgerResult) {
         // page 2
-        console.log(ledgerResult.records)
+        // console.log(ledgerResult.records)
     })
     .catch(function(err) {
         console.log(err)

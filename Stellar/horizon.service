@@ -1,0 +1,11 @@
+[Unit]
+Description=horizon
+ 
+[Service]
+Type=simple
+User=ubuntu
+Restart=always
+ExecStart=/usr/bin/horizon
+ 
+[Install]
+WantedBy=default.target

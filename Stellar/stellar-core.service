@@ -1,0 +1,11 @@
+[Unit]
+Description=stellar-core
+ 
+[Service]
+Type=simple
+User=root
+Restart=always
+ExecStart=/usr/local/bin/stellar-core
+ 
+[Install]
+WantedBy=default.target

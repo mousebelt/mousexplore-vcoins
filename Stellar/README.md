@@ -110,12 +110,11 @@ This will run stellar-core server
 ### create empty database
 
 >createdb horizon_testnet
->createdb core_testnet
 
 ### set environment
 
 >export DATABASE_URL="postgres://ubuntu:a@localhost/horizon_testnet"
->export STELLAR_CORE_DATABASE_URL="postgres://ubuntu:a@localhost/core_testnet"
+>export STELLAR_CORE_DATABASE_URL="postgres://ubuntu:a@localhost/stellar"
 >export STELLAR_CORE_URL="http://localhost:11626"
 
 ### db initialize 
@@ -127,7 +126,13 @@ This will run stellar-core server
 or
 >horizon serve
 
+# make stellar-core and horizon as service
 
+>cp ./geth.service /etc/systemd/system/stellar-core.service
+>cp ./geth.service /etc/systemd/system/horizon.service
+>systemctl daemon-reload
+>systemctl enable geth.service
+>systemctl start geth
 
 # test API
 >node -e 'process.env.RUN_TYPE = "test"'
