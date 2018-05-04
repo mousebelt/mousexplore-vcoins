@@ -101,3 +101,73 @@ exports.getUpdatedTransactions = function(req, res) {
 
 }
 
+/*
+* Get blocklist of specified count of blocks from certain number.
+* @param start_height number of block from where to get block list.
+* @param count count of list to get.
+* @return list of block information same as the etherscan.io
+* Here are some differences:
+*   Age is second unit.
+*   Miner is address, not the name. In etherscan, name is only comment from user on site. 
+*       refer: https://ethereum.stackexchange.com/questions/2620/how-can-i-add-my-name-next-to-address-on-etherscan
+*   GasPrice is GWei unit
+*   Reward is Ether unit
+*/
+exports.blocklist = function(req, res) {
+    var start_height = req.body.start_height;
+    var count = req.body.count;
+
+    web3.eth.getBlockNumber(async  function(error, number) {
+        if (!error) {
+            try {
+                console.log("last number " + number);
+                var blocks = [];
+                for (let i = blocknum; i <= number && i < blocknum + count; i ++) {
+                    var blockdata = await web3.eth.getBlock(i, true);
+                    
+                    var Height = blockdata.number;
+                    var Age = now - blockdata.timestamp;
+                    var txn = blockdata.transactions.lenght;
+                    var Uncles = blockdata.uncles.lenght;
+                    var Miner = blockdata.miner;
+                    var GasUsed = blockdata.gasUsed;
+                    var GasLimit = blockdata.gasLimit;
+                    
+                    var Reward = 0;
+                    for (let j = 0; j < txn; j ++) {
+                        let hash = blockdata.transactions[j];
+                        let txnInfo = await web3.eth.getTransaction(hash);
+                        Reward += txnInfo.gasPrice / 1000000000;
+                    }
+                    var GasPrice = txn ? Reward / txn: 0;
+                    Reward = Reward / 1000000000;
+
+                    blocks.push({
+                        Height: Height,
+                        Age: Age,
+                        txn: txn,
+                        Uncles: Uncles,
+                        Miner: Miner,
+                        GasUsed: GasUsed,
+                        GasLimit: GasLimit,
+                        GasPrice: GasPrice,
+                        Reward: Reward
+                    });
+                }
+
+                console.log("blocks: ", blocks);
+
+                res.status(200).json({data: blocks});
+            }
+            catch(e) {
+                console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+                res.status(400).json({error: e});
+            }
+        }
+        else {
+            console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
+        }
+    });
+
+}
