@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Oleg Baturov",
+  "author": "Genji Sakamoto",
   "license": "ISC",
   "dependencies": {
     "ganache-cli": "^6.1.0",

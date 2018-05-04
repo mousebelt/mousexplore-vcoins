@@ -41,8 +41,8 @@ exports.createAccount = function(req, res) {
 }
 
 //to enable calls of personal functions, need to set --rpcapi eth,web3,personal when call geth
-exports.makeTransaction = function(req, res) {
-    console.log("makeTransaction", req.body);
+exports.sendTransaction = function(req, res) {
+    console.log("sendTransaction", req.body);
     var from = req.body.from;
     var to = req.body.to;
     var value = req.body.value;

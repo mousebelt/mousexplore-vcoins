@@ -7,6 +7,6 @@ module.exports = function (app) {
     app.get('/api/get_address_balance/:address', EthereumController.getBalance);
     app.post('/api/create_account', EthereumController.createAccount);
 
-    app.post('/api/make_transaction', EthereumController.makeTransaction);
+    app.post('/api/make_transaction', EthereumController.sendTransaction);
     app.post('/api/get_updated_transaction', EthereumController.getUpdatedTransactions);
 }
