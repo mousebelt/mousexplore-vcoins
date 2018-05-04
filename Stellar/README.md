@@ -61,11 +61,10 @@ https://github.com/stellar/stellar-core/blob/master/INSTALL.md
 >Type make check to run tests.
 >Type make install to install.
 
-# install environment
+## install environment
 https://www.stellar.org/developers/horizon/reference/admin.html
 https://github.com/stellar/stellar-core/blob/master/docs/software/admin.md
 
-## horizon db initialize
 ### install postgresql
 
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
@@ -83,12 +82,11 @@ enter postgres console and set password to user
 >sudo -u postgres psql
 >postgres=# ALTER USER ubuntu PASSWORD 'a';
 
-## stellar-core config
+### stellar-core config
 https://github.com/stellar/stellar-core/blob/master/docs/software/testnet.md
 
 * Need to add db
 >createdb stellar
-
 
 * add table using postgresql prompt if error exists of storestate
 >sudo -u postgres psql
@@ -106,12 +104,12 @@ here do this if get error of some tables not exists.
 
 This will run stellar-core server
 
-## horizon setup (not needed for apis?)
-### create empty database
+### horizon config
 
+* create db
 >createdb horizon_testnet
 
-### set environment at /root/.bashrc
+* set environment at /root/.bashrc
 
 >export DATABASE_URL="postgres://ubuntu:a@localhost/horizon_testnet"
 >export STELLAR_CORE_DATABASE_URL="postgres://ubuntu:a@localhost/stellar"
@@ -119,22 +117,35 @@ This will run stellar-core server
 
 source /root/.bashrc
 
-### db initialize 
+* db initialize 
 
 >horizon db init
 
-## run horizon
+* run horizon
 >horizon 
 or
 >horizon serve
 
-# make stellar-core and horizon as service
+## make stellar-core and horizon as service
 
->cp ./geth.service /etc/systemd/system/stellar-core.service
->cp ./geth.service /etc/systemd/system/horizon.service
+>cp ./stellar-core.service /etc/systemd/system/stellar-core.service
+>cp ./horizon.service /etc/systemd/system/horizon.service
 >systemctl daemon-reload
->systemctl enable geth.service
->systemctl start geth
+>systemctl enable stellar-core.service
+>systemctl enable horizon.service
+>systemctl start stellar-core
+>systemctl start horizon
+
+* check service status
+>service stellar-core status
+>service horizon status
+
+## Mainnet setting
+need to edit stellar-core.cfg.
+need inserting validating node, crafting a quorum set
+set all urls as live and history storage
+
+Maybe only for getting transaction history, we don't need main net setting
 
 # test API
 >node -e 'process.env.RUN_TYPE = "test"'
