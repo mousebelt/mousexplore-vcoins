@@ -114,7 +114,6 @@ function latestblocks(count) {
                 }
 
                 console.log("blocks: ", blocks);
-                res.status(200).json({msg: "success", data: blocks});
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
