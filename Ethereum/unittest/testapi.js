@@ -21,8 +21,8 @@ function getblockTest() {
                     
                     var Height = blockdata.number;
                     var Age = Date.now() - blockdata.timestamp;
-                    var txn = blockdata.transactions.lenght;
-                    var Uncles = blockdata.uncles.lenght;
+                    var txn = blockdata.transactions.length;
+                    var Uncles = blockdata.uncles.length;
                     var Miner = blockdata.miner;
                     var GasUsed = blockdata.gasUsed;
                     var GasLimit = blockdata.gasLimit;
