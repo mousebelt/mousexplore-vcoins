@@ -5,9 +5,10 @@ var Web3 = require('web3');
 var config = require('../config/common').info;
 var web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 
-console.log("------------ test blocklist API -------------");
 
 function getblockTest() {
+    console.log("------------ test blocklist API -------------");
+
     var blocknum = 3168614;
     var count = 100;
     web3.eth.getBlockNumber(async  function(error, number) {
@@ -49,17 +50,13 @@ function getblockTest() {
                 }
 
                 console.log("blocks: ", blocks);
-
-                res.status(200).json({data: blocks});
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
-                res.status(400).json({error: e});
             }
         }
         else {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
-            res.status(400).json({error: error});
         }
     });
 }
