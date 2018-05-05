@@ -123,51 +123,52 @@ exports.blocklist = function(req, res) {
                 console.log("last number " + number);
                 var blocks = [];
                 for (let i = blocknum; i <= number && i < blocknum + count; i ++) {
-                    var blockdata = await web3.eth.getBlock(i, true);
+                    var blockdata = await web3.eth.getBlock(i, true); 
                     
                     var Height = blockdata.number;
-                    var Age = now - blockdata.timestamp;
-                    var txn = blockdata.transactions.lenght;
-                    var Uncles = blockdata.uncles.lenght;
+                    var Age = blockdata.timestamp;
+                    var txn = blockdata.transactions.length;
+                    var Uncles = blockdata.uncles.length;
                     var Miner = blockdata.miner;
                     var GasUsed = blockdata.gasUsed;
                     var GasLimit = blockdata.gasLimit;
                     
                     var Reward = 0;
+                    var gas = 0;
                     for (let j = 0; j < txn; j ++) {
-                        let hash = blockdata.transactions[j];
-                        let txnInfo = await web3.eth.getTransaction(hash);
-                        Reward += txnInfo.gasPrice / 1000000000;
+                        let hash = blockdata.transactions[j].hash;
+                        let gasprice = blockdata.transactions[j].gasPrice;
+                        let transaction = await web3.eth.getTransactionReceipt(hash);
+
+                        let price = gasprice * transaction.gasUsed;
+                        gas += transaction.gasUsed;
+                        Reward += price / 1000000000;
                     }
-                    var GasPrice = txn ? Reward / txn: 0;
+
+                    var GasPrice = txn ? Reward / gas: 0;
                     Reward = Reward / 1000000000;
 
                     blocks.push({
-                        Height: Height,
-                        Age: Age,
+                        blockNumber: Height,
+                        timeStamp: Age,
                         txn: txn,
-                        Uncles: Uncles,
-                        Miner: Miner,
-                        GasUsed: GasUsed,
-                        GasLimit: GasLimit,
-                        GasPrice: GasPrice,
-                        Reward: Reward
+                        uncles: Uncles,
+                        blockMiner: Miner,
+                        gasUsed: GasUsed,
+                        gasLimit: GasLimit,
+                        avgGasPrice: GasPrice.toFixed(2),
                     });
                 }
 
                 console.log("blocks: ", blocks);
-
-                res.status(200).json({data: blocks});
+                res.status(200).json({msg: "success", data: blocks});
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
-                res.status(400).json({error: e});
             }
         }
         else {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
-            res.status(400).json({error: error});
         }
     });
-
 }

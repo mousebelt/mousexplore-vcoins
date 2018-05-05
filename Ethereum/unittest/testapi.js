@@ -17,11 +17,10 @@ function getblockTest() {
                 console.log("last number " + number);
                 var blocks = [];
                 for (let i = blocknum; i <= number && i < blocknum + count; i ++) {
-                    var blockdata = await web3.eth.getBlock(i, true);
-console.log(blockdata);
+                    var blockdata = await web3.eth.getBlock(i, true); 
                     
                     var Height = blockdata.number;
-                    var Age = parseInt(Date.now() / 1000) - blockdata.timestamp;
+                    var Age = blockdata.timestamp;
                     var txn = blockdata.transactions.length;
                     var Uncles = blockdata.uncles.length;
                     var Miner = blockdata.miner;
@@ -29,27 +28,29 @@ console.log(blockdata);
                     var GasLimit = blockdata.gasLimit;
                     
                     var Reward = 0;
-		    var gas = 0;
+		            var gas = 0;
                     for (let j = 0; j < txn; j ++) {
-                        let price = blockdata.transactions[j].gasPrice * blockdata.transactions[j].gas;
-			gas += blockdata.transactions[j].gas;
+                        let hash = blockdata.transactions[j].hash;
+                        let gasprice = blockdata.transactions[j].gasPrice;
+                        let transaction = await web3.eth.getTransactionReceipt(hash);
+
+                        let price = gasprice * transaction.gasUsed;
+			            gas += transaction.gasUsed;
                         Reward += price / 1000000000;
                     }
-console.log("used", GasUsed);
-console.log("gas sum", gas);
+
                     var GasPrice = txn ? Reward / gas: 0;
                     Reward = Reward / 1000000000;
 
                     blocks.push({
-                        Height: Height,
-                        Age: Age,
+                        blockNumber: Height,
+                        timeStamp: Age,
                         txn: txn,
-                        Uncles: Uncles,
-                        Miner: Miner,
-                        GasUsed: GasUsed,
-                        GasLimit: GasLimit,
-                        GasPrice: parseInt(GasPrice),
-                        Reward: Reward.toFixed(2)
+                        uncles: Uncles,
+                        blockMiner: Miner,
+                        gasUsed: GasUsed,
+                        gasLimit: GasLimit,
+                        avgGasPrice: GasPrice.toFixed(2),
                     });
                 }
 
