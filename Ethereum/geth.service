@@ -5,7 +5,7 @@ Description=Geth
 Type=simple
 User=root
 Restart=always
-ExecStart=/usr/bin/geth --testnet --networkid=3 --rpcport 8555 --syncmode=fast --cache=1024 --rpcapi eth,web3,personal --rpc --ws --shh
+ExecStart=/usr/bin/geth --testnet --networkid=3 --rpcport 8555 --syncmode=fast --cache=1024 --rpcapi eth,web3,personal --rpc
  
 [Install]
 WantedBy=default.target

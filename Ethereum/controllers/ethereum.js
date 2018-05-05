@@ -114,7 +114,7 @@ exports.getUpdatedTransactions = function(req, res) {
 *   Reward is Ether unit
 */
 exports.blocklist = function(req, res) {
-    var start_height = req.body.start_height;
+    var blocknum = req.body.start_height;
     var count = req.body.count;
 
     web3.eth.getBlockNumber(async  function(error, number) {
