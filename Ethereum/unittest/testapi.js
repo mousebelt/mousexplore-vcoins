@@ -1,79 +1,69 @@
+var EthereumController = require('../controllers/ethereum');
 var Web3 = require('web3');
 
-var ganache = require("ganache-cli");
+// Show Web3 where it needs to look for a connection to Ethereum.
 var config = require('../config/common').info;
-web3 = new Web3(new Web3.providers.HttpProvider(config.provider));//ganache.provider()
+var web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 
-exports.testTransaction = function (from, to, value) {
 
-    // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-    web3.eth.personal.newAccount(config.mainpass, function (error, newaddr) {
+function getblockTest() {
+    console.log("------------ test blocklist API -------------");
+
+    var blocknum = 3174639;
+    var count = 4;
+    web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
-            console.log('New Account:', newaddr);
-            /*
-            // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-            web3.eth.personal.unlockAccount(from, config.mainpass, function (error, result) {
-                if (!error) {
-                    console.log('Unlocked Account: ', result);
-                    web3.eth.sendTransaction({
-                        from: from,
-                        to: newaddr,
-                        value: web3.utils.toWei(value),
-                    }, function (err, hash) {
-                        if (!err) {
-                            console.log("Send transaction: ", hash);
-                            web3.eth.getBalance(from, function (error, result) {
-                                if (!error) {
-                                    console.log("Send getBalance: ", result);
-                                }
-                            });
-                        }
-                        else {
-                            console.log('error: ', err);
-                        }
-                    });
-                    
-                }
-                else {
-                    console.log('we have a promblem: ', error); // Should dump errors here
-                }
-            });*/
-        }
-        else {
-            console.log('we have a promblem: ', error); // Should dump errors here
-        }
-    });
-}
-
-exports.getUpdatedTransactions = function (blocknum) {
-    var lastblock = web3.eth.getBlockNumber(async function (error, number) {
-        console.log("lastblock= ", number);
-
-        if (!error) {
-
             try {
+                console.log("last number " + number);
                 var blocks = [];
-                for (let i = blocknum; i <= number; i++) {
-                    var blockdata = await web3.eth.getBlock(i, true);
-                    blocks = blocks.concat(blockdata.transactions);
+                for (let i = blocknum; i <= number && i < blocknum + count; i ++) {
+                    var blockdata = await web3.eth.getBlock(i, true); 
+                    
+                    var Height = blockdata.number;
+                    var Age = blockdata.timestamp;
+                    var txn = blockdata.transactions.length;
+                    var Uncles = blockdata.uncles.length;
+                    var Miner = blockdata.miner;
+                    var GasUsed = blockdata.gasUsed;
+                    var GasLimit = blockdata.gasLimit;
+                    
+                    var Reward = 0;
+		            var gas = 0;
+                    for (let j = 0; j < txn; j ++) {
+                        let hash = blockdata.transactions[j].hash;
+                        let gasprice = blockdata.transactions[j].gasPrice;
+                        let transaction = await web3.eth.getTransactionReceipt(hash);
+
+                        let price = gasprice * transaction.gasUsed;
+			            gas += transaction.gasUsed;
+                        Reward += price / 1000000000;
+                    }
+
+                    var GasPrice = txn ? Reward / gas: 0;
+                    Reward = Reward / 1000000000;
+
+                    blocks.push({
+                        blockNumber: Height,
+                        timeStamp: Age,
+                        txn: txn,
+                        uncles: Uncles,
+                        blockMiner: Miner,
+                        gasUsed: GasUsed,
+                        gasLimit: GasLimit,
+                        avgGasPrice: GasPrice.toFixed(2),
+                    });
                 }
 
-                console.log("transactions: ", blocks);
+                console.log("blocks: ", blocks);
             }
-            catch (e) {
-                console.log('we have a promblem: ', e); // Should dump errors here
+            catch(e) {
+                console.log('blocklist: we have a promblem: ', e); // Should dump errors here
             }
         }
         else {
-            console.log('we have a promblem: ', error); // Should dump errors here
+            console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
         }
     });
-
 }
 
-exports.loadAccounts = function () {
-    console.log("loadAccounts with password ", config.mainpass);
-    web3.eth.personal.importRawKey("0x573d730f73950d35f20662a68c14e6602c0d8a8f639b1cf8b8e50d483046af8b", config.mainpass);
-    web3.eth.personal.importRawKey("0xfb96501ccc206cc79a01eef49349b2187a1ccf5726d5dfc716d06e6cf6190ef9", config.mainpass);
-    web3.eth.personal.importRawKey("0x199229b78ef01c03c33a725df4656970f8e0d873c8d910b0971e3461987763a1", config.mainpass);
-}
+getblockTest();
