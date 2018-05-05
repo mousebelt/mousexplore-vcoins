@@ -20,7 +20,7 @@ function getblockTest() {
                     var blockdata = await web3.eth.getBlock(i, true);
                     
                     var Height = blockdata.number;
-                    var Age = now - blockdata.timestamp;
+                    var Age = Date.now() - blockdata.timestamp;
                     var txn = blockdata.transactions.lenght;
                     var Uncles = blockdata.uncles.lenght;
                     var Miner = blockdata.miner;
