@@ -9,8 +9,8 @@ var web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 function getblockTest() {
     console.log("------------ test blocklist API -------------");
 
-    var blocknum = 3168614;
-    var count = 100;
+    var blocknum = 3174639;
+    var count = 4;
     web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
             try {
@@ -18,9 +18,10 @@ function getblockTest() {
                 var blocks = [];
                 for (let i = blocknum; i <= number && i < blocknum + count; i ++) {
                     var blockdata = await web3.eth.getBlock(i, true);
+console.log(blockdata);
                     
                     var Height = blockdata.number;
-                    var Age = Date.now() - blockdata.timestamp;
+                    var Age = parseInt(Date.now() / 1000) - blockdata.timestamp;
                     var txn = blockdata.transactions.length;
                     var Uncles = blockdata.uncles.length;
                     var Miner = blockdata.miner;
@@ -28,11 +29,15 @@ function getblockTest() {
                     var GasLimit = blockdata.gasLimit;
                     
                     var Reward = 0;
+		    var gas = 0;
                     for (let j = 0; j < txn; j ++) {
                         let price = blockdata.transactions[j].gasPrice * blockdata.transactions[j].gas;
+			gas += blockdata.transactions[j].gas;
                         Reward += price / 1000000000;
                     }
-                    var GasPrice = txn ? Reward / txn: 0;
+console.log("used", GasUsed);
+console.log("gas sum", gas);
+                    var GasPrice = txn ? Reward / gas: 0;
                     Reward = Reward / 1000000000;
 
                     blocks.push({
@@ -43,8 +48,8 @@ function getblockTest() {
                         Miner: Miner,
                         GasUsed: GasUsed,
                         GasLimit: GasLimit,
-                        GasPrice: GasPrice,
-                        Reward: Reward
+                        GasPrice: parseInt(GasPrice),
+                        Reward: Reward.toFixed(2)
                     });
                 }
 
