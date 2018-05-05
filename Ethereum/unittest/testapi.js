@@ -29,7 +29,7 @@ function getblockTest() {
                     
                     var Reward = 0;
                     for (let j = 0; j < txn; j ++) {
-                        let price = blockdata.transactions[j].gasPrice;
+                        let price = blockdata.transactions[j].gasPrice * blockdata.transactions[j].gas;
                         Reward += price / 1000000000;
                     }
                     var GasPrice = txn ? Reward / txn: 0;
