@@ -9,7 +9,6 @@
   "author": "Genji Sakamoto",
   "license": "ISC",
   "dependencies": {
-    "ganache-cli": "^6.1.0",
-    "web3": "^1.0.0-beta.33"
+    "web3": "1.0.0-beta.34"
   }
 }
