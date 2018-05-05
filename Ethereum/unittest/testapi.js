@@ -29,9 +29,8 @@ function getblockTest() {
                     
                     var Reward = 0;
                     for (let j = 0; j < txn; j ++) {
-                        let hash = blockdata.transactions[j];
-                        let txnInfo = await web3.eth.getTransaction(hash);
-                        Reward += txnInfo.gasPrice / 1000000000;
+                        let price = blockdata.transactions[j].gasPrice;
+                        Reward += price / 1000000000;
                     }
                     var GasPrice = txn ? Reward / txn: 0;
                     Reward = Reward / 1000000000;
