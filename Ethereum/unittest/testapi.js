@@ -75,7 +75,7 @@ function latestblocks(count) {
                     count = number + 1;
                 
                 var blocks = [];
-                for (let i = number - count + 1; i <= number; i ++) {
+                for (let i = number; i > number - count; i --) {
                     var blockdata = await web3.eth.getBlock(i, true); 
                     
                     var Height = blockdata.number;
