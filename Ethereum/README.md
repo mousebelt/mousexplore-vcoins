@@ -196,7 +196,6 @@ Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 blocknum | Number | YES | start block number
 count | Number | YES | count of blocks to get 
-net | live/test | YES | get result from main net or testnet
 
 ### RETURN
 
@@ -244,7 +243,6 @@ get block list of latest blocks.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 count | Number | YES | count of blocks to get 
-net | live/test | YES | get result from main net or testnet
 
 
 ### RETURN
@@ -292,7 +290,6 @@ Get block info from blockNumber.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 blocknum | Number | YES | start block number
-net | live/test | YES | get result from main net or testnet
 
 
 ### RETURN
@@ -320,6 +317,52 @@ net | live/test | YES | get result from main net or testnet
            nonce: "0xa9cdfb1c086bb04b", 
            unclesReward: "0", 
            extraData: "seo2 (Hex:0x73656f32)"
+          },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+## Get Block Detail
+```
+ POST /api/v1/block
+```
+
+Get transactions from blockNumber.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+blockNumber | Number | YES | start block number
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+          "blockNumber": "2165403", "timeStamp": "1472533979",
+          "txHash": "0x98db583e5ff636b78",
+          "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
+          "to": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6",
+          "value": "0.007792298571672 Ether"
+          "txFee": "0.000084"
           },
         ...
     ]

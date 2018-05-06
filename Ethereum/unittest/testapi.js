@@ -172,6 +172,38 @@ async function getblockdetail(blockNumber) {
     }
 }
 
+async function getTransactions(blockNumber) {
+
+    try {
+        var blockdata = await web3.eth.getBlock(blockNumber, true); 
+        var timestamp = blockdata.timestamp;
+        var transactions = blockdata.transactions;
+
+        var txnlist = [];
+        for (let i = 0; i < transactions.length; i ++) {
+            let transaction = transactions[i];
+            let fee = transaction.gas * transaction.gasPrice;
+            fee = fee / 1e18;
+
+            txnlist.push({
+                blockNumber: blockNumber,
+                timeStamp: timestamp,
+                txHash: transaction.hash,
+                from: transaction.from,
+                to: transaction.to,
+                value: transaction.value / 1e18,
+                txFee: fee
+            })
+        }
+
+        console.log("data: ", txnlist);
+    }
+    catch(e) {
+        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+    }
+}
+
 // getblockTest(3174639, 40);
 // latestblocks(20);
-getblockdetail(3174639);
+// getblockdetail(3174639);
+getTransactions(3179897);
