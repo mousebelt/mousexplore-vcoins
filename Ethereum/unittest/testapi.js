@@ -267,7 +267,7 @@ function getTransactionList(offset, count) {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
         }
     });
-
+}
 // getblockTest(3174639, 40);
 // latestblocks(20);
 // getblockdetail(3174639);
