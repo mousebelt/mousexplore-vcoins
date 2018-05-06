@@ -226,7 +226,7 @@ function getTransactionList(offset, count) {
                         continue;
                     }
                     
-                    for (let j = 0; j < txn; j ++) {
+                    for (let j = txn - 1; j > 0; j --) {
                         offset --;
                         if (offset > 0)
                             continue;
@@ -238,7 +238,7 @@ function getTransactionList(offset, count) {
                         let to = transaction.to;
                         let value = transaction.value / 1e18;
 
-                        console.log("gasprice =" + transaction.gasprice + " gas =" + transaction.gas);
+                        console.log("tx=" +hash + " gasprice =" + transaction.gasprice + " gas =" + transaction.gas);
             
                         let txreceipt = await web3.eth.getTransactionReceipt(hash);
 
@@ -282,4 +282,4 @@ function getTransactionList(offset, count) {
 // latestblocks(20);
 // getblockdetail(3174639);
 // getTransactions(3179897);
-getTransactionList(25, 20);
+getTransactionList(5, 20);

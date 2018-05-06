@@ -385,7 +385,7 @@ exports.getTransactionList = async function(req, res) {
                         continue;
                     }
                     
-                    for (let j = 0; j < txn; j ++) {
+                    for (let j = txn - 1; j > 0; j --) {
                         offset --;
                         if (offset > 0)
                             continue;
