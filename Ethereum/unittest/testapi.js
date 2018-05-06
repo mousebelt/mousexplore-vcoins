@@ -65,6 +65,7 @@ function getblockTest(blocknum, count) {
 }
 
 function latestblocks(count) {
+    console.log("------------ test latestblocks API -------------");
 
     web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
@@ -126,6 +127,8 @@ function latestblocks(count) {
 }
 
 async function getblockdetail(blockNumber) {
+    console.log("------------ test getblockdetail API -------------");
+ 
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, true); 
         
@@ -169,6 +172,6 @@ async function getblockdetail(blockNumber) {
     }
 }
 
-getblockTest(3174639, 40);
-latestblocks(20);
+// getblockTest(3174639, 40);
+// latestblocks(20);
 getblockdetail(3174639);
