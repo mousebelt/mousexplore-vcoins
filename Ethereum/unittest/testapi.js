@@ -290,7 +290,7 @@ function getTransactionInfo(txHash) {
                 
                 var timestamp = blockdata.timestamp;
 
-                let txreceipt = await web3.eth.getTransactionReceipt(hash);
+                let txreceipt = await web3.eth.getTransactionReceipt(txHash);
 
                 let fee = txreceipt.gasUsed * transaction.gasPrice;
                 fee = fee / 1e18;
