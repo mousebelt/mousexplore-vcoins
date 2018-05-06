@@ -247,3 +247,68 @@ exports.latestblocks = function(req, res) {
         }
     });
 }
+
+/*
+* Get block detail
+* @blockNumber block number.
+* @return block detail information
+* 
+* comment to internal transactions: 
+*   There's not currently any way to do this using the web3 API. 
+    Internal transactions, despite the name (which isn't part of the yellowpaper; 
+    it's a convention people have settled on) aren't actual transactions, 
+    and aren't included directly in the blockchain; 
+    they're value transfers that were initiated by executing a contract.
+
+    As such, they're not stored explicitly anywhere: 
+    they're the effects of running the transaction in question on the blockchain state. 
+    Blockchain explorers like etherscan obtain them by running a modified node with an instrumented EVM, 
+    which record all the value transfers that took place as part of transaction execution, 
+    storing them separately.
+*/
+exports.getblockdetail = function(req, res) {
+    var blockNumber = req.blockNumber;
+
+    try {
+        var blockdata = await web3.eth.getBlock(blockNumber, true); 
+        
+        var timestamp = blockdata.timestamp;
+        var txn = blockdata.transactions.length;
+        var Uncles = blockdata.uncles.length;
+        var hash = blockdata.hash;
+        var parentHash = blockdata.parentHash;
+        var sha3Uncles = blockdata.sha3Uncles;
+        var Miner = blockdata.miner;
+        var difficulty = blockdata.difficulty;
+        var totalDifficulty = blockdata.totalDifficulty;
+        var size = blockdata.size;
+        var nonce = blockdata.nonce;
+        var extraData = blockdata.extraData;
+        var GasUsed = blockdata.gasUsed;
+        var GasLimit = blockdata.gasLimit;
+        
+
+        blocks.push({
+            blockNumber: blockNumber,
+            timeStamp: timestamp,
+            transactions: txn,
+            hash: hash,
+            parentHash: parentHash,
+            sha3Uncles: sha3Uncles,
+            minedBy: Miner,
+            difficulty: difficulty,
+            totalDifficulty, totalDifficulty,
+            size: size, 
+            gasUsed: GasUsed,
+            gasLimit: GasLimit,
+            nonce: nonce,
+            extraData: extraData
+        });
+
+        console.log("blocks: ", blocks);
+        res.status(200).json({msg: "success", data: blocks});
+    }
+    catch(e) {
+        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+    }
+}

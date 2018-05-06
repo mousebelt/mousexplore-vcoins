@@ -125,5 +125,50 @@ function latestblocks(count) {
     });
 }
 
+function getblockdetail(blockNumber) {
+    try {
+        var blockdata = await web3.eth.getBlock(blockNumber, true); 
+        
+        var timestamp = blockdata.timestamp;
+        var txn = blockdata.transactions.length;
+        var Uncles = blockdata.uncles.length;
+        var hash = blockdata.hash;
+        var parentHash = blockdata.parentHash;
+        var sha3Uncles = blockdata.sha3Uncles;
+        var Miner = blockdata.miner;
+        var difficulty = blockdata.difficulty;
+        var totalDifficulty = blockdata.totalDifficulty;
+        var size = blockdata.size;
+        var nonce = blockdata.nonce;
+        var extraData = blockdata.extraData;
+        var GasUsed = blockdata.gasUsed;
+        var GasLimit = blockdata.gasLimit;
+        
+
+        blocks.push({
+            blockNumber: blockNumber,
+            timeStamp: timestamp,
+            transactions: txn,
+            hash: hash,
+            parentHash: parentHash,
+            sha3Uncles: sha3Uncles,
+            minedBy: Miner,
+            difficulty: difficulty,
+            totalDifficulty, totalDifficulty,
+            size: size, 
+            gasUsed: GasUsed,
+            gasLimit: GasLimit,
+            nonce: nonce,
+            extraData: extraData
+        });
+
+        console.log("blocks: ", blocks);
+    }
+    catch(e) {
+        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+    }
+}
+
 getblockTest(3174639, 40);
 latestblocks(20);
+getblockdetail(3174639);
