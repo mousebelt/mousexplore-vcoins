@@ -278,8 +278,54 @@ function getTransactionList(offset, count) {
         }
     });
 }
+
+function getTransactionInfo(txHash) {
+
+    web3.eth.getTransaction(txHash, async  function(error, transaction) {
+        if (!error) {
+            try {
+                let blocknumber = transaction.blockNumber;
+
+                var blockdata = await web3.eth.getBlock(blocknumber, true); 
+                
+                var timestamp = blockdata.timestamp;
+
+                let txreceipt = await web3.eth.getTransactionReceipt(txHash);
+
+                let fee = txreceipt.gasUsed * transaction.gasPrice;
+                fee = fee / 1e18;
+
+                let txinfo = {
+                    "txHash": transaction.hash,
+                    "timeStamp": timestamp,
+                    "status": txreceipt.status,
+                    "block": blocknumber,
+                    "from": transaction.from,
+                    "to": transaction.to,
+                    "value": transaction.value / 1e18,
+                    "gasLimit": transaction.gas,
+                    "gasUsedByTxn": txreceipt.gasUsed,
+                    "gasPrice": transaction.gasPrice,
+                    "actualTxCostFee": fee,
+                    "nonce": transaction.nonce,
+                    "inputData": transaction.input
+                };
+
+                console.log("txinfo: ", txinfo);
+            }
+            catch(e) {
+                console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+            }
+        }
+        else {
+            console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+        }
+    });
+}
+
 // getblockTest(3174639, 40);
 // latestblocks(20);
 // getblockdetail(3174639);
 // getTransactions(3179897);
-getTransactionList(5, 20);
+//getTransactionList(5, 20);
+getTransactionInfo("0xcdcab7444862ccedbbe10409ef0de3c2a663283edf164ad04f4296012cd5949c");

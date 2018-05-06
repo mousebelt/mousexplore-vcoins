@@ -434,3 +434,55 @@ exports.getTransactionList = async function(req, res) {
         }
     });
 }
+
+/*
+* Get transactions info
+* @hash transactin has to get info
+* @return transaction detail info
+* 
+*/
+exports.getTransactionInfo =  function(req, res) {
+    var txHash = req.body.txHash;
+
+    web3.eth.getTransaction(txHash, async  function(error, transaction) {
+        if (!error) {
+            try {
+                let blocknumber = transaction.blockNumber;
+
+                var blockdata = await web3.eth.getBlock(blocknumber, true); 
+                
+                var timestamp = blockdata.timestamp;
+
+                let txreceipt = await web3.eth.getTransactionReceipt(txHash);
+
+                let fee = txreceipt.gasUsed * transaction.gasPrice;
+                fee = fee / 1e18;
+
+                let txinfo = {
+                    "txHash": transaction.hash,
+                    "timeStamp": timestamp,
+                    "status": txreceipt.status,
+                    "block": blocknumber,
+                    "from": transaction.from,
+                    "to": transaction.to,
+                    "value": transaction.value / 1e18,
+                    "gasLimit": transaction.gas,
+                    "gasUsedByTxn": txreceipt.gasUsed,
+                    "gasPrice": transaction.gasPrice,
+                    "actualTxCostFee": fee,
+                    "nonce": transaction.nonce,
+                    "inputData": transaction.input
+                };
+
+                console.log("txinfo: ", txinfo);
+                res.status(200).json({msg: "success", data: txinfo});
+            }
+            catch(e) {
+                console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+            }
+        }
+        else {
+            console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+        }
+    });
+}
