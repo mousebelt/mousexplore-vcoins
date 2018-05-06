@@ -288,25 +288,25 @@ exports.getblockdetail = async function(req, res) {
         var GasLimit = blockdata.gasLimit;
         
 
-        blocks.push({
-            blockNumber: blockNumber,
-            timeStamp: timestamp,
-            transactions: txn,
-            hash: hash,
-            parentHash: parentHash,
-            sha3Uncles: sha3Uncles,
-            minedBy: Miner,
-            difficulty: difficulty,
-            totalDifficulty, totalDifficulty,
-            size: size, 
-            gasUsed: GasUsed,
-            gasLimit: GasLimit,
-            nonce: nonce,
-            extraData: extraData
-        });
+        var blockdetail = {
+                blockNumber: blockNumber,
+                timeStamp: timestamp,
+                transactions: txn,
+                hash: hash,
+                parentHash: parentHash,
+                sha3Uncles: sha3Uncles,
+                minedBy: Miner,
+                difficulty: difficulty,
+                totalDifficulty, totalDifficulty,
+                size: size, 
+                gasUsed: GasUsed,
+                gasLimit: GasLimit,
+                nonce: nonce,
+                extraData: extraData
+            };
 
-        console.log("blocks: ", blocks);
-        res.status(200).json({msg: "success", data: blocks});
+        console.log("data: ", blockdetail);
+        res.status(200).json({msg: "success", data: blockdetail});
     }
     catch(e) {
         console.log('blocklist: we have a promblem: ', e); // Should dump errors here
