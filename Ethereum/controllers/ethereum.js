@@ -361,7 +361,7 @@ exports.getTransactions = async function(req, res) {
                 txHash: transaction.hash,
                 from: transaction.from,
                 to: transaction.to,
-                value: transaction.value,
+                value: transaction.value / 1e18,
                 txFee: fee
             })
         }
