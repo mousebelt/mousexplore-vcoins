@@ -4,6 +4,7 @@ var Web3 = require('web3');
 var config = require('../config/common').info;
 var web3Test = new Web3(new Web3.providers.HttpProvider(config.providerTest));
 var web3Live = new Web3(new Web3.providers.HttpProvider(config.providerLive));
+var web3 = web3Test;
 
 function getWeb3(type) {
     if (type == "live") {
@@ -127,6 +128,8 @@ exports.blocklist = function(req, res) {
     var count = req.body.count;
     var net = req.body.net;
 
+    web3 = getWeb3(net);
+
     web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
             try {
@@ -197,6 +200,9 @@ exports.blocklist = function(req, res) {
 */
 exports.latestblocks = function(req, res) {
     var count = req.body.count;
+    var net = req.body.net;
+
+    web3 = getWeb3(net);
 
     web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
@@ -278,9 +284,12 @@ exports.latestblocks = function(req, res) {
 */
 exports.getblockdetail = async function(req, res) {
     var blockNumber = req.blockNumber;
+    var net = req.body.net;
+
+    web3 = getWeb3(net);
 
     try {
-        var blockdata = await web3.eth.getBlock(blockNumber, true); 
+        var blockdata = await web3.eth.getBlock(blockNumber, false); 
         
         var timestamp = blockdata.timestamp;
         var txn = blockdata.transactions.length;
@@ -317,6 +326,48 @@ exports.getblockdetail = async function(req, res) {
 
         console.log("data: ", blockdetail);
         res.status(200).json({msg: "success", data: blockdetail});
+    }
+    catch(e) {
+        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+    }
+}
+
+/*
+* Get transactions of blocknumber
+* @blockNumber block number.
+* @return transaction information
+* 
+*/
+exports.getTransactions = async function(req, res) {
+    var blockNumber = req.blockNumber;
+    var net = req.body.net;
+
+    web3 = getWeb3(net);
+
+    try {
+        var blockdata = await web3.eth.getBlock(blockNumber, true); 
+        var timeStamp = blockdata.timestamp;
+        var transactions = blockdata.transactions;
+
+        var txnlist = [];
+        for (let i = 0; i < transactions.length; i ++) {
+            let transaction = transactions[i];
+            let fee = transaction.gas * transaction.gasPrice;
+            fee = fee / 1e18;
+
+            txnlist.push({
+                blockNumber: blockNumber,
+                timeStamp: timestamp,
+                txHash: transaction.hash,
+                from: transaction.from,
+                to: transaction.to,
+                value: transaction.value,
+                txFee: fee
+            })
+        }
+
+        console.log("data: ", txnlist);
+        res.status(200).json({msg: "success", data: txnlist});
     }
     catch(e) {
         console.log('blocklist: we have a promblem: ', e); // Should dump errors here
