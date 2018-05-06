@@ -238,7 +238,7 @@ function getTransactionList(offset, count) {
                         fee = fee / 1e18;
 
                         txnlist.push({
-                            blockNumber: blockNumber,
+                            blockNumber: blocknumber,
                             timeStamp: timestamp,
                             txHash: transaction.hash,
                             from: transaction.from,
