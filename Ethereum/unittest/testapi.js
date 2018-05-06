@@ -172,7 +172,7 @@ async function getblockdetail(blockNumber) {
     }
 }
 
-function getTransactions(blockNumber) {
+async function getTransactions(blockNumber) {
 
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, true); 
