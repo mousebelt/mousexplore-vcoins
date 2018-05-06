@@ -237,8 +237,12 @@ function getTransactionList(offset, count) {
                         let from = transaction.from;
                         let to = transaction.to;
                         let value = transaction.value / 1e18;
+
+                        console.log("gasprice =" + transaction.gasprice + " gas =" + transaction.gas);
             
                         let txreceipt = await web3.eth.getTransactionReceipt(hash);
+
+                        console.log("receipt gas =" + txreceipt.gasUsed);
 
                         let fee = txreceipt.gasUsed * transaction.gasPrice;
                         fee = fee / 1e18;
