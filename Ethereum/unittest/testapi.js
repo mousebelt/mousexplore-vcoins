@@ -125,7 +125,7 @@ function latestblocks(count) {
     });
 }
 
-function getblockdetail(blockNumber) {
+async function getblockdetail(blockNumber) {
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, true); 
         

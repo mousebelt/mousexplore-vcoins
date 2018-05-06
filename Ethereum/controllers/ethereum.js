@@ -266,7 +266,7 @@ exports.latestblocks = function(req, res) {
     which record all the value transfers that took place as part of transaction execution, 
     storing them separately.
 */
-exports.getblockdetail = function(req, res) {
+exports.getblockdetail = async function(req, res) {
     var blockNumber = req.blockNumber;
 
     try {
