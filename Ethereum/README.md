@@ -21,7 +21,7 @@ https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 >geth attach ipc:/root/.ethereum/testnet/geth.ipc
 
 # Public Rest API for Ethereum Node
-# General API Information
+## General API Information
 * The base endpoint is: **http://**
 * All endpoints return a JSON object.
 
@@ -34,11 +34,11 @@ https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 * If a parameter sent in both the `query string` and `request body`, the
   `query string` parameter will be used.
 
-# Endpoint security type
+## Endpoint security type
 * Endpoint can only be accessed from specified client for provided REST APIs.
 * Every APIs needs Authorization.
 
-# Get Balance
+## Get Balance
 ```
 GET /api/get_address_balance/:address
 ```
@@ -70,7 +70,7 @@ address | STRING | YES | address to get balance
 }
 ```
 
-# Create Account
+## Create Account
 ```
 POST /api/create_account
 ```
@@ -101,7 +101,7 @@ Name | Type | Mandatory | Description
 }
 ```
 
-# Make Transaction
+## Make Transaction
 ```
 POST /api/make_transaction
 ```
@@ -135,7 +135,7 @@ value | Number | YES | amount of ether
 }
 ```
 
-# Get Updated Transaction
+## Get Updated Transaction
 ```
 POST /api/get_updated_transaction
 ```
@@ -168,6 +168,159 @@ blocknum | Number | YES | start block number
             gasPrice: '20000000000',
             input: '0x0' 
         },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+## Get Block list
+```
+ POST /api/v1/blocks
+```
+
+get block list of count blocks started from blockNumber.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+blocknum | Number | YES | start block number
+count | Number | YES | count of blocks to get 
+net | live/test | YES | get result from main net or testnet
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+           blockNumber: "5556102", 
+           timeStamp: "1472533979", 
+           txn: 260, 
+           uncles: 1, 
+           blockMiner: "0x13a06d3dfe21e0db5c016c03ea7d2509f7f8d1e3",
+           gasUsed: "7985391", 
+           gasLimit: 7992222, 
+           avgGasPrice: "8.66"
+          },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+## Get Latest Blocks
+```
+ POST /api/v1/blocks/latest
+```
+
+get block list of latest blocks.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+count | Number | YES | count of blocks to get 
+net | live/test | YES | get result from main net or testnet
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+           blockNumber: "5556102", 
+           timeStamp: "1472533979", 
+           txn: 260, 
+           uncles: 1, 
+           blockMiner: "0x13a06d3dfe21e0db5c016c03ea7d2509f7f8d1e3",
+           gasUsed: "7985391", 
+           gasLimit: 7992222, 
+           avgGasPrice: "8.66"
+          },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+## Get Block Detail
+```
+ POST /api/v1/block
+```
+
+Get block info from blockNumber.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+blocknum | Number | YES | start block number
+net | live/test | YES | get result from main net or testnet
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+           blockNumber: "5556102", 
+           timeStamp: "1472533979", 
+           transactions: 260, 
+           hash: "0x1716fe362ce1711ccc7727d72f1becd8d585318dcae48c714d7b7b25f7c3d6ae", 
+           parentHash: "0x3c192dfa22e832633723b57897cd9e00024a0ed341e2de274d2bbeeee5921bbe", 
+           sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347", 
+           minedBy: "0xb2930b35844a230f00e51431acae96fe543a0347", 
+           difficulty: "3,162,739,934,758,047", 
+           totalDifficulty: "4,003,097,177,949,420,847,497", 
+           size: "38742 bytes", 
+           gasUsed: "7,993,537 (99.92%)", 
+           gasLimit: "8,000,029", 
+           nonce: "0xa9cdfb1c086bb04b", 
+           unclesReward: "0", 
+           extraData: "seo2 (Hex:0x73656f32)"
+          },
         ...
     ]
 }

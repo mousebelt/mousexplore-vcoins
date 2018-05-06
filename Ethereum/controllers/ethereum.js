@@ -2,7 +2,16 @@ var Web3 = require('web3');
 
 // Show Web3 where it needs to look for a connection to Ethereum.
 var config = require('../config/common').info;
-var web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
+var web3Test = new Web3(new Web3.providers.HttpProvider(config.providerTest));
+var web3Live = new Web3(new Web3.providers.HttpProvider(config.providerLive));
+
+function getWeb3(type) {
+    if (type == "live") {
+        return web3Live;
+    }
+
+    return web3Test;
+}
 
 exports.getBalance = function(req, res) {
     var addr = req.params.address;
@@ -116,6 +125,7 @@ exports.getUpdatedTransactions = function(req, res) {
 exports.blocklist = function(req, res) {
     var blocknum = req.body.start_height;
     var count = req.body.count;
+    var net = req.body.net;
 
     web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
@@ -246,4 +256,69 @@ exports.latestblocks = function(req, res) {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
         }
     });
+}
+
+/*
+* Get block detail
+* @blockNumber block number.
+* @return block detail information
+* 
+* comment to internal transactions: 
+*   There's not currently any way to do this using the web3 API. 
+    Internal transactions, despite the name (which isn't part of the yellowpaper; 
+    it's a convention people have settled on) aren't actual transactions, 
+    and aren't included directly in the blockchain; 
+    they're value transfers that were initiated by executing a contract.
+
+    As such, they're not stored explicitly anywhere: 
+    they're the effects of running the transaction in question on the blockchain state. 
+    Blockchain explorers like etherscan obtain them by running a modified node with an instrumented EVM, 
+    which record all the value transfers that took place as part of transaction execution, 
+    storing them separately.
+*/
+exports.getblockdetail = async function(req, res) {
+    var blockNumber = req.blockNumber;
+
+    try {
+        var blockdata = await web3.eth.getBlock(blockNumber, true); 
+        
+        var timestamp = blockdata.timestamp;
+        var txn = blockdata.transactions.length;
+        var Uncles = blockdata.uncles.length;
+        var hash = blockdata.hash;
+        var parentHash = blockdata.parentHash;
+        var sha3Uncles = blockdata.sha3Uncles;
+        var Miner = blockdata.miner;
+        var difficulty = blockdata.difficulty;
+        var totalDifficulty = blockdata.totalDifficulty;
+        var size = blockdata.size;
+        var nonce = blockdata.nonce;
+        var extraData = blockdata.extraData;
+        var GasUsed = blockdata.gasUsed;
+        var GasLimit = blockdata.gasLimit;
+        
+
+        var blockdetail = {
+                blockNumber: blockNumber,
+                timeStamp: timestamp,
+                transactions: txn,
+                hash: hash,
+                parentHash: parentHash,
+                sha3Uncles: sha3Uncles,
+                minedBy: Miner,
+                difficulty: difficulty,
+                totalDifficulty, totalDifficulty,
+                size: size, 
+                gasUsed: GasUsed,
+                gasLimit: GasLimit,
+                nonce: nonce,
+                extraData: extraData
+            };
+
+        console.log("data: ", blockdetail);
+        res.status(200).json({msg: "success", data: blockdetail});
+    }
+    catch(e) {
+        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+    }
 }
