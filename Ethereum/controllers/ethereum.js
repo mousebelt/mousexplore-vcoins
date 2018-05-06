@@ -268,7 +268,7 @@ exports.latestblocks = function(req, res) {
     storing them separately.
 */
 exports.getblockdetail = async function(req, res) {
-    var blockNumber = req.blockNumber;
+    var blockNumber = req.body.blockNumber;
 
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, false); 
@@ -321,7 +321,7 @@ exports.getblockdetail = async function(req, res) {
 * 
 */
 exports.getTransactions = async function(req, res) {
-    var blockNumber = req.blockNumber;
+    var blockNumber = req.body.blockNumber;
 
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, true); 
@@ -351,4 +351,80 @@ exports.getTransactions = async function(req, res) {
     catch(e) {
         console.log('blocklist: we have a promblem: ', e); // Should dump errors here
     }
+}
+
+/*
+* Get transactions list
+* @offset transaction offset from latest
+* @count transaction count
+* @return transactions list
+* 
+*/
+exports.getTransactionList = async function(req, res) {
+    var offset = req.body.offset;
+    var count = req.body.count;
+
+    web3.eth.getBlockNumber(async  function(error, number) {
+        if (!error) {
+            try {
+                console.log("last number " + number);
+                
+                var txnlist = [];
+                for (let i = number; i > 0; i --) {
+                    var blockdata = await web3.eth.getBlock(i, true); 
+                    
+                    var blocknumber = blockdata.number;
+                    var timestamp = blockdata.timestamp;
+                    var txn = blockdata.transactions.length;
+
+                    if (txn <= offset) {
+                        offset -= txn;
+                        continue;
+                    }
+                    
+                    for (let j = 0; j < txn; j ++) {
+                        offset --;
+                        if (offset > 0)
+                            continue;
+
+                        let transaction = blockdata.transactions[j];
+
+                        let hash = transaction.hash;
+                        let from = transaction.from;
+                        let to = transaction.to;
+                        let value = transaction.value / 1e18;
+                        let fee = transaction.gas * transaction.gasPrice;
+                        fee = fee / 1e18;
+
+                        txnlist.push({
+                            blockNumber: blockNumber,
+                            timeStamp: timestamp,
+                            txHash: transaction.hash,
+                            from: transaction.from,
+                            to: transaction.to,
+                            value: transaction.value / 1e18,
+                            txFee: fee
+                        })
+
+                        count --;
+                        if (count <= 0)
+                            break;
+                    }
+
+                    if (count <= 0)
+                            break;
+
+                }
+
+                console.log("txnlist: ", txnlist);
+                res.status(200).json({msg: "success", data: txnlist});
+            }
+            catch(e) {
+                console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+            }
+        }
+        else {
+            console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+        }
+    });
 }
