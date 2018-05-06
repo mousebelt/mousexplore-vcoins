@@ -331,7 +331,10 @@ exports.getTransactions = async function(req, res) {
         var txnlist = [];
         for (let i = 0; i < transactions.length; i ++) {
             let transaction = transactions[i];
-            let fee = transaction.gas * transaction.gasPrice;
+
+            let txreceipt = await web3.eth.getTransactionReceipt(hash);
+
+            let fee = txreceipt.gasUsed * transaction.gasPrice;
             fee = fee / 1e18;
 
             txnlist.push({
@@ -393,7 +396,10 @@ exports.getTransactionList = async function(req, res) {
                         let from = transaction.from;
                         let to = transaction.to;
                         let value = transaction.value / 1e18;
-                        let fee = transaction.gas * transaction.gasPrice;
+            
+                        let txreceipt = await web3.eth.getTransactionReceipt(hash);
+
+                        let fee = txreceipt.gasUsed * transaction.gasPrice;
                         fee = fee / 1e18;
 
                         txnlist.push({
