@@ -346,7 +346,7 @@ exports.getTransactions = async function(req, res) {
 
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, true); 
-        var timeStamp = blockdata.timestamp;
+        var timestamp = blockdata.timestamp;
         var transactions = blockdata.transactions;
 
         var txnlist = [];
