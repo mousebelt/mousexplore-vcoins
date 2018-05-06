@@ -333,9 +333,9 @@ blocknum | Number | YES | start block number
 ```
 
 
-## Get Block Detail
+## Get transactions from blocknumber
 ```
- POST /api/v1/block
+ POST /api/v1/block/txs
 ```
 
 Get transactions from blockNumber.
@@ -363,6 +363,103 @@ blockNumber | Number | YES | start block number
           "to": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6",
           "value": "0.007792298571672 Ether"
           "txFee": "0.000084"
+          },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+## Get transaction list
+```
+ POST /api/v1/txs
+```
+
+Get list of specified transactions.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+blockNumber | Number | YES | start block number
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+          "blockNumber": "2165403", "timeStamp": "1472533979",
+          "txHash": "0x98db583e5ff636b78",
+          "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
+          "to": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6",
+          "value": "0.007792298571672 Ether"
+          "txFee": "0.000084"
+          },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+## Get tx info from txHash
+```
+ POST /api/v1/tx
+```
+
+Get list of specified transactions.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+txHash | String | YES | hash value
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+          "txHash": "0x9cd48d513a081e7832088e152e26ca46f05dc062b36d9e983a0c6049a2f56cbd",
+          "timeStamp": "1472533979",
+          "txReceipt Status": "Success",
+          "block": "5558044 (70 block confirmations)",
+          "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
+          "to": "0x1a7208627ffe43a69f13f3c393a41712fa4a7831"
+          "value": "0.09 Ether ($71.87)"
+          "gasLimit": 120000,
+          "gasUsedByTxn": 87221,
+          "gasPrice": "0.000000003 Ether (3 Gwei)",
+          "actualTxCostFee": "0.000261663 Ether ($0.21)",
+          "nonce": 574,
+          "inputData": "Function: miningTen() MethodID: 0xcc4bf6a3"
           },
         ...
     ]
