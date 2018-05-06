@@ -3,7 +3,7 @@ var Web3 = require('web3');
 
 // Show Web3 where it needs to look for a connection to Ethereum.
 var config = require('../config/common').info;
-var web3 = new Web3(new Web3.providers.HttpProvider(config.providerTest));
+var web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 
 
 function getblockTest(blocknum, count) {

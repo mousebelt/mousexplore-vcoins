@@ -2,17 +2,8 @@ var Web3 = require('web3');
 
 // Show Web3 where it needs to look for a connection to Ethereum.
 var config = require('../config/common').info;
-var web3Test = new Web3(new Web3.providers.HttpProvider(config.providerTest));
-var web3Live = new Web3(new Web3.providers.HttpProvider(config.providerLive));
-var web3 = web3Test;
+var web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 
-function getWeb3(type) {
-    if (type == "live") {
-        return web3Live;
-    }
-
-    return web3Test;
-}
 
 exports.getBalance = function(req, res) {
     var addr = req.params.address;
@@ -126,9 +117,6 @@ exports.getUpdatedTransactions = function(req, res) {
 exports.blocklist = function(req, res) {
     var blocknum = req.body.start_height;
     var count = req.body.count;
-    var net = req.body.net;
-
-    web3 = getWeb3(net);
 
     web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
@@ -200,9 +188,6 @@ exports.blocklist = function(req, res) {
 */
 exports.latestblocks = function(req, res) {
     var count = req.body.count;
-    var net = req.body.net;
-
-    web3 = getWeb3(net);
 
     web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
@@ -284,9 +269,6 @@ exports.latestblocks = function(req, res) {
 */
 exports.getblockdetail = async function(req, res) {
     var blockNumber = req.blockNumber;
-    var net = req.body.net;
-
-    web3 = getWeb3(net);
 
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, false); 
@@ -340,9 +322,6 @@ exports.getblockdetail = async function(req, res) {
 */
 exports.getTransactions = async function(req, res) {
     var blockNumber = req.blockNumber;
-    var net = req.body.net;
-
-    web3 = getWeb3(net);
 
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, true); 

@@ -196,7 +196,6 @@ Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 blocknum | Number | YES | start block number
 count | Number | YES | count of blocks to get 
-net | live/test | YES | get result from main net or testnet
 
 ### RETURN
 
@@ -244,7 +243,6 @@ get block list of latest blocks.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 count | Number | YES | count of blocks to get 
-net | live/test | YES | get result from main net or testnet
 
 
 ### RETURN
@@ -292,7 +290,6 @@ Get block info from blockNumber.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 blocknum | Number | YES | start block number
-net | live/test | YES | get result from main net or testnet
 
 
 ### RETURN
@@ -348,7 +345,6 @@ Get transactions from blockNumber.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 blockNumber | Number | YES | start block number
-net | live/test | YES | get result from main net or testnet
 
 
 ### RETURN
