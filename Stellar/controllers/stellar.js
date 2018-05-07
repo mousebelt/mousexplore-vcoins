@@ -5,7 +5,8 @@ if (runtype == "test") {
     StellarSdk.Network.useTestNetwork();
 }
 
-var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
+// var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
+var server = new StellarSdk.Server('http://127.0.0.1:8000', {allowHttp: true});
 // var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
 exports.getBalance = function(req, res) {
@@ -70,7 +71,7 @@ exports.getLatestLedgers = function(req, res) {
     server.transactions()
     .forLedger(1400)
     .call().then(function(r){ console.log(r); });
-    
+
     // server.ledgers()
     // .call()
     // .then(function (ledgerResult) {
