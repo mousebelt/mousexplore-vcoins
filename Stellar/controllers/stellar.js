@@ -60,88 +60,30 @@ exports.createAccount = function(req, res) {
 }
 
 
-//to enable calls of personal functions, need to set --rpcapi eth,web3,personal when call geth
-exports.sendTransaction = function(req, res) {
-    console.log("sendTransaction", req.body);
-    var from = req.body.from;
-    var to = req.body.to;
-    var value = req.body.value;
-    // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-    web3.eth.personal.unlockAccount(from, config.mainpass, function (error, result) {
-        if (!error) {
-            console.log('Unlocked Account: ', result);
-            web3.eth.sendTransaction({
-                from: from,
-                to: to,
-                value: web3.utils.toWei(value),
-            }, function (err, hash) {
-                if (!err) {
-                    console.log("Send transaction: ", hash);
-                    res.status(200).json({hash: hash});
-                }
-                else {
-                    console.log('error: ', err);
-                    res.status(400).json({error: error});
-                }
-            })
-        }
-        else {
-            console.log('we have a promblem: ', error); // Should dump errors here
-            res.status(400).json({error: error});
-        }
-    });
-}
-
-exports.getUpdatedTransactions = function(req, res) {
-    var blocknum = req.body.blocknum;
-
-    var lastblock = web3.eth.getBlockNumber(async  function(error, number) {
-        //console.log("lastblock= ", number);
-
-        if (!error) {
-            try {
-                var blocks = [];
-                for (let i = blocknum; i <= number; i ++) {
-                    var blockdata = await web3.eth.getBlock(i, true);
-                    blocks = blocks.concat(blockdata.transactions);
-                }
-
-                res.status(200).json({lastblock: number, data: blocks});
-            }
-            catch(e) {
-                console.log('we have a promblem: ', e); // Should dump errors here
-                res.status(400).json({error: e});
-            }
-        }
-        else {
-            console.log('we have a promblem: ', error); // Should dump errors here
-            res.status(400).json({error: error});
-        }
-    });
-}
-
-exports.getTransactions = function(req, res) {
-    // server.transactions()
-    // .forAccount('3f53908cc5306ec31469f89b22da22a41feee5d439b93e652613fc667989bd17')
-    // .call().then(function(r){ console.log(r); });
+/*
+* Get latest ledger list.
+* @param start_height number of block from where to get block list.
+* @param count count of list to get.
+* @return list of ledger information same as the https://steexp.com/ledgers
+*/
+exports.getLatestLedgers = function(req, res) {
     server.transactions()
+    .forLedger(1400)
     .call().then(function(r){ console.log(r); });
-}
-
-exports.getLedgers = function(req, res) {
-    server.ledgers()
-    .call()
-    .then(function (ledgerResult) {
-        // page 1
-        console.log(ledgerResult)
-        // console.log(ledgerResult.records)
-        // return ledgerResult.next()
-    })
-    .then(function (ledgerResult) {
-        // page 2
-        // console.log(ledgerResult.records)
-    })
-    .catch(function(err) {
-        console.log(err)
-    })
+    
+    // server.ledgers()
+    // .call()
+    // .then(function (ledgerResult) {
+    //     // page 1
+    //     console.log(ledgerResult)
+    //     // console.log(ledgerResult.records)
+    //     // return ledgerResult.next()
+    // })
+    // .then(function (ledgerResult) {
+    //     // page 2
+    //     // console.log(ledgerResult.records)
+    // })
+    // .catch(function(err) {
+    //     console.log(err)
+    // })
 }
