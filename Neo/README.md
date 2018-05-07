@@ -28,10 +28,11 @@ You will find the following config files.
 >$HOME/neo-cli/config.mainnet.json
 >$HOME/neo-cli/config.testnet.json
 
-testnet config
+mainnet config
 >cp config.mainnet.json config.json
 
 testnet config
 >cp config.testnet.json config.json
 
 ## run as daemon
+>screen -S dotnet neo-cli /rpc
