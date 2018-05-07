@@ -33,7 +33,7 @@ testnet config
 >cp config.testnet.json config.json
 
 ## run as daemon
->screen -S dotnet neo-cli /rpc
+>screen -S dotnet neo-cli.dll /rpc
 
 # Reference
 http://docs.neo.org/en-us/node/cli.html
