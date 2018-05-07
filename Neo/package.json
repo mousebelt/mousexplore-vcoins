@@ -1,0 +1,14 @@
+{
+  "name": "neo-vcoin-node",
+  "version": "1.0.0",
+  "description": "neo node client",
+  "main": "index.js",
+  "author": "Oleg Baturov",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "neo-api": "^1.0.3",
+    "request": "^2.85.0"
+  }
+}
