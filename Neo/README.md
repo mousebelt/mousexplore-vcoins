@@ -26,10 +26,10 @@ You will find the following config files.
 >$HOME/neo-cli/config.mainnet.json
 >$HOME/neo-cli/config.testnet.json
 
-mainnet config
+mainnet config (json-rpc port: 10332)
 >cp config.mainnet.json config.json
 
-testnet config
+testnet config (json-rpc port: 20332)
 >cp config.testnet.json config.json
 
 ## run as daemon
