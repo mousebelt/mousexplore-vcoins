@@ -1,5 +1,3 @@
-Neo vcoin-node server
-
 # Install Neo node
 ## dotnet install
 ### Register Microsoft key and feed
@@ -36,3 +34,6 @@ testnet config
 
 ## run as daemon
 >screen -S dotnet neo-cli /rpc
+
+# Reference
+http://docs.neo.org/en-us/node/cli.html
