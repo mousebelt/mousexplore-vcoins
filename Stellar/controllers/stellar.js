@@ -87,3 +87,117 @@ exports.getLatestLedgers = function(req, res) {
         console.log(err)
     })
 }
+
+/*
+* Get ledger info.
+* @param ledger   hash or sequence.
+* @return ledger information 
+*/
+exports.getLedgerDetail = function(req, res) {
+    var ledger = req.body.ledger;
+
+    server.ledgers()
+    .ledger(ledger)
+    .call()
+    .then(function(ledgerResult) {
+      console.log(ledgerResult)
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+}
+
+/*
+* Get transactions by ledger.
+* @param ledger   hash or sequence.
+* @return transactions of ledger 
+*/
+exports.getTransactions = function(req, res) {
+    var ledger = req.body.ledger;
+
+    server.transactions()
+    .forLedger(ledger)
+    .call()
+    .then(function(txResult) {
+      console.log(txResult)
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+}
+
+/*
+* Get operations by ledger.
+* @param ledger   hash or sequence.
+* @return operations of ledger 
+*/
+exports.getOperations = function(req, res) {
+    var ledger = req.body.ledger;
+
+    server.transactions()
+    .forLedger(ledger)
+    .call()
+    .then(function(operationResult) {
+      console.log(operationResult)
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+}
+
+/*
+* Get transaction by transaction hash.
+* @param txHash   hash of transaction.
+* @return transaction info 
+*/
+exports.getTransaction = function(req, res) {
+    var txHash = req.body.txHash;
+
+    server.transactions()
+    .transaction(txHash)
+    .call()
+    .then(function(transactionResult) {
+      console.log(transactionResult)
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+}
+
+/*
+* Get account information by accountID.
+* @param account   account ID.
+* @return account info 
+*/
+exports.getAccount = function(req, res) {
+    var account = req.body.account;
+
+    server.transactions()
+    .accountId(account)
+    .call()
+    .then(function(accountResult) {
+      console.log(accountResult)
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+}
+
+/*
+* Get operations by accountID.
+* @param account   account ID.
+* @return account info 
+*/
+exports.getOperationsForAccount = function(req, res) {
+    var account = req.body.account;
+
+    server.transactions()
+    .forAccount(account)
+    .call()
+    .then(function(operationsResult) {
+      console.log(operationsResult.records)
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+}
