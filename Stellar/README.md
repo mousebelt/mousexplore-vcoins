@@ -476,8 +476,38 @@ account | String | YES | account ID
 "msg": "success",
 "data":
         {   
-		   "balance": "2.9999947 XLM",
-		   "other info"
+		  "subentry_count": 1,
+		  "thresholds": {
+		    "low_threshold": 0,
+		    "med_threshold": 0,
+		    "high_threshold": 0
+		  },
+		  "flags": {
+		    "auth_required": false,
+		    "auth_revocable": false
+		  },
+		  "balances": [
+		    {
+		      "balance": "49881.0000000",
+		      "limit": "922337203685.4775807",
+		      "asset_type": "credit_alphanum12",
+		      "asset_code": "nCntGameCoin",
+		      "asset_issuer": "GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB"
+		    },
+		    {
+		      "balance": "9999.9530300",
+		      "asset_type": "native"
+		    }
+		  ],
+		  "signers": [
+		    {
+		      "public_key": "GBYLPSBGNBG2RNGOQ66RSSYLWOGD6MNYRFNEB4UH3QY6CBH5IPMPXIBH",
+		      "weight": 1,
+		      "key": "GBYLPSBGNBG2RNGOQ66RSSYLWOGD6MNYRFNEB4UH3QY6CBH5IPMPXIBH",
+		      "type": "ed25519_public_key"
+		    }
+		  ],
+		  "data": {}
         },
 }
 ```
@@ -513,11 +543,51 @@ account | String | YES | account ID
 "msg": "success",
 "data": [
     {   
-	   "type": "Manage Offer" | "Payment" | "Change Trust" | "manage_data",
-	   data according to type
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "type": 11,
+		  "ledger": "payment",
     },
   ],
         ...
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+## Get transactions by account
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+account | String | YES | account ID
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "operations": 11,
+        },
+        ...
+    ]
 }
 ```
 

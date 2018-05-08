@@ -321,10 +321,22 @@ exports.getAccount = function(req, res) {
     .accountId(account)
     .call()
     .then(function(accountResult) {
-      console.log(accountResult)
+      console.log(accountResult);
+
+      var info = {
+        subentry_count: accountResult.subentry_count,
+        flags: accountResult.flags,
+        balances: accountResult.balances,
+        thresholds: accountResult.thresholds,
+        signers: accountResult.signers,
+        data: accountResult.data,
+      }
+
+      res.status(200).json({msg: "success", data: info});
     })
     .catch(function(err) {
-      console.log(err)
+      console.log(err);
+      res.status(400).json({error: err});
     })
 }
 
@@ -340,9 +352,61 @@ exports.getOperationsForAccount = function(req, res) {
     .forAccount(account)
     .call()
     .then(function(operationsResult) {
-      console.log(operationsResult.records)
+      console.log(operationsResult.records);
+
+      var records = operationResult.records;
+
+      var operations = [];
+      for (let i = 0; i < records.length; i ++) {
+        let info = records[i];
+        operations.push({
+            account: info.account,
+            type: info.type,
+            transaction: info.transaction_hash,
+            timestamp: info.created_at
+        })
+      }
+
+      res.status(200).json({msg: "success", data: operations});
     })
     .catch(function(err) {
       console.log(err)
+      res.status(400).json({error: err});
+    })
+}
+
+
+/*
+* Get transactions by account.
+* @param account   account id
+* @return transactions of account 
+*/
+exports.getTransactionsForLedger = function(req, res) {
+    var account = req.body.account;
+
+    server.transactions()
+    .forAccount(account)
+    .call()
+    .then(function(txResult) {
+        console.log(txResult)
+        console.log(txResult.records)
+
+        var records = txResult.records;
+
+        var transactions = [];
+        for (let i = 0; i < records.length; i ++) {
+            let info = records[i];
+            transactions.push({
+                hash: info.hash,
+                account: info.account,
+                operations: info.operation_count,
+                timestamp: info.created_at
+            })
+        }
+        res.status(200).json({msg: "success", data: transactions});
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.status(400).json({error: err});
     })
 }
