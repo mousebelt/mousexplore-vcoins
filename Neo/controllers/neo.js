@@ -202,24 +202,40 @@ exports.postBlock = async function (req, res) {
  * POST /block/txs
  * Get txs from block
  * 
- * @param token: NEP5
- * @param hash: "0x8cb9fee28a48a45468e3c0a229fd4473288cdd9794c10cac7b8f4681ca404342"
+ * @param {String|Int} height: "0x5a6ef8a1b8a4c040145c5fbc0ade618edab81f31ab97618801ad8beee3217fc0" | 3333
+ *                              if height is String, it is hash
+ *                              if height is Number, it is index
  * 
  * @return
- * { "status": "200", "msg": "success", 
- *   "data": [txs]
- * }
+ * { "status": "200", "msg": "success", "data": [txs] }
  * 
  * tx: {
- *  "type": "MinerTransaction", 
- *  "txID": "0e3d66967a1783bba502d62483ae79ee86ceaf1fa32358f548881498157d20ec", 
- *  "size": "10",
- *  "time": 1520521121,
- * }
+        "txid": "0x0ba2f72cabb58bd0e7bdcd4a8cdfd58c6f4e75792cde1bb5285a611213dff96a",
+        "size": 10,
+        "type": "MinerTransaction",
+        "version": 0,
+        "attributes": [],
+        "vin": [],
+        "vout": [],
+        "sys_fee": "0",
+        "net_fee": "0",
+        "scripts": [],
+        "nonce": 1213780983
+    }
  */
-exports.postBlockTxs = function (req, res) {
-    console.log('postBlockTxs running.')
-    res.json({ status: 200, msg: 'success', data: 'postBlockTxs' });
+exports.postBlockTxs = async function (req, res) {
+    var { height } = req.body
+
+    // validation
+    if (!height) res.json({ status: 400, msg: 'errors', data: 'empty height !' });
+    
+    // logic
+    try {
+        var block = await localNode.getBlockByHeight(height, 1);
+        return res.json({ status: 200, msg: 'success', data: block.tx });
+    } catch (error) {
+        return res.json({ status: 400, msg: 'errors', data: error });
+    }
 }
 
 /**
