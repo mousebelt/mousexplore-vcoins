@@ -234,7 +234,7 @@ ledger | String | YES | sequence or hash
 "data":{   
 		  "sequence": "17730975", "timeStamp": "1472533979", 
 		  "hash": "16a77f2b7d8d7a0204585ab1c3c73da73746dbb1e93ac2fd7e0ab8c3303657cf"
-		  "totalCoins": "103,906,864,158.029",
+		  "prev_hash": "4b0b8bace3b2438b2404776ce57643966855487ba6384724a3c664c7aa4cd9e4",
 		  "feePool": "1,437,655.968",
 		  "baseFee": "100 stroops",
 		  "baseReserve": "0.5 XLM",
@@ -253,6 +253,7 @@ ledger | String | YES | sequence or hash
 {
   "error": ""   //error message
 }
+```
 
 
 ## Get transactions by ledger

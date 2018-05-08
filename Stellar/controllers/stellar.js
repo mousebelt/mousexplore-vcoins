@@ -111,6 +111,41 @@ exports.getLedgerDetail = function(req, res) {
     .call()
     .then(function(ledgerResult) {
       console.log(ledgerResult)
+      var info = {
+        sequence: ledgerResult.sequence, 
+        timeStamp: ledgerResult.closed_at, 
+        hash: ledgerResult.hash,
+        prevHash: ledgerResult.prev_hash,
+        feePool: ledgerResult.fee_pool,
+        baseFee: ledgerResult.base_fee_in_stroops,
+        baseReserve: ledgerResult.base_reserve_in_stroops,
+        maxTransactions: ledgerResult.max_tx_set_size,
+        totalCoins: ledgerResult.total_coins,
+        transactions: ledgerResult.transaction_count, 
+        operations: ledgerResult.operation_count
+      };
+
+      res.status(200).json({msg: "success", data: info});
+    })
+    .catch(function(err) {
+      console.log(err)
+      res.status(400).json({error: err});
+    })
+}
+
+/*
+* Get transactions by ledger.
+* @param ledger   hash or sequence.
+* @return transactions of ledger 
+*/
+exports.getTransactions = function(req, res) {
+    var ledger = req.body.ledger;
+
+    server.transactions()
+    .forLedger(ledger)
+    .call()
+    .then(function(txResult) {
+      console.log(txResult)
     })
     .catch(function(err) {
       console.log(err)
@@ -122,7 +157,7 @@ exports.getLedgerDetail = function(req, res) {
 * @param ledger   hash or sequence.
 * @return transactions of ledger 
 */
-exports.getTransactions = function(req, res) {
+exports.getTransactionsForLedger = function(req, res) {
     var ledger = req.body.ledger;
 
     server.transactions()
@@ -154,6 +189,26 @@ exports.getOperations = function(req, res) {
       console.log(err)
     })
 }
+
+/*
+* Get operations by ledger.
+* @param ledger   hash or sequence.
+* @return operations of ledger 
+*/
+exports.getOperationsForLedger = function(req, res) {
+    var ledger = req.body.ledger;
+
+    server.transactions()
+    .forLedger(ledger)
+    .call()
+    .then(function(operationResult) {
+      console.log(operationResult)
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+}
+
 
 /*
 * Get transaction by transaction hash.
