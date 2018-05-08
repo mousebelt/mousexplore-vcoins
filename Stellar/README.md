@@ -256,6 +256,46 @@ ledger | String | YES | sequence or hash
 ```
 
 
+## Get Latest transactions
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+count | Number | YES | count of transactions
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "operations": 11,
+		  "ledger": 17733198,
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
 ## Get transactions by ledger
 
 ### QUERY PARAMS
@@ -275,10 +315,10 @@ ledger | String | YES | sequence or hash
 "msg": "success",
 "data": [
         {   
-		  "timeStamp": "1472533979",
-		  "txHash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		  "ledgerSequence": 17733198,
-		  "fee": 0.00004 XLM,
+		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "operations": 11,
         },
         ...
     ]

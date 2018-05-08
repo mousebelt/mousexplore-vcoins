@@ -165,7 +165,8 @@ exports.getLatestTransactions = function(req, res) {
         res.status(200).json({msg: "success", data: transactions});
     })
     .catch(function(err) {
-      console.log(err)
+      console.log(err);
+      res.status(400).json({error: err});
     })
 }
 
@@ -181,10 +182,26 @@ exports.getTransactionsForLedger = function(req, res) {
     .forLedger(ledger)
     .call()
     .then(function(txResult) {
-      console.log(txResult)
+        console.log(txResult)
+        console.log(txResult.records)
+
+        var records = txResult.records;
+
+        var transactions = [];
+        for (let i = 0; i < records.length; i ++) {
+            let info = records[i];
+            transactions.push({
+                hash: info.hash,
+                account: info.account,
+                operations: info.operation_count,
+                timestamp: info.created_at
+            })
+        }
+        res.status(200).json({msg: "success", data: transactions});
     })
     .catch(function(err) {
-      console.log(err)
+      console.log(err);
+      res.status(400).json({error: err});
     })
 }
 
