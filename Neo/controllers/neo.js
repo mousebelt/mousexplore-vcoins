@@ -143,7 +143,9 @@ exports.postBlocks = async function (req, res) {
  * POST /block
  * Get block info from hash or index
  * 
- * @param {String|Int} height: 0x4708829b458f53921839d87b721e4e42ef9d27f2083a87cb38f523cf556224ca | 69588
+ * @param {String|Int} height: "0x4708829b458f53921839d87b721e4e42ef9d27f2083a87cb38f523cf556224ca" | 69588
+ *                              if height is String, it is hash
+ *                              if height is Number, it is index
  * 
  * @return
  * { "status": 200, "msg": "success", "data": block }
