@@ -115,7 +115,7 @@ exports.getUpdatedTransactions = function(req, res) {
 *   Reward cannot be retrieved from node. Maybe should get it from etherscan
 */
 exports.blocklist = function(req, res) {
-    var blocknum = req.body.start_height;
+    var blocknum = req.body.blocknum;
     var count = req.body.count;
 
     web3.eth.getBlockNumber(async  function(error, number) {

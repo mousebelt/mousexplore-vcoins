@@ -190,7 +190,7 @@ blocknum | Number | YES | start block number
 
 ## Get Block list
 ```
- POST /api/v1/blocks
+ POST /api/v1/blocklisr
 ```
 
 get block list of count blocks started from blockNumber.
