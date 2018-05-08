@@ -63,28 +63,27 @@ exports.createAccount = function(req, res) {
 
 /*
 * Get latest ledger list.
-* @param start_height number of block from where to get block list.
 * @param count count of list to get.
 * @return list of ledger information same as the https://steexp.com/ledgers
 */
 exports.getLatestLedgers = function(req, res) {
-    server.transactions()
-    .forLedger(1400)
-    .call().then(function(r){ console.log(r); });
+    var count = req.body.count;
 
-    // server.ledgers()
-    // .call()
-    // .then(function (ledgerResult) {
-    //     // page 1
-    //     console.log(ledgerResult)
-    //     // console.log(ledgerResult.records)
-    //     // return ledgerResult.next()
-    // })
-    // .then(function (ledgerResult) {
-    //     // page 2
-    //     // console.log(ledgerResult.records)
-    // })
-    // .catch(function(err) {
-    //     console.log(err)
-    // })
+    server.ledgers()
+    .limit(count)
+    .order("desc")
+    .call()
+    .then(function (ledgerResult) {
+        // page 1
+        console.log(ledgerResult)
+        console.log(ledgerResult.records)
+        return ledgerResult.next()
+    })
+    .then(function (ledgerResult) {
+        // page 2
+        console.log(ledgerResult.records)
+    })
+    .catch(function(err) {
+        console.log(err)
+    })
 }

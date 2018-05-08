@@ -88,17 +88,12 @@ https://github.com/stellar/stellar-core/blob/master/docs/software/testnet.md
 * Need to add db
 >createdb stellar
 
-* add table using postgresql prompt if error exists of storestate
->sudo -u postgres psql
-select db
->postgres=#\c stellar                     
->postgres=#CREATE TABLE storestate (statename CHARACTER(32) PRIMARY KEY,state TEXT);
-
->sudo cp config/stellar_core_standalone.cfg /usr/local/bin/stellar-core.cfg
->sudo stellar-core --forcescp
+>sudo cp config/stellar_core_public.cfg /usr/local/bin/stellar-core.cfg
 
 here do this if get error of some tables not exists.
 >stellar-core --newdb
+
+>sudo stellar-core --forcescp                ---------?
 
 >sudo stellar-core
 
