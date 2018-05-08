@@ -77,14 +77,24 @@ exports.getLatestLedgers = function(req, res) {
         // page 1
         console.log(ledgerResult)
         console.log(ledgerResult.records)
-        return ledgerResult.next()
-    })
-    .then(function (ledgerResult) {
-        // page 2
-        console.log(ledgerResult.records)
+
+        var records = ledgerResult.records;
+
+        var ledgers = [];
+        for (let i = 0; i < records.length; i ++) {
+            let ledgerinfo = records[i];
+            ledgers.push({
+                sequence: ledgerinfo.sequence,
+                timeStamp: ledgerinfo.closed_at,
+                transactions: ledgerinfo.transaction_count,
+                operations: ledgerinfo.operation_count
+            })
+        }
+        res.status(200).json({msg: "success", data: ledgers});
     })
     .catch(function(err) {
         console.log(err)
+        res.status(400).json({error: err});
     })
 }
 

@@ -166,10 +166,12 @@ exports.blocklist = function(req, res) {
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+                res.status(400).json({error: e});
             }
         }
         else {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
         }
     });
 }
@@ -241,10 +243,12 @@ exports.latestblocks = function(req, res) {
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+                res.status(400).json({error: e});
             }
         }
         else {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
         }
     });
 }
@@ -311,6 +315,7 @@ exports.getblockdetail = async function(req, res) {
     }
     catch(e) {
         console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+        res.status(400).json({error: e});
     }
 }
 
@@ -353,6 +358,7 @@ exports.getTransactions = async function(req, res) {
     }
     catch(e) {
         console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+        res.status(400).json({error: e});
     }
 }
 
@@ -427,10 +433,12 @@ exports.getTransactionList = async function(req, res) {
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+                res.status(400).json({error: e});
             }
         }
         else {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
         }
     });
 }
@@ -479,10 +487,12 @@ exports.getTransactionInfo =  function(req, res) {
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+                res.status(400).json({error: e});
             }
         }
         else {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
         }
     });
 }
