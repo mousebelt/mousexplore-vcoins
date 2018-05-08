@@ -134,18 +134,35 @@ exports.getLedgerDetail = function(req, res) {
 }
 
 /*
-* Get transactions by ledger.
-* @param ledger   hash or sequence.
+* Get all latest transactions.
+* @param count count of list to get.
 * @return transactions of ledger 
 */
-exports.getTransactions = function(req, res) {
-    var ledger = req.body.ledger;
+exports.getLatestTransactions = function(req, res) {
+    var count = req.body.count;
 
     server.transactions()
-    .forLedger(ledger)
+    .limit(count)
+    .order("dsc")
     .call()
     .then(function(txResult) {
-      console.log(txResult)
+        console.log(txResult)
+        console.log(txResult.records)
+
+        var records = txResult.records;
+
+        var transactions = [];
+        for (let i = 0; i < records.length; i ++) {
+            let info = records[i];
+            transactions.push({
+                hash: info.hash,
+                account: info.account,
+                ledger: info.ledger,
+                operations: info.operation_count,
+                timestamp: info.created_at
+            })
+        }
+        res.status(200).json({msg: "success", data: transactions});
     })
     .catch(function(err) {
       console.log(err)
