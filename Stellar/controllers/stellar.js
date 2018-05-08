@@ -289,10 +289,23 @@ exports.getTransaction = function(req, res) {
     .transaction(txHash)
     .call()
     .then(function(transactionResult) {
-      console.log(transactionResult)
+      console.log(transactionResult);
+
+      var info = {
+        timeStamp: transactionResult.created_at,
+        txHash: transactionResult.hash,
+        ledgerSequence: transactionResult.ledger,
+        sourceAccount: transactionResult.account,
+        sourceAccountSequence: transactionResult.account_sequence,
+        fee: transactionResult.fee_paid,
+        Signatures: transactionResult.envelope_xdr
+      };
+
+      res.status(200).json({msg: "success", data: info});
     })
     .catch(function(err) {
-      console.log(err)
+      console.log(err);
+      res.status(400).json({error: err});
     })
 }
 

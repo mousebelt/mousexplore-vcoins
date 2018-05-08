@@ -434,15 +434,13 @@ txHash | String | YES | hash of transaction
 {
 "msg": "success",
 "data": {   
-	   "timeStamp": "1472533979",
+	   "timeStamp": "2015-09-24T10:07:09Z",
 	   "txHash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
 	   "ledgerSequence": 17733198,
 	   "sourceAccount": GA4K4BUZ4SLAKQA5T2OE64FM3BWTUJXQQ3J4QPCEQBHCQZWQHRHGPPSO,
 	   "sourceAccountSequence": 70914226499158536,
 	   "fee": 0.00004 XLM,
 	   "Signatures": "X74ykBLM6rVaJmtEP0LgnTh8ugm5ykaVCD8p+JfRGMm2HiaWrIV2VckmxU02z2xqSiKrq+Oomx6GxlTwpf9ABg==",
-	   "sourceAccountSequence": 70914226499158536,
-	   "operations": [operation]
 	 },
 }
 ```
