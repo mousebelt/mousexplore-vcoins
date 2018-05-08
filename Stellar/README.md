@@ -335,15 +335,13 @@ ledger | String | YES | sequence or hash
 ```
 
 
-
-## Get operations by ledger
-Get operations from ledger sequence
+## Get Latest operations
 
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-ledger | String | YES | sequence or hash
+count | Number | YES | count of operations
 
 
 ### RETURN
@@ -356,8 +354,51 @@ ledger | String | YES | sequence or hash
 "msg": "success",
 "data": [
         {   
-		  "type": "Manage Offer" | "Payment" | "Change Trust" | "manage_data",
-		  data according to type
+		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "type": 11,
+		  "ledger": "payment",
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+## Get operations by transaction
+Get operations from transaction 
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+txHash | String | YES | sequence or hash
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "type": 11,
+		  "ledger": "payment",
         },
         ...
     ]

@@ -207,39 +207,72 @@ exports.getTransactionsForLedger = function(req, res) {
 
 /*
 * Get operations by ledger.
-* @param ledger   hash or sequence.
+* @param count count of list to get.
 * @return operations of ledger 
 */
 exports.getOperations = function(req, res) {
-    var ledger = req.body.ledger;
+    var count = req.body.count;
 
-    server.transactions()
-    .forLedger(ledger)
+    server.operations()
+    .limit(count)
+    .order("dsc")
     .call()
     .then(function(operationResult) {
       console.log(operationResult)
+
+      var records = operationResult.records;
+
+      var operations = [];
+      for (let i = 0; i < records.length; i ++) {
+        let info = records[i];
+        operations.push({
+            account: info.account,
+            type: info.type,
+            transaction: info.transaction_hash,
+            timestamp: info.created_at
+        })
+      }
+    
+      res.status(200).json({msg: "success", data: operations});
     })
     .catch(function(err) {
-      console.log(err)
+      console.log(err);
+      res.status(400).json({error: err});
     })
 }
 
 /*
-* Get operations by ledger.
-* @param ledger   hash or sequence.
-* @return operations of ledger 
+* Get operations by transaction.
+* @param txHash   hash of transaction.
+* @return operations of transaction
 */
-exports.getOperationsForLedger = function(req, res) {
-    var ledger = req.body.ledger;
+exports.getOperationsForTransaction = function(req, res) {
+    var txHash = req.body.txHash;
 
-    server.transactions()
-    .forLedger(ledger)
+    server.operations()
+    .forTransaction(txHash)
     .call()
     .then(function(operationResult) {
-      console.log(operationResult)
+      console.log(operationResult);
+
+      var records = operationResult.records;
+
+      var operations = [];
+      for (let i = 0; i < records.length; i ++) {
+        let info = records[i];
+        operations.push({
+            account: info.account,
+            type: info.type,
+            transaction: info.transaction_hash,
+            timestamp: info.created_at
+        })
+      }
+    
+      res.status(200).json({msg: "success", data: operations});
     })
     .catch(function(err) {
-      console.log(err)
+      console.log(err);
+      res.status(400).json({error: err});
     })
 }
 
