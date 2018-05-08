@@ -265,10 +265,9 @@ exports.postTxs = function (req, res) {
 
 /**
  * POST /tx
- * Get tx info from txID
+ * Get tx info from txId
  * 
- * @param token: NEP5
- * @param txID: 0e3d66967a1783bba502d62483ae79ee86ceaf1fa32358f548881498157d20ec
+ * @param {String} txId: "0x0e3d66967a1783bba502d62483ae79ee86ceaf1fa32358f548881498157d20ec"
  * 
  * @return
  * { "status": "200", "msg": "success", 
@@ -276,24 +275,57 @@ exports.postTxs = function (req, res) {
  * }
  * 
  * tx: {
- *  "txID": "0x9cd48d513a081e7832088e152e26ca46f05dc062b36d9e983a0c6049a2f56cbd", 
- *  "time": "1472533979", 
- *  "type": "ContractTransaction", 
- *  "systemFee": "0",
- *  "networkFee": "0",
- *  "size": "202",
- *  "confirmations": "-2022686",
- *  "blockIndex": 2022689,
- *  "blockHash": 7e8d950dc45c5e3cf65ec2e5545564960014b5d48f6ef986519b6738786598a0,
- *  "from": "AYJXuFBfUyELoTe3wXEzPkq5RcsHsF58uW"
- *  "neo": "1"
- *  "to": "AYJXuFBfUyELoTe3wXEzPkq5RcsHsF58uW"
- *  "gas": "8.68e-6"
- * }
+    "Txid": "f4250dab094c38d8265acc15c366dc508d2e14bf5699e12d9df26577ed74d657",
+    "Size": 262,
+    "Type": "ContractTransaction",
+    "Version": 0,
+    "Attributes":[],
+    "Vin": [
+      {
+        "Txid": "abe82713f756eaeebf6fa6440057fca7c36b6c157700738bc34d3634cb765819",
+        "Vout": 0
+      }
+     ],
+     "Vout": [
+      {
+        "N": 0,
+        "Asset": "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+        "Value": "2950",
+        "Address": "AHCNSDkh2Xs66SzmyKGdoDKY752uyeXDrt"
+      },
+      {
+        "N": 1,
+        "Asset": "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+        "Value": "4050",
+        "Address": "ALDCagdWUVV4wYoEzCcJ4dtHqtWhsNEEaR"
+       }
+    ],
+    "Sys_fee": "0",
+    "Net_fee": "0",
+    "Scripts": [
+      {
+        "Invocation": "40915467ecd359684b2dc358024ca750609591aa731a0b309c7fb3cab5cd0836ad3992aa0a24da431f43b68883ea5651d548feb6bd3c8e16376e6e426f91f84c58",
+        "Verification": "2103322f35c7819267e721335948d385fae5be66e7ba8c748ac15467dcca0693692dac"
+      }
+    ],
+    "Blockhash": "9c814276156d33f5dbd4e1bd4e279bb4da4ca73ea7b7f9f0833231854648a72c",
+    "Confirmations": 144,
+    "Blocktime": 1496719422
+  }
  */
 exports.postTx = function (req, res) {
-    console.log('postTx running.')
-    res.json({ status: 200, msg: 'success', data: 'postTx' });
+    var { txId } = req.body
+
+    // validation
+    if (!txId) res.json({ status: 400, msg: 'errors', data: 'empty txId !' });
+    
+    // logic
+    try {
+        var tx = await localNode.getRawTransaction(txId, 1);
+        return res.json({ status: 200, msg: 'success', data: tx });
+    } catch (error) {
+        return res.json({ status: 400, msg: 'errors', data: error });
+    }
 }
 
 /**
