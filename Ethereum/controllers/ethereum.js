@@ -272,7 +272,7 @@ exports.latestblocks = function(req, res) {
     storing them separately.
 */
 exports.getblockdetail = async function(req, res) {
-    var blockNumber = req.body.blockNumber;
+    var blockNumber = req.body.blocknum;
 
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, false); 
