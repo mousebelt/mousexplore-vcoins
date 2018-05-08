@@ -2,16 +2,21 @@
 ## testnet
 screen
 >geth --testnet --networkid=3 –-syncmode=fast –-cache=1024 console --rpcapi eth,web3,personal
+>
 >ctrl+a and d will detach from new console.
 
 ## run as service
 
-* using systemctl
 https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 
+* using systemctl
+
 >cp ./geth.service /etc/systemd/system/geth.service
+>
 >systemctl daemon-reload
+>
 >systemctl enable geth.service
+>
 >systemctl start geth
 
 * check the status
