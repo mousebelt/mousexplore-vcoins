@@ -32,8 +32,20 @@ mainnet config (json-rpc port: 10332)
 testnet config (json-rpc port: 20332)
 >cp config.testnet.json config.json
 
-## run as daemon
->screen -S dotnet neo-cli.dll /rpc
+
+## run as service
+
+* using systemctl
+https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
+
+>cp ./neo.service /etc/systemd/system/neo.service
+>systemctl daemon-reload
+>systemctl enable neo.service
+>systemctl start neo
+
+* check the status
+>service neo status
+
 
 # Reference
 http://docs.neo.org/en-us/node/cli.html
