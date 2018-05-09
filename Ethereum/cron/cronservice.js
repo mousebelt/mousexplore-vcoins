@@ -62,7 +62,7 @@ function CheckUpdatedTransactions() {
 
                         let fee = gasprice * transaction.gasUsed;
 
-                        var newTxn = TransactionModel.new({
+                        var newTxn = new TransactionModel({
                         	hash: hash,
                         	from: from,
                         	to: to,
