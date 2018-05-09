@@ -9,6 +9,7 @@
   "author": "Genji Sakamoto",
   "license": "ISC",
   "dependencies": {
+    "mongoose": "^5.0.17",
     "web3": "1.0.0-beta.34"
   }
 }
