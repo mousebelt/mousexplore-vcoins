@@ -452,10 +452,8 @@ exports.getTransactionList = async function(req, res) {
 */
 exports.getTransactionInfo =  function(req, res) {
     var txHash = req.body.txHash;
-    console.log("getTransactionInfo ", txHash);
-    var hashStr = Buffer.from(txHash, 'hex');
 
-    web3.eth.getTransaction(hashStr, async  function(error, transaction) {
+    web3.eth.getTransaction(txHash async  function(error, transaction) {
         if (!error) {
             try {
                 let blocknumber = transaction.blockNumber;
