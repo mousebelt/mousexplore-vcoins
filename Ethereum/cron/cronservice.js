@@ -85,8 +85,6 @@ function CheckUpdatedTransactions() {
                     }
 
                 }
-
-                console.log("blocks: ", blocks);
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
