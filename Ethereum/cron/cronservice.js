@@ -32,7 +32,7 @@ function saveCronServiceInfo() {
 	        	info.set({lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex});
 	        }
 	        else {
-	        	info = new ServiceInofModel({{lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex}});
+	        	info = new ServiceInofModel({lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex});
 	        }
 	        info.save();
 	    }
