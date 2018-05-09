@@ -13,10 +13,12 @@ var cronServiceInfo = null;
 async function getLastCheckedBlock() {
 	try {
 		cronServiceInfo = await ServiceInofModel.findOne();
-		lastCheckedBlock = cronServiceInfo.lastblock;
-		lastCheckedIndex = cronServiceInfo.lastTxnIndex;
-		console.log("Last checked block number is " + lastCheckedBlock);
-		console.log("Last checked txn index is " + lastCheckedIndex);
+		if (cronServiceInfo) {
+			lastCheckedBlock = cronServiceInfo.lastblock;
+			lastCheckedIndex = cronServiceInfo.lastTxnIndex;
+			console.log("Last checked block number is " + lastCheckedBlock);
+			console.log("Last checked txn index is " + lastCheckedIndex);
+		}
 	}
 	catch(e) {
 		console.log("getLastCheckedBlock error: ", e);
