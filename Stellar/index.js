@@ -29,6 +29,3 @@ app.use(bodyParser.urlencoded({
 }));
 require('./route/route')(app);
 
-// require('./unittest/testapi').testTransaction("0x89718DE358A73343bd0F9D71E5f623131792E43d", "0x89718DE358A73343bd0F9D71E5f623131792E43d", "0.1");
-// require('./unittest/testapi').getUpdatedTransactions(0);
-// require('./unittest/testapi').loadAccounts();
