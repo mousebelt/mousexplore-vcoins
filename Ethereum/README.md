@@ -349,7 +349,7 @@ Get transactions from blockNumber.
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-blockNumber | Number | YES | start block number
+blockNumber | Number | YES | block number
 
 
 ### RETURN
@@ -362,6 +362,7 @@ blockNumber | Number | YES | start block number
 "msg": "success",
 "data": [
         {   
+          "status": true
           "blockNumber": "2165403", "timeStamp": "1472533979",
           "txHash": "0x98db583e5ff636b78",
           "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
