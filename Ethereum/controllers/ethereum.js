@@ -452,6 +452,7 @@ exports.getTransactionList = async function(req, res) {
 */
 exports.getTransactionInfo =  function(req, res) {
     var txHash = req.body.txHash;
+    console.log("getTransactionInfo ", txHash);
 
     web3.eth.getTransaction(txHash, async  function(error, transaction) {
         if (!error) {
@@ -492,7 +493,7 @@ exports.getTransactionInfo =  function(req, res) {
             }
         }
         else {
-            console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            console.log('getTransaction: we have a promblem: ', error); // Should dump errors here
             res.status(400).json({error: error});
         }
     });

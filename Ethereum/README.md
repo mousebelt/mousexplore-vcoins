@@ -395,8 +395,8 @@ Get list of specified transactions.
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-blockNumber | Number | YES | start block number
-
+offset | Number | YES | offset from latest transaction
+count | Number | YES | count of blocks to get 
 
 ### RETURN
 
