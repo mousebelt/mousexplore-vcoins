@@ -47,8 +47,6 @@ function CheckUpdatedTransactions() {
     web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
             try {
-                console.log("last number " + number);
-                
                 for (let i = lastCheckedBlock; i <= number && i < lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS; i ++) {
                     var blockdata = await web3.eth.getBlock(i, true); 
                     
@@ -78,6 +76,9 @@ function CheckUpdatedTransactions() {
 
                         await newTxn.save();
 
+                        if (lastCheckedBlock != i) {
+                        	console.log("Updating block: " + i);
+                        }
 						lastCheckedBlock = i;
                         lastCheckedIndex = j;
 
