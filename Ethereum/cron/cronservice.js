@@ -65,8 +65,8 @@ function CheckUpdatedTransactions() {
                         	from: from,
                         	to: to,
                         	value: value,
-                        	fee: fee
-                        	timestamp: timestamp,
+                        	fee: fee,
+                        	timestamp: timestamp
                         });
 
                         await newTxn.save();
