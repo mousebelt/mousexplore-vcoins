@@ -102,11 +102,11 @@ This will run stellar-core server
 ### horizon config
 
 * create db
->createdb horizon_testnet
+>createdb horizon
 
 * set environment at /root/.bashrc
 
->export DATABASE_URL="postgres://ubuntu:a@localhost/horizon_testnet"
+>export DATABASE_URL="postgres://ubuntu:a@localhost/horizon"
 >export STELLAR_CORE_DATABASE_URL="postgres://ubuntu:a@localhost/stellar"
 >export STELLAR_CORE_URL="http://localhost:11626"
 
