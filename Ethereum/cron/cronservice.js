@@ -74,7 +74,7 @@ function CheckUpdatedTransactions() {
 						lastCheckedBlock = i;
                         lastCheckedIndex = j;
 
-						saveCronServiceInfo();
+						await saveCronServiceInfo();
                     }
 
                 }
@@ -90,7 +90,7 @@ function CheckUpdatedTransactions() {
         }
     });
 }
-}
+
 
 function transactionService() {
 	CheckUpdatedTransactions();
