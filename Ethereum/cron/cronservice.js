@@ -25,8 +25,8 @@ async function getLastCheckedBlock() {
 	}
 }
 
-function saveCronServiceInfo() {
-	ServiceInofModel.findOne(async function(e, info) {
+async function saveCronServiceInfo() {
+	await ServiceInofModel.findOne(async function(e, info) {
 		if (!e) {
 			if (info) {
 	        	info.set({lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex});
@@ -43,8 +43,8 @@ function saveCronServiceInfo() {
 	    
 }
 
-function CheckUpdatedTransactions() {
-    web3.eth.getBlockNumber(async  function(error, number) {
+async function CheckUpdatedTransactions() {
+    await web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
             try {
                 for (let i = lastCheckedBlock; i <= number && i < lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS; i ++) {
