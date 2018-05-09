@@ -111,9 +111,9 @@ function transactionService() {
 	setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
 
-exports.start_cronService = function() {
+exports.start_cronService = async function() {
 	console.log("Start ethereum cron service");
-	getLastCheckedBlock();
+	await getLastCheckedBlock();
 
 	transactionService();
 }
