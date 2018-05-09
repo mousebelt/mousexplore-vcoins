@@ -76,20 +76,23 @@ function CheckUpdatedTransactions() {
 
                         await newTxn.save();
 
-                        if (lastCheckedBlock != i) {
+                        if (lastCheckedBlock != i || lastCheckedIndex != j) {
                         	console.log("Updating block: " + i);
+							lastCheckedBlock = i;
+	                        lastCheckedIndex = j;
+
+							await saveCronServiceInfo();
                         }
+                    }
+
+                    if (lastCheckedBlock != i || lastCheckedIndex != -1) {
+                    	console.log("Updating block: " + i);
 						lastCheckedBlock = i;
-                        lastCheckedIndex = j;
+                        lastCheckedIndex = -1;
 
 						await saveCronServiceInfo();
                     }
-
-                	lastCheckedBlock = i;
-                    lastCheckedIndex = -1;
-
-					await saveCronServiceInfo();
-
+    
                 }
             }
             catch(e) {
