@@ -5,7 +5,7 @@ Description=horizon
 Type=simple
 User=ubuntu
 Restart=always
-ExecStart=/usr/bin/horizon --db-url=postgres://ubuntu:a@localhost/horizon_testnet --stellar-core-db-url=postgres://ubuntu:a@localhost/stellar --stellar-core-url=http://localhost:11626
+ExecStart=/usr/bin/horizon --db-url=postgres://ubuntu:a@localhost/horizon --stellar-core-db-url=postgres://ubuntu:a@localhost/stellar --stellar-core-url=http://localhost:11626
  
 [Install]
 WantedBy=default.target

@@ -88,17 +88,12 @@ https://github.com/stellar/stellar-core/blob/master/docs/software/testnet.md
 * Need to add db
 >createdb stellar
 
-* add table using postgresql prompt if error exists of storestate
->sudo -u postgres psql
-select db
->postgres=#\c stellar                     
->postgres=#CREATE TABLE storestate (statename CHARACTER(32) PRIMARY KEY,state TEXT);
-
->sudo cp config/stellar_core_standalone.cfg /usr/local/bin/stellar-core.cfg
->sudo stellar-core --forcescp
+>sudo cp config/stellar_core_public.cfg /usr/local/bin/stellar-core.cfg
 
 here do this if get error of some tables not exists.
 >stellar-core --newdb
+
+>sudo stellar-core --forcescp                ---------?
 
 >sudo stellar-core
 
@@ -107,11 +102,11 @@ This will run stellar-core server
 ### horizon config
 
 * create db
->createdb horizon_testnet
+>createdb horizon
 
 * set environment at /root/.bashrc
 
->export DATABASE_URL="postgres://ubuntu:a@localhost/horizon_testnet"
+>export DATABASE_URL="postgres://ubuntu:a@localhost/horizon"
 >export STELLAR_CORE_DATABASE_URL="postgres://ubuntu:a@localhost/stellar"
 >export STELLAR_CORE_URL="http://localhost:11626"
 
@@ -152,3 +147,455 @@ Maybe only for getting transaction history, we don't need main net setting
 
 ## createAccount
 >node ./unittest/testAccount.js
+
+
+# Public Rest API for Stellar Node
+## General API Information
+* The base endpoint is: **http://**
+* All endpoints return a JSON object.
+
+* For `GET` endpoints, parameters must be sent as a `query string`.
+* For `POST`, `PUT`, and `DELETE` endpoints, the parameters may be sent as a
+  `query string` or in the `request body` with content type
+  `application/x-www-form-urlencoded`. You may mix parameters between both the
+  `query string` and `request body` if you wish to do so.
+* Parameters may be sent in any order.
+* If a parameter sent in both the `query string` and `request body`, the
+  `query string` parameter will be used.
+
+## Endpoint security type
+* Endpoint can only be accessed from specified client for provided REST APIs.
+* Every APIs needs Authorization.
+## Get tx info from txHash
+```
+ POST /api/v1/tx
+```
+
+## Get latest ledgers
+
+Get latest ledger list.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+count | Number | YES | ledger count to get
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "sequence": "17730975", "timeStamp": "1472533979", 
+		  "hash": "16a77f2b7d8d7a0204585ab1c3c73da73746dbb1e93ac2fd7e0ab8c3303657cf"
+		  "transactions": 10, 
+		  "operations": 22, 
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+
+## Get ledger
+
+Get ledger info.
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+ledger | String | YES | sequence or hash
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data":{   
+		  "sequence": "17730975", "timeStamp": "1472533979", 
+		  "hash": "16a77f2b7d8d7a0204585ab1c3c73da73746dbb1e93ac2fd7e0ab8c3303657cf"
+		  "prev_hash": "4b0b8bace3b2438b2404776ce57643966855487ba6384724a3c664c7aa4cd9e4",
+		  "feePool": "1,437,655.968",
+		  "baseFee": "100 stroops",
+		  "baseReserve": "0.5 XLM",
+		  "maxTransactions": "50 per ledger",
+		  "totalCoins": "103,906,864,158.029",
+		  "transactions": 10, 
+		  "operations": 22, 
+        },
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+## Get Latest transactions
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+count | Number | YES | count of transactions
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "operations": 11,
+		  "ledger": 17733198,
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+## Get transactions by ledger
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+ledger | String | YES | sequence or hash
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "operations": 11,
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+## Get Latest operations
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+count | Number | YES | count of operations
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "type": 11,
+		  "ledger": "payment",
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+## Get operations by transaction
+Get operations from transaction 
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+txHash | String | YES | sequence or hash
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "type": 11,
+		  "ledger": "payment",
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+
+## Get transaction by transaction hash
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+txHash | String | YES | hash of transaction
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": {   
+	   "timeStamp": "2015-09-24T10:07:09Z",
+	   "txHash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+	   "ledgerSequence": 17733198,
+	   "sourceAccount": GA4K4BUZ4SLAKQA5T2OE64FM3BWTUJXQQ3J4QPCEQBHCQZWQHRHGPPSO,
+	   "sourceAccountSequence": 70914226499158536,
+	   "fee": 0.00004 XLM,
+	   "Signatures": "X74ykBLM6rVaJmtEP0LgnTh8ugm5ykaVCD8p+JfRGMm2HiaWrIV2VckmxU02z2xqSiKrq+Oomx6GxlTwpf9ABg==",
+	 },
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+
+## Get account information by accountID
+Get overview from account
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+account | String | YES | account ID
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data":
+        {   
+		  "subentry_count": 1,
+		  "thresholds": {
+		    "low_threshold": 0,
+		    "med_threshold": 0,
+		    "high_threshold": 0
+		  },
+		  "flags": {
+		    "auth_required": false,
+		    "auth_revocable": false
+		  },
+		  "balances": [
+		    {
+		      "balance": "49881.0000000",
+		      "limit": "922337203685.4775807",
+		      "asset_type": "credit_alphanum12",
+		      "asset_code": "nCntGameCoin",
+		      "asset_issuer": "GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB"
+		    },
+		    {
+		      "balance": "9999.9530300",
+		      "asset_type": "native"
+		    }
+		  ],
+		  "signers": [
+		    {
+		      "public_key": "GBYLPSBGNBG2RNGOQ66RSSYLWOGD6MNYRFNEB4UH3QY6CBH5IPMPXIBH",
+		      "weight": 1,
+		      "key": "GBYLPSBGNBG2RNGOQ66RSSYLWOGD6MNYRFNEB4UH3QY6CBH5IPMPXIBH",
+		      "type": "ed25519_public_key"
+		    }
+		  ],
+		  "data": {}
+        },
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+
+## Get operations by accountID
+Get operations related to account
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+account | String | YES | account ID
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+    {   
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "type": 11,
+		  "ledger": "payment",
+    },
+  ],
+        ...
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+## Get transactions by account
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+account | String | YES | account ID
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "operations": 11,
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```

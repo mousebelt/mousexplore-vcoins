@@ -5,7 +5,8 @@ if (runtype == "test") {
     StellarSdk.Network.useTestNetwork();
 }
 
-var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
+// var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
+var server = new StellarSdk.Server('http://127.0.0.1:8000', {allowHttp: true});
 // var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
 exports.getBalance = function(req, res) {
@@ -60,88 +61,352 @@ exports.createAccount = function(req, res) {
 }
 
 
-//to enable calls of personal functions, need to set --rpcapi eth,web3,personal when call geth
-exports.sendTransaction = function(req, res) {
-    console.log("sendTransaction", req.body);
-    var from = req.body.from;
-    var to = req.body.to;
-    var value = req.body.value;
-    // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-    web3.eth.personal.unlockAccount(from, config.mainpass, function (error, result) {
-        if (!error) {
-            console.log('Unlocked Account: ', result);
-            web3.eth.sendTransaction({
-                from: from,
-                to: to,
-                value: web3.utils.toWei(value),
-            }, function (err, hash) {
-                if (!err) {
-                    console.log("Send transaction: ", hash);
-                    res.status(200).json({hash: hash});
-                }
-                else {
-                    console.log('error: ', err);
-                    res.status(400).json({error: error});
-                }
-            })
-        }
-        else {
-            console.log('we have a promblem: ', error); // Should dump errors here
-            res.status(400).json({error: error});
-        }
-    });
-}
+/*
+* Get latest ledger list.
+* @param count count of list to get.
+* @return list of ledger information same as the https://steexp.com/ledgers
+*/
+exports.getLatestLedgers = function(req, res) {
+    var count = req.body.count;
 
-exports.getUpdatedTransactions = function(req, res) {
-    var blocknum = req.body.blocknum;
-
-    var lastblock = web3.eth.getBlockNumber(async  function(error, number) {
-        //console.log("lastblock= ", number);
-
-        if (!error) {
-            try {
-                var blocks = [];
-                for (let i = blocknum; i <= number; i ++) {
-                    var blockdata = await web3.eth.getBlock(i, true);
-                    blocks = blocks.concat(blockdata.transactions);
-                }
-
-                res.status(200).json({lastblock: number, data: blocks});
-            }
-            catch(e) {
-                console.log('we have a promblem: ', e); // Should dump errors here
-                res.status(400).json({error: e});
-            }
-        }
-        else {
-            console.log('we have a promblem: ', error); // Should dump errors here
-            res.status(400).json({error: error});
-        }
-    });
-}
-
-exports.getTransactions = function(req, res) {
-    // server.transactions()
-    // .forAccount('3f53908cc5306ec31469f89b22da22a41feee5d439b93e652613fc667989bd17')
-    // .call().then(function(r){ console.log(r); });
-    server.transactions()
-    .call().then(function(r){ console.log(r); });
-}
-
-exports.getLedgers = function(req, res) {
     server.ledgers()
+    .limit(count)
+    .order("desc")
     .call()
     .then(function (ledgerResult) {
         // page 1
         console.log(ledgerResult)
-        // console.log(ledgerResult.records)
-        // return ledgerResult.next()
-    })
-    .then(function (ledgerResult) {
-        // page 2
-        // console.log(ledgerResult.records)
+        console.log(ledgerResult.records)
+
+        var records = ledgerResult.records;
+
+        var ledgers = [];
+        for (let i = 0; i < records.length; i ++) {
+            let ledgerinfo = records[i];
+            ledgers.push({
+                sequence: ledgerinfo.sequence,
+                timeStamp: ledgerinfo.closed_at,
+                transactions: ledgerinfo.transaction_count,
+                operations: ledgerinfo.operation_count
+            })
+        }
+        res.status(200).json({msg: "success", data: ledgers});
     })
     .catch(function(err) {
         console.log(err)
+        res.status(400).json({error: err});
+    })
+}
+
+/*
+* Get ledger info.
+* @param ledger   hash or sequence.
+* @return ledger information 
+*/
+exports.getLedgerDetail = function(req, res) {
+    var ledger = req.body.ledger;
+
+    server.ledgers()
+    .ledger(ledger)
+    .call()
+    .then(function(ledgerResult) {
+      console.log(ledgerResult)
+      var info = {
+        sequence: ledgerResult.sequence, 
+        timeStamp: ledgerResult.closed_at, 
+        hash: ledgerResult.hash,
+        prevHash: ledgerResult.prev_hash,
+        feePool: ledgerResult.fee_pool,
+        baseFee: ledgerResult.base_fee_in_stroops,
+        baseReserve: ledgerResult.base_reserve_in_stroops,
+        maxTransactions: ledgerResult.max_tx_set_size,
+        totalCoins: ledgerResult.total_coins,
+        transactions: ledgerResult.transaction_count, 
+        operations: ledgerResult.operation_count
+      };
+
+      res.status(200).json({msg: "success", data: info});
+    })
+    .catch(function(err) {
+      console.log(err)
+      res.status(400).json({error: err});
+    })
+}
+
+/*
+* Get all latest transactions.
+* @param count count of list to get.
+* @return transactions of ledger 
+*/
+exports.getLatestTransactions = function(req, res) {
+    var count = req.body.count;
+
+    server.transactions()
+    .limit(count)
+    .order("dsc")
+    .call()
+    .then(function(txResult) {
+        console.log(txResult)
+        console.log(txResult.records)
+
+        var records = txResult.records;
+
+        var transactions = [];
+        for (let i = 0; i < records.length; i ++) {
+            let info = records[i];
+            transactions.push({
+                hash: info.hash,
+                account: info.account,
+                ledger: info.ledger,
+                operations: info.operation_count,
+                timestamp: info.created_at
+            })
+        }
+        res.status(200).json({msg: "success", data: transactions});
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.status(400).json({error: err});
+    })
+}
+
+/*
+* Get transactions by ledger.
+* @param ledger   hash or sequence.
+* @return transactions of ledger 
+*/
+exports.getTransactionsForLedger = function(req, res) {
+    var ledger = req.body.ledger;
+
+    server.transactions()
+    .forLedger(ledger)
+    .call()
+    .then(function(txResult) {
+        console.log(txResult)
+        console.log(txResult.records)
+
+        var records = txResult.records;
+
+        var transactions = [];
+        for (let i = 0; i < records.length; i ++) {
+            let info = records[i];
+            transactions.push({
+                hash: info.hash,
+                account: info.account,
+                operations: info.operation_count,
+                timestamp: info.created_at
+            })
+        }
+        res.status(200).json({msg: "success", data: transactions});
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.status(400).json({error: err});
+    })
+}
+
+/*
+* Get operations by ledger.
+* @param count count of list to get.
+* @return operations of ledger 
+*/
+exports.getOperations = function(req, res) {
+    var count = req.body.count;
+
+    server.operations()
+    .limit(count)
+    .order("dsc")
+    .call()
+    .then(function(operationResult) {
+      console.log(operationResult)
+
+      var records = operationResult.records;
+
+      var operations = [];
+      for (let i = 0; i < records.length; i ++) {
+        let info = records[i];
+        operations.push({
+            account: info.account,
+            type: info.type,
+            transaction: info.transaction_hash,
+            timestamp: info.created_at
+        })
+      }
+    
+      res.status(200).json({msg: "success", data: operations});
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.status(400).json({error: err});
+    })
+}
+
+/*
+* Get operations by transaction.
+* @param txHash   hash of transaction.
+* @return operations of transaction
+*/
+exports.getOperationsForTransaction = function(req, res) {
+    var txHash = req.body.txHash;
+
+    server.operations()
+    .forTransaction(txHash)
+    .call()
+    .then(function(operationResult) {
+      console.log(operationResult);
+
+      var records = operationResult.records;
+
+      var operations = [];
+      for (let i = 0; i < records.length; i ++) {
+        let info = records[i];
+        operations.push({
+            account: info.account,
+            type: info.type,
+            transaction: info.transaction_hash,
+            timestamp: info.created_at
+        })
+      }
+    
+      res.status(200).json({msg: "success", data: operations});
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.status(400).json({error: err});
+    })
+}
+
+
+/*
+* Get transaction by transaction hash.
+* @param txHash   hash of transaction.
+* @return transaction info 
+*/
+exports.getTransaction = function(req, res) {
+    var txHash = req.body.txHash;
+
+    server.transactions()
+    .transaction(txHash)
+    .call()
+    .then(function(transactionResult) {
+      console.log(transactionResult);
+
+      var info = {
+        timeStamp: transactionResult.created_at,
+        txHash: transactionResult.hash,
+        ledgerSequence: transactionResult.ledger,
+        sourceAccount: transactionResult.account,
+        sourceAccountSequence: transactionResult.account_sequence,
+        fee: transactionResult.fee_paid,
+        Signatures: transactionResult.envelope_xdr
+      };
+
+      res.status(200).json({msg: "success", data: info});
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.status(400).json({error: err});
+    })
+}
+
+/*
+* Get account information by accountID.
+* @param account   account ID.
+* @return account info 
+*/
+exports.getAccount = function(req, res) {
+    var account = req.body.account;
+
+    server.transactions()
+    .accountId(account)
+    .call()
+    .then(function(accountResult) {
+      console.log(accountResult);
+
+      var info = {
+        subentry_count: accountResult.subentry_count,
+        flags: accountResult.flags,
+        balances: accountResult.balances,
+        thresholds: accountResult.thresholds,
+        signers: accountResult.signers,
+        data: accountResult.data,
+      }
+
+      res.status(200).json({msg: "success", data: info});
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.status(400).json({error: err});
+    })
+}
+
+/*
+* Get operations by accountID.
+* @param account   account ID.
+* @return account info 
+*/
+exports.getOperationsForAccount = function(req, res) {
+    var account = req.body.account;
+
+    server.transactions()
+    .forAccount(account)
+    .call()
+    .then(function(operationsResult) {
+      console.log(operationsResult.records);
+
+      var records = operationResult.records;
+
+      var operations = [];
+      for (let i = 0; i < records.length; i ++) {
+        let info = records[i];
+        operations.push({
+            account: info.account,
+            type: info.type,
+            transaction: info.transaction_hash,
+            timestamp: info.created_at
+        })
+      }
+
+      res.status(200).json({msg: "success", data: operations});
+    })
+    .catch(function(err) {
+      console.log(err)
+      res.status(400).json({error: err});
+    })
+}
+
+
+/*
+* Get transactions by account.
+* @param account   account id
+* @return transactions of account 
+*/
+exports.getTransactionsForLedger = function(req, res) {
+    var account = req.body.account;
+
+    server.transactions()
+    .forAccount(account)
+    .call()
+    .then(function(txResult) {
+        console.log(txResult)
+        console.log(txResult.records)
+
+        var records = txResult.records;
+
+        var transactions = [];
+        for (let i = 0; i < records.length; i ++) {
+            let info = records[i];
+            transactions.push({
+                hash: info.hash,
+                account: info.account,
+                operations: info.operation_count,
+                timestamp: info.created_at
+            })
+        }
+        res.status(200).json({msg: "success", data: transactions});
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.status(400).json({error: err});
     })
 }

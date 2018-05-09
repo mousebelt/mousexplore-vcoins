@@ -2,16 +2,21 @@
 ## testnet
 screen
 >geth --testnet --networkid=3 –-syncmode=fast –-cache=1024 console --rpcapi eth,web3,personal
+>
 >ctrl+a and d will detach from new console.
 
 ## run as service
 
-* using systemctl
 https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 
+* using systemctl
+
 >cp ./geth.service /etc/systemd/system/geth.service
+>
 >systemctl daemon-reload
+>
 >systemctl enable geth.service
+>
 >systemctl start geth
 
 * check the status
@@ -185,7 +190,7 @@ blocknum | Number | YES | start block number
 
 ## Get Block list
 ```
- POST /api/v1/blocks
+ POST /api/v1/blocklisr
 ```
 
 get block list of count blocks started from blockNumber.
@@ -316,7 +321,7 @@ blocknum | Number | YES | start block number
            gasLimit: "8,000,029", 
            nonce: "0xa9cdfb1c086bb04b", 
            unclesReward: "0", 
-           extraData: "seo2 (Hex:0x73656f32)"
+           extraData: "0x73656f3234242342e34242323d324324"
           },
         ...
     ]
@@ -344,7 +349,7 @@ Get transactions from blockNumber.
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-blockNumber | Number | YES | start block number
+blockNumber | Number | YES | block number
 
 
 ### RETURN
@@ -357,6 +362,7 @@ blockNumber | Number | YES | start block number
 "msg": "success",
 "data": [
         {   
+          "status": true
           "blockNumber": "2165403", "timeStamp": "1472533979",
           "txHash": "0x98db583e5ff636b78",
           "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
@@ -389,8 +395,8 @@ Get list of specified transactions.
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-blockNumber | Number | YES | start block number
-
+offset | Number | YES | offset from latest transaction
+count | Number | YES | count of blocks to get 
 
 ### RETURN
 

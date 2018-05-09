@@ -1,4 +1,4 @@
-var Web3 = require('web3');
+                            var Web3 = require('web3');
 
 // Show Web3 where it needs to look for a connection to Ethereum.
 var config = require('../config/common').info;
@@ -115,7 +115,7 @@ exports.getUpdatedTransactions = function(req, res) {
 *   Reward cannot be retrieved from node. Maybe should get it from etherscan
 */
 exports.blocklist = function(req, res) {
-    var blocknum = req.body.start_height;
+    var blocknum = req.body.blocknum;
     var count = req.body.count;
 
     web3.eth.getBlockNumber(async  function(error, number) {
@@ -166,10 +166,12 @@ exports.blocklist = function(req, res) {
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+                res.status(400).json({error: e});
             }
         }
         else {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
         }
     });
 }
@@ -241,10 +243,12 @@ exports.latestblocks = function(req, res) {
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+                res.status(400).json({error: e});
             }
         }
         else {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
         }
     });
 }
@@ -268,7 +272,7 @@ exports.latestblocks = function(req, res) {
     storing them separately.
 */
 exports.getblockdetail = async function(req, res) {
-    var blockNumber = req.body.blockNumber;
+    var blockNumber = req.body.blocknum;
 
     try {
         var blockdata = await web3.eth.getBlock(blockNumber, false); 
@@ -310,7 +314,8 @@ exports.getblockdetail = async function(req, res) {
         res.status(200).json({msg: "success", data: blockdetail});
     }
     catch(e) {
-        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+        console.log('blockdeatil: we have a promblem: ', e); // Should dump errors here
+        res.status(400).json({error: e});
     }
 }
 
@@ -331,16 +336,17 @@ exports.getTransactions = async function(req, res) {
         var txnlist = [];
         for (let i = 0; i < transactions.length; i ++) {
             let transaction = transactions[i];
-
+            let hash = transaction.hash;
             let txreceipt = await web3.eth.getTransactionReceipt(hash);
 
             let fee = txreceipt.gasUsed * transaction.gasPrice;
             fee = fee / 1e18;
 
             txnlist.push({
+                status: txreceipt.status,
                 blockNumber: blockNumber,
                 timeStamp: timestamp,
-                txHash: transaction.hash,
+                txHash: hash,
                 from: transaction.from,
                 to: transaction.to,
                 value: transaction.value / 1e18,
@@ -353,6 +359,7 @@ exports.getTransactions = async function(req, res) {
     }
     catch(e) {
         console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+        res.status(400).json({error: e});
     }
 }
 
@@ -427,10 +434,12 @@ exports.getTransactionList = async function(req, res) {
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+                res.status(400).json({error: e});
             }
         }
         else {
             console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
         }
     });
 }
@@ -444,7 +453,7 @@ exports.getTransactionList = async function(req, res) {
 exports.getTransactionInfo =  function(req, res) {
     var txHash = req.body.txHash;
 
-    web3.eth.getTransaction(txHash, async  function(error, transaction) {
+    web3.eth.getTransaction(txHash async  function(error, transaction) {
         if (!error) {
             try {
                 let blocknumber = transaction.blockNumber;
@@ -479,10 +488,12 @@ exports.getTransactionInfo =  function(req, res) {
             }
             catch(e) {
                 console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+                res.status(400).json({error: e});
             }
         }
         else {
-            console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            console.log('getTransaction: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
         }
     });
 }

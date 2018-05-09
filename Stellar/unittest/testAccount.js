@@ -1,20 +1,14 @@
-// Setup basic express server
-var stellarController = require('../controllers/stellar');
+var StellarSdk = require('stellar-sdk');
+var runtype = process.env.RUN_TYPE;
 
-//stellarController.getTransactions();
-//stellarController.createAccount();
-// var req = {params: {address: "3f53908cc5306ec31469f89b22da22a41feee5d439b93e652613fc667989bd17"}};
-console.log("---------------------------------------");
-stellarController.getLedgers();
-// stellarController.getTransactions();
-// var StellarSdk = require('stellar-sdk')
-// var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
-// var accountId = '3f53908cc5306ec31469f89b22da22a41feee5d439b93e652613fc667989bd17';
+if (runtype == "test") {
+    StellarSdk.Network.useTestNetwork();
+}
+else {
+	StellarSdk.Network.usePublicNetwork();
+}
 
-//     server.transactions()
-//     .forAccount('3f53908cc5306ec31469f89b22da22a41feee5d439b93e652613fc667989bd17')
-//     .call().then(function(r){ console.log(r); });
-//     server.transactions()
-//     .call().then(function(r){ console.log(r); });
+var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
 
-
+    server.transactions()
+    .call().then(function(r){ console.log(r); });
