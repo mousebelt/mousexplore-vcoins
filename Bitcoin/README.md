@@ -21,9 +21,9 @@ rpcuser=UNIQUE_RPC_USERNAME
 rpcpassword=UNIQUE_RPC_PASSWORD
 ```
 ## start bitcoind
->bitcoind
->bitcoind getinfo
->bitcoind help
+>bitcoind  
+>bitcoind getinfo  
+>bitcoind help  
 
 # TypeScript Express Server (TES)
 
