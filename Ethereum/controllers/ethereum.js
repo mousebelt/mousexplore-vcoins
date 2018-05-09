@@ -343,7 +343,7 @@ exports.getTransactions = async function(req, res) {
             fee = fee / 1e18;
 
             txnlist.push({
-                status: transaction.status,
+                status: txreceipt.status,
                 blockNumber: blockNumber,
                 timeStamp: timestamp,
                 txHash: hash,
