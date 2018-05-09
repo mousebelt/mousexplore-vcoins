@@ -1,4 +1,4 @@
-var Web3 = require('web3');
+                            var Web3 = require('web3');
 
 // Show Web3 where it needs to look for a connection to Ethereum.
 var config = require('../config/common').info;
@@ -314,7 +314,7 @@ exports.getblockdetail = async function(req, res) {
         res.status(200).json({msg: "success", data: blockdetail});
     }
     catch(e) {
-        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+        console.log('blockdeatil: we have a promblem: ', e); // Should dump errors here
         res.status(400).json({error: e});
     }
 }
@@ -336,7 +336,7 @@ exports.getTransactions = async function(req, res) {
         var txnlist = [];
         for (let i = 0; i < transactions.length; i ++) {
             let transaction = transactions[i];
-
+            let hash = transaction.hash;
             let txreceipt = await web3.eth.getTransactionReceipt(hash);
 
             let fee = txreceipt.gasUsed * transaction.gasPrice;
@@ -345,7 +345,7 @@ exports.getTransactions = async function(req, res) {
             txnlist.push({
                 blockNumber: blockNumber,
                 timeStamp: timestamp,
-                txHash: transaction.hash,
+                txHash: hash,
                 from: transaction.from,
                 to: transaction.to,
                 value: transaction.value / 1e18,

@@ -321,7 +321,7 @@ blocknum | Number | YES | start block number
            gasLimit: "8,000,029", 
            nonce: "0xa9cdfb1c086bb04b", 
            unclesReward: "0", 
-           extraData: "seo2 (Hex:0x73656f32)"
+           extraData: "0x73656f3234242342e34242323d324324"
           },
         ...
     ]
