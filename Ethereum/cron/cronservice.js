@@ -46,57 +46,71 @@ async function saveCronServiceInfo() {
 async function CheckUpdatedTransactions() {
     await web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
-            try {
-                for (let i = lastCheckedBlock; i <= number && i < lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS; i ++) {
-                    var blockdata = await web3.eth.getBlock(i, true); 
-                    
-                    var txnCount = blockdata.transactions.length;
-                    
-                    for (let j = lastCheckedIndex + 1; j < txnCount; j ++) {
-                    	let transaction = blockdata.transactions[j];
-                        let hash = transaction.hash;
-                        let from = transaction.from;
-                        let to = transaction.to;
-                        let value = transaction.value;
-	                    var timestamp = blockdata.timestamp;
+            for (let i = lastCheckedBlock; i <= number && i < lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS; i ++) {
+            	try {
+                	var blockdata = await web3.eth.getBlock(i, true); 
+   	            }
+	            catch(e) {
+	                console.log('getBlock: error: ', e); // Should dump errors here
+	            }
 
-                        let gasprice = transaction.gasPrice;
-                        let txnReceipt = await web3.eth.getTransactionReceipt(hash);
+                
+                var txnCount = blockdata.transactions.length;
+                
+                for (let j = lastCheckedIndex + 1; j < txnCount; j ++) {
+                	let transaction = blockdata.transactions[j];
+                    let hash = transaction.hash;
+                    let from = transaction.from;
+                    let to = transaction.to;
+                    let value = transaction.value;
+                    var timestamp = blockdata.timestamp;
 
-                        let fee = gasprice * txnReceipt.gasUsed;
+                    let gasprice = transaction.gasPrice;
 
-                        var newTxn = new TransactionModel({
-                        	hash: hash,
-                        	from: from,
-                        	to: to,
-                        	value: value,
-                        	fee: fee,
-                        	timestamp: timestamp
-                        });
-
-                        await newTxn.save();
-
-                        if (lastCheckedBlock != i || lastCheckedIndex != j) {
-                        	console.log("Updating block: " + i);
-							lastCheckedBlock = i;
-	                        lastCheckedIndex = j;
-
-							await saveCronServiceInfo();
-                        }
+                    try {
+                    	var txnReceipt = await web3.eth.getTransactionReceipt(hash);
                     }
+		            catch(e) {
+		                console.log('getTransactionReceipt: error: ', e); // Should dump errors here
+		            }
 
-                    if (lastCheckedBlock != i || lastCheckedIndex != -1) {
+
+                    let fee = gasprice * txnReceipt.gasUsed;
+
+                    var newTxn = new TransactionModel({
+                    	hash: hash,
+                    	from: from,
+                    	to: to,
+                    	value: value,
+                    	fee: fee,
+                    	timestamp: timestamp
+                    });
+
+                    try {
+                    	await newTxn.save();
+   	   	            }
+		            catch(e) {
+		                console.log('newTxn.save: error: ', e); // Should dump errors here
+	            	}
+
+
+                    if (lastCheckedBlock != i || lastCheckedIndex != j) {
                     	console.log("Updating block: " + i);
 						lastCheckedBlock = i;
-                        lastCheckedIndex = -1;
+                        lastCheckedIndex = j;
 
 						await saveCronServiceInfo();
                     }
-    
                 }
-            }
-            catch(e) {
-                console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+
+                if (lastCheckedBlock != i || lastCheckedIndex != -1) {
+                	console.log("Updating block: " + i);
+					lastCheckedBlock = i;
+                    lastCheckedIndex = -1;
+
+					await saveCronServiceInfo();
+                }
+
             }
         }
         else {
