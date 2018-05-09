@@ -65,7 +65,7 @@ function CheckUpdatedTransactions() {
                         let gasprice = transaction.gasPrice;
                         let txnReceipt = await web3.eth.getTransactionReceipt(hash);
 
-                        let fee = gasprice * transaction.gasUsed;
+                        let fee = gasprice * txnReceipt.gasUsed;
 
                         var newTxn = new TransactionModel({
                         	hash: hash,
