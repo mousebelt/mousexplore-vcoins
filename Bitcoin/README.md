@@ -1,5 +1,6 @@
 # Install Bitcoin node
 https://degreesofzero.com/article/building-bitcoind-from-source-on-ubuntu.html  
+https://github.com/mmgen/mmgen/wiki/Install-Bitcoind-from-Source-on-Debian-or-Ubuntu-Linux  
 https://degreesofzero.com/article/installing-bitcoind-on-ubuntu.html
 
 # TypeScript Express Server (TES)
