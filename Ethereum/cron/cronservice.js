@@ -106,8 +106,8 @@ function CheckUpdatedTransactions() {
 }
 
 
-function transactionService() {
-	CheckUpdatedTransactions();
+async function transactionService() {
+	await CheckUpdatedTransactions();
 	setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
 
