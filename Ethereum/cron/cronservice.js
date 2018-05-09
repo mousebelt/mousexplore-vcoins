@@ -28,7 +28,12 @@ async function getLastCheckedBlock() {
 function saveCronServiceInfo() {
 	ServiceInofModel.findOne(function(e, info) {
 		if (!e) {
-	        info.set({lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex});
+			if (info) {
+	        	info.set({lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex});
+	        }
+	        else {
+	        	info = new ServiceInofModel({{lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex}});
+	        }
 	        info.save();
 	    }
 	    else {
