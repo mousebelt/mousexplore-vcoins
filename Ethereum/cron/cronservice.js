@@ -85,6 +85,11 @@ function CheckUpdatedTransactions() {
 						await saveCronServiceInfo();
                     }
 
+                	lastCheckedBlock = i;
+                    lastCheckedIndex = -1;
+
+					await saveCronServiceInfo();
+
                 }
             }
             catch(e) {

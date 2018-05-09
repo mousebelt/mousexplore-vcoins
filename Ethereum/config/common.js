@@ -7,6 +7,6 @@ exports.info = {
 	db: "mongodb://localhost:27017/ethertransactions",
     mainpass: "vCoinEthpass2018", 
     provider: "http://127.0.0.1:8555",
-    CRON_TIME_INTERVAL: 100,
+    CRON_TIME_INTERVAL: 1000,
     CRON_TREAT_MAX_BLOCKS: 100
 }
