@@ -19,7 +19,7 @@ mongoose.connect(config.db, function(err, db) {
 	server.listen(port, function () {
 	  console.log('Server listening at port %d', port);
 	});
-}
+});
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
