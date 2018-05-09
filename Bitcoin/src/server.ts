@@ -11,11 +11,8 @@ import * as path from 'path';
 require('dotenv').config();
 const config = require('./config/config').get(process.env.NODE_ENV);
 
-import QtumRouter from './router/QtumRouter';
 import BtcRouter from './router/BtcRouter';
 import LiteRouter from './router/LiteRouter';
-import DashRouter from './router/DashRouter';
-import BchRouter from './router/BchRouter';
 
 class Server {
 
@@ -52,11 +49,8 @@ class Server {
 
   // application routes
   public routes(): void {
-    this.app.use('/api/v1/qtum', QtumRouter);
     this.app.use('/api/v1/bitcoin', BtcRouter);
-    this.app.use('/api/v1/litecoin', LiteRouter);
-    this.app.use('/api/v1/dash', DashRouter);
-    this.app.use('/api/v1/bch', BchRouter);
+    // this.app.use('/api/v1/litecoin', LiteRouter);
   }
 }
 
