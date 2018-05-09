@@ -18,7 +18,7 @@ async function getLastCheckedBlock() {
 		console.log("Last checked block number is " + lastCheckedBlock);
 		console.log("Last checked txn index is " + lastCheckedIndex);
 	}
-	cache(e) {
+	catch(e) {
 		console.log("getLastCheckedBlock error: ", e);
 	}
 }
