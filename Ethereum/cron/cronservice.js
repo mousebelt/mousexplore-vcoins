@@ -26,7 +26,7 @@ async function getLastCheckedBlock() {
 }
 
 function saveCronServiceInfo() {
-	ServiceInofModel.findOne(function(e, info) {
+	ServiceInofModel.findOne(async function(e, info) {
 		if (!e) {
 			if (info) {
 	        	info.set({lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex});
@@ -34,7 +34,7 @@ function saveCronServiceInfo() {
 	        else {
 	        	info = new ServiceInofModel({lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex});
 	        }
-	        info.save();
+	        await info.save();
 	    }
 	    else {
 	    	console.log('saveCronServiceInfo:error: ', e); // Should dump errors here
