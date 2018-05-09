@@ -1,29 +1,44 @@
 # Install Bitcoin node
 ```
-add-apt-repository ppa:bitcoin/bitcoin
-apt-get update
-apt-get install libboost-all-dev libdb4.8-dev libdb4.8++-dev
-ln -s /usr/local/bin/bitcoind /usr/bin/bitcoind
-```
-## configuration
-```
-cd ~/
-mkdir .bitcoin
-cd .bitcoin
-vim bitcoin.conf
-```
-Add the following to bitcoin.conf:
-```
-server=1
-daemon=1
+** Add repository and install bitcoind ** 
+
+sudo apt-get install build-essential
+sudo apt-get install libtool autotools-dev autoconf
+sudo apt-get install libssl-dev
+sudo apt-get install libboost-all-dev
+sudo add-apt-repository ppa:bitcoin/bitcoin
+sudo apt-get update
+sudo apt-get install bitcoind
+mkdir ~/.bitcoin/ && cd ~/.bitcoin/
+nano bitcoind.conf
+
+
+** Add config to bitcoin.conf file ** 
+
+rpcuser=username
+rpcpassword=password
 testnet=1
-rpcuser=UNIQUE_RPC_USERNAME
-rpcpassword=UNIQUE_RPC_PASSWORD
+rpcport=8332
+rpcallowip=127.0.0.1
+rpcallowip=195.154.11.93
+server=1
+
+
+** Start bitcoind ** 
+
+bitcoind &
+
+
+** If bitcoind is already started ** 
+
+ps -e | grep bitcoin // returns pid
+kill -9 <pid>
+bitcoind &
+
+** Test bitcoind is running and working **
+
+bitcoin-cli getinfo
 ```
-## start bitcoind
->bitcoind  
->bitcoind getinfo  
->bitcoind help  
 
 # TypeScript Express Server (TES)
 
