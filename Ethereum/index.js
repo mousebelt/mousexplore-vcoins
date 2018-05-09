@@ -6,16 +6,14 @@ var server = require('http').createServer(app);
 var bodyParser = require('body-parser');
 var config = require("./config/common.js").info;
 
-// var io = require('socket.io')(server);
-var port = process.env.PORT || 2000;
-
-// listen the server port
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.db, function(err, db) {
 	if(err) throw err;
 
-// listen the server port
+	// listen the server port
+	var port = process.env.PORT || 2000;
+	
 	server.listen(port, function () {
 	  console.log('Server listening at port %d', port);
 	});
