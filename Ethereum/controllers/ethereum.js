@@ -429,8 +429,6 @@ exports.getTransactionCountFromAccount = async function(req, res) {
     TransactionModel.find()
     .or([{from: account}, {to: account}])
     .sort({timestamp: -1})
-    .skip(offset)
-    .limit(count)
     .exec(function(error, transactions) {
         if (!error) {
             res.status(200).json({msg: "success", data: transactions.length});
