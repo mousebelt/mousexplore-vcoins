@@ -213,7 +213,6 @@ export class BtcRouter {
 
   public getBlockHash(req: Request, res: Response) {
     const index: number = req.params.index;
-    console.log('index: ', index);
 
     try {
       client.call('getblockhash', [Number(index)],  function (err, result) {
@@ -242,6 +241,21 @@ export class BtcRouter {
     }
   }
 
+  public getRawTransaction(req: Request, res: Response) {
+    const txid: string = req.params.txid;
+
+    try {
+      client.call('getrawtransaction', [txid],  function (err, result) {
+        if (err) {
+          return res.json({ status: 400, msg: 'errors', data: err });
+        }
+        return res.json({ status: 200, msg: 'sccuess', data: result });
+      });
+    } catch(error) {
+      return res.json({ status: 400, msg: 'errors', data: error });
+    }
+  }
+
   public listAccounts(req: Request, res: Response) {
     try {
       client.call('listaccounts', [],  function (err, result) {
@@ -259,10 +273,10 @@ export class BtcRouter {
     const fromaccount: string = req.body.fromaccount;
     const toaddress: string = req.body.toaddress;
     const amount: number = req.body.amount;
-    const confrim: string = req.body.confrim;
+    const confrim: number = req.body.confrim;
 
     try {
-      client.call('setaccount', [fromaccount, toaddress, amount, confrim],  function (err, result) {
+      client.call('sendfrom', [fromaccount, toaddress, amount, confrim],  function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
@@ -276,10 +290,10 @@ export class BtcRouter {
   public sendMany(req: Request, res: Response) {
     const fromaccount: string = req.body.fromaccount;
     const toaddresses: any = req.body.toaddresses;
-    const confrim: string = req.body.confrim;
+    const confrim: number = req.body.confrim;
 
     try {
-      client.call('setaccount', [fromaccount, toaddresses, confrim],  function (err, result) {
+      client.call('sendmany', [fromaccount, toaddresses, confrim],  function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
@@ -353,6 +367,7 @@ export class BtcRouter {
     this.router.get('/getblock/:hash', this.getBlock);
     this.router.get('/getblockhash/:index', this.getBlockHash);
     this.router.get('/gettransaction/:txid', this.getTransaction);
+    this.router.get('/getrawtransaction/:txid', this.getRawTransaction);
     this.router.get('/listaccounts', this.listAccounts);
     this.router.get('/listsinceblock/:blockhash', this.listSinceBlock);
     this.router.post('/sendfrom', this.sendFrom);

@@ -4,8 +4,8 @@ const config = {
 
 		BTC_RPC_HOST: "127.0.0.1",
 		BTC_RPC_PORT: 18332,
-		BTC_RPC_USER: "igor",
-		BTC_RPC_PASS: "123456",
+		BTC_RPC_USER: "rpcuser",
+		BTC_RPC_PASS: "pwd",
 
 		LITE_RPC_HOST: "127.0.0.1",
 		LITE_RPC_PORT: 28338,
@@ -17,8 +17,8 @@ const config = {
 
 		BTC_RPC_HOST: "127.0.0.1",
 		BTC_RPC_PORT: 18332,
-		BTC_RPC_USER: "igor",
-		BTC_RPC_PASS: "123456",
+		BTC_RPC_USER: "rpcuser",
+		BTC_RPC_PASS: "pwd",
 
 		LITE_RPC_HOST: "127.0.0.1",
 		LITE_RPC_PORT: 28338,
