@@ -416,6 +416,30 @@ exports.getTransactionsFromAccount = async function(req, res) {
     });
 }
 
+
+/*
+* Get transactions count from Account
+* @account: account address to get transactions
+* @return count
+* 
+*/
+exports.getTransactionCountFromAccount = async function(req, res) {
+    var account = req.body.account;
+
+    TransactionModel.find()
+    .or([{from: account}, {to: account}])
+    .sort({timestamp: -1})
+    .exec(function(error, transactions) {
+        if (!error) {
+            res.status(200).json({msg: "success", data: transactions.length});
+        }
+        else {
+            console.log('getTransactionsFromAccount: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
+        }
+    });
+}
+
 /*
 * Get transactions info
 * @hash transactin has to get info
@@ -467,7 +491,7 @@ exports.getTransactionInfo =  function(req, res) {
             console.log('getTransaction: we have a promblem: ', error); // Should dump errors here
             res.status(400).json({error: error});
         }
-    });
+    });     
 }
 
 

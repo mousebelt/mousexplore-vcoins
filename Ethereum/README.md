@@ -483,6 +483,42 @@ count | Number | YES | count of blocks to get
 
 
 
+## Get transaction count From Account
+```
+ POST /api/v1/account/txcount
+```
+
+Get count of transactions of an account.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+account | String | YES | account address
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": 50
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+
 
 ## Get tx info from txHash
 ```
