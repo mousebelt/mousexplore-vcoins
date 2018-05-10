@@ -388,6 +388,35 @@ exports.getTransactionList = async function(req, res) {
 }
 
 /*
+* Get transactions list from Account
+* @account: account address to get transactions
+* @offset: offset to get list
+* @count transaction count
+* @return transactions list
+* 
+*/
+exports.getTransactionsFromAccount = async function(req, res) {
+    var account = req.body.account;
+    var offset = req.body.offset;
+    var count = req.body.count;
+
+    TransactionModel.find()
+    .or([{from: account}, {to: account}])
+    .sort({timestamp: -1})
+    .skip(offset)
+    .limit(count)
+    .exec(function(error, transactions) {
+        if (!error) {
+            res.status(200).json({msg: "success", data: transactions});
+        }
+        else {
+            console.log('getTransactionsFromAccount: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
+        }
+    });
+}
+
+/*
 * Get transactions info
 * @hash transactin has to get info
 * @return transaction detail info
