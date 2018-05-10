@@ -128,15 +128,21 @@ async function CheckUpdatedTransactions() {
 }
 
 
+// async function transactionService() {
+// 	console.log("lastCheckedBlock = " + lastCheckedBlock);
+// 	await CheckUpdatedTransactions();
+// 	setTimeout(transactionService, config.CRON_TIME_INTERVAL);
+// }
+
 async function transactionService() {
-	console.log("lastCheckedBlock = " + lastCheckedBlock);
-	await CheckUpdatedTransactions();
-	setTimeout(transactionService, config.CRON_TIME_INTERVAL);
+    console.log("lastCheckedBlock = " + lastCheckedBlock);
+    CheckUpdatedTransactions();
 }
 
 exports.start_cronService = async function() {
 	console.log("Start ethereum cron service");
 	await getLastCheckedBlock();
 
-	transactionService();
+	//transactionService();
+    setInterval(transactionService, config.CRON_TIME_INTERVAL);
 }
