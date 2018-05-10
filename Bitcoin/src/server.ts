@@ -49,7 +49,7 @@ class Server {
 
   // application routes
   public routes(): void {
-    this.app.use('/api/v1/bitcoin', BtcRouter);
+    this.app.use('/api/v1', BtcRouter);
     // this.app.use('/api/v1/litecoin', LiteRouter);
   }
 }

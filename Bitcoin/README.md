@@ -13,6 +13,13 @@ rpcuser=rpcuser
 rpcpassword=pwd
 ```
 
+## run
+>bitcoind
+
+## checking rpc
+>curl --user rpcuser --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "getbestblockhash", "params": [] }' -H 'content-type: text/plain;' http://127.0.0.1:18332/
+
+
 # TypeScript Express Server (TES)
 
 This is a sample server using Express, TypeScript, MongoDB, and Mongoose.
