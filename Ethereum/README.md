@@ -413,12 +413,12 @@ count | Number | YES | count of blocks to get
 "msg": "success",
 "data": [
         {   
-          "blockNumber": "2165403", "timeStamp": "1472533979",
-          "txHash": "0x98db583e5ff636b78",
+          "blocknumber": "2165403", "timestamp": "1472533979",
+          "hash": "0x98db583e5ff636b78",
           "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
           "to": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6",
           "value": "0.007792298571672 Ether"
-          "txFee": "0.000084"
+          "fee": "0.000084"
           },
         ...
     ]

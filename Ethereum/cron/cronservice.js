@@ -47,7 +47,7 @@ async function CheckUpdatedTransactions() {
     await web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
         	var limit = lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS;
-            for (let i = lastCheckedBlock; i <= number && i < limit; i ++) {
+            for (let i = lastCheckedBlock; i <= number && i <= limit; i ++) {
             	try {
                 	var blockdata = await web3.eth.getBlock(i, true); 
    	            }
@@ -79,6 +79,7 @@ async function CheckUpdatedTransactions() {
                     let fee = gasprice * txnReceipt.gasUsed;
 
                     var newTxn = new TransactionModel({
+                    	blocknumber: i,
                     	hash: hash,
                     	from: from,
                     	to: to,
