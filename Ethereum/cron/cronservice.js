@@ -53,6 +53,7 @@ async function CheckUpdatedTransactions() {
    	            }
 	            catch(e) {
 	                console.log('getBlock: error: ', e); // Should dump errors here
+                    return;
 	            }
 
                 
@@ -73,6 +74,7 @@ async function CheckUpdatedTransactions() {
                     }
 		            catch(e) {
 		                console.log('getTransactionReceipt: error: ', e); // Should dump errors here
+                        return;
 		            }
 
 
@@ -93,6 +95,7 @@ async function CheckUpdatedTransactions() {
    	   	            }
 		            catch(e) {
 		                console.log('newTxn.save: error: ', e); // Should dump errors here
+                        return;
 	            	}
 
 
