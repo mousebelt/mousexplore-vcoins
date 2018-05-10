@@ -15,5 +15,6 @@ module.exports = function (app) {
     app.post('/api/v1/block', EthereumController.getblockdetail);
     app.post('/api/v1/block/txs', EthereumController.getTransactions);
     app.post('/api/v1/txs', EthereumController.getTransactionList);
+    app.post('/api/v1/account/txs', EthereumController.getTransactionsFromAccount);
     app.post('/api/v1/tx', EthereumController.getTransactionInfo);
 }

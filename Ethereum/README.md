@@ -434,6 +434,56 @@ count | Number | YES | count of blocks to get
 }
 ```
 
+
+## Get transaction list From Account
+```
+ POST /api/v1/account/txs
+```
+
+Get list of transactions of an account.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+account | String | YES | account address
+offset | Number | YES | offset from latest transaction
+count | Number | YES | count of blocks to get 
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+          "blocknumber": "2165403", "timestamp": "1472533979",
+          "hash": "0x98db583e5ff636b78",
+          "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
+          "to": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6",
+          "value": "0.007792298571672 Ether"
+          "fee": "0.000084"
+          },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+
+
 ## Get tx info from txHash
 ```
  POST /api/v1/tx

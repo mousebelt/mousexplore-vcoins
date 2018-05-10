@@ -45,6 +45,7 @@ async function saveCronServiceInfo() {
 
 async function CheckUpdatedTransactions() {
     await web3.eth.getBlockNumber(async  function(error, number) {
+        var iCount = 0;
         if (!error) {
         	var limit = lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS;
             for (let i = lastCheckedBlock; i <= number && i <= limit; i ++) {
@@ -52,10 +53,10 @@ async function CheckUpdatedTransactions() {
                 	var blockdata = await web3.eth.getBlock(i, true); 
    	            }
 	            catch(e) {
+                    console.log("iCount --------------" + iCount ++);
 	                console.log('getBlock: error: ', e); // Should dump errors here
                     return;
 	            }
-
                 
                 var txnCount = blockdata.transactions.length;
                 
@@ -73,6 +74,7 @@ async function CheckUpdatedTransactions() {
                     	var txnReceipt = await web3.eth.getTransactionReceipt(hash);
                     }
 		            catch(e) {
+                        console.log("iCount --------------" + iCount ++);
 		                console.log('getTransactionReceipt: error: ', e); // Should dump errors here
                         return;
 		            }
@@ -94,6 +96,7 @@ async function CheckUpdatedTransactions() {
                     	await newTxn.save();
    	   	            }
 		            catch(e) {
+                        console.log("iCount --------------" + iCount ++);
 		                console.log('newTxn.save: error: ', e); // Should dump errors here
                         return;
 	            	}
