@@ -46,7 +46,8 @@ async function saveCronServiceInfo() {
 async function CheckUpdatedTransactions() {
     await web3.eth.getBlockNumber(async  function(error, number) {
         if (!error) {
-            for (let i = lastCheckedBlock; i <= number && i < lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS; i ++) {
+        	var limit = lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS;
+            for (let i = lastCheckedBlock; i <= number && i < limit; i ++) {
             	try {
                 	var blockdata = await web3.eth.getBlock(i, true); 
    	            }
@@ -95,7 +96,7 @@ async function CheckUpdatedTransactions() {
 
 
                     if (lastCheckedBlock != i || lastCheckedIndex != j) {
-                    	console.log("Updating block: " + i);
+                    	// console.log("Updating block: " + i);
 						lastCheckedBlock = i;
                         lastCheckedIndex = j;
 
@@ -104,7 +105,7 @@ async function CheckUpdatedTransactions() {
                 }
 
                 if (lastCheckedBlock != i || lastCheckedIndex != -1) {
-                	console.log("Updating block: " + i);
+                	// console.log("Updating block: " + i);
 					lastCheckedBlock = i;
                     lastCheckedIndex = -1;
 
@@ -121,6 +122,7 @@ async function CheckUpdatedTransactions() {
 
 
 async function transactionService() {
+	console.log("lastCheckedBlock = " + lastCheckedBlock);
 	await CheckUpdatedTransactions();
 	setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
