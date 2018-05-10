@@ -1,9 +1,5 @@
-                            var Web3 = require('web3');
-
-// Show Web3 where it needs to look for a connection to Ethereum.
 var config = require('../config/common').info;
-var web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
-
+var web3 = require('../config/common').web3;
 
 exports.getBalance = function(req, res) {
     var addr = req.params.address;
@@ -453,7 +449,7 @@ exports.getTransactionList = async function(req, res) {
 exports.getTransactionInfo =  function(req, res) {
     var txHash = req.body.txHash;
 
-    web3.eth.getTransaction(txHash async  function(error, transaction) {
+    web3.eth.getTransaction(txHash, async  function(error, transaction) {
         if (!error) {
             try {
                 let blocknumber = transaction.blockNumber;

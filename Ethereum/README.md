@@ -1,3 +1,8 @@
+# Environment
+* install node
+* install mongod
+* npm install
+
 # Install Ethereum node
 ## testnet
 screen
