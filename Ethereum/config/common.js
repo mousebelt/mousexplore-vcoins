@@ -10,3 +10,13 @@ exports.info = {
     CRON_TIME_INTERVAL: 5000,	//if we decrease this to 100ms, cronservice has trouble after some time.
     CRON_TREAT_MAX_BLOCKS: 100
 }
+
+var fs = require('fs');
+var util = require('util');
+var log_file = fs.createWriteStream(__dirname + '/debug.log', {flags : 'w'});
+var log_stdout = process.stdout;
+
+console.log = function(d) { //
+  log_file.write(util.format(d) + '\n');
+  log_stdout.write(util.format(d) + '\n');
+};
