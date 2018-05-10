@@ -377,8 +377,8 @@ exports.getTransactionList = async function(req, res) {
     .skip(offset)
     .limit(count)
     .exec(function(error, transactions) {
-        if (!error)
-            res.status(200).json({msg: "success", data: txnlist});
+        if (!error) {
+            res.status(200).json({msg: "success", data: transactions});
         }
         else {
             console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
