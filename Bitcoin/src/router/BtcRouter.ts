@@ -23,15 +23,12 @@ export class BtcRouter {
     try {
       client.call('getnewaddress', [account],  function (err, result) {
         if (err) {
-          res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -42,15 +39,12 @@ export class BtcRouter {
     try {
       client.call('setaccount', [address, account],  function (err, result) {
         if (err) {
-          res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -60,15 +54,12 @@ export class BtcRouter {
     try {
       client.call('settxfee', [fee],  function (err, result) {
         if (err) {
-          res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -79,15 +70,12 @@ export class BtcRouter {
     try {
       client.call('getreceivedbyaccount', [account, confirm],  function (err, result) {
         if (err) {
-          res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -98,15 +86,12 @@ export class BtcRouter {
     try {
       client.call('getreceivedbyaddress', [address, confirm],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -116,15 +101,12 @@ export class BtcRouter {
     try {
       client.call('getbalance', [account],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -134,15 +116,12 @@ export class BtcRouter {
     try {
       client.call('getbalance', [address],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -152,15 +131,12 @@ export class BtcRouter {
     try {
       client.call('getaccount', [address],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -170,15 +146,12 @@ export class BtcRouter {
     try {
       client.call('getaccountaddress', [account],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -188,15 +161,12 @@ export class BtcRouter {
     try {
       client.call('getaddressesbyaccount', [account],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -204,15 +174,12 @@ export class BtcRouter {
     try {
       client.call('getblockcount', [],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -220,15 +187,12 @@ export class BtcRouter {
     try {
       client.call('getbestblockhash', [],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -238,15 +202,12 @@ export class BtcRouter {
     try {
       client.call('getblock', [hash],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -257,16 +218,12 @@ export class BtcRouter {
     try {
       client.call('getblockhash', [Number(index)],  function (err, result) {
         if (err) {
-          console.log(result, err);
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -276,15 +233,12 @@ export class BtcRouter {
     try {
       client.call('gettransaction', [txid],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -292,15 +246,12 @@ export class BtcRouter {
     try {
       client.call('listaccounts', [],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -313,15 +264,12 @@ export class BtcRouter {
     try {
       client.call('setaccount', [fromaccount, toaddress, amount, confrim],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -333,15 +281,12 @@ export class BtcRouter {
     try {
       client.call('setaccount', [fromaccount, toaddresses, confrim],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -352,15 +297,12 @@ export class BtcRouter {
     try {
       client.call('sendtoaddress', [toaddress, amount, confrim],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
@@ -371,34 +313,27 @@ export class BtcRouter {
     try {
       client.call('listtransactions', [account, count, from],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
   public listSinceBlock(req: Request, res: Response) {
     const blockhash: string = req.params.blockhash;
-    console.log('blockhash: ', blockhash);
 
     try {
       client.call('listsinceblock', [blockhash, 1],  function (err, result) {
         if (err) {
-          return res.json({ err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-
-        console.log(result);
-
-        res.status(200).json({result});
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       });
     } catch(error) {
-      res.json({ error });
+      return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
