@@ -1,5 +1,6 @@
 var config = require('../config/common').info;
 var web3 = require('../config/common').web3;
+var TransactionModel = require("../model/transactions");
 
 exports.getBalance = function(req, res) {
     var addr = req.params.address;
@@ -359,6 +360,7 @@ exports.getTransactions = async function(req, res) {
     }
 }
 
+
 /*
 * Get transactions list
 * @offset transaction offset from latest
@@ -370,71 +372,16 @@ exports.getTransactionList = async function(req, res) {
     var offset = req.body.offset;
     var count = req.body.count;
 
-    web3.eth.getBlockNumber(async  function(error, number) {
+    TransactionModel.find()
+    .sort({timestamp: -1})
+    .skip(offset)
+    .limit(count)
+    .exec(function(error, transactions) {
         if (!error) {
-            try {
-                console.log("last number " + number);
-                
-                var txnlist = [];
-                for (let i = number; i > 0; i --) {
-                    var blockdata = await web3.eth.getBlock(i, true); 
-                    
-                    var blocknumber = blockdata.number;
-                    var timestamp = blockdata.timestamp;
-                    var txn = blockdata.transactions.length;
-
-                    if (txn <= offset) {
-                        offset -= txn;
-                        continue;
-                    }
-                    
-                    for (let j = txn - 1; j > 0; j --) {
-                        offset --;
-                        if (offset > 0)
-                            continue;
-
-                        let transaction = blockdata.transactions[j];
-
-                        let hash = transaction.hash;
-                        let from = transaction.from;
-                        let to = transaction.to;
-                        let value = transaction.value / 1e18;
-            
-                        let txreceipt = await web3.eth.getTransactionReceipt(hash);
-
-                        let fee = txreceipt.gasUsed * transaction.gasPrice;
-                        fee = fee / 1e18;
-
-                        txnlist.push({
-                            blockNumber: blocknumber,
-                            timeStamp: timestamp,
-                            txHash: transaction.hash,
-                            from: transaction.from,
-                            to: transaction.to,
-                            value: transaction.value / 1e18,
-                            txFee: fee
-                        })
-
-                        count --;
-                        if (count <= 0)
-                            break;
-                    }
-
-                    if (count <= 0)
-                            break;
-
-                }
-
-                console.log("txnlist: ", txnlist);
-                res.status(200).json({msg: "success", data: txnlist});
-            }
-            catch(e) {
-                console.log('blocklist: we have a promblem: ', e); // Should dump errors here
-                res.status(400).json({error: e});
-            }
+            res.status(200).json({msg: "success", data: transactions});
         }
         else {
-            console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+            console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
             res.status(400).json({error: error});
         }
     });
@@ -493,3 +440,5 @@ exports.getTransactionInfo =  function(req, res) {
         }
     });
 }
+
+
