@@ -175,13 +175,14 @@ Maybe only for getting transaction history, we don't need main net setting
 ## Endpoint security type
 * Endpoint can only be accessed from specified client for provided REST APIs.
 * Every APIs needs Authorization.
-## Get tx info from txHash
-```
- POST /api/v1/tx
-```
+
+
 
 ## Get latest ledgers
 
+```
+/api/v1/ledgers/latest
+```
 Get latest ledger list.
 
 ### QUERY PARAMS
@@ -189,6 +190,7 @@ Get latest ledger list.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 count | Number | YES | ledger count to get
+cursor | String | YES | 0 for first page, and next or prev value of response of this api
 
 
 ### RETURN
@@ -199,6 +201,8 @@ count | Number | YES | ledger count to get
 ```javascript
 {
 "msg": "success",
+"next": "23442324233",
+"next": "23442324128"
 "data": [
         {   
 		  "sequence": "17730975", "timeStamp": "1472533979", 
