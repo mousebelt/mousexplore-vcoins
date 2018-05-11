@@ -65,7 +65,7 @@ exports.createAccount = function(req, res) {
 *   get cursor value from string liken ledgers?order=asc&limit=2&cursor=8589934592
 */
 function getCursor(url) {
-    var url = new URL(url_string);
+    var url = new URL(url);
     var c = url.searchParams.get("cursor");
     console.log(c);
 
