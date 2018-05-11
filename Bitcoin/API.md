@@ -81,7 +81,7 @@ account | String | YES | account
  POST /settxfee
 ```
 
-<fee> is a real and is rounded to the nearest 0.00000001
+`<fee>` is a real and is rounded to the nearest 0.00000001
 
 ### QUERY PARAMS
 
@@ -141,8 +141,9 @@ confirm | Number | NO | minconf
  POST /getreceivedbyaddress
 ```
 
-<bitcoinaddress> [minconf=1] 
-Returns the amount received by <bitcoinaddress> in transactions with at least [minconf] confirmations. It correctly handles the case where someone has sent to the address in multiple transactions. Keep in mind that addresses are only ever used for receiving transactions. Works only for addresses in the local wallet, external addresses will always show 0. 
+`<bitcoinaddress> [minconf=1]`
+
+Returns the amount received by `<bitcoinaddress>` in transactions with at least [minconf] confirmations. It correctly handles the case where someone has sent to the address in multiple transactions. Keep in mind that addresses are only ever used for receiving transactions. Works only for addresses in the local wallet, external addresses will always show 0. 
 
 ### QUERY PARAMS
 
@@ -229,7 +230,8 @@ address | String | YES | address
  GET /getaccount/:address
 ```
 
-<bitcoinaddress> 
+`<bitcoinaddress>`
+
 Returns the account associated with the given address. 
 
 ### QUERY PARAMS
@@ -258,8 +260,9 @@ address | String | YES | address
  GET /getaccountaddress/:account
 ```
 
-<account> 
-Returns the current bitcoin address for receiving payments to this account. If <account> does not exist, it will be created along with an associated new address that will be returned. 
+`<account>`
+
+Returns the current bitcoin address for receiving payments to this account. If `<account>` does not exist, it will be created along with an associated new address that will be returned. 
 
 ### QUERY PARAMS
 
@@ -287,7 +290,8 @@ account | String | YES | account
  GET /getaddressesbyaccount/:account
 ```
 
-<account>
+`<account>`
+
 Returns the list of addresses for the given account. 
 
 ### QUERY PARAMS
@@ -366,7 +370,8 @@ version 0.9 Returns the hash of the best (tip) block in the longest block chain.
  GET /getblock/:hash
 ```
 
-<hash> 
+`<hash>`
+
 Returns information about the block with the given hash. 
 
 ### QUERY PARAMS
@@ -420,8 +425,9 @@ hash | String | YES | hash
  GET /getblockhash/:index
 ```
 
-<index> 
-Returns hash of block in best-block-chain at <index>; index 0 is the genesis block
+`<index>`
+
+Returns hash of block in best-block-chain at `<index>`; index 0 is the genesis block
 
 ### QUERY PARAMS
 
@@ -453,7 +459,8 @@ index | Number | YES | index
  GET /gettransaction/:txid
 ```
 
-<txid> 
+`<txid>`
+
 Returns an object about the given transaction containing:
 
     "amount" : total amount of the transaction
@@ -494,7 +501,8 @@ txid | String | YES | txid
  GET /getrawtransaction/:txid
 ```
 
-<txid> 
+`<txid>`
+
 Returns raw transaction representation for given transaction id. 
 
 ### QUERY PARAMS
@@ -639,8 +647,9 @@ blockhash | String | YES | blockhash
  POST /sendfrom
 ```
 
-<fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to] 
-<amount> is a real and is rounded to 8 decimal places. Will send the given amount to the given address, ensuring the account has a valid balance using [minconf] confirmations. Returns the transaction ID if successful (not in JSON object).
+`<fromaccount> <tobitcoinaddress> <amount> [minconf=1] [comment] [comment-to]`
+
+`<amount>` is a real and is rounded to 8 decimal places. Will send the given amount to the given address, ensuring the account has a valid balance using `[minconf]` confirmations. Returns the transaction ID if successful (not in JSON object).
 
 ### QUERY PARAMS
 
@@ -670,7 +679,8 @@ confrim | Number | YES | confrim
  POST /sendmany
 ```
 
-<fromaccount> {address:amount,...} [minconf=1] [comment]  
+`<fromaccount> {address:amount,...} [minconf=1] [comment]`
+
 amounts are double-precision floating point numbers.
 
 ### QUERY PARAMS
@@ -701,8 +711,9 @@ confrim | Number | YES | minconf
  POST /sendtoaddress
 ```
 
-<bitcoinaddress> <amount> [comment] [comment-to]
-<amount> is a real and is rounded to 8 decimal places. Returns the transaction ID <txid> if successful.
+`<bitcoinaddress> <amount> [comment] [comment-to]`
+
+`<amount>` is a real and is rounded to 8 decimal places. Returns the transaction ID `<txid>` if successful.
 
 ### QUERY PARAMS
 
@@ -731,7 +742,7 @@ confrim | Number | YES | confrim
  POST /listtransactions
 ```
 
-[account] [count=10] [from=0]  
+`[account] [count=10] [from=0]`  
 Returns up to [count] most recent transactions skipping the first [from] transactions for account [account]. If [account] not provided it'll return recent transactions from all accounts. 
 
 ### QUERY PARAMS
@@ -749,6 +760,57 @@ from | Number | YES | from
 
 ```javascript
 { status: 200, msg: 'sccuess', data: result }
+```
+
+* for failed case
+
+```javascript
+{ status: 400, msg: 'errors', data: err }
+```
+
+# Utility APIs
+
+## Get latest blocks
+```
+ GET /blocks/latest/:count
+```
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+count | Number | YES | count
+
+### RETURN
+
+* for successed case
+
+```javascript
+{ status: 200, msg: 'sccuess', data: [blocks] }
+
+block: {
+            "hash": "0000000000000171dd048645bbeee7e123093e5f4e68d38ed17fc24d34fa7142",
+            "confirmations": 2,
+            "strippedsize": 15715,
+            "size": 18803,
+            "weight": 65948,
+            "height": 1297315,
+            "version": 536870912,
+            "versionHex": "20000000",
+            "merkleroot": "c9f98a531dd34b0dede5969955f779b74ee8225a158d2fce099c7c998f5752ce",
+            "tx": [
+                "9eff7a269396f7a18c9424842bbc3b1d4837c3ec20b675e899c57b2393ef7971",
+                ...
+            ],
+            "time": 1526058347,
+            "mediantime": 1526057159,
+            "nonce": 1487591789,
+            "bits": "1a020231",
+            "difficulty": 8352729.56295154,
+            "chainwork": "0000000000000000000000000000000000000000000000400558f6e6826d654d",
+            "previousblockhash": "00000000000001ba933c605a4ce4dfbb012c1587e77dc1580b4993160bcddbf0",
+            "nextblockhash": "000000000000017caabb3ca758e7ad38be73e38d5d84f899fc07f0b7abe5234f"
+        }
 ```
 
 * for failed case
