@@ -311,6 +311,8 @@ count | Number | YES | count of transactions
 
 ## Get transactions by ledger
 
+/api/v1/ledger/txs
+
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
