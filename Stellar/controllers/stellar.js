@@ -600,7 +600,7 @@ exports.getPaymentsForAccount = function(req, res) {
     var count = req.body.count;
     var cursor = req.body.cursor;
 
-    var url = urlAPI + "accounts/" + account + "/?limit=" + count + "&order=desc";
+    var url = urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
     url += cursor? "&cursor=" + cursor : "";
     console.log(url);
     request(url, function(error, response, body) {
