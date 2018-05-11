@@ -81,6 +81,7 @@ function getCursor(url) {
 /*
 * Get latest ledger list.
 * @param count count of list to get.
+* @param cursor page token to start to get ledgers.
 * @return list of ledger information same as the https://steexp.com/ledgers
 */
 exports.getLatestLedgers = function(req, res) {
@@ -207,15 +208,62 @@ exports.getLedgerDetail = function(req, res) {
 
 /*
 * Get all latest transactions.
-* @param count count of list to get.
-* @return transactions of ledger 
+* @param count: count of list to get.
+* @param cursor: page token to start to get transactions.
+* @return transactions 
 */
 exports.getLatestTransactions = function(req, res) {
+    var count = req.body.count;
+    var cursor = req.body.cursor;
+
+    var url = urlAPI + "transactions?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            console.log("response: ", body);
+
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
+
+            console.log("next= ", next);
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            console.log("next= ", next);
+
+            var records = body._embedded.records;
+
+            var transactions = [];
+            for (let i = 0; i < records.length; i ++) {
+                let info = records[i];
+                transactions.push({
+                    hash: info.hash,
+                    account: info.account,
+                    ledger: info.ledger,
+                    operations: info.operation_count,
+                    timestamp: info.created_at
+                })
+            }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: transactions});
+
+        }
+        else {
+            console.log("getLatestTransactions error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
+
+/*
+    //This is using stellar sdk
+
     var count = req.body.count;
 
     server.transactions()
     .limit(count)
-    .order("dsc")
+    .order("desc")
     .call()
     .then(function(txResult) {
         console.log(txResult)
@@ -240,6 +288,7 @@ exports.getLatestTransactions = function(req, res) {
       console.log(err);
       res.status(400).json({error: err});
     })
+*/
 }
 
 /*
@@ -287,7 +336,7 @@ exports.getOperations = function(req, res) {
 
     server.operations()
     .limit(count)
-    .order("dsc")
+    .order("desc")
     .call()
     .then(function(operationResult) {
       console.log(operationResult)
