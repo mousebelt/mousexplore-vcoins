@@ -264,7 +264,7 @@ exports.getTransactionsForLedger = function(req, res) {
             let info = records[i];
             transactions.push({
                 hash: info.hash,
-                account: info.account,
+                account: info.source_account,
                 operations: info.operation_count,
                 timestamp: info.created_at
             })
