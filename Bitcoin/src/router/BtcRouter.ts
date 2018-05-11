@@ -8,6 +8,21 @@ const config = require('../config/config').get(process.env.NODE_ENV);
 var rpc = require('json-rpc2');
 var client = rpc.Client.$create(config.BTC_RPC_PORT, config.BTC_RPC_HOST, config.BTC_RPC_USER, config.BTC_RPC_PASS);
 
+var promisify = function promisify(fn, args) {
+  return new Promise((resolve, reject) => {
+    try {
+      client.call(fn, args, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 export class BtcRouter {
 
   public router: Router;
@@ -357,26 +372,27 @@ export class BtcRouter {
 
     try {
       // get block count
-      client.call('getblockcount', [], function (err, result) {
+      client.call('getblockcount', [], async function (err, blockCount) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
-        var blockCount: number = result.data;
-        var arrBlock: any[] = [];
 
+        var arrBlocks = [];
         for (var i = 1; i <= count; i++) {
           var index = blockCount - i;
 
-          // get block hash
-          // client.call('getblockhash', [Number(index)], function (err, result) {
-          //   if (err) {
-          //     return res.json({ status: 400, msg: 'errors', data: err });
-          //   }
-          //   // return res.json({ status: 200, msg: 'sccuess', data: result });
-          // });
+          // promisify('getblockhash', [index])
+          //   .then(result => console.log(result))
+          //   .catch(e => console.log(e));
+
+          var hash = await promisify('getblockhash', [index]);
+          if (hash) {
+            var block = await promisify('getblock', [hash]);
+            if (block) arrBlocks.push(block);
+          }
         }
 
-        // return res.json({ status: 200, msg: 'sccuess', data: result });
+        return res.json({ status: 200, msg: 'sccuess', data: arrBlocks });
       });
     } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
@@ -408,7 +424,7 @@ export class BtcRouter {
     this.router.post('/listtransactions', this.listTransactions);
 
     // Utilty APIs
-    this.router.get('/blocks/latest', this.getBlocksLatest);
+    this.router.get('/blocks/latest/:count', this.getBlocksLatest);
   }
 
 }
