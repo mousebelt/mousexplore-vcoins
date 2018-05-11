@@ -19,6 +19,12 @@ other connections can safely be blocked
 it is used by other systems (such as Horizon) to submit transactions (so may have to be exposed to the rest of your internal ips)
 query information (info, metrics, …) for humans and automation perform administrative commands (schedule upgrades, change log levels, …)
 
+
+# Environment
+* install node
+* install mongod
+* npm install
+
 # Install node
 ## installation of horizon and stella-core
 

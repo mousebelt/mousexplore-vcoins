@@ -68,6 +68,7 @@ exports.createAccount = function(req, res) {
 */
 exports.getLatestLedgers = function(req, res) {
     var count = req.body.count;
+    var cursor = req.body.cursor;
 
     server.ledgers()
     .limit(count)
@@ -78,6 +79,9 @@ exports.getLatestLedgers = function(req, res) {
         console.log(ledgerResult)
         console.log(ledgerResult.records)
 
+        var next = ledgerResult.links.next.href;
+        var prev = ledgerResult.links.prev.href;
+
         var records = ledgerResult.records;
 
         var ledgers = [];
@@ -87,7 +91,8 @@ exports.getLatestLedgers = function(req, res) {
                 sequence: ledgerinfo.sequence,
                 timeStamp: ledgerinfo.closed_at,
                 transactions: ledgerinfo.transaction_count,
-                operations: ledgerinfo.operation_count
+                operations: ledgerinfo.operation_count,
+
             })
         }
         res.status(200).json({msg: "success", data: ledgers});
@@ -381,7 +386,7 @@ exports.getOperationsForAccount = function(req, res) {
 * @param account   account id
 * @return transactions of account 
 */
-exports.getTransactionsForLedger = function(req, res) {
+exports.getTransactionsForAccount = function(req, res) {
     var account = req.body.account;
 
     server.transactions()

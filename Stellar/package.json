@@ -8,6 +8,8 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "express": "^4.16.3",
+    "mongoose": "^5.1.0",
     "request": "^2.85.0",
     "stellar-sdk": "^0.8.0"
   }
