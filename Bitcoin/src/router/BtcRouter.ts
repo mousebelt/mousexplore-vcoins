@@ -426,7 +426,7 @@ export class BtcRouter {
     const height: number = req.params.height;
 
     try {
-      var hash = await promisify('getblockhash', [height]);
+      var hash = await promisify('getblockhash', [Number(height)]);
       if (hash) {
         var block = await promisify('getblock', [hash]);
         if (block) return res.json({ status: 200, msg: 'sccuess', data: block });
