@@ -1,4 +1,10 @@
 var StellarSdk = require('stellar-sdk');
+var request = require('request');
+
+var config = require('../config/common.js').config;
+var port = process.env.PORT || 2000;
+var urlAPI = config.url;
+
 var runtype = process.env.RUN_TYPE;
 
 if (runtype == "test") {
@@ -62,40 +68,106 @@ exports.createAccount = function(req, res) {
 
 
 /*
+*   get cursor value from string liken ledgers?order=asc&limit=2&cursor=8589934592
+*/
+function getCursor(url) {
+    var url = new URL(url);
+    var c = url.searchParams.get("cursor");
+    console.log(c);
+
+    return c;
+}
+
+/*
 * Get latest ledger list.
 * @param count count of list to get.
 * @return list of ledger information same as the https://steexp.com/ledgers
 */
 exports.getLatestLedgers = function(req, res) {
     var count = req.body.count;
+    var cursor = req.body.cursor;
 
-    server.ledgers()
-    .limit(count)
-    .order("desc")
-    .call()
-    .then(function (ledgerResult) {
-        // page 1
-        console.log(ledgerResult)
-        console.log(ledgerResult.records)
+    var url = urlAPI + "ledgers?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            console.log("response: ", body);
 
-        var records = ledgerResult.records;
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
 
-        var ledgers = [];
-        for (let i = 0; i < records.length; i ++) {
-            let ledgerinfo = records[i];
-            ledgers.push({
-                sequence: ledgerinfo.sequence,
-                timeStamp: ledgerinfo.closed_at,
-                transactions: ledgerinfo.transaction_count,
-                operations: ledgerinfo.operation_count
-            })
+            console.log("next= ", next);
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            console.log("next= ", next);
+
+            var records = body._embedded.records;
+
+            var ledgers = [];
+            for (let i = 0; i < records.length; i ++) {
+                let ledgerinfo = records[i];
+                ledgers.push({
+                    sequence: ledgerinfo.sequence,
+                    timeStamp: ledgerinfo.closed_at,
+                    transactions: ledgerinfo.transaction_count,
+                    operations: ledgerinfo.operation_count
+                })
+            }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: ledgers});
+
         }
-        res.status(200).json({msg: "success", data: ledgers});
-    })
-    .catch(function(err) {
-        console.log(err)
-        res.status(400).json({error: err});
-    })
+        else {
+            console.log("getLatestLedgers error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
+
+/*
+    //This is using stellar sdk
+    
+    // server.ledgers()
+    // .limit(count)
+    // .order("desc")
+    // .call()
+    // .then(async function (ledgerResult) {
+    //     // page 1
+    //     console.log(ledgerResult);
+
+    //     var next = await ledgerResult.next();//ledgers?order=asc&limit=2&cursor=8589934592
+    //     var prev = await ledgerResult.prev();
+
+    //     console.log("next= ", next);
+
+    //     next = getCursor(next);
+    //     prev = getCursor(prev);
+
+    //     console.log("next= ", next);
+
+    //     var records = ledgerResult.records;
+
+    //     var ledgers = [];
+    //     for (let i = 0; i < records.length; i ++) {
+    //         let ledgerinfo = records[i];
+    //         ledgers.push({
+    //             sequence: ledgerinfo.sequence,
+    //             timeStamp: ledgerinfo.closed_at,
+    //             transactions: ledgerinfo.transaction_count,
+    //             operations: ledgerinfo.operation_count,
+    //             next: next,
+    //             prev: prev
+    //         })
+    //     }
+    //     res.status(200).json({msg: "success", data: ledgers});
+    // })
+    // .catch(function(err) {
+    //     console.log(err)
+    //     res.status(400).json({error: err});
+    // })
+*/
 }
 
 /*
@@ -381,7 +453,7 @@ exports.getOperationsForAccount = function(req, res) {
 * @param account   account id
 * @return transactions of account 
 */
-exports.getTransactionsForLedger = function(req, res) {
+exports.getTransactionsForAccount = function(req, res) {
     var account = req.body.account;
 
     server.transactions()

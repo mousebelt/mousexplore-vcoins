@@ -19,6 +19,14 @@ other connections can safely be blocked
 it is used by other systems (such as Horizon) to submit transactions (so may have to be exposed to the rest of your internal ips)
 query information (info, metrics, …) for humans and automation perform administrative commands (schedule upgrades, change log levels, …)
 
+
+# Environment
+* install node
+* install mongod
+* npm install
+
+set environment variable RUN_TYPE as "test" if want to run StellarSdk.Network.useTestNetwork
+
 # Install node
 ## installation of horizon and stella-core
 
@@ -167,13 +175,14 @@ Maybe only for getting transaction history, we don't need main net setting
 ## Endpoint security type
 * Endpoint can only be accessed from specified client for provided REST APIs.
 * Every APIs needs Authorization.
-## Get tx info from txHash
-```
- POST /api/v1/tx
-```
+
+
 
 ## Get latest ledgers
 
+```
+/api/v1/ledgers/latest
+```
 Get latest ledger list.
 
 ### QUERY PARAMS
@@ -181,6 +190,7 @@ Get latest ledger list.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 count | Number | YES | ledger count to get
+cursor | String | YES | 0 for first page, and next or prev value of response of this api
 
 
 ### RETURN
@@ -191,6 +201,8 @@ count | Number | YES | ledger count to get
 ```javascript
 {
 "msg": "success",
+"next": "23442324233",
+"next": "23442324128"
 "data": [
         {   
 		  "sequence": "17730975", "timeStamp": "1472533979", 
