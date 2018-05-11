@@ -491,7 +491,7 @@ exports.getTransaction = function(req, res) {
 exports.getAccount = function(req, res) {
     var account = req.body.account;
 
-    server.transactions()
+    server.accounts()
     .accountId(account)
     .call()
     .then(function(accountResult) {
@@ -502,8 +502,7 @@ exports.getAccount = function(req, res) {
         flags: accountResult.flags,
         balances: accountResult.balances,
         thresholds: accountResult.thresholds,
-        signers: accountResult.signers,
-        data: accountResult.data,
+        signers: accountResult.signers
       }
 
       res.status(200).json({msg: "success", data: info});

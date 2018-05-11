@@ -485,6 +485,9 @@ txHash | String | YES | hash of transaction
 
 
 ## Get account information by accountID
+
+/api/v1/account
+
 Get overview from account
 
 ### QUERY PARAMS
