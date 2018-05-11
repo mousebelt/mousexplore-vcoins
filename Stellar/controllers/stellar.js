@@ -62,6 +62,17 @@ exports.createAccount = function(req, res) {
 
 
 /*
+*   get cursor value from string liken ledgers?order=asc&limit=2&cursor=8589934592
+*/
+function getCursor(url) {
+    var url = new URL(url_string);
+    var c = url.searchParams.get("cursor");
+    console.log(c);
+
+    return c;
+}
+
+/*
 * Get latest ledger list.
 * @param count count of list to get.
 * @return list of ledger information same as the https://steexp.com/ledgers
@@ -79,8 +90,8 @@ exports.getLatestLedgers = function(req, res) {
         console.log(ledgerResult)
         console.log(ledgerResult.records)
 
-        var next = ledgerResult.links.next.href;
-        var prev = ledgerResult.links.prev.href;
+        var next = getCursor(ledgerResult.links.next.href);//ledgers?order=asc&limit=2&cursor=8589934592
+        var prev = getCursor(ledgerResult.links.prev.href);
 
         var records = ledgerResult.records;
 
@@ -92,7 +103,8 @@ exports.getLatestLedgers = function(req, res) {
                 timeStamp: ledgerinfo.closed_at,
                 transactions: ledgerinfo.transaction_count,
                 operations: ledgerinfo.operation_count,
-
+                next: next,
+                prev: prev
             })
         }
         res.status(200).json({msg: "success", data: ledgers});
