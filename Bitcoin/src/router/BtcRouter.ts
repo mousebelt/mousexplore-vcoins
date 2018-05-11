@@ -399,6 +399,30 @@ export class BtcRouter {
     }
   }
 
+  // Utility APIs
+  public async getBlocks(req: Request, res: Response) {
+    const height: number = req.query.height;
+    const count: number = req.query.count;
+
+    try {
+      // get block count
+      var arrBlocks = [];
+      for (var i = 0; i < count; i++) {
+        var index = height - i;
+
+        var hash = await promisify('getblockhash', [index]);
+        if (hash) {
+          var block = await promisify('getblock', [hash]);
+          if (block) arrBlocks.push(block);
+        }
+      }
+
+      return res.json({ status: 200, msg: 'sccuess', data: arrBlocks });
+    } catch (error) {
+      return res.json({ status: 400, msg: 'errors', data: error });
+    }
+  }
+
   public routes() {
     this.router.post('/createaccount', this.createAccount);
     this.router.post('/associateaddress', this.associateAddresss);
@@ -425,6 +449,7 @@ export class BtcRouter {
 
     // Utilty APIs
     this.router.get('/blocks/latest/:count', this.getBlocksLatest);
+    this.router.get('/blocks', this.getBlocks);
   }
 
 }
