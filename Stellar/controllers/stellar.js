@@ -92,6 +92,7 @@ exports.getLatestLedgers = function(req, res) {
     console.log(url);
     request(url, function(error, response, body) {
         if (!error) {
+            body = JSON.parse(body);
             console.log("response: ", body);
 
             var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
