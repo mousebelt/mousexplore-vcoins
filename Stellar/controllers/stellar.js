@@ -470,12 +470,9 @@ exports.getTransaction = function(req, res) {
 
       var info = {
         timeStamp: transactionResult.created_at,
-        txHash: transactionResult.hash,
-        ledgerSequence: transactionResult.ledger,
-        sourceAccount: transactionResult.account,
-        sourceAccountSequence: transactionResult.account_sequence,
+        ledger: transactionResult.ledger_attr,
+        account: transactionResult.source_account,
         fee: transactionResult.fee_paid,
-        Signatures: transactionResult.envelope_xdr
       };
 
       res.status(200).json({msg: "success", data: info});
