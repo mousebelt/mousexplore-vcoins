@@ -648,7 +648,8 @@ account | String | YES | account ID
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 account | String | YES | account ID
-
+count | Number | YES | count of transactions
+cursor | String | YES | 0 for first page, and next or prev value of response of this api
 
 ### RETURN
 
@@ -658,6 +659,8 @@ account | String | YES | account ID
 ```javascript
 {
 "msg": "success",
+"next": "23442324233",
+"next": "23442324128",
 "data": [
         {   
         	"hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
