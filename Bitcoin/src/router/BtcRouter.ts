@@ -8,6 +8,21 @@ const config = require('../config/config').get(process.env.NODE_ENV);
 var rpc = require('json-rpc2');
 var client = rpc.Client.$create(config.BTC_RPC_PORT, config.BTC_RPC_HOST, config.BTC_RPC_USER, config.BTC_RPC_PASS);
 
+var promisify = function promisify(fn, args) {
+  return new Promise((resolve, reject) => {
+    try {
+      client.call(fn, args, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 export class BtcRouter {
 
   public router: Router;
@@ -21,13 +36,13 @@ export class BtcRouter {
     const account: string = req.body.account;
 
     try {
-      client.call('getnewaddress', [account],  function (err, result) {
+      client.call('getnewaddress', [account], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -37,13 +52,13 @@ export class BtcRouter {
     const address: string = req.body.address;
 
     try {
-      client.call('setaccount', [address, account],  function (err, result) {
+      client.call('setaccount', [address, account], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -52,13 +67,13 @@ export class BtcRouter {
     const fee: number = req.body.fee;
 
     try {
-      client.call('settxfee', [fee],  function (err, result) {
+      client.call('settxfee', [fee], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -68,13 +83,13 @@ export class BtcRouter {
     const confirm: number = req.body.confirm;
 
     try {
-      client.call('getreceivedbyaccount', [account, confirm],  function (err, result) {
+      client.call('getreceivedbyaccount', [account, confirm], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -84,13 +99,13 @@ export class BtcRouter {
     const confirm: number = req.body.confirm;
 
     try {
-      client.call('getreceivedbyaddress', [address, confirm],  function (err, result) {
+      client.call('getreceivedbyaddress', [address, confirm], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -99,13 +114,13 @@ export class BtcRouter {
     const account: string = req.params.account;
 
     try {
-      client.call('getbalance', [account],  function (err, result) {
+      client.call('getbalance', [account], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -114,13 +129,13 @@ export class BtcRouter {
     const address: string = req.params.address;
 
     try {
-      client.call('getbalance', [address],  function (err, result) {
+      client.call('getbalance', [address], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -129,13 +144,13 @@ export class BtcRouter {
     const address: string = req.params.address;
 
     try {
-      client.call('getaccount', [address],  function (err, result) {
+      client.call('getaccount', [address], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -144,13 +159,13 @@ export class BtcRouter {
     const account: string = req.params.account;
 
     try {
-      client.call('getaccountaddress', [account],  function (err, result) {
+      client.call('getaccountaddress', [account], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -159,39 +174,39 @@ export class BtcRouter {
     const account: string = req.params.account;
 
     try {
-      client.call('getaddressesbyaccount', [account],  function (err, result) {
+      client.call('getaddressesbyaccount', [account], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
   public getBlockCount(req: Request, res: Response) {
     try {
-      client.call('getblockcount', [],  function (err, result) {
+      client.call('getblockcount', [], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
   public getBestBlockHash(req: Request, res: Response) {
     try {
-      client.call('getbestblockhash', [],  function (err, result) {
+      client.call('getbestblockhash', [], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -200,13 +215,13 @@ export class BtcRouter {
     const hash: string = req.params.hash;
 
     try {
-      client.call('getblock', [hash],  function (err, result) {
+      client.call('getblock', [hash], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -215,13 +230,13 @@ export class BtcRouter {
     const index: number = req.params.index;
 
     try {
-      client.call('getblockhash', [Number(index)],  function (err, result) {
+      client.call('getblockhash', [Number(index)], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -230,13 +245,13 @@ export class BtcRouter {
     const txid: string = req.params.txid;
 
     try {
-      client.call('gettransaction', [txid],  function (err, result) {
+      client.call('gettransaction', [txid], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -245,26 +260,26 @@ export class BtcRouter {
     const txid: string = req.params.txid;
 
     try {
-      client.call('getrawtransaction', [txid],  function (err, result) {
+      client.call('getrawtransaction', [txid], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
 
   public listAccounts(req: Request, res: Response) {
     try {
-      client.call('listaccounts', [],  function (err, result) {
+      client.call('listaccounts', [], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -276,13 +291,13 @@ export class BtcRouter {
     const confrim: number = req.body.confrim;
 
     try {
-      client.call('sendfrom', [fromaccount, toaddress, amount, confrim],  function (err, result) {
+      client.call('sendfrom', [fromaccount, toaddress, amount, confrim], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -293,13 +308,13 @@ export class BtcRouter {
     const confrim: number = req.body.confrim;
 
     try {
-      client.call('sendmany', [fromaccount, toaddresses, confrim],  function (err, result) {
+      client.call('sendmany', [fromaccount, toaddresses, confrim], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -309,13 +324,13 @@ export class BtcRouter {
     const amount: number = req.body.amount;
     const confrim: number = req.body.confrim;
     try {
-      client.call('sendtoaddress', [toaddress, amount, confrim],  function (err, result) {
+      client.call('sendtoaddress', [toaddress, amount, confrim], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -325,13 +340,13 @@ export class BtcRouter {
     const count: number = req.body.count;
     const from: number = req.body.from;
     try {
-      client.call('listtransactions', [account, count, from],  function (err, result) {
+      client.call('listtransactions', [account, count, from], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -340,13 +355,46 @@ export class BtcRouter {
     const blockhash: string = req.params.blockhash;
 
     try {
-      client.call('listsinceblock', [blockhash, 1],  function (err, result) {
+      client.call('listsinceblock', [blockhash, 1], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
         return res.json({ status: 200, msg: 'sccuess', data: result });
       });
-    } catch(error) {
+    } catch (error) {
+      return res.json({ status: 400, msg: 'errors', data: error });
+    }
+  }
+
+  // Utility APIs
+  public getBlocksLatest(req: Request, res: Response) {
+    const count: number = req.params.count;
+
+    try {
+      // get block count
+      client.call('getblockcount', [], async function (err, blockCount) {
+        if (err) {
+          return res.json({ status: 400, msg: 'errors', data: err });
+        }
+
+        var arrBlocks = [];
+        for (var i = 1; i <= count; i++) {
+          var index = blockCount - i;
+
+          // promisify('getblockhash', [index])
+          //   .then(result => console.log(result))
+          //   .catch(e => console.log(e));
+
+          var hash = await promisify('getblockhash', [index]);
+          if (hash) {
+            var block = await promisify('getblock', [hash]);
+            if (block) arrBlocks.push(block);
+          }
+        }
+
+        return res.json({ status: 200, msg: 'sccuess', data: arrBlocks });
+      });
+    } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
   }
@@ -374,6 +422,9 @@ export class BtcRouter {
     this.router.post('/sendmany', this.sendMany);
     this.router.post('/sendtoaddress', this.sendToAddress);
     this.router.post('/listtransactions', this.listTransactions);
+
+    // Utilty APIs
+    this.router.get('/blocks/latest/:count', this.getBlocksLatest);
   }
 
 }
