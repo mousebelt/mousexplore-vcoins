@@ -114,12 +114,10 @@ exports.getLatestLedgers = function(req, res) {
                     sequence: ledgerinfo.sequence,
                     timeStamp: ledgerinfo.closed_at,
                     transactions: ledgerinfo.transaction_count,
-                    operations: ledgerinfo.operation_count,
-                    next: next,
-                    prev: prev
+                    operations: ledgerinfo.operation_count
                 })
             }
-            res.status(200).json({msg: "success", data: ledgers});
+            res.status(200).json({msg: "success", next: next, prev: prev, data: ledgers});
 
         }
         else {
