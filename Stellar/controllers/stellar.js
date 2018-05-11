@@ -502,8 +502,7 @@ exports.getAccount = function(req, res) {
         flags: accountResult.flags,
         balances: accountResult.balances,
         thresholds: accountResult.thresholds,
-        signers: accountResult.signers,
-        data: accountResult.data,
+        signers: accountResult.signers
       }
 
       res.status(200).json({msg: "success", data: info});
