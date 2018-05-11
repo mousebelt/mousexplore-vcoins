@@ -51,12 +51,8 @@ https://github.com/stellar/stellar-core/blob/master/INSTALL.md
 >sudo apt-get update
 >sudo apt-get install git build-essential pkg-config autoconf automake libtool bison flex libpq-dev clang++-4.9 gcc-4.9 g++-4.9 cpp-4.9
 
-git clone https://github.com/stellar/stellar-core.git
-Here if we use master branch of this git, node may have trouble in working, so copy git directory to release version and follow:
+>git clone --single-branch --branch prod https://github.com/stellar/stellar-core.git
 
->sudo wget https://github.com/stellar/stellar-core/archive/v9.2.0.tar.gz
->sudo tar -xvf 9.2.0.tar.gz
->cd stellar-core-9.2.0
 >git submodule init
 >git submodule update
 >./autogen.sh.
