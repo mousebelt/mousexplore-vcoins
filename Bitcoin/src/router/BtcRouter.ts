@@ -399,7 +399,6 @@ export class BtcRouter {
     }
   }
 
-  // Utility APIs
   public async getBlocks(req: Request, res: Response) {
     const height: number = req.query.height;
     const count: number = req.query.count;
@@ -418,6 +417,22 @@ export class BtcRouter {
       }
 
       return res.json({ status: 200, msg: 'sccuess', data: arrBlocks });
+    } catch (error) {
+      return res.json({ status: 400, msg: 'errors', data: error });
+    }
+  }
+
+  public async getBlockHeight(req: Request, res: Response) {
+    const height: number = req.params.height;
+
+    try {
+      var hash = await promisify('getblockhash', [Number(height)]);
+      if (hash) {
+        var block = await promisify('getblock', [hash]);
+        if (block) return res.json({ status: 200, msg: 'sccuess', data: block });
+      }
+
+      return res.json({ status: 400, msg: 'errors', data: 'no existing block !' });
     } catch (error) {
       return res.json({ status: 400, msg: 'errors', data: error });
     }
@@ -450,6 +465,7 @@ export class BtcRouter {
     // Utilty APIs
     this.router.get('/blocks/latest/:count', this.getBlocksLatest);
     this.router.get('/blocks', this.getBlocks);
+    this.router.get('/block/:height', this.getBlockHeight);
   }
 
 }
