@@ -202,7 +202,7 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 {
 "msg": "success",
 "next": "23442324233",
-"prev": "23442324128",
+"next": "23442324128",
 "data": [
         {   
 		  "sequence": "17730975", "timeStamp": "1472533979", 
@@ -287,7 +287,7 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 {
 "msg": "success",
 "next": "23442324233",
-"prev": "23442324128",
+"next": "23442324128",
 "data": [
         {   
 		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
@@ -361,7 +361,6 @@ ledger | String | YES | sequence or hash
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 count | Number | YES | count of operations
-cursor | String | YES | 0 for first page, and next or prev value of response of this api
 
 
 ### RETURN
@@ -372,15 +371,18 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 ```javascript
 {
 "msg": "success",
-"next": "23442324233",
-"prev": "23442324128",
 "data": [
         {   
-		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		  "timeStamp": "2015-09-24T10:07:09Z",
-		  "type": 11,
-		  "ledger": "payment",
+		   "transaction": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		   "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		   "type": "payment",
+		   "asset_type": 'credit_alphanum12',
+	       "asset_code": 'nCntGameCoin',
+	       "asset_issuer": 'GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB',
+	       "from": 'GAK3NSB43EVCZKDH4PYGJPCVPOYZ7X7KIR3ZTWSYRKRMJWGG5TABM6TH',
+	       "to": 'GCHKKQ5VWJBRQZHNMODO5BWYZKPNM2HDSJ26T4O644CNEQBYK7IXATKM',
+	       "amount": '2.0000000'
+		   "timeStamp": "2015-09-24T10:07:09Z",
         },
         ...
     ]
@@ -398,7 +400,7 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 
 
 ## Get operations by transaction
-Get operations from transaction 
+/api/v1/txs/operations
 
 ### QUERY PARAMS
 
@@ -417,10 +419,15 @@ txHash | String | YES | sequence or hash
 "msg": "success",
 "data": [
         {   
-		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		  "timeStamp": "2015-09-24T10:07:09Z",
-		  "type": 11,
-		  "ledger": "payment",
+		   "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		   "type": "payment",
+		   "asset_type": 'credit_alphanum12',
+	       "asset_code": 'nCntGameCoin',
+	       "asset_issuer": 'GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB',
+	       "from": 'GAK3NSB43EVCZKDH4PYGJPCVPOYZ7X7KIR3ZTWSYRKRMJWGG5TABM6TH',
+	       "to": 'GCHKKQ5VWJBRQZHNMODO5BWYZKPNM2HDSJ26T4O644CNEQBYK7IXATKM',
+	       "amount": '2.0000000'
+		   "timeStamp": "2015-09-24T10:07:09Z"
         },
         ...
     ]

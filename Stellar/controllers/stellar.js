@@ -360,9 +360,15 @@ exports.getOperations = function(req, res) {
             for (let i = 0; i < records.length; i ++) {
                 let info = records[i];
                 operations.push({
+                    transaction: info.transaction_hash,
                     account: info.source_account,
                     type: info.type,
-                    transaction: info.transaction_hash,
+                    asset_type: info.asset_type,
+                    asset_code: info.asset_code,
+                    asset_issuer: info.asset_issuer,
+                    from: info.from,
+                    to: info.to,
+                    amount: info.amount,
                     timestamp: info.created_at
                 })
               }
@@ -429,7 +435,12 @@ exports.getOperationsForTransaction = function(req, res) {
         operations.push({
             account: info.account,
             type: info.type,
-            transaction: info.transaction_hash,
+            asset_type: info.asset_type,
+            asset_code: info.asset_code,
+            asset_issuer: info.asset_issuer,
+            from: info.from,
+            to: info.to,
+            amount: info.amount,
             timestamp: info.created_at
         })
       }
@@ -528,6 +539,12 @@ exports.getOperationsForAccount = function(req, res) {
         operations.push({
             account: info.account,
             type: info.type,
+            asset_type: info.asset_type,
+            asset_code: info.asset_code,
+            asset_issuer: info.asset_issuer,
+            from: info.from,
+            to: info.to,
+            amount: info.amount,
             transaction: info.transaction_hash,
             timestamp: info.created_at
         })
