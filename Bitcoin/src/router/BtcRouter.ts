@@ -445,10 +445,10 @@ export class BtcRouter {
       var hash = await promisify('getblockhash', [Number(height)]);
       if (hash) {
         var block = await promisify('getblock', [hash]);
-        var txs = block.tx;
+        var txs = block['tx'];
         var arrTxs = [];
         for (var i = 0; i < txs.length; i++) {
-          var txInfo = await promisify('getrawtransaction', [txs[i]]);
+          var txInfo = await promisify('getrawtransaction', [txs[i], 1]);
           arrTxs.push(txInfo);
         }
         return res.json({ status: 200, msg: 'errors', data: arrTxs });
