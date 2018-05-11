@@ -87,7 +87,8 @@ exports.getLatestLedgers = function(req, res) {
     var count = req.body.count;
     var cursor = req.body.cursor;
 
-    var url = urlAPI + "ledgers?limit=" + count + "&order=desc&cursor=" + cursor;
+    var url = urlAPI + "ledgers?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
     console.log(url);
     request(url, function(error, response, body) {
         if (!error) {
