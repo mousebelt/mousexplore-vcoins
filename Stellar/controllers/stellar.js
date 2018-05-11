@@ -3,7 +3,7 @@ var request = require('request');
 
 var config = require('../config/common.js').config;
 var port = process.env.PORT || 2000;
-var urlAPI = config.url + ":" + port + "/api/v1/";
+var urlAPI = config.url;
 
 var runtype = process.env.RUN_TYPE;
 
