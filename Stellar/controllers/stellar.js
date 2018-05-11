@@ -516,18 +516,18 @@ exports.getAccount = function(req, res) {
 /*
 * Get operations by accountID.
 * @param account   account ID.
-* @return account info 
+* @return operation list
 */
 exports.getOperationsForAccount = function(req, res) {
     var account = req.body.account;
 
-    server.transactions()
+    server.operations()
     .forAccount(account)
     .call()
     .then(function(operationsResult) {
       console.log(operationsResult.records);
 
-      var records = operationResult.records;
+      var records = operationsResult.records;
 
       var operations = [];
       for (let i = 0; i < records.length; i ++) {

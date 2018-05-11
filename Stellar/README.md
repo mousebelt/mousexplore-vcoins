@@ -555,6 +555,10 @@ account | String | YES | account ID
 
 
 ## Get operations by accountID
+
+/api/v1/account/operations
+
+
 Get operations related to account
 
 ### QUERY PARAMS
