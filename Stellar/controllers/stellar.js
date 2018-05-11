@@ -85,14 +85,20 @@ exports.getLatestLedgers = function(req, res) {
     .limit(count)
     .order("desc")
     .call()
-    .then(function (ledgerResult) {
+    .then(async function (ledgerResult) {
         // page 1
-        console.log(ledgerResult)
-        console.log(ledgerResult.records)
+        console.log(ledgerResult);
 
-        var next = getCursor(ledgerResult.links.next.href);//ledgers?order=asc&limit=2&cursor=8589934592
-        var prev = getCursor(ledgerResult.links.prev.href);
+        var next = await ledgerResult.next();//ledgers?order=asc&limit=2&cursor=8589934592
+        var prev = await ledgerResult.prev();
 
+        console.log("next= ", next);
+
+        next = getCursor(next);
+        prev = getCursor(prev);
+
+        console.log("next= ", next);
+        
         var records = ledgerResult.records;
 
         var ledgers = [];
