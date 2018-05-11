@@ -327,7 +327,7 @@ exports.getTransactionsForLedger = function(req, res) {
 }
 
 /*
-* Get operations by ledger.
+* Get latest operations.
 * @param count count of list to get.
 * @return operations of ledger 
 */

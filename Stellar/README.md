@@ -354,6 +354,8 @@ ledger | String | YES | sequence or hash
 
 ## Get Latest operations
 
+/api/v1/operations
+
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
