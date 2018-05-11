@@ -491,7 +491,7 @@ exports.getTransaction = function(req, res) {
 exports.getAccount = function(req, res) {
     var account = req.body.account;
 
-    server.transactions()
+    server.accounts()
     .accountId(account)
     .call()
     .then(function(accountResult) {
