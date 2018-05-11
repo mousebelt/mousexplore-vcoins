@@ -129,7 +129,7 @@ export class BtcRouter {
     const address: string = req.params.address;
 
     try {
-      client.call('getbalance', [address], function (err, result) {
+      client.call('listtransactions', [address], function (err, result) {
         if (err) {
           return res.json({ status: 400, msg: 'errors', data: err });
         }
@@ -438,6 +438,28 @@ export class BtcRouter {
     }
   }
 
+  public async getBlockTransactions(req: Request, res: Response) {
+    const height: number = req.params.height;
+
+    try {
+      var hash = await promisify('getblockhash', [Number(height)]);
+      if (hash) {
+        var block = await promisify('getblock', [hash]);
+        var txs = block['tx'];
+        var arrTxs = [];
+        for (var i = 0; i < txs.length; i++) {
+          var txInfo = await promisify('getrawtransaction', [txs[i], 1]);
+          arrTxs.push(txInfo);
+        }
+        return res.json({ status: 200, msg: 'errors', data: arrTxs });
+      }
+
+      return res.json({ status: 400, msg: 'errors', data: 'no existing block !' });
+    } catch (error) {
+      return res.json({ status: 400, msg: 'errors', data: error });
+    }
+  }
+
   public routes() {
     this.router.post('/createaccount', this.createAccount);
     this.router.post('/associateaddress', this.associateAddresss);
@@ -466,6 +488,7 @@ export class BtcRouter {
     this.router.get('/blocks/latest/:count', this.getBlocksLatest);
     this.router.get('/blocks', this.getBlocks);
     this.router.get('/block/:height', this.getBlockHeight);
+    this.router.get('/block/transactions/:height', this.getBlockTransactions);
   }
 
 }
