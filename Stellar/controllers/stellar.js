@@ -620,8 +620,6 @@ exports.getPaymentsForAccount = function(req, res) {
 
             var records = body._embedded.records;
 
-            var records = paymentsResult.records;
-
             var operations = [];
                 for (let i = 0; i < records.length; i ++) {
                 let info = records[i];
