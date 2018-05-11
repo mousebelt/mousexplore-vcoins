@@ -25,6 +25,8 @@ query information (info, metrics, …) for humans and automation perform adminis
 * install mongod
 * npm install
 
+set environment variable RUN_TYPE as "test" if want to run StellarSdk.Network.useTestNetwork
+
 # Install node
 ## installation of horizon and stella-core
 

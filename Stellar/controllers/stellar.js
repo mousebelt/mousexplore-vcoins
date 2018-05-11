@@ -1,4 +1,10 @@
 var StellarSdk = require('stellar-sdk');
+var request = require('request');
+
+var config = require('../config/common.js').config;
+var port = process.env.PORT || 2000;
+var urlAPI = config.url + ":" + port + "/api/v1/";
+
 var runtype = process.env.RUN_TYPE;
 
 if (runtype == "test") {
@@ -81,44 +87,82 @@ exports.getLatestLedgers = function(req, res) {
     var count = req.body.count;
     var cursor = req.body.cursor;
 
-    server.ledgers()
-    .limit(count)
-    .order("desc")
-    .call()
-    .then(async function (ledgerResult) {
-        // page 1
-        console.log(ledgerResult);
+    var url = urlAPI + "ledgers?limit=" + count + "&order=desc&cursor=" + cursor;
+    request(url, function(error, response, body) {
+        if (!error) {
+            console.log("response: ", body);
 
-        var next = await ledgerResult.next();//ledgers?order=asc&limit=2&cursor=8589934592
-        var prev = await ledgerResult.prev();
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
 
-        console.log("next= ", next);
+            console.log("next= ", next);
 
-        next = getCursor(next);
-        prev = getCursor(prev);
+            next = getCursor(next);
+            prev = getCursor(prev);
 
-        console.log("next= ", next);
-        
-        var records = ledgerResult.records;
+            console.log("next= ", next);
 
-        var ledgers = [];
-        for (let i = 0; i < records.length; i ++) {
-            let ledgerinfo = records[i];
-            ledgers.push({
-                sequence: ledgerinfo.sequence,
-                timeStamp: ledgerinfo.closed_at,
-                transactions: ledgerinfo.transaction_count,
-                operations: ledgerinfo.operation_count,
-                next: next,
-                prev: prev
-            })
+            var records = body._embedded.records;
+
+            var ledgers = [];
+            for (let i = 0; i < records.length; i ++) {
+                let ledgerinfo = records[i];
+                ledgers.push({
+                    sequence: ledgerinfo.sequence,
+                    timeStamp: ledgerinfo.closed_at,
+                    transactions: ledgerinfo.transaction_count,
+                    operations: ledgerinfo.operation_count,
+                    next: next,
+                    prev: prev
+                })
+            }
+            res.status(200).json({msg: "success", data: ledgers});
+
         }
-        res.status(200).json({msg: "success", data: ledgers});
-    })
-    .catch(function(err) {
-        console.log(err)
-        res.status(400).json({error: err});
-    })
+        else {
+            console.log("getLatestLedgers error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
+
+    // server.ledgers()
+    // .limit(count)
+    // .order("desc")
+    // .call()
+    // .then(async function (ledgerResult) {
+    //     // page 1
+    //     console.log(ledgerResult);
+
+    //     var next = await ledgerResult.next();//ledgers?order=asc&limit=2&cursor=8589934592
+    //     var prev = await ledgerResult.prev();
+
+    //     console.log("next= ", next);
+
+    //     next = getCursor(next);
+    //     prev = getCursor(prev);
+
+    //     console.log("next= ", next);
+
+    //     var records = ledgerResult.records;
+
+    //     var ledgers = [];
+    //     for (let i = 0; i < records.length; i ++) {
+    //         let ledgerinfo = records[i];
+    //         ledgers.push({
+    //             sequence: ledgerinfo.sequence,
+    //             timeStamp: ledgerinfo.closed_at,
+    //             transactions: ledgerinfo.transaction_count,
+    //             operations: ledgerinfo.operation_count,
+    //             next: next,
+    //             prev: prev
+    //         })
+    //     }
+    //     res.status(200).json({msg: "success", data: ledgers});
+    // })
+    // .catch(function(err) {
+    //     console.log(err)
+    //     res.status(400).json({error: err});
+    // })
 }
 
 /*
