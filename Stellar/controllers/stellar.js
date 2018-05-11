@@ -329,9 +329,53 @@ exports.getTransactionsForLedger = function(req, res) {
 /*
 * Get latest operations.
 * @param count count of list to get.
+* @param cursor: page token to start to get operations.
 * @return operations of ledger 
 */
 exports.getOperations = function(req, res) {
+    var count = req.body.count;
+    var cursor = req.body.cursor;
+
+    var url = urlAPI + "operations?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            console.log("response: ", body);
+
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
+
+            console.log("next= ", next);
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            console.log("next= ", next);
+
+            var records = body._embedded.records;
+
+            var operations = [];
+            for (let i = 0; i < records.length; i ++) {
+                let info = records[i];
+                operations.push({
+                    account: info.source_account,
+                    type: info.type,
+                    transaction: info.transaction_hash,
+                    timestamp: info.created_at
+                })
+              }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
+
+        }
+        else {
+            console.log("getLatestTransactions error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
+
+/*    
     var count = req.body.count;
 
     server.operations()
@@ -360,6 +404,7 @@ exports.getOperations = function(req, res) {
       console.log(err);
       res.status(400).json({error: err});
     })
+*/    
 }
 
 /*
