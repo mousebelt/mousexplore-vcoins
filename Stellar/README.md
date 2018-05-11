@@ -202,7 +202,7 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 {
 "msg": "success",
 "next": "23442324233",
-"next": "23442324128",
+"prev": "23442324128",
 "data": [
         {   
 		  "sequence": "17730975", "timeStamp": "1472533979", 
@@ -287,7 +287,7 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 {
 "msg": "success",
 "next": "23442324233",
-"next": "23442324128",
+"prev": "23442324128",
 "data": [
         {   
 		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
@@ -361,6 +361,7 @@ ledger | String | YES | sequence or hash
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 count | Number | YES | count of operations
+cursor | String | YES | 0 for first page, and next or prev value of response of this api
 
 
 ### RETURN
@@ -371,6 +372,8 @@ count | Number | YES | count of operations
 ```javascript
 {
 "msg": "success",
+"next": "23442324233",
+"prev": "23442324128",
 "data": [
         {   
 		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
