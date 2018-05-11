@@ -433,7 +433,7 @@ exports.getOperationsForTransaction = function(req, res) {
       for (let i = 0; i < records.length; i ++) {
         let info = records[i];
         operations.push({
-            account: info.account,
+            account: info.source_account,
             type: info.type,
             asset_type: info.asset_type,
             asset_code: info.asset_code,
@@ -533,7 +533,6 @@ exports.getOperationsForAccount = function(req, res) {
       for (let i = 0; i < records.length; i ++) {
         let info = records[i];
         operations.push({
-            account: info.account,
             type: info.type,
             asset_type: info.asset_type,
             asset_code: info.asset_code,
@@ -586,6 +585,48 @@ exports.getTransactionsForAccount = function(req, res) {
     })
     .catch(function(err) {
       console.log(err);
+      res.status(400).json({error: err});
+    })
+}
+
+
+/*
+* Get payments by accountID.
+* @param account   account ID.
+* @return payment list
+*/
+exports.getPaymentsForAccount = function(req, res) {
+    var account = req.body.account;
+
+    server.payments()
+    .forAccount(account)
+    .call()
+    .then(function(paymentsResult) {
+      console.log(paymentsResult.records);
+
+      var records = paymentsResult.records;
+
+      var operations = [];
+      for (let i = 0; i < records.length; i ++) {
+        let info = records[i];
+        operations.push({
+            account: info.account,
+            type: info.type,
+            asset_type: info.asset_type,
+            asset_code: info.asset_code,
+            asset_issuer: info.asset_issuer,
+            from: info.from,
+            to: info.to,
+            amount: info.amount,
+            transaction: info.transaction_hash,
+            timestamp: info.created_at
+        })
+      }
+
+      res.status(200).json({msg: "success", data: operations});
+    })
+    .catch(function(err) {
+      console.log(err)
       res.status(400).json({error: err});
     })
 }
