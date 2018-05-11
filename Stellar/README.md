@@ -447,6 +447,8 @@ txHash | String | YES | sequence or hash
 
 ## Get transaction by transaction hash
 
+/api/v1/tx
+
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
@@ -464,12 +466,9 @@ txHash | String | YES | hash of transaction
 "msg": "success",
 "data": {   
 	   "timeStamp": "2015-09-24T10:07:09Z",
-	   "txHash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-	   "ledgerSequence": 17733198,
-	   "sourceAccount": GA4K4BUZ4SLAKQA5T2OE64FM3BWTUJXQQ3J4QPCEQBHCQZWQHRHGPPSO,
-	   "sourceAccountSequence": 70914226499158536,
-	   "fee": 0.00004 XLM,
-	   "Signatures": "X74ykBLM6rVaJmtEP0LgnTh8ugm5ykaVCD8p+JfRGMm2HiaWrIV2VckmxU02z2xqSiKrq+Oomx6GxlTwpf9ABg==",
+	   "ledger": 17733198,
+	   "account": "GA4K4BUZ4SLAKQA5T2OE64FM3BWTUJXQQ3J4QPCEQBHCQZWQHRHGPPSO",
+	   "fee": 0.00004,
 	 },
 }
 ```
