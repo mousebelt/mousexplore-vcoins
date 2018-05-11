@@ -599,6 +599,8 @@ account | String | YES | account ID
 
 ## Get transactions by account
 
+/api/v1/account/txs
+
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
@@ -617,7 +619,7 @@ account | String | YES | account ID
 "data": [
         {   
 		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "ledger": 17733198,
 		  "timeStamp": "2015-09-24T10:07:09Z",
 		  "operations": 11,
         },

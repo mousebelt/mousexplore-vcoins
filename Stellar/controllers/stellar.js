@@ -577,7 +577,7 @@ exports.getTransactionsForAccount = function(req, res) {
             let info = records[i];
             transactions.push({
                 hash: info.hash,
-                account: info.account,
+                ledger: info.ledger_attr,
                 operations: info.operation_count,
                 timestamp: info.created_at
             })
