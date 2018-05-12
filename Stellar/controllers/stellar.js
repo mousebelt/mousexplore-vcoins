@@ -1,6 +1,6 @@
 var StellarSdk = require('stellar-sdk');
 var request = require('request');
-var curlrequest = require('curlrequest');
+var requestpromise = require('request-promise');
 
 var config = require('../config/common.js').config;
 var port = process.env.PORT || 2000;
@@ -830,7 +830,7 @@ exports.getLatestEffects = function(req, res) {
                 var timestamp = 0;
                 var transaction_hash = "";
                 try {
-                    var operationDetail = await curlrequest.request({url: opUrl});
+                    var operationDetail = await requestpromise(opUrl);
                     console.log("--------operation", operationDetail);
 
                     operationDetail = JSON.parse(operationDetail);

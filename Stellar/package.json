@@ -8,10 +8,10 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "curlrequest": "^1.0.1",
     "express": "^4.16.3",
     "mongoose": "^5.1.0",
     "request": "^2.85.0",
+    "request-promise": "^4.2.2",
     "stellar-sdk": "^0.8.0"
   }
 }
