@@ -122,8 +122,8 @@ exports.getLatestLedgers = function(req, res) {
 
         }
         else {
-            console.log("getLatestLedgers error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
         }
     });
 
@@ -251,8 +251,8 @@ exports.getLatestTransactions = function(req, res) {
 
         }
         else {
-            console.log("getLatestTransactions error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestTransactions error: ", error);
+            res.status(400).json({error: error});
         }
     });
 
@@ -376,8 +376,8 @@ exports.getOperations = function(req, res) {
 
         }
         else {
-            console.log("getLatestTransactions error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestTransactions error: ", error);
+            res.status(400).json({error: error});
         }
     });
 
@@ -640,8 +640,8 @@ exports.getPaymentsForAccount = function(req, res) {
 
         }
         else {
-            console.log("getLatestLedgers error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
         }
     });
 /*
@@ -726,8 +726,8 @@ exports.getOffersForAccount = function(req, res) {
 
         }
         else {
-            console.log("getLatestLedgers error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
         }
     });
 }
@@ -780,31 +780,12 @@ exports.getEffectsForAccount = function(req, res) {
 
         }
         else {
-            console.log("getLatestLedgers error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
         }
     });
 }
 
-
-
-async function getOperationDetail(opID) {
-    await server.operations()
-    .operation(opID)
-    .then(function(operationResult) {
-        console.log(operationResult)
-
-        return {
-            type: info.type,
-            transaction: info.transaction_hash,
-            timestamp: info.created_at
-        };
-    })
-    .catch(function(err) {
-        console.log(err);
-        return {};
-    })
-}
 
 /*
 * Get effects.
@@ -841,12 +822,26 @@ exports.getLatestEffects = function(req, res) {
                 let info = records[i];
 
                 console.log(info);
+                opUrl = info._links.operation.href;
+
+                var timestamp = 0;
+                var transaction_hash = "";
+                try {
+                    var body = await request(opUrl);
+                    body = JSON.parse(body);
+                    timestamp = body.created_at;
+                    transaction_hash = body.transaction_hash;
+                }
+                catch(e) {
+                    console.log("reqeust error: ", e);
+                }
 
                 delete info._links;
                 delete info.paging_token;
                 delete info.id;
 
-                // getOperationDetail
+                info.timestamp = timestamp;
+                info.transaction_hash = transaction_hash;
 
                 operations.push(info);
             }
@@ -854,8 +849,8 @@ exports.getLatestEffects = function(req, res) {
 
         }
         else {
-            console.log("getLatestLedgers error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
         }
     });
 }
