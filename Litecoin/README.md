@@ -8,7 +8,7 @@ daemon=1
 testnet=1
 rpcuser=rpcuser
 rpcpassword=pwd
-rpcport=19332
+rpcport=28332
 ```
 
 ## test
