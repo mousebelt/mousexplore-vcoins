@@ -1,4 +1,4 @@
-# Install Bitcoin node
+# Install Litecoin node
 https://github.com/mmgen/mmgen/wiki/Install-Bitcoind-from-Source-on-Debian-or-Ubuntu-Linux  
 
 ## litecoin.conf
