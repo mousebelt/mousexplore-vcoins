@@ -788,6 +788,24 @@ exports.getEffectsForAccount = function(req, res) {
 
 
 
+aync function getOperationDetail(opID) {
+    await server.operations()
+    .operation(opID)
+    .then(function(operationResult) {
+        console.log(operationResult)
+
+        return {
+            type: info.type,
+            transaction: info.transaction_hash,
+            timestamp: info.created_at
+        };
+    })
+    .catch(function(err) {
+        console.log(err);
+        return {};
+    })
+}
+
 /*
 * Get effects.
 * @param count count of list to get.
@@ -804,7 +822,7 @@ exports.getLatestEffects = function(req, res) {
     request(url, function(error, response, body) {
         if (!error) {
             body = JSON.parse(body);
-            console.log("response: ", body);
+            // console.log("response: ", body);
 
             var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
             var prev =  body._links.prev.href;
@@ -822,10 +840,13 @@ exports.getLatestEffects = function(req, res) {
             for (let i = 0; i < records.length; i ++) {
                 let info = records[i];
 
+                console.log(info);
+
                 delete info._links;
                 delete info.paging_token;
-                delete info.account;
                 delete info.id;
+
+                // getOperationDetail
 
                 operations.push(info);
             }
