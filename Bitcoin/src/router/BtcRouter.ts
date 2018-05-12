@@ -438,6 +438,21 @@ export class BtcRouter {
     }
   }
 
+  public getTransactionInfo(req: Request, res: Response) {
+    const txid: string = req.params.txid;
+
+    try {
+      client.call('getrawtransaction', [txid, 1], function (err, result) {
+        if (err) {
+          return res.json({ status: 400, msg: 'errors', data: err });
+        }
+        return res.json({ status: 200, msg: 'sccuess', data: result });
+      });
+    } catch (error) {
+      return res.json({ status: 400, msg: 'errors', data: error });
+    }
+  }
+
   public async getBlockTransactions(req: Request, res: Response) {
     const height: number = req.params.height;
 
@@ -488,6 +503,7 @@ export class BtcRouter {
     this.router.get('/blocks/latest/:count', this.getBlocksLatest);
     this.router.get('/blocks', this.getBlocks);
     this.router.get('/block/:height', this.getBlockHeight);
+    this.router.get('/transaction/:txid', this.getTransactionInfo);
     this.router.get('/block/transactions/:height', this.getBlockTransactions);
   }
 
