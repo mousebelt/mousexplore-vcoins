@@ -8,16 +8,16 @@ https://degreesofzero.com/article/installing-bitcoind-on-ubuntu.html
 server=1
 daemon=1
 testnet=1
-disablewallet=1
 rpcuser=rpcuser
 rpcpassword=pwd
+rpcport=18332
 ```
 
 ## run
 >bitcoind
 
 ## checking rpc
->curl --user rpcuser --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "getbestblockhash", "params": [] }' -H 'content-type: text/plain;' http://127.0.0.1:18332/
+>bitcoin-cli getnetworkinfo
 
 
 # TypeScript Express Server (TES)
