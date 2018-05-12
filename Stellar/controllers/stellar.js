@@ -788,7 +788,7 @@ exports.getEffectsForAccount = function(req, res) {
 
 
 
-aync function getOperationDetail(opID) {
+async function getOperationDetail(opID) {
     await server.operations()
     .operation(opID)
     .then(function(operationResult) {
