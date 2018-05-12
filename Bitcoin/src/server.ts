@@ -12,7 +12,6 @@ require('dotenv').config();
 const config = require('./config/config').get(process.env.NODE_ENV);
 
 import BtcRouter from './router/BtcRouter';
-import LiteRouter from './router/LiteRouter';
 
 class Server {
 
@@ -50,7 +49,6 @@ class Server {
   // application routes
   public routes(): void {
     this.app.use('/api/v1', BtcRouter);
-    // this.app.use('/api/v1/litecoin', LiteRouter);
   }
 }
 
