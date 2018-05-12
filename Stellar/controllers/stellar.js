@@ -593,6 +593,8 @@ exports.getTransactionsForAccount = function(req, res) {
 /*
 * Get payments by accountID.
 * @param account   account ID.
+* @param count count of list to get.
+* @param cursor: page token to start to get operations.
 * @return payment list
 */
 exports.getPaymentsForAccount = function(req, res) {
@@ -679,8 +681,10 @@ exports.getPaymentsForAccount = function(req, res) {
 }
 
 /*
-* Get payments by accountID.
+* Get offers by accountID.
 * @param account   account ID.
+* @param count count of list to get.
+* @param cursor: page token to start to get operations.
 * @return payment list
 */
 exports.getOffersForAccount = function(req, res) {
@@ -688,7 +692,7 @@ exports.getOffersForAccount = function(req, res) {
     var count = req.body.count;
     var cursor = req.body.cursor;
 
-    var url = urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
+    var url = urlAPI + "accounts/" + account + "/offers?limit=" + count + "&order=desc";
     url += cursor? "&cursor=" + cursor : "";
     console.log(url);
     request(url, function(error, response, body) {
@@ -734,8 +738,10 @@ exports.getOffersForAccount = function(req, res) {
 
 
 /*
-* Get payments by accountID.
+* Get effects by accountID.
 * @param account   account ID.
+* @param count count of list to get.
+* @param cursor: page token to start to get operations.
 * @return payment list
 */
 exports.getEffectsForAccount = function(req, res) {
@@ -743,7 +749,7 @@ exports.getEffectsForAccount = function(req, res) {
     var count = req.body.count;
     var cursor = req.body.cursor;
 
-    var url = urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
+    var url = urlAPI + "accounts/" + account + "/effects?limit=" + count + "&order=desc";
     url += cursor? "&cursor=" + cursor : "";
     console.log(url);
     request(url, function(error, response, body) {
