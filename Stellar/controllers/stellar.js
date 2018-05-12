@@ -716,14 +716,10 @@ exports.getOffersForAccount = function(req, res) {
                 for (let i = 0; i < records.length; i ++) {
                 let info = records[i];
                 operations.push({
-                    asset_type: info.asset_type,
-                    asset_code: info.asset_code,
-                    asset_issuer: info.asset_issuer,
-                    from: info.from,
-                    to: info.to,
+                    sell: info.selling,
+                    buy: info.buying,
                     amount: info.amount,
-                    transaction: info.transaction_hash,
-                    timestamp: info.created_at
+                    price: info.price,
                 })
             }
             res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
@@ -770,18 +766,15 @@ exports.getEffectsForAccount = function(req, res) {
             var records = body._embedded.records;
 
             var operations = [];
-                for (let i = 0; i < records.length; i ++) {
+            for (let i = 0; i < records.length; i ++) {
                 let info = records[i];
-                operations.push({
-                    asset_type: info.asset_type,
-                    asset_code: info.asset_code,
-                    asset_issuer: info.asset_issuer,
-                    from: info.from,
-                    to: info.to,
-                    amount: info.amount,
-                    transaction: info.transaction_hash,
-                    timestamp: info.created_at
-                })
+
+                delete info._links;
+                delete info.paging_token;
+                delete info.account;
+                delete info.id;
+
+                operations.push(info);
             }
             res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
 
