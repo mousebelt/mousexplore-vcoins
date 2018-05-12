@@ -16,4 +16,5 @@ module.exports = function (app) {
     app.post('/api/v1/account/payments', StellarController.getPaymentsForAccount);
     app.post('/api/v1/account/offers', StellarController.getOffersForAccount);
     app.post('/api/v1/account/effects', StellarController.getEffectsForAccount);
+    app.post('/api/v1/effects', StellarController.getLatestEffects);
 }

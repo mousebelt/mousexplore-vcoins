@@ -738,7 +738,7 @@ exports.getOffersForAccount = function(req, res) {
 * @param account   account ID.
 * @param count count of list to get.
 * @param cursor: page token to start to get operations.
-* @return payment list
+* @return effect list
 */
 exports.getEffectsForAccount = function(req, res) {
     var account = req.body.account;
@@ -746,6 +746,59 @@ exports.getEffectsForAccount = function(req, res) {
     var cursor = req.body.cursor;
 
     var url = urlAPI + "accounts/" + account + "/effects?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            console.log("response: ", body);
+
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
+
+            console.log("next= ", next);
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            console.log("next= ", next);
+
+            var records = body._embedded.records;
+
+            var operations = [];
+            for (let i = 0; i < records.length; i ++) {
+                let info = records[i];
+
+                delete info._links;
+                delete info.paging_token;
+                delete info.account;
+                delete info.id;
+
+                operations.push(info);
+            }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
+
+        }
+        else {
+            console.log("getLatestLedgers error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
+}
+
+
+
+/*
+* Get effects.
+* @param count count of list to get.
+* @param cursor: page token to start to get operations.
+* @return effect list
+*/
+exports.getLatestEffects = function(req, res) {
+    var count = req.body.count;
+    var cursor = req.body.cursor;
+
+    var url = urlAPI + "/effects?limit=" + count + "&order=desc";
     url += cursor? "&cursor=" + cursor : "";
     console.log(url);
     request(url, function(error, response, body) {

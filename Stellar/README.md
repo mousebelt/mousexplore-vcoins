@@ -782,3 +782,53 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
   "error": ""   //error message
 }
 ```
+
+
+
+## Get Latest effects
+
+/api/v1/effects
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+account | String | YES | account ID
+count | Number | YES | count of transactions
+cursor | String | YES | 0 for first page, and next or prev value of response of this api
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"next": "23442324233",
+"next": "23442324128",
+"data": [
+        {   
+        	"hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		   	"account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		   	"asset_type": 'credit_alphanum12',
+	       	"asset_code": 'nCntGameCoin',
+	       	"asset_issuer": 'GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB',
+	       	"from": 'GAK3NSB43EVCZKDH4PYGJPCVPOYZ7X7KIR3ZTWSYRKRMJWGG5TABM6TH',
+	       	"to": 'GCHKKQ5VWJBRQZHNMODO5BWYZKPNM2HDSJ26T4O644CNEQBYK7IXATKM',
+	       	"amount": '2.0000000'
+		   	"timeStamp": "2015-09-24T10:07:09Z"
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
