@@ -677,3 +677,112 @@ exports.getPaymentsForAccount = function(req, res) {
     })
     */
 }
+
+/*
+* Get payments by accountID.
+* @param account   account ID.
+* @return payment list
+*/
+exports.getOffersForAccount = function(req, res) {
+    var account = req.body.account;
+    var count = req.body.count;
+    var cursor = req.body.cursor;
+
+    var url = urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            console.log("response: ", body);
+
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
+
+            console.log("next= ", next);
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            console.log("next= ", next);
+
+            var records = body._embedded.records;
+
+            var operations = [];
+                for (let i = 0; i < records.length; i ++) {
+                let info = records[i];
+                operations.push({
+                    asset_type: info.asset_type,
+                    asset_code: info.asset_code,
+                    asset_issuer: info.asset_issuer,
+                    from: info.from,
+                    to: info.to,
+                    amount: info.amount,
+                    transaction: info.transaction_hash,
+                    timestamp: info.created_at
+                })
+            }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
+
+        }
+        else {
+            console.log("getLatestLedgers error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
+}
+
+
+/*
+* Get payments by accountID.
+* @param account   account ID.
+* @return payment list
+*/
+exports.getEffectsForAccount = function(req, res) {
+    var account = req.body.account;
+    var count = req.body.count;
+    var cursor = req.body.cursor;
+
+    var url = urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            console.log("response: ", body);
+
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
+
+            console.log("next= ", next);
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            console.log("next= ", next);
+
+            var records = body._embedded.records;
+
+            var operations = [];
+                for (let i = 0; i < records.length; i ++) {
+                let info = records[i];
+                operations.push({
+                    asset_type: info.asset_type,
+                    asset_code: info.asset_code,
+                    asset_issuer: info.asset_issuer,
+                    from: info.from,
+                    to: info.to,
+                    amount: info.amount,
+                    transaction: info.transaction_hash,
+                    timestamp: info.created_at
+                })
+            }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
+
+        }
+        else {
+            console.log("getLatestLedgers error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
+}
