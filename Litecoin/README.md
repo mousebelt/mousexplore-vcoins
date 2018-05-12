@@ -12,7 +12,7 @@ rpcport=28332
 ```
 
 ## test
->curl --user rpcuser --data-binary '{"jsonrpc": "1.0", "id":"curltest", "method": "getblock", "params": [] }' -H 'content-type: text/plain;' http://127.0.0.1:19332/
+>litecoin-cli getnetworkinfo
 
 # TypeScript Express Server (TES)
 
