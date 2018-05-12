@@ -800,7 +800,7 @@ exports.getLatestEffects = function(req, res) {
     var url = urlAPI + "/effects?limit=" + count + "&order=desc";
     url += cursor? "&cursor=" + cursor : "";
     console.log(url);
-    request(url, function(error, response, body) {
+    request(url, async function(error, response, body) {
         if (!error) {
             body = JSON.parse(body);
             // console.log("response: ", body);
@@ -827,10 +827,12 @@ exports.getLatestEffects = function(req, res) {
                 var timestamp = 0;
                 var transaction_hash = "";
                 try {
-                    var body = await request(opUrl);
-                    body = JSON.parse(body);
-                    timestamp = body.created_at;
-                    transaction_hash = body.transaction_hash;
+                    var operationDetail = await request(opUrl);
+                    operationDetail = JSON.parse(operationDetail);
+
+                    console.log("--------operation", operationDetail);
+                    timestamp = operationDetail.created_at;
+                    transaction_hash = operationDetail.transaction_hash;
                 }
                 catch(e) {
                     console.log("reqeust error: ", e);
