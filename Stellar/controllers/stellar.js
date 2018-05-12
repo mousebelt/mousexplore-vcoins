@@ -824,6 +824,8 @@ exports.getLatestEffects = function(req, res) {
                 console.log(info);
                 opUrl = info._links.operation.href;
 
+                console.log("operation URL: ", opUrl);
+
                 var timestamp = 0;
                 var transaction_hash = "";
                 try {
