@@ -433,7 +433,7 @@ exports.getOperationsForTransaction = function(req, res) {
       for (let i = 0; i < records.length; i ++) {
         let info = records[i];
         operations.push({
-            account: info.account,
+            account: info.source_account,
             type: info.type,
             asset_type: info.asset_type,
             asset_code: info.asset_code,
@@ -533,7 +533,6 @@ exports.getOperationsForAccount = function(req, res) {
       for (let i = 0; i < records.length; i ++) {
         let info = records[i];
         operations.push({
-            account: info.account,
             type: info.type,
             asset_type: info.asset_type,
             asset_code: info.asset_code,
@@ -588,4 +587,201 @@ exports.getTransactionsForAccount = function(req, res) {
       console.log(err);
       res.status(400).json({error: err});
     })
+}
+
+
+/*
+* Get payments by accountID.
+* @param account   account ID.
+* @param count count of list to get.
+* @param cursor: page token to start to get operations.
+* @return payment list
+*/
+exports.getPaymentsForAccount = function(req, res) {
+    var account = req.body.account;
+    var count = req.body.count;
+    var cursor = req.body.cursor;
+
+    var url = urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            console.log("response: ", body);
+
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
+
+            console.log("next= ", next);
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            console.log("next= ", next);
+
+            var records = body._embedded.records;
+
+            var operations = [];
+                for (let i = 0; i < records.length; i ++) {
+                let info = records[i];
+                operations.push({
+                    asset_type: info.asset_type,
+                    asset_code: info.asset_code,
+                    asset_issuer: info.asset_issuer,
+                    from: info.from,
+                    to: info.to,
+                    amount: info.amount,
+                    transaction: info.transaction_hash,
+                    timestamp: info.created_at
+                })
+            }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
+
+        }
+        else {
+            console.log("getLatestLedgers error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
+/*
+    //This is using stellar sdk
+    var account = req.body.account;
+
+    server.payments()
+    .forAccount(account)
+    .call()
+    .then(function(paymentsResult) {
+      console.log(paymentsResult);
+
+      var records = paymentsResult.records;
+
+      var operations = [];
+      for (let i = 0; i < records.length; i ++) {
+        let info = records[i];
+        operations.push({
+            asset_type: info.asset_type,
+            asset_code: info.asset_code,
+            asset_issuer: info.asset_issuer,
+            from: info.from,
+            to: info.to,
+            amount: info.amount,
+            transaction: info.transaction_hash,
+            timestamp: info.created_at
+        })
+      }
+
+      res.status(200).json({msg: "success", data: operations});
+    })
+    .catch(function(err) {
+      console.log(err)
+      res.status(400).json({error: err});
+    })
+    */
+}
+
+/*
+* Get offers by accountID.
+* @param account   account ID.
+* @param count count of list to get.
+* @param cursor: page token to start to get operations.
+* @return payment list
+*/
+exports.getOffersForAccount = function(req, res) {
+    var account = req.body.account;
+    var count = req.body.count;
+    var cursor = req.body.cursor;
+
+    var url = urlAPI + "accounts/" + account + "/offers?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            console.log("response: ", body);
+
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
+
+            console.log("next= ", next);
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            console.log("next= ", next);
+
+            var records = body._embedded.records;
+
+            var operations = [];
+                for (let i = 0; i < records.length; i ++) {
+                let info = records[i];
+                operations.push({
+                    sell: info.selling,
+                    buy: info.buying,
+                    amount: info.amount,
+                    price: info.price,
+                })
+            }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
+
+        }
+        else {
+            console.log("getLatestLedgers error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
+}
+
+
+/*
+* Get effects by accountID.
+* @param account   account ID.
+* @param count count of list to get.
+* @param cursor: page token to start to get operations.
+* @return payment list
+*/
+exports.getEffectsForAccount = function(req, res) {
+    var account = req.body.account;
+    var count = req.body.count;
+    var cursor = req.body.cursor;
+
+    var url = urlAPI + "accounts/" + account + "/effects?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            console.log("response: ", body);
+
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
+
+            console.log("next= ", next);
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            console.log("next= ", next);
+
+            var records = body._embedded.records;
+
+            var operations = [];
+            for (let i = 0; i < records.length; i ++) {
+                let info = records[i];
+
+                delete info._links;
+                delete info.paging_token;
+                delete info.account;
+                delete info.id;
+
+                operations.push(info);
+            }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
+
+        }
+        else {
+            console.log("getLatestLedgers error: ", err);
+            res.status(400).json({error: err});
+        }
+    });
 }
