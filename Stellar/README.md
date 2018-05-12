@@ -793,7 +793,6 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-account | String | YES | account ID
 count | Number | YES | count of transactions
 cursor | String | YES | 0 for first page, and next or prev value of response of this api
 
@@ -810,14 +809,15 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 "data": [
         {   
         	"hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		   	"account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		   	"asset_type": 'credit_alphanum12',
-	       	"asset_code": 'nCntGameCoin',
-	       	"asset_issuer": 'GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB',
-	       	"from": 'GAK3NSB43EVCZKDH4PYGJPCVPOYZ7X7KIR3ZTWSYRKRMJWGG5TABM6TH',
-	       	"to": 'GCHKKQ5VWJBRQZHNMODO5BWYZKPNM2HDSJ26T4O644CNEQBYK7IXATKM',
-	       	"amount": '2.0000000'
-		   	"timeStamp": "2015-09-24T10:07:09Z"
+            "account": "GD5WH732DRJWCTMQLNC57UECV44WORONOZ7L3TALNRV3TGFSGIXSNKCB",
+            "type": "account_debited",
+            "type_i": 3,
+            "asset_type": "credit_alphanum4",
+            "asset_code": "ATN",
+            "asset_issuer": "GCAUZH5OGE4HU4NZPBXX67A66D6DVR2IIZMT2BU635UN5PJXWUPUO3A7",
+            "amount": "1.0000000",
+            "timestamp": "2018-05-12T14:05:15Z",
+            "transaction_hash": "e67f79d3eae73a661f21cccdf719b05deec49419e47eb9e5431a3f048c2fa5ac"
         },
         ...
     ]

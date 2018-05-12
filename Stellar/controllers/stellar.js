@@ -809,12 +809,8 @@ exports.getLatestEffects = function(req, res) {
             var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
             var prev =  body._links.prev.href;
 
-            console.log("next= ", next);
-
             next = getCursor(next);
             prev = getCursor(prev);
-
-            console.log("next= ", next);
 
             var records = body._embedded.records;
 
@@ -822,10 +818,7 @@ exports.getLatestEffects = function(req, res) {
             for (let i = 0; i < records.length; i ++) {
                 let info = records[i];
 
-                console.log(info);
                 opUrl = info._links.operation.href;
-
-                console.log("operation URL: ", opUrl);
 
                 var timestamp = 0;
                 var transaction_hash = "";
@@ -836,9 +829,6 @@ exports.getLatestEffects = function(req, res) {
                         json: true
                     }
                     var operationDetail = await requestpromise(option);
-                    console.log("--------operation", operationDetail);
-
-                    // operationDetail = JSON.parse(operationDetail);
 
                     timestamp = operationDetail.created_at;
                     transaction_hash = operationDetail.transaction_hash;
