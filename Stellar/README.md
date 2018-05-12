@@ -782,3 +782,53 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
   "error": ""   //error message
 }
 ```
+
+
+
+## Get Latest effects
+
+/api/v1/effects
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+count | Number | YES | count of transactions
+cursor | String | YES | 0 for first page, and next or prev value of response of this api
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"next": "23442324233",
+"next": "23442324128",
+"data": [
+        {   
+        	"hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+            "account": "GD5WH732DRJWCTMQLNC57UECV44WORONOZ7L3TALNRV3TGFSGIXSNKCB",
+            "type": "account_debited",
+            "type_i": 3,
+            "asset_type": "credit_alphanum4",
+            "asset_code": "ATN",
+            "asset_issuer": "GCAUZH5OGE4HU4NZPBXX67A66D6DVR2IIZMT2BU635UN5PJXWUPUO3A7",
+            "amount": "1.0000000",
+            "timestamp": "2018-05-12T14:05:15Z",
+            "transaction_hash": "e67f79d3eae73a661f21cccdf719b05deec49419e47eb9e5431a3f048c2fa5ac"
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```

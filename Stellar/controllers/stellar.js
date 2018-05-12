@@ -1,5 +1,6 @@
 var StellarSdk = require('stellar-sdk');
 var request = require('request');
+var requestpromise = require('request-promise');
 
 var config = require('../config/common.js').config;
 var port = process.env.PORT || 2000;
@@ -122,8 +123,8 @@ exports.getLatestLedgers = function(req, res) {
 
         }
         else {
-            console.log("getLatestLedgers error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
         }
     });
 
@@ -251,8 +252,8 @@ exports.getLatestTransactions = function(req, res) {
 
         }
         else {
-            console.log("getLatestTransactions error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestTransactions error: ", error);
+            res.status(400).json({error: error});
         }
     });
 
@@ -376,8 +377,8 @@ exports.getOperations = function(req, res) {
 
         }
         else {
-            console.log("getLatestTransactions error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestTransactions error: ", error);
+            res.status(400).json({error: error});
         }
     });
 
@@ -640,8 +641,8 @@ exports.getPaymentsForAccount = function(req, res) {
 
         }
         else {
-            console.log("getLatestLedgers error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
         }
     });
 /*
@@ -726,8 +727,8 @@ exports.getOffersForAccount = function(req, res) {
 
         }
         else {
-            console.log("getLatestLedgers error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
         }
     });
 }
@@ -738,7 +739,7 @@ exports.getOffersForAccount = function(req, res) {
 * @param account   account ID.
 * @param count count of list to get.
 * @param cursor: page token to start to get operations.
-* @return payment list
+* @return effect list
 */
 exports.getEffectsForAccount = function(req, res) {
     var account = req.body.account;
@@ -780,8 +781,77 @@ exports.getEffectsForAccount = function(req, res) {
 
         }
         else {
-            console.log("getLatestLedgers error: ", err);
-            res.status(400).json({error: err});
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
+        }
+    });
+}
+
+
+/*
+* Get effects.
+* @param count count of list to get.
+* @param cursor: page token to start to get operations.
+* @return effect list
+*/
+exports.getLatestEffects = function(req, res) {
+    var count = req.body.count;
+    var cursor = req.body.cursor;
+
+    var url = urlAPI + "/effects?limit=" + count + "&order=desc";
+    url += cursor? "&cursor=" + cursor : "";
+    console.log(url);
+    request(url, async function(error, response, body) {
+        if (!error) {
+            body = JSON.parse(body);
+            // console.log("response: ", body);
+
+            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
+            var prev =  body._links.prev.href;
+
+            next = getCursor(next);
+            prev = getCursor(prev);
+
+            var records = body._embedded.records;
+
+            var operations = [];
+            for (let i = 0; i < records.length; i ++) {
+                let info = records[i];
+
+                opUrl = info._links.operation.href;
+
+                var timestamp = 0;
+                var transaction_hash = "";
+                try {
+                    var option = {
+                        method: "GET",
+                        uri: opUrl,
+                        json: true
+                    }
+                    var operationDetail = await requestpromise(option);
+
+                    timestamp = operationDetail.created_at;
+                    transaction_hash = operationDetail.transaction_hash;
+                }
+                catch(e) {
+                    console.log("reqeust error: ", e);
+                }
+
+                delete info._links;
+                delete info.paging_token;
+                delete info.id;
+
+                info.timestamp = timestamp;
+                info.transaction_hash = transaction_hash;
+
+                operations.push(info);
+            }
+            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
+
+        }
+        else {
+            console.log("getLatestLedgers error: ", error);
+            res.status(400).json({error: error});
         }
     });
 }
