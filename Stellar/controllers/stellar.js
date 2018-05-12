@@ -830,10 +830,15 @@ exports.getLatestEffects = function(req, res) {
                 var timestamp = 0;
                 var transaction_hash = "";
                 try {
-                    var operationDetail = await requestpromise(opUrl);
+                    var option = {
+                        method: "GET",
+                        uri: opUrl,
+                        json: true
+                    }
+                    var operationDetail = await requestpromise(option);
                     console.log("--------operation", operationDetail);
 
-                    operationDetail = JSON.parse(operationDetail);
+                    // operationDetail = JSON.parse(operationDetail);
 
                     timestamp = operationDetail.created_at;
                     transaction_hash = operationDetail.transaction_hash;
