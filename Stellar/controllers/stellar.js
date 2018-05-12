@@ -830,7 +830,7 @@ exports.getLatestEffects = function(req, res) {
                 var timestamp = 0;
                 var transaction_hash = "";
                 try {
-                    var operationDetail = await curlrequest(opUrl);
+                    var operationDetail = await curlrequest.request({url: opUrl});
                     console.log("--------operation", operationDetail);
 
                     operationDetail = JSON.parse(operationDetail);
