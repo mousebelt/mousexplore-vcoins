@@ -37,7 +37,13 @@ account | String | NO | account
 * for successed case
 
 ```javascript
-{ status: 200, msg: 'sccuess', data: result }
+{
+    "status": 200,
+    "msg": "sccuess",
+    "data": address
+}
+
+address: "QM9nZhu8nFZBmW6PCuetQ17U89AxoQ7tRr"
 ```
 
 * for failed case
