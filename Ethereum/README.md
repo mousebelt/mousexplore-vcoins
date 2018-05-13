@@ -571,3 +571,124 @@ txHash | String | YES | hash value
   "error": ""   //error message
 }
 ```
+
+
+
+
+# REST APIs for Token management
+
+## Endpoint security type
+* Endpoint can only be accessed from specified client for provided REST APIs.
+* Every APIs needs Authorization.
+
+## Get token list
+```
+ GET /api/v1/token/list
+```
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+          "_id": "9cd48d513a081e7832088e152e26ca46f05dc062b36d9e983a0c6049a2f56cbd",
+          "symbol": "Tronix",
+          "address": "0xf230b790E05390FC8295F4d3F60332c93BEd42e2",
+          },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+
+## Add token
+```
+ POST /api/v1/token/add
+```
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+symbol | String | YES | symbol of token
+address | String | YES | address of token
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": 
+        {   
+          "_id": "9cd48d513a081e7832088e152e26ca46f05dc062b36d9e983a0c6049a2f56cbd",
+          "symbol": "Tronix",
+          "address": "0xf230b790E05390FC8295F4d3F60332c93BEd42e2",
+          }
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+
+## Remove token
+```
+ POST /api/v1/token/remove
+```
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+symbol | String | YES | symbol of token
+address | String | YES | address of token
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
