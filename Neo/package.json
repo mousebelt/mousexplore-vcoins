@@ -9,6 +9,8 @@
   },
   "dependencies": {
     "express": "^4.16.3",
+    "log": "^1.4.0",
+    "mongoose": "^5.1.0",
     "neo-api": "^1.0.3",
     "request": "^2.85.0"
   }
