@@ -1,13 +1,15 @@
 var mongoose = require("mongoose");
 
 var transactionSchema = new mongoose.Schema({
-	blocknumber: Number,
-	hash: String,
-	from: String,
-	to: String,
-	value: Number,
-	fee: Number,
-	timestamp: Number
+	Txid: String,
+	Type: String,
+	Vin: any,
+	Vout: any,
+	Confirmations: Number,
+	Sys_fee: String,
+	Net_fee: String,
+	Nonce: Number,
+	Time: Number
 });
 
 var Transaction = mongoose.model("Transaction", transactionSchema);
