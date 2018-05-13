@@ -10,6 +10,7 @@ module.exports = function (app) {
     app.post('/api/make_transaction', EthereumController.sendTransaction);
     app.post('/api/get_updated_transaction', EthereumController.getUpdatedTransactions);
 
+    //api for block explorer
     app.post('/api/v1/blocks', EthereumController.blocklist);
     app.post('/api/v1/blocks/latest', EthereumController.latestblocks);
     app.post('/api/v1/block', EthereumController.getblockdetail);
@@ -18,4 +19,9 @@ module.exports = function (app) {
     app.post('/api/v1/account/txs', EthereumController.getTransactionsFromAccount);
     app.post('/api/v1/account/txcount', EthereumController.getTransactionCountFromAccount);
     app.post('/api/v1/tx', EthereumController.getTransactionInfo);
+
+    //api for token related
+    app.get('/api/v1/token/list', EthereumController.getTokenList);
+    app.post('/api/v1/token/add', EthereumController.addToken);
+    app.post('/api/v1/token/remove', EthereumController.removeToken);
 }

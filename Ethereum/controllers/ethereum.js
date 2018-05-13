@@ -1,6 +1,7 @@
 var config = require('../config/common').info;
 var web3 = require('../config/common').web3;
 var TransactionModel = require("../model/transactions");
+var TokenModel = require("../model/tokens");
 
 exports.getBalance = function(req, res) {
     var addr = req.params.address;
@@ -492,6 +493,66 @@ exports.getTransactionInfo =  function(req, res) {
             res.status(400).json({error: error});
         }
     });     
+}
+
+
+
+//api for token related
+exports.getTokenList = function(req, res) {
+    TokenModel.find()
+    .sort({symbol: 1})
+    .exec(function(error, tokens) {
+        if (!error) {
+            console.log(tokens);
+            res.status(200).json({msg: "success", data: tokens});
+        }
+        else {
+            console.log('getTokenList: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
+        }
+    });
+}
+
+exports.addToken = function(req, res) {
+    var symbol =  req.body.symbol;
+    var address = req.body.address;
+
+    TokenModel.find({symbol: symbol, address: address})
+    .exec(function(error, tokens) {
+        if (!error) {
+            if (tokens.length) {
+                console.log('addToken: token already exsit'); // Should dump errors here
+                res.status(400).json({error: "token already exsit"});
+                return;
+            }
+
+            var newToken = new TokenModel({symbol: symbol, address: address});
+            newToken.save(function(err, token) {
+                res.status(200).json({msg: "success", data: token});    
+            });
+        }
+        else {
+            console.log('addToken: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
+        }
+    })
+}
+
+exports.removeToken = function(req, res) {
+    var symbol =  req.body.symbol;
+    var address = req.body.address;
+
+    TokenModel.findOneAndRemove({symbol: symbol, address: address})
+    .exec(function(error, tokens) {
+        if (!error) {
+            res.status(200).json({msg: "success"});    
+        }
+        else {
+            console.log('removeToken: we have a promblem: ', error); // Should dump errors here
+            res.status(400).json({error: error});
+        }
+    })
+
 }
 
 
