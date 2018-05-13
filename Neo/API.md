@@ -1,12 +1,42 @@
-// define local node object
-var config = require('../config');
-const localNode = config.localNode;
+# Neo
+neo-vcoin apis  
+>api prefix: '/api/v1'  
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-//// RPC Call apis ////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+## Summary
+[RPC Call apis](#rpc-call-apis-1)  
+[Utility apis](#utility-apis-1)  
+### RPC Call apis
+#### Asset
+[getBalance](#getBalance)  
+#### Block
+[getLastBlockHash](#getLastBlockHash)  
+[getBlockByHeight](#getBlockByHeight)  
+[getBlockCount](#getBlockCount)  
+[getBlockHashByHeight](#getBlockHashByHeight)  
+#### Net
+[getConnectionCount](#getConnectionCount)  
+[getVersion](#getVersion) 
+#### Tx 
+[getRawMemPool](#getRawMemPool)  
+[getRawTransaction](#getRawTransaction)  
+[getTxOut](#getTxOut)  
 
-//Asset
+### Utility apis
+[postBlocksLatest](#postBlocksLatest)  
+[postBlocks](#postBlocks)  
+[postBlock](#postBlock)  
+[postBlockTxs](#postBlockTxs)  
+[postTx](#postTx)  
+
+
+***
+
+## RPC Call apis
+### Asset
+<a name="getBalance"/>
+
+- getBalance
+```
 /**
  * @description Returns the balance of the corresponding asset in the wallet, based on the specified asset number.
  * 
@@ -22,16 +52,13 @@ const localNode = config.localNode;
     "Confirmed": "1.01"
     }
  */
-exports.getBalance = function (req, res) {
-    var assetId = req.params.assetId;
-    localNode.getBalance(assetId).then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
-//Block
+### Block
+<a name="getLastBlockHash"/>
+
+- getLastBlockHash
+```
 /**
  * @description Returns the hash of the tallest block
  * 
@@ -42,14 +69,12 @@ exports.getBalance = function (req, res) {
  * 
  * hash: "773dd2dae4a9c9275290f89b56e67d7363ea4826dfd4fc13cc01cf73a44b0d0e"
  */
-exports.getLastBlockHash = function (req, res) {
-    localNode.getLastBlockHash().then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
+<a name="getBlockByHeight"/>
+
+- getBlockByHeight
+```
 /**
  * @description The corresponding block information is returned according to the specified hash or index value.
  * 
@@ -94,15 +119,12 @@ exports.getLastBlockHash = function (req, res) {
     "Nextblockhash": "0b08e2eeed05c70f27293521c47f7f60dfc29f9f299ae9909a8552a4a87db7a2"
   }
  */
-exports.getBlockByHeight = function (req, res) {
-    var height = req.params.height;
-    localNode.getBlockByHeight(height, 1).then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
+<a name="getBlockCount"/>
+
+- getBlockCount
+```
 /**
  * @description Gets the number of blocks.
  * 
@@ -113,14 +135,12 @@ exports.getBlockByHeight = function (req, res) {
  * 
  * blockcount: 991991
  */
-exports.getBlockCount = function (req, res) {
-    localNode.getBlockCount().then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
+<a name="getBlockHashByHeight"/>
+
+- getBlockHashByHeight
+```
 /**
  * @description Returns the hash value of the corresponding block, based on the specified index.
  * 
@@ -133,17 +153,13 @@ exports.getBlockCount = function (req, res) {
  * 
  * hash: "4c1e879872344349067c3b1a30781eeb4f9040d3795db7922f513f6f9660b9b2"
  */
-exports.getBlockHashByHeight = function (req, res) {
-    var height = req.params.height;
-    
-    localNode.getBlockHashByHeight(height).then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
-//Net
+### Net
+<a name="getConnectionCount"/>
+
+- getConnectionCount
+```
 /**
  * @description Gets the current number of connections for the node.
  * 
@@ -154,14 +170,12 @@ exports.getBlockHashByHeight = function (req, res) {
  * 
  * count: 10
  */
-exports.getConnectionCount = function (req, res) {
-    localNode.getConnectionCount().then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
+<a name="getVersion"/>
+
+- getVersion
+```
 /**
  * @description Returns the version information about the queried node.
  * 
@@ -176,15 +190,13 @@ exports.getConnectionCount = function (req, res) {
       "useragent": "/NEO:2.3.5/"
   }
  */
-exports.getVersion = function (req, res) {
-    localNode.getVersion().then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
-//Tx
+### Tx
+<a name="getRawMemPool"/>
+
+- getRawMemPool
+```
 /**
  * @description Obtains the list of unconfirmed transactions in memory.
  * 
@@ -195,14 +207,12 @@ exports.getVersion = function (req, res) {
  * 
  * result: "B4534f6d4c17cda008a76a1968b7fa6256cd90ca448739eae8e828698ccc44e7"
  */
-exports.getRawMemPool = function (req, res) {
-    localNode.getRawMemPool().then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
+<a name="getRawTransaction"/>
+
+- getRawTransaction
+```
 /**
  * @description Returns the corresponding transaction information, based on the specified hash value.
  * 
@@ -252,16 +262,12 @@ exports.getRawMemPool = function (req, res) {
     "Blocktime": 1496719422
   }
  */
-exports.getRawTransaction = function (req, res) {
-    var txId = req.params.txId;
-    
-    localNode.getRawTransaction(txId, 1).then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
+<a name="getTxOut"/>
+
+- getTxOut
+```
 /**
  * @description Returns the corresponding unspent transaction output information (returned change), based on the specified hash and index. 
  *              If the transaction output is already spent, the result value will be null.
@@ -281,21 +287,16 @@ exports.getRawTransaction = function (req, res) {
      "Address": "AHCNSDkh2Xs66SzmyKGdoDKY752uyeXDrt"
    }
  */
-exports.getTxOut = function (req, res) {
-    var txId = req.params.txId;
-    var index = req.params.index;
-    
-    localNode.getTxOut(txId, index).then(function (result) {
-        res.json({ status: 200, msg: 'success', data: result });
-    }).catch(function (err) {
-        res.json({ status: 400, msg: 'errors', data: err });
-    });
-}
+```
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-//// Utility apis ////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+***
+
+## Utility apis
+<a name="postBlocksLatest"/>
+
+- postBlocksLatest
+```
 /**
  * Get latest block list
  * POST /blocks/latest
@@ -338,30 +339,12 @@ exports.getTxOut = function (req, res) {
             "nextblockhash": "0x4530743a9a497b77c24249e995b832e7216e6a0283ca6a4a0b7bfb19c54c4566"
         }
  */
-exports.postBlocksLatest = async function (req, res) {
-    var { count } = req.body
+```
 
-    // validation
-    if (!count || count < 1 || count > 50) count = 20;
+<a name="postBlocks"/>
 
-    // logic
-    var blockCount = await localNode.getBlockCount();
-
-    if (!blockCount) {
-        res.json({ status: 400, msg: 'errors', data: 'Fail to get block count !' });
-    }
-
-    var blocks = [];
-    for (let i = 1; i <= count; i++) {
-        var index = blockCount - i;
-
-        var block = await localNode.getBlockByHeight(index, 1);
-        blocks.push(block);
-    }
-
-    return res.json({ status: 200, msg: 'success', data: blocks });
-}
-
+- postBlocks
+```
 /**
  * POST /blocks 
  * Get block list
@@ -405,25 +388,12 @@ exports.postBlocksLatest = async function (req, res) {
             "nextblockhash": "0x4530743a9a497b77c24249e995b832e7216e6a0283ca6a4a0b7bfb19c54c4566"
         }
  */
-exports.postBlocks = async function (req, res) {
-    var { index, count } = req.body
+```
 
-    // validation
-    if (!index || index < 0) res.json({ status: 400, msg: 'errors', data: 'invalid index !' });
-    if (!count || count < 1 || count > 50) count = 20;
+<a name="postBlock"/>
 
-    // logic
-    var blocks = [];
-    for (let i = 0; i < count; i++) {
-        var _index = index - i;
-
-        var block = await localNode.getBlockByHeight(_index, 1);
-        blocks.push(block);
-    }
-
-    return res.json({ status: 200, msg: 'success', data: blocks });
-}
-
+- postBlock
+```
 /**
  * POST /block
  * Get block info from hash or index
@@ -468,21 +438,12 @@ exports.postBlocks = async function (req, res) {
             "nextblockhash": "0x4530743a9a497b77c24249e995b832e7216e6a0283ca6a4a0b7bfb19c54c4566"
         }
  */
-exports.postBlock = async function (req, res) {
-    var { height } = req.body
+```
 
-    // validation
-    if (!height) res.json({ status: 400, msg: 'errors', data: 'empty height !' });
+<a name="postBlockTxs"/>
 
-    // logic
-    try {
-        var block = await localNode.getBlockByHeight(height, 1);
-        return res.json({ status: 200, msg: 'success', data: block });
-    } catch (error) {
-        return res.json({ status: 400, msg: 'errors', data: error });
-    }
-}
-
+- postBlockTxs
+```
 /**
  * POST /block/txs
  * Get txs from block
@@ -508,21 +469,12 @@ exports.postBlock = async function (req, res) {
         "nonce": 1213780983
     }
  */
-exports.postBlockTxs = async function (req, res) {
-    var { height } = req.body
+```
 
-    // validation
-    if (!height) res.json({ status: 400, msg: 'errors', data: 'empty height !' });
+<a name="postTx"/>
 
-    // logic
-    try {
-        var block = await localNode.getBlockByHeight(height, 1);
-        return res.json({ status: 200, msg: 'success', data: block.tx });
-    } catch (error) {
-        return res.json({ status: 400, msg: 'errors', data: error });
-    }
-}
-
+- postTx
+```
 /**
  * POST /tx
  * Get tx info from txId
@@ -573,17 +525,4 @@ exports.postBlockTxs = async function (req, res) {
     "Blocktime": 1496719422
   }
  */
-exports.postTx = async function (req, res) {
-    var { txId } = req.body
-
-    // validation
-    if (!txId) res.json({ status: 400, msg: 'errors', data: 'empty txId !' });
-
-    // logic
-    try {
-        var tx = await localNode.getRawTransaction(txId, 1);
-        return res.json({ status: 200, msg: 'success', data: tx });
-    } catch (error) {
-        return res.json({ status: 400, msg: 'errors', data: error });
-    }
-}
+```
