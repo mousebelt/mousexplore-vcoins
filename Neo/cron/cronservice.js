@@ -17,7 +17,7 @@ var Log = require('log'),
 
 function filelog(...params) { //
   log.info(...params);
-  console.log(...params);
+  // console.log(...params);
 };
 
 async function getLastCheckedBlock() {
