@@ -603,20 +603,20 @@ exports.postTx = async function (req, res) {
  * }
  * 
  * tx: {
-    "_id" : ObjectId("5afa7b5c3d9e2133887d2dbf"),
-    "txid" : "0xdecbdc420b4a1081c0e8b4cd87f09b297b8e07112b58203725973041be5c2caa",
-    "size" : 10,
-    "type" : "MinerTransaction",
-    "version" : 0,
-    "vin" : [],
-    "vout" : [],
-    "sys_fee" : "0",
-    "net_fee" : "0",
-    "nonce" : 275155326,
-    "blockIndex" : 14,
-    "blockTime" : 1476647619,
-    "__v" : 0
- }
+        "_id": "5afa852c31a9a73db264d7ff",
+        "txid": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+        "size": 107,
+        "type": "RegisterTransaction",
+        "version": 0,
+        "vin": [],
+        "vout": [],
+        "sys_fee": "0",
+        "net_fee": "0",
+        "blockIndex": 0,
+        "blockTime": 1468595301,
+        "updatedAt": "2018-05-15T06:58:52.181Z",
+        "__v": 0
+    }
  */
 exports.postTxs = async function (req, res) {
     var { offset, count, sort } = req.body
