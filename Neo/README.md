@@ -34,6 +34,7 @@ testnet config (json-rpc port: 20332)
 
 
 ## run as service
+>screen dotnet neo-cli.dll /rpc
 
 * using systemctl
 https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
