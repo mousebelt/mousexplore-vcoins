@@ -132,6 +132,6 @@ async function transactionService() {
 exports.start_cronService = async function () {
   filelog("Start neo cron service");
   await getLastCheckedBlock();
-  transactionService();
-  // setInterval(transactionService, config.CRON_TIME_INTERVAL);
+  // transactionService();
+  setInterval(transactionService, config.CRON_TIME_INTERVAL);
 }
