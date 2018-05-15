@@ -12,7 +12,13 @@ var transactionSchema = new mongoose.Schema({
 	nonce: Number,
 	
 	blockIndex: Number,
-	blockTime: Number
+	blockTime: Number,
+	updatedAt: Date
+});
+
+transactionSchema.pre('save', function(next) {
+	this.updatedAt = new Date();
+	next();
 });
 
 var Transaction = mongoose.model("Transaction", transactionSchema);

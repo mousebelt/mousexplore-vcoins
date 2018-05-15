@@ -587,3 +587,64 @@ exports.postTx = async function (req, res) {
         return res.json({ status: 400, msg: 'errors', data: error });
     }
 }
+
+/**
+ * POST /txs
+ * Get tx list from offset and count
+ * 
+ * @param {Number} offset: 0
+ * @param {Number} count: 10
+ * @param {Boolean} sort: If true, newest order. If false, oldest order.
+ * 
+ * @return
+ * { "status": "200", "msg": "success", 
+ *   "data": [txs]
+ * }
+ * 
+ * tx: {
+    "_id" : ObjectId("5afa7b5c3d9e2133887d2dbf"),
+    "txid" : "0xdecbdc420b4a1081c0e8b4cd87f09b297b8e07112b58203725973041be5c2caa",
+    "size" : 10,
+    "type" : "MinerTransaction",
+    "version" : 0,
+    "vin" : [],
+    "vout" : [],
+    "sys_fee" : "0",
+    "net_fee" : "0",
+    "nonce" : 275155326,
+    "blockIndex" : 14,
+    "blockTime" : 1476647619,
+    "__v" : 0
+ }
+ */
+exports.postTxs = async function (req, res) {
+    var { offset, count, sort } = req.body
+
+    // validation
+    if (!offset) offset = 0;
+    if (!count || count == 0) return res.json({ status: 400, msg: 'errors', data: 'invalid count !' });
+
+    // condition
+    var condition;
+    if (sort) condition =  {updatedAt: -1}; // Desc order
+    else condition  = {updatedAt: 1}; // Asc order
+
+    // logic
+    try {
+        TransactionModel.find()
+        .sort(condition)
+        .skip(offset)
+        .limit(count)
+        .exec(function(error, txs) {
+            if (!error) {
+                return res.json({status: 200, msg: "success", data: txs});
+            }
+            else {
+                console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
+                return res.json({status: 400, msg: 'errors', data: error});
+            }
+        });
+    } catch (error) {
+        return res.json({ status: 400, msg: 'errors', data: error });
+    }
+}
