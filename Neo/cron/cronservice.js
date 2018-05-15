@@ -56,39 +56,25 @@ async function saveCronServiceInfo() {
 async function CheckUpdatedTransactions() {
   try {
     var blockCount = await localNode.getBlockCount();
-    var iCount = 0;
     if (blockCount) {
       var limit = lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS;
+      var iCount = 0;
       for (let i = lastCheckedBlock; i < blockCount && i < limit; i++) {
         try {
           var blockdata = await localNode.getBlockByHeight(i, 1)
-          var txnCount = blockdata['Tx'].length;
+          var txs = blockdata.tx;
 
-          for (let j = lastCheckedIndex; j < txnCount; j++) {
-            let transaction = blockdata['Tx'][j];
-            let Txid = transaction.Txid;
-            let Type = transaction.Type;
-            let Vin = transaction.Vin;
-            let Vout = transaction.Vout;
-            var Confirmations = blockdata.Confirmations;
-            var Sys_fee = blockdata.Sys_fee;
-            var Net_fee = blockdata.Net_fee;
-            var Nonce = blockdata.Nonce;
-            var Time = blockdata.Time;
+          for (let j = lastCheckedIndex; j < txs.length; j++) {
+            let tx = txs[j]
+            let { txid, size, type, version, vin, vout, sys_fee, net_fee, nonce } = tx;
 
-            var txModel = await TransactionModel.findOne({Txid});
+            var txModel = await TransactionModel.findOne({ txid });
             if (txModel) continue;
 
             txModel = new TransactionModel({
-              Txid,
-              Type,
-              Vin,
-              Vout,
-              Confirmations,
-              Sys_fee,
-              Net_fee,
-              Nonce,
-              Time
+              txid, size, type, version, vin, vout, sys_fee, net_fee, nonce,
+              blockIndex: blockdata.index,
+              blockTime: blockdata.time
             });
 
             try {
@@ -119,7 +105,7 @@ async function CheckUpdatedTransactions() {
         }
         catch (e) {
           filelog("iCount --------------" + iCount++);
-          filelog('getBlock: error: ', e); // Should dump errors here
+          filelog('getBlock, error: ', e); // Should dump errors here
           return;
         }
       }
