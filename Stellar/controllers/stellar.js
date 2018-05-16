@@ -78,7 +78,6 @@ exports.createAccount = function(req, res) {
 function getCursor(url) {
   var url_parts = URL.parse(url, true);
   var query = url_parts.query;
-  var url = new URL(url);
   var c = query.cursor;
 
   return c;
