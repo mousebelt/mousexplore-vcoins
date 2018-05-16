@@ -69,21 +69,22 @@ async function CheckUpdatedTransactions() {
             let { txid, size, type, version, vin, vout, sys_fee, net_fee, nonce } = tx;
 
             var txModel = await TransactionModel.findOne({ txid });
-            if (txModel) continue;
+            if (!txModel) {
 
-            txModel = new TransactionModel({
-              txid, size, type, version, vin, vout, sys_fee, net_fee, nonce,
-              blockIndex: blockdata.index,
-              blockTime: blockdata.time
-            });
+              txModel = new TransactionModel({
+                txid, size, type, version, vin, vout, sys_fee, net_fee, nonce,
+                blockIndex: blockdata.index,
+                blockTime: blockdata.time
+              });
 
-            try {
-              await txModel.save();
-            }
-            catch (e) {
-              filelog("iCount --------------" + iCount++);
-              filelog('newTxn.save: error: ', e); // Should dump errors here
-              return;
+              try {
+                await txModel.save();
+              }
+              catch (e) {
+                filelog("iCount --------------" + iCount++);
+                filelog('newTxn.save: error: ', e); // Should dump errors here
+                return;
+              }
             }
 
             if (lastCheckedBlock != i || lastCheckedIndex != j) {
@@ -118,20 +119,20 @@ async function CheckUpdatedTransactions() {
 }
 
 
-// async function transactionService() {
-// 	filelog("lastCheckedBlock = " + lastCheckedBlock);
-// 	await CheckUpdatedTransactions();
-// 	setTimeout(transactionService, config.CRON_TIME_INTERVAL);
-// }
-
 async function transactionService() {
-  filelog("lastCheckedBlock = " + lastCheckedBlock);
-  CheckUpdatedTransactions();
+	filelog("lastCheckedBlock = " + lastCheckedBlock);
+	await CheckUpdatedTransactions();
+	setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
+
+// async function transactionService() {
+//   filelog("lastCheckedBlock = " + lastCheckedBlock);
+//   CheckUpdatedTransactions();
+// }
 
 exports.start_cronService = async function () {
   filelog("Start neo cron service");
   await getLastCheckedBlock();
-  // transactionService();
-  setInterval(transactionService, config.CRON_TIME_INTERVAL);
+  transactionService();
+  // setInterval(transactionService, config.CRON_TIME_INTERVAL);
 }
