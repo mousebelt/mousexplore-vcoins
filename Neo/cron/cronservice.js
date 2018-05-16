@@ -121,7 +121,7 @@ async function CheckUpdatedTransactions() {
 
 async function transactionService() {
 	filelog("lastCheckedBlock = " + lastCheckedBlock);
-	await CheckUpdatedTransactions();
+  await CheckUpdatedTransactions();
 	setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
 
