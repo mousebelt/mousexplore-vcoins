@@ -6,6 +6,6 @@ module.exports = {
 
     db: "mongodb://localhost:27017/neodb",
 
-    CRON_TIME_INTERVAL: 5000,	//if we decrease this to 100ms, cronservice has trouble after some time.
-    CRON_TREAT_MAX_BLOCKS: 100
+    CRON_TIME_INTERVAL: 3000,	//if we decrease this to 100ms, cronservice has trouble after some time.
+    CRON_TREAT_MAX_BLOCKS: 50
 }
