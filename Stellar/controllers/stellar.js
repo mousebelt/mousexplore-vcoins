@@ -1,32 +1,35 @@
-var StellarSdk = require('stellar-sdk');
-var request = require('request');
-var requestpromise = require('request-promise');
+var StellarSdk = require("stellar-sdk");
+var request = require("request");
+var requestpromise = require("request-promise");
+var URL = require("url");
 
-var config = require('../config/common.js').config;
+var config = require("../config/common.js").config;
 var port = process.env.PORT || 2000;
 var urlAPI = config.url;
 
 var runtype = process.env.RUN_TYPE;
 
 if (runtype == "test") {
-    StellarSdk.Network.useTestNetwork();
+  StellarSdk.Network.useTestNetwork();
 }
 
 // var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
-var server = new StellarSdk.Server('http://127.0.0.1:8000', {allowHttp: true});
+var server = new StellarSdk.Server("http://127.0.0.1:8000", {
+  allowHttp: true
+});
 // var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
 exports.getBalance = function(req, res) {
-    var addr = req.params.address;
+  var addr = req.params.address;
 
-    // the JS SDK uses promises for most actions, such as retrieving an account
-    server.loadAccount(addr).then(function(account) {
-      console.log('Balances for account: ' + addr);
-      account.balances.forEach(function(balance) {
-        console.log('Type:', balance.asset_type, ', Balance:', balance.balance);
-      });
+  // the JS SDK uses promises for most actions, such as retrieving an account
+  server.loadAccount(addr).then(function(account) {
+    console.log("Balances for account: " + addr);
+    account.balances.forEach(function(balance) {
+      console.log("Type:", balance.asset_type, ", Balance:", balance.balance);
     });
-}
+  });
+};
 
 /*
 * create account.
@@ -43,40 +46,42 @@ exports.getBalance = function(req, res) {
 * Keypair.fromRawEd25519Seed
 */
 exports.createAccount = function(req, res) {
-    console.log("createAccount");
+  console.log("createAccount");
 
-    var pair = StellarSdk.Keypair.random();
+  var pair = StellarSdk.Keypair.random();
 
-    console.log("Secret is ", pair.secret());
-    console.log("PublicKey is ", pair.publicKey());
+  console.log("Secret is ", pair.secret());
+  console.log("PublicKey is ", pair.publicKey());
 
-    if (runtype == "test") {
-        var request = require('request');
-        request.get({
-            url: 'https://friendbot.stellar.org',
-            qs: { addr: pair.publicKey() },
-            json: true
-        }, function(error, response, body) {
-            if (error || response.statusCode !== 200) {
-                console.error('ERROR!', error || body);
-            }
-            else {
-                console.log('SUCCESS! You have a new account :)\n', body);
-            }
-        });
-    }
-}
-
+  if (runtype == "test") {
+    var request = require("request");
+    request.get(
+      {
+        url: "https://friendbot.stellar.org",
+        qs: { addr: pair.publicKey() },
+        json: true
+      },
+      function(error, response, body) {
+        if (error || response.statusCode !== 200) {
+          console.error("ERROR!", error || body);
+        } else {
+          console.log("SUCCESS! You have a new account :)\n", body);
+        }
+      }
+    );
+  }
+};
 
 /*
 *   get cursor value from string liken ledgers?order=asc&limit=2&cursor=8589934592
 */
 function getCursor(url) {
-    var url = new URL(url);
-    var c = url.searchParams.get("cursor");
-    console.log(c);
+  var url_parts = URL.parse(url, true);
+  var query = url_parts.query;
+  var url = new URL(url);
+  var c = query.cursor;
 
-    return c;
+  return c;
 }
 
 /*
@@ -86,49 +91,49 @@ function getCursor(url) {
 * @return list of ledger information same as the https://steexp.com/ledgers
 */
 exports.getLatestLedgers = function(req, res) {
-    var count = req.body.count;
-    var cursor = req.body.cursor;
+  var count = req.body.count;
+  var cursor = req.body.cursor;
 
-    var url = urlAPI + "ledgers?limit=" + count + "&order=desc";
-    url += cursor? "&cursor=" + cursor : "";
-    console.log(url);
-    request(url, function(error, response, body) {
-        if (!error) {
-            body = JSON.parse(body);
-            console.log("response: ", body);
+  var url = urlAPI + "ledgers?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
+  console.log(url);
+  request(url, function(error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+      console.log("response: ", body);
 
-            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
-            var prev =  body._links.prev.href;
+      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+      var prev = body._links.prev.href;
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            next = getCursor(next);
-            prev = getCursor(prev);
+      next = getCursor(next);
+      prev = getCursor(prev);
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            var records = body._embedded.records;
+      var records = body._embedded.records;
 
-            var ledgers = [];
-            for (let i = 0; i < records.length; i ++) {
-                let ledgerinfo = records[i];
-                ledgers.push({
-                    sequence: ledgerinfo.sequence,
-                    timeStamp: ledgerinfo.closed_at,
-                    transactions: ledgerinfo.transaction_count,
-                    operations: ledgerinfo.operation_count
-                })
-            }
-            res.status(200).json({msg: "success", next: next, prev: prev, data: ledgers});
+      var ledgers = [];
+      for (let i = 0; i < records.length; i++) {
+        let ledgerinfo = records[i];
+        ledgers.push({
+          sequence: ledgerinfo.sequence,
+          timeStamp: ledgerinfo.closed_at,
+          transactions: ledgerinfo.transaction_count,
+          operations: ledgerinfo.operation_count
+        });
+      }
+      res
+        .status(200)
+        .json({ msg: "success", next: next, prev: prev, data: ledgers });
+    } else {
+      console.log("getLatestLedgers error: ", error);
+      res.status(400).json({ error: error });
+    }
+  });
 
-        }
-        else {
-            console.log("getLatestLedgers error: ", error);
-            res.status(400).json({error: error});
-        }
-    });
-
-/*
+  /*
     //This is using stellar sdk
     
     // server.ledgers()
@@ -170,7 +175,7 @@ exports.getLatestLedgers = function(req, res) {
     //     res.status(400).json({error: err});
     // })
 */
-}
+};
 
 /*
 * Get ledger info.
@@ -178,16 +183,17 @@ exports.getLatestLedgers = function(req, res) {
 * @return ledger information 
 */
 exports.getLedgerDetail = function(req, res) {
-    var ledger = req.body.ledger;
+  var ledger = req.body.ledger;
 
-    server.ledgers()
+  server
+    .ledgers()
     .ledger(ledger)
     .call()
     .then(function(ledgerResult) {
-      console.log(ledgerResult)
+      console.log(ledgerResult);
       var info = {
-        sequence: ledgerResult.sequence, 
-        timeStamp: ledgerResult.closed_at, 
+        sequence: ledgerResult.sequence,
+        timeStamp: ledgerResult.closed_at,
         hash: ledgerResult.hash,
         prevHash: ledgerResult.prev_hash,
         feePool: ledgerResult.fee_pool,
@@ -195,17 +201,17 @@ exports.getLedgerDetail = function(req, res) {
         baseReserve: ledgerResult.base_reserve_in_stroops,
         maxTransactions: ledgerResult.max_tx_set_size,
         totalCoins: ledgerResult.total_coins,
-        transactions: ledgerResult.transaction_count, 
+        transactions: ledgerResult.transaction_count,
         operations: ledgerResult.operation_count
       };
 
-      res.status(200).json({msg: "success", data: info});
+      res.status(200).json({ msg: "success", data: info });
     })
     .catch(function(err) {
-      console.log(err)
-      res.status(400).json({error: err});
-    })
-}
+      console.log(err);
+      res.status(400).json({ error: err });
+    });
+};
 
 /*
 * Get all latest transactions.
@@ -214,50 +220,50 @@ exports.getLedgerDetail = function(req, res) {
 * @return transactions 
 */
 exports.getLatestTransactions = function(req, res) {
-    var count = req.body.count;
-    var cursor = req.body.cursor;
+  var count = req.body.count;
+  var cursor = req.body.cursor;
 
-    var url = urlAPI + "transactions?limit=" + count + "&order=desc";
-    url += cursor? "&cursor=" + cursor : "";
-    console.log(url);
-    request(url, function(error, response, body) {
-        if (!error) {
-            body = JSON.parse(body);
-            console.log("response: ", body);
+  var url = urlAPI + "transactions?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
+  console.log(url);
+  request(url, function(error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+      console.log("response: ", body);
 
-            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
-            var prev =  body._links.prev.href;
+      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+      var prev = body._links.prev.href;
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            next = getCursor(next);
-            prev = getCursor(prev);
+      next = getCursor(next);
+      prev = getCursor(prev);
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            var records = body._embedded.records;
+      var records = body._embedded.records;
 
-            var transactions = [];
-            for (let i = 0; i < records.length; i ++) {
-                let info = records[i];
-                transactions.push({
-                    hash: info.hash,
-                    account: info.source_account,
-                    ledger: info.ledger,
-                    operations: info.operation_count,
-                    timestamp: info.created_at
-                })
-            }
-            res.status(200).json({msg: "success", next: next, prev: prev, data: transactions});
+      var transactions = [];
+      for (let i = 0; i < records.length; i++) {
+        let info = records[i];
+        transactions.push({
+          hash: info.hash,
+          account: info.source_account,
+          ledger: info.ledger,
+          operations: info.operation_count,
+          timestamp: info.created_at
+        });
+      }
+      res
+        .status(200)
+        .json({ msg: "success", next: next, prev: prev, data: transactions });
+    } else {
+      console.log("getLatestTransactions error: ", error);
+      res.status(400).json({ error: error });
+    }
+  });
 
-        }
-        else {
-            console.log("getLatestTransactions error: ", error);
-            res.status(400).json({error: error});
-        }
-    });
-
-/*
+  /*
     //This is using stellar sdk
 
     var count = req.body.count;
@@ -290,7 +296,7 @@ exports.getLatestTransactions = function(req, res) {
       res.status(400).json({error: err});
     })
 */
-}
+};
 
 /*
 * Get transactions by ledger.
@@ -298,34 +304,35 @@ exports.getLatestTransactions = function(req, res) {
 * @return transactions of ledger 
 */
 exports.getTransactionsForLedger = function(req, res) {
-    var ledger = req.body.ledger;
+  var ledger = req.body.ledger;
 
-    server.transactions()
+  server
+    .transactions()
     .forLedger(ledger)
     .call()
     .then(function(txResult) {
-        console.log(txResult)
-        console.log(txResult.records)
+      console.log(txResult);
+      console.log(txResult.records);
 
-        var records = txResult.records;
+      var records = txResult.records;
 
-        var transactions = [];
-        for (let i = 0; i < records.length; i ++) {
-            let info = records[i];
-            transactions.push({
-                hash: info.hash,
-                account: info.source_account,
-                operations: info.operation_count,
-                timestamp: info.created_at
-            })
-        }
-        res.status(200).json({msg: "success", data: transactions});
+      var transactions = [];
+      for (let i = 0; i < records.length; i++) {
+        let info = records[i];
+        transactions.push({
+          hash: info.hash,
+          account: info.source_account,
+          operations: info.operation_count,
+          timestamp: info.created_at
+        });
+      }
+      res.status(200).json({ msg: "success", data: transactions });
     })
     .catch(function(err) {
       console.log(err);
-      res.status(400).json({error: err});
-    })
-}
+      res.status(400).json({ error: err });
+    });
+};
 
 /*
 * Get latest operations.
@@ -334,55 +341,55 @@ exports.getTransactionsForLedger = function(req, res) {
 * @return operations of ledger 
 */
 exports.getOperations = function(req, res) {
-    var count = req.body.count;
-    var cursor = req.body.cursor;
+  var count = req.body.count;
+  var cursor = req.body.cursor;
 
-    var url = urlAPI + "operations?limit=" + count + "&order=desc";
-    url += cursor? "&cursor=" + cursor : "";
-    console.log(url);
-    request(url, function(error, response, body) {
-        if (!error) {
-            body = JSON.parse(body);
-            console.log("response: ", body);
+  var url = urlAPI + "operations?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
+  console.log(url);
+  request(url, function(error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+      console.log("response: ", body);
 
-            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
-            var prev =  body._links.prev.href;
+      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+      var prev = body._links.prev.href;
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            next = getCursor(next);
-            prev = getCursor(prev);
+      next = getCursor(next);
+      prev = getCursor(prev);
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            var records = body._embedded.records;
+      var records = body._embedded.records;
 
-            var operations = [];
-            for (let i = 0; i < records.length; i ++) {
-                let info = records[i];
-                operations.push({
-                    transaction: info.transaction_hash,
-                    account: info.source_account,
-                    type: info.type,
-                    asset_type: info.asset_type,
-                    asset_code: info.asset_code,
-                    asset_issuer: info.asset_issuer,
-                    from: info.from,
-                    to: info.to,
-                    amount: info.amount,
-                    timestamp: info.created_at
-                })
-              }
-            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
+      var operations = [];
+      for (let i = 0; i < records.length; i++) {
+        let info = records[i];
+        operations.push({
+          transaction: info.transaction_hash,
+          account: info.source_account,
+          type: info.type,
+          asset_type: info.asset_type,
+          asset_code: info.asset_code,
+          asset_issuer: info.asset_issuer,
+          from: info.from,
+          to: info.to,
+          amount: info.amount,
+          timestamp: info.created_at
+        });
+      }
+      res
+        .status(200)
+        .json({ msg: "success", next: next, prev: prev, data: operations });
+    } else {
+      console.log("getLatestTransactions error: ", error);
+      res.status(400).json({ error: error });
+    }
+  });
 
-        }
-        else {
-            console.log("getLatestTransactions error: ", error);
-            res.status(400).json({error: error});
-        }
-    });
-
-/*    
+  /*    
     var count = req.body.count;
 
     server.operations()
@@ -411,8 +418,8 @@ exports.getOperations = function(req, res) {
       console.log(err);
       res.status(400).json({error: err});
     })
-*/    
-}
+*/
+};
 
 /*
 * Get operations by transaction.
@@ -420,9 +427,10 @@ exports.getOperations = function(req, res) {
 * @return operations of transaction
 */
 exports.getOperationsForTransaction = function(req, res) {
-    var txHash = req.body.txHash;
+  var txHash = req.body.txHash;
 
-    server.operations()
+  server
+    .operations()
     .forTransaction(txHash)
     .call()
     .then(function(operationResult) {
@@ -431,29 +439,28 @@ exports.getOperationsForTransaction = function(req, res) {
       var records = operationResult.records;
 
       var operations = [];
-      for (let i = 0; i < records.length; i ++) {
+      for (let i = 0; i < records.length; i++) {
         let info = records[i];
         operations.push({
-            account: info.source_account,
-            type: info.type,
-            asset_type: info.asset_type,
-            asset_code: info.asset_code,
-            asset_issuer: info.asset_issuer,
-            from: info.from,
-            to: info.to,
-            amount: info.amount,
-            timestamp: info.created_at
-        })
+          account: info.source_account,
+          type: info.type,
+          asset_type: info.asset_type,
+          asset_code: info.asset_code,
+          asset_issuer: info.asset_issuer,
+          from: info.from,
+          to: info.to,
+          amount: info.amount,
+          timestamp: info.created_at
+        });
       }
-    
-      res.status(200).json({msg: "success", data: operations});
+
+      res.status(200).json({ msg: "success", data: operations });
     })
     .catch(function(err) {
       console.log(err);
-      res.status(400).json({error: err});
-    })
-}
-
+      res.status(400).json({ error: err });
+    });
+};
 
 /*
 * Get transaction by transaction hash.
@@ -461,9 +468,10 @@ exports.getOperationsForTransaction = function(req, res) {
 * @return transaction info 
 */
 exports.getTransaction = function(req, res) {
-    var txHash = req.body.txHash;
+  var txHash = req.body.txHash;
 
-    server.transactions()
+  server
+    .transactions()
     .transaction(txHash)
     .call()
     .then(function(transactionResult) {
@@ -473,16 +481,16 @@ exports.getTransaction = function(req, res) {
         timeStamp: transactionResult.created_at,
         ledger: transactionResult.ledger_attr,
         account: transactionResult.source_account,
-        fee: transactionResult.fee_paid,
+        fee: transactionResult.fee_paid
       };
 
-      res.status(200).json({msg: "success", data: info});
+      res.status(200).json({ msg: "success", data: info });
     })
     .catch(function(err) {
       console.log(err);
-      res.status(400).json({error: err});
-    })
-}
+      res.status(400).json({ error: err });
+    });
+};
 
 /*
 * Get account information by accountID.
@@ -490,9 +498,10 @@ exports.getTransaction = function(req, res) {
 * @return account info 
 */
 exports.getAccount = function(req, res) {
-    var account = req.body.account;
+  var account = req.body.account;
 
-    server.accounts()
+  server
+    .accounts()
     .accountId(account)
     .call()
     .then(function(accountResult) {
@@ -504,15 +513,15 @@ exports.getAccount = function(req, res) {
         balances: accountResult.balances,
         thresholds: accountResult.thresholds,
         signers: accountResult.signers
-      }
+      };
 
-      res.status(200).json({msg: "success", data: info});
+      res.status(200).json({ msg: "success", data: info });
     })
     .catch(function(err) {
       console.log(err);
-      res.status(400).json({error: err});
-    })
-}
+      res.status(400).json({ error: err });
+    });
+};
 
 /*
 * Get operations by accountID.
@@ -520,9 +529,10 @@ exports.getAccount = function(req, res) {
 * @return operation list
 */
 exports.getOperationsForAccount = function(req, res) {
-    var account = req.body.account;
+  var account = req.body.account;
 
-    server.operations()
+  server
+    .operations()
     .forAccount(account)
     .call()
     .then(function(operationsResult) {
@@ -531,29 +541,28 @@ exports.getOperationsForAccount = function(req, res) {
       var records = operationsResult.records;
 
       var operations = [];
-      for (let i = 0; i < records.length; i ++) {
+      for (let i = 0; i < records.length; i++) {
         let info = records[i];
         operations.push({
-            type: info.type,
-            asset_type: info.asset_type,
-            asset_code: info.asset_code,
-            asset_issuer: info.asset_issuer,
-            from: info.from,
-            to: info.to,
-            amount: info.amount,
-            transaction: info.transaction_hash,
-            timestamp: info.created_at
-        })
+          type: info.type,
+          asset_type: info.asset_type,
+          asset_code: info.asset_code,
+          asset_issuer: info.asset_issuer,
+          from: info.from,
+          to: info.to,
+          amount: info.amount,
+          transaction: info.transaction_hash,
+          timestamp: info.created_at
+        });
       }
 
-      res.status(200).json({msg: "success", data: operations});
+      res.status(200).json({ msg: "success", data: operations });
     })
     .catch(function(err) {
-      console.log(err)
-      res.status(400).json({error: err});
-    })
-}
-
+      console.log(err);
+      res.status(400).json({ error: err });
+    });
+};
 
 /*
 * Get transactions by account.
@@ -561,35 +570,35 @@ exports.getOperationsForAccount = function(req, res) {
 * @return transactions of account 
 */
 exports.getTransactionsForAccount = function(req, res) {
-    var account = req.body.account;
+  var account = req.body.account;
 
-    server.transactions()
+  server
+    .transactions()
     .forAccount(account)
     .call()
     .then(function(txResult) {
-        console.log(txResult)
-        console.log(txResult.records)
+      console.log(txResult);
+      console.log(txResult.records);
 
-        var records = txResult.records;
+      var records = txResult.records;
 
-        var transactions = [];
-        for (let i = 0; i < records.length; i ++) {
-            let info = records[i];
-            transactions.push({
-                hash: info.hash,
-                ledger: info.ledger_attr,
-                operations: info.operation_count,
-                timestamp: info.created_at
-            })
-        }
-        res.status(200).json({msg: "success", data: transactions});
+      var transactions = [];
+      for (let i = 0; i < records.length; i++) {
+        let info = records[i];
+        transactions.push({
+          hash: info.hash,
+          ledger: info.ledger_attr,
+          operations: info.operation_count,
+          timestamp: info.created_at
+        });
+      }
+      res.status(200).json({ msg: "success", data: transactions });
     })
     .catch(function(err) {
       console.log(err);
-      res.status(400).json({error: err});
-    })
-}
-
+      res.status(400).json({ error: err });
+    });
+};
 
 /*
 * Get payments by accountID.
@@ -599,53 +608,54 @@ exports.getTransactionsForAccount = function(req, res) {
 * @return payment list
 */
 exports.getPaymentsForAccount = function(req, res) {
-    var account = req.body.account;
-    var count = req.body.count;
-    var cursor = req.body.cursor;
+  var account = req.body.account;
+  var count = req.body.count;
+  var cursor = req.body.cursor;
 
-    var url = urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
-    url += cursor? "&cursor=" + cursor : "";
-    console.log(url);
-    request(url, function(error, response, body) {
-        if (!error) {
-            body = JSON.parse(body);
-            console.log("response: ", body);
+  var url =
+    urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
+  console.log(url);
+  request(url, function(error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+      console.log("response: ", body);
 
-            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
-            var prev =  body._links.prev.href;
+      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+      var prev = body._links.prev.href;
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            next = getCursor(next);
-            prev = getCursor(prev);
+      next = getCursor(next);
+      prev = getCursor(prev);
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            var records = body._embedded.records;
+      var records = body._embedded.records;
 
-            var operations = [];
-                for (let i = 0; i < records.length; i ++) {
-                let info = records[i];
-                operations.push({
-                    asset_type: info.asset_type,
-                    asset_code: info.asset_code,
-                    asset_issuer: info.asset_issuer,
-                    from: info.from,
-                    to: info.to,
-                    amount: info.amount,
-                    transaction: info.transaction_hash,
-                    timestamp: info.created_at
-                })
-            }
-            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
-
-        }
-        else {
-            console.log("getLatestLedgers error: ", error);
-            res.status(400).json({error: error});
-        }
-    });
-/*
+      var operations = [];
+      for (let i = 0; i < records.length; i++) {
+        let info = records[i];
+        operations.push({
+          asset_type: info.asset_type,
+          asset_code: info.asset_code,
+          asset_issuer: info.asset_issuer,
+          from: info.from,
+          to: info.to,
+          amount: info.amount,
+          transaction: info.transaction_hash,
+          timestamp: info.created_at
+        });
+      }
+      res
+        .status(200)
+        .json({ msg: "success", next: next, prev: prev, data: operations });
+    } else {
+      console.log("getLatestLedgers error: ", error);
+      res.status(400).json({ error: error });
+    }
+  });
+  /*
     //This is using stellar sdk
     var account = req.body.account;
 
@@ -679,7 +689,7 @@ exports.getPaymentsForAccount = function(req, res) {
       res.status(400).json({error: err});
     })
     */
-}
+};
 
 /*
 * Get offers by accountID.
@@ -689,50 +699,50 @@ exports.getPaymentsForAccount = function(req, res) {
 * @return payment list
 */
 exports.getOffersForAccount = function(req, res) {
-    var account = req.body.account;
-    var count = req.body.count;
-    var cursor = req.body.cursor;
+  var account = req.body.account;
+  var count = req.body.count;
+  var cursor = req.body.cursor;
 
-    var url = urlAPI + "accounts/" + account + "/offers?limit=" + count + "&order=desc";
-    url += cursor? "&cursor=" + cursor : "";
-    console.log(url);
-    request(url, function(error, response, body) {
-        if (!error) {
-            body = JSON.parse(body);
-            console.log("response: ", body);
+  var url =
+    urlAPI + "accounts/" + account + "/offers?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
+  console.log(url);
+  request(url, function(error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+      console.log("response: ", body);
 
-            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
-            var prev =  body._links.prev.href;
+      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+      var prev = body._links.prev.href;
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            next = getCursor(next);
-            prev = getCursor(prev);
+      next = getCursor(next);
+      prev = getCursor(prev);
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            var records = body._embedded.records;
+      var records = body._embedded.records;
 
-            var operations = [];
-                for (let i = 0; i < records.length; i ++) {
-                let info = records[i];
-                operations.push({
-                    sell: info.selling,
-                    buy: info.buying,
-                    amount: info.amount,
-                    price: info.price,
-                })
-            }
-            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
-
-        }
-        else {
-            console.log("getLatestLedgers error: ", error);
-            res.status(400).json({error: error});
-        }
-    });
-}
-
+      var operations = [];
+      for (let i = 0; i < records.length; i++) {
+        let info = records[i];
+        operations.push({
+          sell: info.selling,
+          buy: info.buying,
+          amount: info.amount,
+          price: info.price
+        });
+      }
+      res
+        .status(200)
+        .json({ msg: "success", next: next, prev: prev, data: operations });
+    } else {
+      console.log("getLatestLedgers error: ", error);
+      res.status(400).json({ error: error });
+    }
+  });
+};
 
 /*
 * Get effects by accountID.
@@ -742,51 +752,51 @@ exports.getOffersForAccount = function(req, res) {
 * @return effect list
 */
 exports.getEffectsForAccount = function(req, res) {
-    var account = req.body.account;
-    var count = req.body.count;
-    var cursor = req.body.cursor;
+  var account = req.body.account;
+  var count = req.body.count;
+  var cursor = req.body.cursor;
 
-    var url = urlAPI + "accounts/" + account + "/effects?limit=" + count + "&order=desc";
-    url += cursor? "&cursor=" + cursor : "";
-    console.log(url);
-    request(url, function(error, response, body) {
-        if (!error) {
-            body = JSON.parse(body);
-            console.log("response: ", body);
+  var url =
+    urlAPI + "accounts/" + account + "/effects?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
+  console.log(url);
+  request(url, function(error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+      console.log("response: ", body);
 
-            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
-            var prev =  body._links.prev.href;
+      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+      var prev = body._links.prev.href;
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            next = getCursor(next);
-            prev = getCursor(prev);
+      next = getCursor(next);
+      prev = getCursor(prev);
 
-            console.log("next= ", next);
+      console.log("next= ", next);
 
-            var records = body._embedded.records;
+      var records = body._embedded.records;
 
-            var operations = [];
-            for (let i = 0; i < records.length; i ++) {
-                let info = records[i];
+      var operations = [];
+      for (let i = 0; i < records.length; i++) {
+        let info = records[i];
 
-                delete info._links;
-                delete info.paging_token;
-                delete info.account;
-                delete info.id;
+        delete info._links;
+        delete info.paging_token;
+        delete info.account;
+        delete info.id;
 
-                operations.push(info);
-            }
-            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
-
-        }
-        else {
-            console.log("getLatestLedgers error: ", error);
-            res.status(400).json({error: error});
-        }
-    });
-}
-
+        operations.push(info);
+      }
+      res
+        .status(200)
+        .json({ msg: "success", next: next, prev: prev, data: operations });
+    } else {
+      console.log("getLatestLedgers error: ", error);
+      res.status(400).json({ error: error });
+    }
+  });
+};
 
 /*
 * Get effects.
@@ -795,63 +805,62 @@ exports.getEffectsForAccount = function(req, res) {
 * @return effect list
 */
 exports.getLatestEffects = function(req, res) {
-    var count = req.body.count;
-    var cursor = req.body.cursor;
+  var count = req.body.count;
+  var cursor = req.body.cursor;
 
-    var url = urlAPI + "/effects?limit=" + count + "&order=desc";
-    url += cursor? "&cursor=" + cursor : "";
-    console.log(url);
-    request(url, async function(error, response, body) {
-        if (!error) {
-            body = JSON.parse(body);
-            // console.log("response: ", body);
+  var url = urlAPI + "/effects?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
+  console.log(url);
+  request(url, async function(error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+      // console.log("response: ", body);
 
-            var next = body._links.next.href;//ledgers?order=asc&limit=2&cursor=8589934592
-            var prev =  body._links.prev.href;
+      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+      var prev = body._links.prev.href;
 
-            next = getCursor(next);
-            prev = getCursor(prev);
+      next = getCursor(next);
+      prev = getCursor(prev);
 
-            var records = body._embedded.records;
+      var records = body._embedded.records;
 
-            var operations = [];
-            for (let i = 0; i < records.length; i ++) {
-                let info = records[i];
+      var operations = [];
+      for (let i = 0; i < records.length; i++) {
+        let info = records[i];
 
-                opUrl = info._links.operation.href;
+        opUrl = info._links.operation.href;
 
-                var timestamp = 0;
-                var transaction_hash = "";
-                try {
-                    var option = {
-                        method: "GET",
-                        uri: opUrl,
-                        json: true
-                    }
-                    var operationDetail = await requestpromise(option);
+        var timestamp = 0;
+        var transaction_hash = "";
+        try {
+          var option = {
+            method: "GET",
+            uri: opUrl,
+            json: true
+          };
+          var operationDetail = await requestpromise(option);
 
-                    timestamp = operationDetail.created_at;
-                    transaction_hash = operationDetail.transaction_hash;
-                }
-                catch(e) {
-                    console.log("reqeust error: ", e);
-                }
-
-                delete info._links;
-                delete info.paging_token;
-                delete info.id;
-
-                info.timestamp = timestamp;
-                info.transaction_hash = transaction_hash;
-
-                operations.push(info);
-            }
-            res.status(200).json({msg: "success", next: next, prev: prev, data: operations});
-
+          timestamp = operationDetail.created_at;
+          transaction_hash = operationDetail.transaction_hash;
+        } catch (e) {
+          console.log("reqeust error: ", e);
         }
-        else {
-            console.log("getLatestLedgers error: ", error);
-            res.status(400).json({error: error});
-        }
-    });
-}
+
+        delete info._links;
+        delete info.paging_token;
+        delete info.id;
+
+        info.timestamp = timestamp;
+        info.transaction_hash = transaction_hash;
+
+        operations.push(info);
+      }
+      res
+        .status(200)
+        .json({ msg: "success", next: next, prev: prev, data: operations });
+    } else {
+      console.log("getLatestLedgers error: ", error);
+      res.status(400).json({ error: error });
+    }
+  });
+};
