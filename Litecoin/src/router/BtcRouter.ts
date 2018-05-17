@@ -2,11 +2,9 @@ import { Request, Response, Router } from 'express';
 
 var moment = require('moment');
 
-require('dotenv').config();
-const config = require('../config/config').get(process.env.NODE_ENV);
-
-var rpc = require('json-rpc2');
-var client = rpc.Client.$create(config.LTC_RPC_PORT, config.LTC_RPC_HOST, config.LTC_RPC_USER, config.LTC_RPC_PASS);
+// require('dotenv').config();
+const config = require('../config').get();
+var client = config.client;
 
 var promisify = function promisify(fn, args) {
   return new Promise((resolve, reject) => {
@@ -23,7 +21,7 @@ var promisify = function promisify(fn, args) {
   });
 }
 
-export class LtcRouter {
+export class BtcRouter {
 
   public router: Router;
 
@@ -509,7 +507,7 @@ export class LtcRouter {
 
 }
 
-const ltcRoutes = new LtcRouter();
-ltcRoutes.routes();
+const btcRoutes = new BtcRouter();
+btcRoutes.routes();
 
-export default ltcRoutes.router;
+export default btcRoutes.router;

@@ -8,10 +8,10 @@ import * as mongoose from 'mongoose';
 import * as logger from 'morgan';
 import * as path from 'path';
 
-require('dotenv').config();
-const config = require('./config/config').get(process.env.NODE_ENV);
+// require('dotenv').config();
+const config = require('./config').get();
 
-import LtcRouter from './router/LtcRouter';
+import BtcRouter from './router/BtcRouter';
 
 class Server {
 
@@ -48,7 +48,7 @@ class Server {
 
   // application routes
   public routes(): void {
-    this.app.use('/api/v1', LtcRouter);
+    this.app.use('/api/v1', BtcRouter);
   }
 }
 
