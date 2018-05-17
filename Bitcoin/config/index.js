@@ -1,6 +1,6 @@
 var rpc = require("json-rpc2");
 var localNode = rpc.Client.$create(
-  "2001", // BTC_RPC_PORT
+  "18332", // BTC_RPC_PORT
   "127.0.0.1", // BTC_RPC_HOST
   "rpcuser", // BTC_RPC_USER
   "pwd" // BTC_RPC_PASS
