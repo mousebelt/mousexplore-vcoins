@@ -158,7 +158,7 @@ async function CheckUpdatedTransactions() {
 async function CheckUpdatedAddresses() {
   filelog('CheckUpdatedAddresses starting...');
 
-  var lastTxid = "", lastTxOffset = 0,
+  var lastTxid = "", lastTxOffset = 0;
   var serviceInfo = await getAddrServiceInfo();
   if (serviceInfo) {
     lastTxid = serviceInfo.lastTxid;
@@ -166,7 +166,7 @@ async function CheckUpdatedAddresses() {
   }
   filelog({ serviceInfo });
 
-  var arrTxs = await TransactionModel.find().skip(lastTxIndex).limit(config.ADDR_CRON_TX_COUNT);
+  var arrTxs = await TransactionModel.find().skip(lastTxOffset).limit(config.ADDR_CRON_TX_COUNT);
 
   if (arrTxs && arrTxs.length > 0) {
     for (let i = 0; i < arrTxs.length; i++) {
@@ -235,8 +235,8 @@ async function CheckUpdatedAddresses() {
 
       // Save service info
       lastTxid = txid;
-      lastTxIndex++;
-      await saveAddrServiceInfo(lastTxid, lastTxIndex);
+      lastTxOffset++;
+      await saveAddrServiceInfo(lastTxid, lastTxOffset);
     }
   }
 }
