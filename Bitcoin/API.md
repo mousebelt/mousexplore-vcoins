@@ -2,22 +2,48 @@
 json-rpc client api list
 https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list
 
-## General API Information
-* The base endpoint is: **/api/v1**
-* All endpoints return a JSON object.
+vcoin apis  
+>api prefix: '/api/v1'  
 
-* For `GET` endpoints, parameters must be sent as a `query string`.
-* For `POST`, `PUT`, and `DELETE` endpoints, the parameters may be sent as a
-  `query string` or in the `request body` with content type
-  `application/x-www-form-urlencoded`. You may mix parameters between both the
-  `query string` and `request body` if you wish to do so.
-* Parameters may be sent in any order.
-* If a parameter sent in both the `query string` and `request body`, the
-  `query string` parameter will be used.
+# Summary
+[RPC Call apis](#rpc-call-apis-1)  
+[Utility apis](#utility-apis-1)  
+## RPC Call apis
+[getnewaddress](#getnewaddress)  
+[setaccount](#setaccount)  
+[settxfee](#settxfee)  
+[getreceivedbyaccount](#getreceivedbyaccount)  
+[getreceivedbyaddress](#getreceivedbyaddress)  
+[getbalance](#getbalance)  
+[getalltransactionsbyaccount](#getalltransactionsbyaccount)  
+[getaccount](#getaccount)  
+[getaccountaddress](#getaccountaddress)  
+[getaddressesbyaccount](#getaddressesbyaccount)  
+[getblockcount](#getblockcount)  
+[getbestblockhash](#getbestblockhash)  
+[getblock](#getblock)  
+[getblockhash](#getblockhash)  
+[gettransaction](#gettransaction)  
+[getrawtransaction](#getrawtransaction)  
+[listaccounts](#listaccounts)  
+[listsinceblock](#listsinceblock)  
+[sendfrom](#sendfrom)  
+[sendmany](#sendmany)  
+[sendtoaddress](#sendtoaddress)  
+[listtransactions](#listtransactions)  
 
-## Endpoint security type
-* Endpoint can only be accessed from specified client for provided REST APIs.
-* Every APIs needs Authorization.
+## Utility apis
+[Get latest blocks](#get-latest-blocks)  
+[Get Bitcoin blocks from given block height with offset](#get-bitcoin-blocks-from-given-block-height-with-offset)  
+[Get Bitcoin block info from given block height](#get-bitcoin-block-info-from-given-block-height)  
+[Get transaction by txid](#get-transaction-by-txid)  
+[Get Bitcoin transaction by block height](#get-bitcoin-transaction-by-block-height)  
+[postTxs](#postTxs)  
+
+
+***
+
+# RPC Call apis
 
 ## getnewaddress
 ```
