@@ -3,8 +3,8 @@ import * as http from 'http';
 
 import Server from './server';
 
-require('dotenv').config();
-const config = require('./config/config').get(process.env.NODE_ENV);
+// require('dotenv').config();
+const config = require('./config').get();
 
 debug('ts-express:server');
 

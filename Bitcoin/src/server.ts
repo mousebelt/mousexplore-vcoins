@@ -8,8 +8,8 @@ import * as mongoose from 'mongoose';
 import * as logger from 'morgan';
 import * as path from 'path';
 
-require('dotenv').config();
-const config = require('./config/config').get(process.env.NODE_ENV);
+// require('dotenv').config();
+const config = require('./config').get();
 
 import BtcRouter from './router/BtcRouter';
 
