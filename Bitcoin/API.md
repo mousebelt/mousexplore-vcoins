@@ -38,7 +38,6 @@ vcoin apis
 [Get Bitcoin block info from given block height](#get-bitcoin-block-info-from-given-block-height)  
 [Get transaction by txid](#get-transaction-by-txid)  
 [Get Bitcoin transaction by block height](#get-bitcoin-transaction-by-block-height)  
-[postTxs](#postTxs)  
 
 
 ***
@@ -226,7 +225,7 @@ minconf | Number | NO | minconf
 { status: 400, msg: 'errors', data: err }
 ```
 
-## getbalance
+## getalltransactionsbyaccount
 ```
  GET /getalltransactionsbyaccount
 ```
