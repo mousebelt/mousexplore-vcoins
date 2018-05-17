@@ -2,11 +2,9 @@ import { Request, Response, Router } from 'express';
 
 var moment = require('moment');
 
-require('dotenv').config();
-const config = require('../config/config').get(process.env.NODE_ENV);
-
-var rpc = require('json-rpc2');
-var client = rpc.Client.$create(config.BTC_RPC_PORT, config.BTC_RPC_HOST, config.BTC_RPC_USER, config.BTC_RPC_PASS);
+// require('dotenv').config();
+const config = require('../config').get();
+var client = config.client;
 
 var promisify = function promisify(fn, args) {
   return new Promise((resolve, reject) => {

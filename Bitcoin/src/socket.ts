@@ -1,6 +1,6 @@
 import * as io from 'socket.io';
 
-require('dotenv').config();
+// require('dotenv').config();
 
 class SocketServer {
 	public sio: any;
