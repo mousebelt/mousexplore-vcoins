@@ -9,7 +9,7 @@ var localNode = rpc.Client.$create(
 module.exports = {
   port: 2001,
   localNode,
-  db: "mongodb://localhost:27017/bitcoindb",
+  db: "mongodb://localhost:27017/litecoindb",
 
   // CRON_SLEEP_TIME: 500,	//if we decrease this to 100ms, cronservice has trouble after some time.
   TX_CRON_TIME: 5000, //if we decrease this to 100ms, cronservice has trouble after some time.
