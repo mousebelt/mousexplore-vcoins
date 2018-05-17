@@ -1,4 +1,4 @@
-var btcController = require('../controllers/bitcoin');
+var btcController = require('../controllers/litecoin');
 
 module.exports = function (app) {
     const prefix = '/api/v1';
