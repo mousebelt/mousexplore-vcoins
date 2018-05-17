@@ -3,6 +3,22 @@ var config = require("../config");
 const client = config.localNode;
 
 // var TransactionModel = require('../model/transactions');
+
+var promisify = function promisify(fn, args) {
+  return new Promise((resolve, reject) => {
+    try {
+      client.call(fn, args, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// RPC Call apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -239,9 +255,10 @@ exports.getTransaction = (req, res) => {
 
 exports.getRawTransaction = (req, res) => {
   const txid = req.params.txid;
+  const verbose = req.query.verbose;
 
   try {
-    client.call("getrawtransaction", [txid], function(err, result) {
+    client.call("getrawtransaction", [txid, Number(verbose)], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
