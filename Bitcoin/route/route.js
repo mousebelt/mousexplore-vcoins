@@ -23,7 +23,7 @@ module.exports = function (app) {
     app.get(prefix + '/gettransaction/:txid', btcController.getTransaction);
     app.get(prefix + '/getrawtransaction/:txid', btcController.getRawTransaction);
     app.get(prefix + '/listaccounts', btcController.listAccounts);
-    app.get(prefix + '/listsinceblock/:blockhash', btcController.listSinceBlock);
+    app.get(prefix + '/listsinceblock', btcController.listSinceBlock);
     app.post(prefix + '/sendfrom', btcController.sendFrom);
     app.post(prefix + '/sendmany', btcController.sendMany);
     app.post(prefix + '/sendtoaddress', btcController.sendToAddress);

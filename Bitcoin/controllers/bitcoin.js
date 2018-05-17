@@ -362,10 +362,11 @@ exports.listTransactions = (req, res) => {
 };
 
 exports.listSinceBlock = (req, res) => {
-  const blockhash = req.params.blockhash;
+  const blockhash = req.query.blockhash;
+  const confirm = req.query.confirm;
 
   try {
-    client.call("listsinceblock", [blockhash, 1], function(err, result) {
+    client.call("listsinceblock", [blockhash, Number(confirm)], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }

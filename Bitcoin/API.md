@@ -510,6 +510,7 @@ Returns raw transaction representation for given transaction id.
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 txid | String | YES | txid
+verbose | Number | NO | verbose
 
 
 ### RETURN
@@ -517,6 +518,14 @@ txid | String | YES | txid
 * for successed case
 
 ```javascript
+if verbose == 0,
+{
+    "status": 200,
+    "msg": "sccuess",
+    "data": "0100000001ef63f7b90f0a37c80090bcf75a94018bbb9c31905d3f3f0a1b31bfdb3e101ca4010000006b4830450221008b16cf55a57467ebb3d6fb0370428193dc914d29aa0812fb4f5a984c36b49cb70220769d63000df8964f411d3b2db383a32dddf3b8b0d8240033a7bf4d47c2bb82f1012103c53dd523b28307e384f6952e61428a5ca4ece665f9926e0aed63d67111f83da4ffffffff024b540101000000001976a914c0611bd7b1b8cd52e41b317134061bbcb6f6176d88ac405dc600000000001976a91419d1da92986db921307794714aeb64b34e46661688ac00000000"
+}
+
+if verbose = 1,
 {
     "status": 200,
     "msg": "sccuess",
