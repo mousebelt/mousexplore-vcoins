@@ -7,7 +7,7 @@ const client = config.localNode;
 var promisify = function promisify(fn, args) {
   return new Promise((resolve, reject) => {
     try {
-      client.call(fn, args, function (err, result) {
+      client.call(fn, args, function(err, result) {
         if (err) {
           reject(err);
         }
@@ -17,13 +17,13 @@ var promisify = function promisify(fn, args) {
       reject(error);
     }
   });
-}
+};
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// RPC Call apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-exports.createAccount = (req, res) => {
+exports.getnewaddress = (req, res) => {
   const account = req.body.account;
 
   try {
@@ -38,7 +38,7 @@ exports.createAccount = (req, res) => {
   }
 };
 
-exports.associateAddresss = (req, res) => {
+exports.setaccount = (req, res) => {
   const account = req.body.account;
   const address = req.body.address;
 
@@ -58,7 +58,7 @@ exports.setTxFee = (req, res) => {
   const fee = req.body.fee;
 
   try {
-    client.call("settxfee", [fee], function(err, result) {
+    client.call("settxfee", [Number(fee)], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -71,10 +71,12 @@ exports.setTxFee = (req, res) => {
 
 exports.getReceivedByAccount = (req, res) => {
   const account = req.body.account;
-  const confirm = req.body.confirm;
+  var minconf = req.body.minconf;
+
+  if (!minconf) minconf = 1;
 
   try {
-    client.call("getreceivedbyaccount", [account, confirm], function(
+    client.call("getreceivedbyaccount", [account, Number(minconf)], function(
       err,
       result
     ) {
@@ -90,10 +92,12 @@ exports.getReceivedByAccount = (req, res) => {
 
 exports.getReceivedByAddress = (req, res) => {
   const address = req.body.address;
-  const confirm = req.body.confirm;
+  var minconf = req.body.minconf;
+
+  if (!minconf) minconf = 1;
 
   try {
-    client.call("getreceivedbyaddress", [address, confirm], function(
+    client.call("getreceivedbyaddress", [address, Number(minconf)], function(
       err,
       result
     ) {
@@ -108,10 +112,16 @@ exports.getReceivedByAddress = (req, res) => {
 };
 
 exports.getAccountBalance = (req, res) => {
-  const account = req.params.account;
+  const account = req.query.account;
+  var minconf = req.query.minconf;
+
+  if (!minconf) minconf = 1;
 
   try {
-    client.call("getbalance", [account], function(err, result) {
+    client.call("getbalance", [account, Number(minconf)], function(
+      err,
+      result
+    ) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -123,15 +133,24 @@ exports.getAccountBalance = (req, res) => {
 };
 
 exports.getAllTransactionsByAccount = (req, res) => {
-  const address = req.params.address;
+  const account = req.query.account;
+  const count = req.query.count;
+  const from = req.query.from;
+
+  if (!count) count = 10;
+  if (!from) from = 0;
 
   try {
-    client.call("listtransactions", [address], function(err, result) {
-      if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+    client.call(
+      "listtransactions",
+      [account, Number(count), Number(from)],
+      function(err, result) {
+        if (err) {
+          return res.json({ status: 400, msg: "errors", data: err });
+        }
+        return res.json({ status: 200, msg: "sccuess", data: result });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
-    });
+    );
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
@@ -255,10 +274,13 @@ exports.getTransaction = (req, res) => {
 
 exports.getRawTransaction = (req, res) => {
   const txid = req.params.txid;
-  const verbose = req.query.verbose;
+  var verbose = req.query.verbose;
 
   try {
-    client.call("getrawtransaction", [txid, Number(verbose)], function(err, result) {
+    client.call("getrawtransaction", [txid, Number(verbose)], function(
+      err,
+      result
+    ) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -270,8 +292,11 @@ exports.getRawTransaction = (req, res) => {
 };
 
 exports.listAccounts = (req, res) => {
+  var minconf = req.query.minconf;
+  if (!minconf) minconf = 1;
+
   try {
-    client.call("listaccounts", [], function(err, result) {
+    client.call("listaccounts", [Number(minconf)], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -286,18 +311,30 @@ exports.sendFrom = (req, res) => {
   const fromaccount = req.body.fromaccount;
   const toaddress = req.body.toaddress;
   const amount = req.body.amount;
-  const confrim = req.body.confrim;
+  var minconf = req.body.minconf;
+  var comment = req.body.comment;
+  var commentto = req.body.commentto;
+
+  if (!minconf) minconf = 1;
 
   try {
-    client.call("sendfrom", [fromaccount, toaddress, amount, confrim], function(
-      err,
-      result
-    ) {
-      if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+    client.call(
+      "sendfrom",
+      [
+        fromaccount,
+        toaddress,
+        Number(amount),
+        Number(minconf),
+        comment,
+        commentto
+      ],
+      function(err, result) {
+        if (err) {
+          return res.json({ status: 400, msg: "errors", data: err });
+        }
+        return res.json({ status: 200, msg: "sccuess", data: result });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
-    });
+    );
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
@@ -306,18 +343,21 @@ exports.sendFrom = (req, res) => {
 exports.sendMany = (req, res) => {
   const fromaccount = req.body.fromaccount;
   const toaddresses = req.body.toaddresses;
-  const confrim = req.body.confrim;
+  var minconf = req.body.minconf;
+
+  if (!minconf) minconf = 1;
 
   try {
-    client.call("sendmany", [fromaccount, toaddresses, confrim], function(
-      err,
-      result
-    ) {
-      if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+    client.call(
+      "sendmany",
+      [fromaccount, toaddresses, Number(minconf), comment],
+      function(err, result) {
+        if (err) {
+          return res.json({ status: 400, msg: "errors", data: err });
+        }
+        return res.json({ status: 200, msg: "sccuess", data: result });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
-    });
+    );
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
@@ -326,17 +366,19 @@ exports.sendMany = (req, res) => {
 exports.sendToAddress = (req, res) => {
   const toaddress = req.body.toaddress;
   const amount = req.body.amount;
-  const confrim = req.body.confrim;
+  const comment = req.body.comment;
+  const commentto = req.body.commentto;
   try {
-    client.call("sendtoaddress", [toaddress, amount, confrim], function(
-      err,
-      result
-    ) {
-      if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+    client.call(
+      "sendtoaddress",
+      [toaddress, Number(amount), comment, commentto],
+      function(err, result) {
+        if (err) {
+          return res.json({ status: 400, msg: "errors", data: err });
+        }
+        return res.json({ status: 200, msg: "sccuess", data: result });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
-    });
+    );
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
@@ -344,18 +386,23 @@ exports.sendToAddress = (req, res) => {
 
 exports.listTransactions = (req, res) => {
   const account = req.body.account;
-  const count = req.body.count;
-  const from = req.body.from;
+  var count = req.body.count;
+  var from = req.body.from;
+
+  if (!count) count = 10;
+  if (!from) from = 0;
+
   try {
-    client.call("listtransactions", [account, count, from], function(
-      err,
-      result
-    ) {
-      if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+    client.call(
+      "listtransactions",
+      [account, Number(count), Number(from)],
+      function(err, result) {
+        if (err) {
+          return res.json({ status: 400, msg: "errors", data: err });
+        }
+        return res.json({ status: 200, msg: "sccuess", data: result });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
-    });
+    );
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
@@ -366,7 +413,10 @@ exports.listSinceBlock = (req, res) => {
   const confirm = req.query.confirm;
 
   try {
-    client.call("listsinceblock", [blockhash, Number(confirm)], function(err, result) {
+    client.call("listsinceblock", [blockhash, Number(confirm)], function(
+      err,
+      result
+    ) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -380,47 +430,49 @@ exports.listSinceBlock = (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Utility apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-exports.getBlocksLatest = (req, res) => {
-  const count = req.params.count;
+exports.getBlocksLatest = async (req, res) => {
+  const count = Number(req.params.count);
+
+  if (count == 0) count = 10;
 
   try {
     // get block count
-    client.call("getblockcount", [], async function(err, blockCount) {
-      if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+    var blockCount = await promisify("getblockcount", []);
+    if (!blockCount) {
+      return res.json({ status: 400, msg: "empty blockcount !" });
+    }
+
+    var arrBlocks = [];
+    for (var i = 1; i <= count; i++) {
+      var index = blockCount - i;
+
+      // promisify('getblockhash', [index])
+      //   .then(result => console.log(result))
+      //   .catch(e => console.log(e));
+
+      var hash = await promisify("getblockhash", [index]);
+      if (hash) {
+        var block = await promisify("getblock", [hash]);
+        if (block) arrBlocks.push(block);
       }
+    }
 
-      var arrBlocks = [];
-      for (var i = 1; i <= count; i++) {
-        var index = blockCount - i;
-
-        // promisify('getblockhash', [index])
-        //   .then(result => console.log(result))
-        //   .catch(e => console.log(e));
-
-        var hash = await promisify("getblockhash", [index]);
-        if (hash) {
-          var block = await promisify("getblock", [hash]);
-          if (block) arrBlocks.push(block);
-        }
-      }
-
-      return res.json({ status: 200, msg: "sccuess", data: arrBlocks });
-    });
+    return res.json({ status: 200, msg: "sccuess", data: arrBlocks });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: error });
   }
 };
 
 exports.getBlocks = async (req, res) => {
-  const height = req.query.height;
-  const count = req.query.count;
+  const height = Number(req.query.height);
+  const count = Number(req.query.count);
 
   try {
     // get block count
     var arrBlocks = [];
     for (var i = 0; i < count; i++) {
       var index = height - i;
+      if (index < 0) break;
 
       var hash = await promisify("getblockhash", [index]);
       if (hash) {
@@ -436,13 +488,13 @@ exports.getBlocks = async (req, res) => {
 };
 
 exports.getBlockHeight = async (req, res) => {
-  const height = req.params.height;
+  const height = Number(req.params.height);
 
   try {
     var hash = await promisify("getblockhash", [Number(height)]);
     if (hash) {
       var block = await promisify("getblock", [hash]);
-      if (block) return res.json({ status: 200, msg: "sccuess", data: block });
+      return res.json({ status: 200, msg: "sccuess", data: block });
     }
 
     return res.json({
@@ -483,7 +535,7 @@ exports.getBlockTransactions = async (req, res) => {
         var txInfo = await promisify("getrawtransaction", [txs[i], 1]);
         arrTxs.push(txInfo);
       }
-      return res.json({ status: 200, msg: "errors", data: arrTxs });
+      return res.json({ status: 200, msg: "success", data: arrTxs });
     }
 
     return res.json({

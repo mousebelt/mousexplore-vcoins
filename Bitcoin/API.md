@@ -21,9 +21,10 @@ https://en.bitcoin.it/wiki/Original_Bitcoin_client/API_calls_list
 
 ## getnewaddress
 ```
- POST /createaccount
+ POST /getnewaddress
 ```
 
+[account]  
 Returns a new bitcoin address for receiving payments. If [account] is specified payments received with the address will be credited to [account].
 
 ### QUERY PARAMS
@@ -48,9 +49,10 @@ account | String | NO | account
 
 ## setaccount
 ```
- POST /associateaddress
+ POST /setaccount
 ```
 
+`<bitcoinaddress> <account>`  
 Sets the account associated with the given address. Assigning address that is already assigned to the same account will create a new address associated with that account.
 
 ### QUERY PARAMS
@@ -118,7 +120,7 @@ Returns the total amount received by addresses with [account] in transactions wi
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 account | String | NO | account
-confirm | Number | NO | minconf
+minconf | Number | NO | minconf
 
 
 ### RETURN
@@ -150,7 +152,7 @@ Returns the amount received by `<bitcoinaddress>` in transactions with at least 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 address | String | YES | bitcoinaddress
-confirm | Number | NO | minconf
+minconf | Number | NO | minconf
 
 
 ### RETURN
@@ -169,7 +171,7 @@ confirm | Number | NO | minconf
 
 ## getbalance
 ```
- GET /getaccountbalance/:account
+ GET /getaccountbalance
 ```
 
 [account] [minconf=1] 
@@ -180,7 +182,8 @@ If [account] is specified, returns the balance in the account.
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-account | String | YES | account
+account | String | NO | account
+minconf | Number | NO | minconf
 
 
 ### RETURN
@@ -199,16 +202,19 @@ account | String | YES | account
 
 ## getbalance
 ```
- GET /getalltransactionsbyaccount/:address
+ GET /getalltransactionsbyaccount
 ```
 
-get all transactions by account. (not tested)
+[account] [count=10] [from=0]  
+get all transactions by account.
 
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-address | String | YES | address
+account | String | NO | account
+count | String | NO | count
+from | String | NO | from
 
 
 ### RETURN
@@ -501,7 +507,7 @@ txid | String | YES | txid
  GET /getrawtransaction/:txid
 ```
 
-`<txid>`
+`<txid> [verbose=0]`  
 
 Returns raw transaction representation for given transaction id. 
 
@@ -607,6 +613,7 @@ Returns Object that has account names as keys, account balances as values.
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
+minconf | Number | NO | minconf
 
 ### RETURN
 
@@ -624,10 +631,10 @@ Name | Type | Mandatory | Description
 
 ## listsinceblock
 ```
- GET /listsinceblock/:blockhash
+ GET /listsinceblock
 ```
 
-[blockhash] [target-confirmations]  
+[blockhash] [target-confirmations]   
 Get all transactions in blocks since block [blockhash], or all transactions if omitted. [target-confirmations] intentionally does not affect the list of returned transactions, but only affects the returned "lastblock" value. 
 
 ### QUERY PARAMS
@@ -635,6 +642,7 @@ Get all transactions in blocks since block [blockhash], or all transactions if o
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 blockhash | String | YES | blockhash
+confirm | Number | YES | target-confirmations
 
 
 ### RETURN
@@ -667,7 +675,9 @@ Name | Type | Mandatory | Description
 fromaccount | String | YES | fromaccount
 toaddress | String | YES | tobitcoinaddress
 amount | Number | YES | amount
-confrim | Number | YES | confrim
+minconf | Number | NO | minconf
+comment | String | NO | comment
+commentto | String | NO | comment-to
 
 ### RETURN
 
@@ -688,7 +698,7 @@ confrim | Number | YES | confrim
  POST /sendmany
 ```
 
-`<fromaccount> {address:amount,...} [minconf=1] [comment]`
+`<fromaccount> {address:amount,...} [minconf=1] [comment]`  
 
 amounts are double-precision floating point numbers.
 
@@ -698,7 +708,8 @@ Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 fromaccount | String | YES | fromaccount
 toaddresses | Any | YES | {address:amount,...}
-confrim | Number | YES | minconf
+minconf | Number | NO | minconf
+comment | String | NO | comment
 
 
 ### RETURN
@@ -730,7 +741,8 @@ Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
 toaddress | String | YES | toaddress
 amount | Number | YES | amount
-confrim | Number | YES | confrim
+comment | String | NO | comment
+commentto | String | NO | comment-to
 
 ### RETURN
 
@@ -758,9 +770,9 @@ Returns up to [count] most recent transactions skipping the first [from] transac
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-account | String | YES | account
-count | Number | YES | count
-from | Number | YES | from
+account | String | NO | account
+count | Number | NO | count
+from | Number | NO | from
 
 
 ### RETURN
