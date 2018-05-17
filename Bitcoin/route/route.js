@@ -33,9 +33,9 @@ module.exports = function (app) {
     //// Utility apis ////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    app.get('/blocks/latest/:count', btcController.getBlocksLatest);
-    app.get('/blocks', btcController.getBlocks);
-    app.get('/block/:height', btcController.getBlockHeight);
-    app.get('/transaction/:txid', btcController.getTransactionInfo);
-    app.get('/block/transactions/:height', btcController.getBlockTransactions);
+    app.get(prefix + '/blocks/latest/:count', btcController.getBlocksLatest);
+    app.get(prefix + '/blocks', btcController.getBlocks);
+    app.get(prefix + '/block/:height', btcController.getBlockHeight);
+    app.get(prefix + '/transaction/:txid', btcController.getTransactionInfo);
+    app.get(prefix + '/block/transactions/:height', btcController.getBlockTransactions);
 }
