@@ -1,15 +1,12 @@
 var config = require("../config");
 var localNode = config.localNode;
 
+var sleepms = require('sleep-ms');
 var TransactionModel = require("../model/transactions");
-var TokenModel = require("../model/tokens");
-var ServiceInofModel = require("../model/serviceinfo");
 var AddressModel = require("../model/address");
-
-
-var lastCheckedBlock = 0;
-var lastCheckedIndex = 0;
-var cronServiceInfo = null;
+var TokenModel = require("../model/tokens");
+var TxServiceInofModel = require("../model/txServiceInfo");
+var AddrServiceInofModel = require("../model/addrServiceInfo");
 
 var fs = require('fs');
 var Log = require('log'),
@@ -21,50 +18,96 @@ function filelog(...params) { //
   // console.log(...params);
 };
 
-async function getLastCheckedBlock() {
+async function getTxServiceInfo() {
   try {
-    cronServiceInfo = await ServiceInofModel.findOne();
-    if (cronServiceInfo) {
-      lastCheckedBlock = cronServiceInfo.lastblock;
-      lastCheckedIndex = cronServiceInfo.lastTxnIndex;
-      filelog("Last checked block number is " + lastCheckedBlock);
-      filelog("Last checked txn index is " + lastCheckedIndex);
+    txServiceInfo = await TxServiceInofModel.findOne();
+    if (txServiceInfo) return txServiceInfo;
+    else return {
+      lastblock: 0,
+      lastTxIndex: 0
     }
   }
   catch (e) {
-    filelog("getLastCheckedBlock error: ", e);
+    filelog("getTxServiceInfo error: ", e);
+    return undefined;
   }
 }
 
-async function saveCronServiceInfo() {
-  await ServiceInofModel.findOne(async function (e, info) {
+async function saveTxServiceInfo(lastblock, lastTxIndex) {
+  await TxServiceInofModel.findOne(async function (e, info) {
     if (!e) {
       if (info) {
-        info.set({ lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex });
+        info.set({ lastblock, lastTxIndex });
       }
       else {
-        info = new ServiceInofModel({ lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex });
+        info = new TxServiceInofModel({ lastblock, lastTxIndex });
       }
       await info.save();
     }
     else {
-      filelog('saveCronServiceInfo:error: ', e); // Should dump errors here
+      filelog('saveTxServiceInfo error: ', e); // Should dump errors here
     }
   });
+}
 
+async function getAddrServiceInfo() {
+  try {
+    addrServiceInfo = await AddrServiceInofModel.findOne();
+    if (addrServiceInfo) return addrServiceInfo;
+    else return {
+      lastTxid: "",
+      lastTxOffset: 0,
+    }
+  }
+  catch (e) {
+    filelog("getAddrServiceInfo error: ", e);
+    return undefined;
+  }
+}
+
+async function saveAddrServiceInfo(lastTxid, lastTxOffset) {
+  await AddrServiceInofModel.findOne(async function (e, info) {
+    if (!e) {
+      if (info) {
+        info.set({
+          lastTxid,
+          lastTxOffset,
+        });
+      }
+      else {
+        info = new AddrServiceInofModel({
+          lastTxid: "",
+          lastTxOffset: 0,
+        });
+      }
+      await info.save();
+    }
+    else {
+      filelog('saveAddrServiceInfo error: ', e); // Should dump errors here
+    }
+  });
 }
 
 async function CheckUpdatedTransactions() {
+  filelog('CheckUpdatedTransactions starting...');
+  var lastblock = 0, lastTxIndex = 0;
+  var txServiceInfo = await getTxServiceInfo();
+  if (txServiceInfo) {
+    lastblock = txServiceInfo.lastblock;
+    lastTxIndex = txServiceInfo.lastTxIndex;
+  }
+  filelog({ txServiceInfo });
+
   try {
     var blockCount = await localNode.getBlockCount();
     if (blockCount) {
-      var limit = lastCheckedBlock + config.CRON_TREAT_MAX_BLOCKS;
-      for (let i = lastCheckedBlock; i < blockCount && i <= limit; i++) {
+      var limit = lastblock + config.TX_CRON_BLOCK_COUNT;
+      for (let i = lastblock; i < blockCount && i <= limit; i++) {
         try {
-          var blockdata = await localNode.getBlockByHeight(i, 1)
+          var blockdata = await localNode.getBlockByHeight(i, 1);
           var txs = blockdata.tx;
 
-          for (let j = lastCheckedIndex; j < txs.length; j++) {
+          for (let j = lastTxIndex; j < txs.length; j++) {
             let tx = txs[j]
             let { txid, size, type, version, vin, vout, sys_fee, net_fee, nonce } = tx;
 
@@ -82,119 +125,140 @@ async function CheckUpdatedTransactions() {
                 await txRow.save();
               }
               catch (e) {
-                filelog(`transaction.save error: txid=${txid}, error: `, e); // Should dump errors here
+                filelog(`transaction save error: txid=${txid}, error: `, e); // Should dump errors here
                 return;
               }
             }
 
-            // Save Address Info
-            if (vout && vout.length > 0) {
-              for (let k = 0; k < vout.length; k++) {
-                let { asset, value, address } = vout[k];
-                // Save vout Info
-                var addressRow = await AddressModel.findOne({ asset, address });
-                if (!addressRow) {
-                  addressRow = new AddressModel({
-                    asset, address,
-                    txsIn: [],
-                    txsOut: []
-                  });
-                }
-                if (addressRow.txsOut.indexOf(txid) == -1) {
-                  addressRow.txsOut.push(txid);
-                  try {
-                    await addressRow.save();
-                  }
-                  catch (e) {
-                    filelog(`address.save.txsOut: txid: ${txid}, error: `, e); // Should dump errors here
-                    return;
-                  }
-                }
-              }
-            }
-
-            if (vin && vin.length > 0) {
-              for (let k = 0; k < vin.length; k++) {
-                var curTxid = vin[k].txid;
-                var curVout = vin[k].vout;
-
-                try {
-                  var curTx = await localNode.getRawTransaction(curTxid, 1);
-                  var curInfo = curTx.vout[curVout];
-
-                  // Save Info
-                  var addressRow = await AddressModel.findOne({ asset: curInfo.asset, address: curInfo.address });
-                  if (!addressRow) {
-                    addressRow = new AddressModel({
-                      asset: curInfo.asset, 
-                      address: curInfo.address,
-                      txsIn: [],
-                      txsOut: []
-                    });
-                  }
-                  if (addressRow.txsIn.indexOf(txid) == -1) {
-                    addressRow.txsIn.push(txid);
-                    try {
-                      await addressRow.save();
-                    }
-                    catch (e) {
-                      filelog(`newAddress.save.txsIn error: txid=${txid}, error: `, e); // Should dump errors here
-                      return;
-                    }
-                  }
-                } catch (e) {
-                  filelog(`address.vin.getTx error: curTxid=${curTxid}, error: `, e); // Should dump errors here
-                  return;
-                }
-              }
-            }
-
             // Save service info
-            if (lastCheckedBlock != i || lastCheckedIndex != j) {
-              // filelog("Updating block: " + i);
-              lastCheckedBlock = i;
-              lastCheckedIndex = j;
-
-              await saveCronServiceInfo();
-            }
+            lastblock = i;
+            lastTxIndex = j;
+            await saveTxServiceInfo(lastblock, lastTxIndex);
           }
 
-          if (lastCheckedBlock != i || lastCheckedIndex != 0) {
-            // filelog("Updating block: " + i);
-            lastCheckedBlock = i;
-            lastCheckedIndex = 0;
-
-            await saveCronServiceInfo();
+          if (lastblock != i || lastTxIndex != 0) {
+            lastblock = i;
+            lastTxIndex = 0;
+            await saveTxServiceInfo(lastblock, lastTxIndex);
           }
         }
         catch (e) {
-          filelog('getBlock, error: ', e); // Should dump errors here
+          filelog('localNode getBlockByHeight error: ', e); // Should dump errors here
           return;
         }
       }
     } else {
-      filelog('getBlockCount: blockcount is empty: ', blockCount); // Should dump errors here
+      filelog('localNode getBlockCount: blockcount is empty'); // Should dump errors here
     }
   } catch (error) {
-    filelog('getBlockCount: we have a promblem: ', error); // Should dump errors here
+    filelog('localNode getBlockCount error: ', error); // Should dump errors here
   }
 }
 
+async function CheckUpdatedAddresses() {
+  filelog('CheckUpdatedAddresses starting...');
 
-async function transactionService() {
-  filelog("lastCheckedBlock = " + lastCheckedBlock);
-  await CheckUpdatedTransactions();
-  setTimeout(transactionService, config.CRON_TIME_INTERVAL);
+  var lastTxid = "", lastTxOffset = 0,
+  var serviceInfo = await getAddrServiceInfo();
+  if (serviceInfo) {
+    lastTxid = serviceInfo.lastTxid;
+    lastTxOffset = serviceInfo.lastTxOffset;
+  }
+  filelog({ serviceInfo });
+
+  var arrTxs = await TransactionModel.find().skip(lastTxIndex).limit(config.ADDR_CRON_TX_COUNT);
+
+  if (arrTxs && arrTxs.length > 0) {
+    for (let i = 0; i < arrTxs.length; i++) {
+      let { txid, vin, vout } = arrTxs[i];
+
+      // Save Address Info
+      if (vout && vout.length > 0) {
+        for (let j = 0; j < vout.length; j++) {
+          let { asset, address } = vout[j];
+          // Save vout Info
+          var addressRow = await AddressModel.findOne({ asset, address });
+          if (!addressRow) {
+            addressRow = new AddressModel({
+              asset, address,
+              txsIn: [],
+              txsOut: []
+            });
+          }
+          if (addressRow.txsOut.indexOf(txid) == -1) {
+            addressRow.txsOut.push(txid);
+            try {
+              await addressRow.save();
+            }
+            catch (e) {
+              filelog(`address.save.txsOut: txid: ${txid}, error: `, e); // Should dump errors here
+              return;
+            }
+          }
+        }
+      }
+
+      if (vin && vin.length > 0) {
+        for (let j = 0; j < vin.length; j++) {
+          var inTxid = vin[j].txid;
+          var inVout = vin[j].vout;
+
+          var inTx = await TransactionModel.findOne({ txid: inTxid });
+          if (!inTx) {
+            filelog(`inTx not found. inTxid=${inTxid}`);
+            return;
+          }
+
+          var inTxInfo = inTx.vout[inVout];
+          // Save Info
+          var addressRow = await AddressModel.findOne({ asset: inTxInfo.asset, address: inTxInfo.address });
+          if (!addressRow) {
+            addressRow = new AddressModel({
+              asset: inTxInfo.asset,
+              address: inTxInfo.address,
+              txsIn: [],
+              txsOut: []
+            });
+          }
+          if (addressRow.txsIn.indexOf(txid) == -1) {
+            addressRow.txsIn.push(txid);
+            try {
+              await addressRow.save();
+            }
+            catch (e) {
+              filelog(`addressRow.save.txsIn error: txid=${txid}, error: `, e); // Should dump errors here
+              return;
+            }
+          }
+        }
+      }
+
+      // Save service info
+      lastTxid = txid;
+      lastTxIndex++;
+      await saveAddrServiceInfo(lastTxid, lastTxIndex);
+    }
+  }
 }
 
-// async function transactionService() {
-//   filelog("lastCheckedBlock = " + lastCheckedBlock);
-//   CheckUpdatedTransactions();
-// }
+async function transactionService() {
+  filelog("Start transaction service ...");
+  await CheckUpdatedTransactions();
+  setTimeout(transactionService, config.TX_CRON_TIME);
+  filelog("Done transaction service .");
+}
+
+async function addressService() {
+  filelog("Start address service ...");
+  await CheckUpdatedAddresses();
+  setTimeout(addressService, config.ADDR_CRON_TIME);
+  filelog("Done address service .");
+}
 
 exports.start_cronService = async function () {
   filelog("Start neo cron service");
-  await getLastCheckedBlock();
+
   transactionService();
   // setInterval(transactionService, config.CRON_TIME_INTERVAL);
+  addressService();
 }
