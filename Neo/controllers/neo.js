@@ -731,7 +731,7 @@ exports.postAddressTransactions = async function (req, res) {
       var txs = addrTxResult.txs;
 
       var toReturn = [];
-      for (let i = txs.length - 1; i >= 0; i++) {
+      for (let i = txs.length - 1; i >= 0; i--) {
         var txid = txs[i];
         var txInfo = await TransactionModel.findOne({ txid });
         toReturn.push(txInfo);
