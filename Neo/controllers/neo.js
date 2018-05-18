@@ -701,7 +701,7 @@ exports.postAddressTransactions = async function (req, res) {
   // logic
   try {
     if (order > 0) { // Oldest first
-      var addrTxResult = await AddressModel.find(
+      var addrTxResult = await AddressModel.findOne(
         { asset, address },
         {
           txs: { $slice: [offset, count] },
@@ -719,10 +719,11 @@ exports.postAddressTransactions = async function (req, res) {
       }
       return res.json({ status: 200, msg: 'success', data: toReturn });
     } else {
-      var addrTxResult = await AddressModel.find(
+      offset = (-1)*offset - count;
+      var addrTxResult = await AddressModel.findOne(
         { asset, address },
         {
-          txs: { $slice: [(-1) * offset, count] },
+          txs: { $slice: [offset, count] },
           txsIn: 0,
           txsOut: 0
         }
