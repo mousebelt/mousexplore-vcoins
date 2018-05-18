@@ -666,9 +666,10 @@ exports.postTxs = async function (req, res) {
  * 
  * @return
  * { "status": "200", "msg": "success", 
- *   "data": [txs]
+ *   "data": { "total": total, "txs": [tx] }
  * }
  * 
+ * total: Number
  * tx: {
         "_id": "5afa852c31a9a73db264d7ff",
         "txid": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
@@ -701,15 +702,26 @@ exports.postAddressTransactions = async function (req, res) {
   // logic
   try {
     if (order > 0) { // Oldest first
-      var addrTxResult = await AddressModel.findOne(
-        { asset, address },
+      var addrTxResult = await AddressModel.aggregate([
         {
-          txs: { $slice: [offset, count] },
-          txsIn: 0,
-          txsOut: 0
+          $match: { asset, address }
+        },
+        {
+          $project: {
+            txs: { $slice: ["$txs", offset, count] },
+            total: { $size: "$txs" }
+          }
         }
-      );
-      var txs = addrTxResult.txs;
+      ])
+      // var addrTxResult = await AddressModel.findOne(
+      //   { asset, address },
+      //   {
+      //     txs: { $slice: [offset, count] },
+      //     txsIn: 0,
+      //     txsOut: 0
+      //   }
+      // );
+      let { txs, total } = addrTxResult[0];
 
       var toReturn = [];
       for (let i = 0; i < txs.length; i++) {
@@ -717,18 +729,21 @@ exports.postAddressTransactions = async function (req, res) {
         var txInfo = await TransactionModel.findOne({ txid });
         toReturn.push(txInfo);
       }
-      return res.json({ status: 200, msg: 'success', data: toReturn });
+      return res.json({ status: 200, msg: 'success', data: { total, txs: toReturn } });
     } else {
-      offset = (-1)*offset - count;
-      var addrTxResult = await AddressModel.findOne(
-        { asset, address },
+      offset = (-1) * offset - count;
+      var addrTxResult = await AddressModel.aggregate([
         {
-          txs: { $slice: [offset, count] },
-          txsIn: 0,
-          txsOut: 0
+          $match: { asset, address }
+        },
+        {
+          $project: {
+            txs: { $slice: ["$txs", offset, count] },
+            total: { $size: "$txs" }
+          }
         }
-      );
-      var txs = addrTxResult.txs;
+      ])
+      let { txs, total } = addrTxResult[0];
 
       var toReturn = [];
       for (let i = txs.length - 1; i >= 0; i--) {
@@ -736,7 +751,7 @@ exports.postAddressTransactions = async function (req, res) {
         var txInfo = await TransactionModel.findOne({ txid });
         toReturn.push(txInfo);
       }
-      return res.json({ status: 200, msg: 'success', data: toReturn });
+      return res.json({ status: 200, msg: 'success', data: { total, txs: toReturn } });
     }
   } catch (error) {
     return res.json({ status: 400, msg: 'error occured !' });
