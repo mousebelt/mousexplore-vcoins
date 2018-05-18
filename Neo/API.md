@@ -28,6 +28,7 @@ neo-vcoin apis
 [postBlockTxs](#postBlockTxs)  
 [postTx](#postTx)  
 [postTxs](#postTxs)  
+[postAddressTransactions](#postAddressTransactions)  
 
 
 ***
@@ -539,6 +540,43 @@ neo-vcoin apis
  * @param {Number} offset: 0
  * @param {Number} count: 10
  * @param {Boolean} sort: If true, newest order. If false, oldest order.
+ * 
+ * @return
+ * { "status": "200", "msg": "success", 
+ *   "data": [txs]
+ * }
+ * 
+ * tx: {
+        "_id": "5afa852c31a9a73db264d7ff",
+        "txid": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+        "size": 107,
+        "type": "RegisterTransaction",
+        "version": 0,
+        "vin": [],
+        "vout": [],
+        "sys_fee": "0",
+        "net_fee": "0",
+        "blockIndex": 0,
+        "blockTime": 1468595301,
+        "updatedAt": "2018-05-15T06:58:52.181Z",
+        "__v": 0
+    }
+ */
+```
+
+<a name="postAddressTransactions"/>
+
+- postAddressTransactions
+```
+/**
+ * POST /address/txs
+ * Get tx list from address
+ * 
+ * @param {String} asset: "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"
+ * @param {String} address: "AQVh2pG732YvtNaxEGkQUei3YA4cvo7d2i"
+ * @param {Number} offset: 0
+ * @param {Number} count: 10
+ * @param {Boolean} order: If 0, newest order. If 1, oldest order.
  * 
  * @return
  * { "status": "200", "msg": "success", 
