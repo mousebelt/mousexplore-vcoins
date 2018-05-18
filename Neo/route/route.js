@@ -4,9 +4,7 @@ var neoClientController = require('../controllers/neo-client');
 module.exports = function (app) {
   const prefix = '/api/v1';
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////
   //// RPC Call apis ////
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   //Asset
   app.get(prefix + '/balance', neoNodeController.getBalance);
@@ -26,9 +24,7 @@ module.exports = function (app) {
   app.get(prefix + '/rawtransaction', neoNodeController.getRawTransaction);
   app.get(prefix + '/txout', neoNodeController.getTxOut);
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////
   //// Utility apis ////
-  ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
   app.post(prefix + '/blocks/latest', neoNodeController.postBlocksLatest);
   app.post(prefix + '/blocks', neoNodeController.postBlocks);
@@ -41,9 +37,36 @@ module.exports = function (app) {
   app.post(prefix + '/address/txs', neoNodeController.postAddressTransactions);
 
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
-  //// Client Call apis ////
+  //// json rpc call apis ////
+  //// http://docs.neo.org/en-us/node/cli/api.html
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
-  const prefixClient = `${prefix}/client`;
-  app.get(prefixClient + '/getblockcount', neoClientController.getblockcount);
-
+  const prefixClient = `/api/rpc`;
+  app.post(prefixClient + '/dumpprivkey', neoClientController.dumpprivkey); // Need to open the wallet
+  app.post(prefixClient + '/getaccountstate', neoClientController.getaccountstate);
+  app.post(prefixClient + '/getapplicationlog', neoClientController.getapplicationlog); // Need to enable logging
+  app.post(prefixClient + '/getassetstate', neoClientController.getassetstate);
+  app.post(prefixClient + '/getbalance', neoClientController.getbalance); // Need to open the wallet
+  app.post(prefixClient + '/getbestblockhash', neoClientController.getbestblockhash);
+  app.post(prefixClient + '/getblock', neoClientController.getblock);
+  app.post(prefixClient + '/getblockcount', neoClientController.getblockcount);
+  app.post(prefixClient + '/getblockhash', neoClientController.getblockhash);
+  app.post(prefixClient + '/getblocksysfee', neoClientController.getblocksysfee);
+  app.post(prefixClient + '/getconnectioncount', neoClientController.getconnectioncount);
+  app.post(prefixClient + '/getcontractstate', neoClientController.getcontractstate);
+  app.post(prefixClient + '/getnewaddress', neoClientController.getnewaddress); // Need to open the wallet
+  app.post(prefixClient + '/getrawmempool', neoClientController.getrawmempool);
+  app.post(prefixClient + '/getrawtransaction', neoClientController.getrawtransaction);
+  app.post(prefixClient + '/getstorage', neoClientController.getstorage);
+  app.post(prefixClient + '/gettxout', neoClientController.gettxout);
+  app.post(prefixClient + '/getpeers', neoClientController.getpeers);
+  app.post(prefixClient + '/getversion', neoClientController.getversion);
+  app.post(prefixClient + '/invoke', neoClientController.invoke);
+  app.post(prefixClient + '/invokefunction', neoClientController.invokefunction);
+  app.post(prefixClient + '/invokescript', neoClientController.invokescript);
+  app.post(prefixClient + '/listaddress', neoClientController.listaddress); // Need to open the wallet
+  app.post(prefixClient + '/sendrawtransaction', neoClientController.sendrawtransaction);
+  app.post(prefixClient + '/sendtoaddress', neoClientController.sendtoaddress); // Need to open the wallet
+  app.post(prefixClient + '/sendmany', neoClientController.sendmany); // Need to open the wallet
+  app.post(prefixClient + '/submitblock', neoClientController.submitblock); // Needs to be a consensus node
+  app.post(prefixClient + '/validateaddress', neoClientController.validateaddress); // Needs to be a consensus node
 }
