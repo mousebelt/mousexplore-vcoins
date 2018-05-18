@@ -701,12 +701,15 @@ exports.postAddressTransactions = async function (req, res) {
   // logic
   try {
     if (order > 0) { // Oldest first
-      var txs = await AddressModel.find(
+      var addrTxResult = await AddressModel.find(
         { asset, address },
         {
-          txs: { $slice: [offset, count] }
+          txs: { $slice: [offset, count] },
+          txsIn: 0,
+          txsOut: 0
         }
       );
+      var txs = addrTxResult.txs;
 
       var toReturn = [];
       for (let i = 0; i < txs.length; i++) {
@@ -716,12 +719,15 @@ exports.postAddressTransactions = async function (req, res) {
       }
       return res.json({ status: 200, msg: 'success', data: toReturn });
     } else {
-      var txs = await AddressModel.find(
+      var addrTxResult = await AddressModel.find(
         { asset, address },
         {
-          txs: { $slice: [(-1) * offset, count] }
+          txs: { $slice: [(-1) * offset, count] },
+          txsIn: 0,
+          txsOut: 0
         }
       );
+      var txs = addrTxResult.txs;
 
       var toReturn = [];
       for (let i = txs.length - 1; i >= 0; i++) {
