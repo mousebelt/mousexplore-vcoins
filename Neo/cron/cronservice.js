@@ -1,7 +1,6 @@
 var config = require("../config");
 var localNode = config.localNode;
 
-var sleepms = require('sleep-ms');
 var TransactionModel = require("../model/transactions");
 var AddressModel = require("../model/address");
 var TokenModel = require("../model/tokens");
