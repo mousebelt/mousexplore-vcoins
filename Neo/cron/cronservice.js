@@ -173,31 +173,6 @@ async function CheckUpdatedAddresses() {
       let { txid, vin, vout } = arrTxs[i];
 
       // Save Address Info
-      if (vout && vout.length > 0) {
-        for (let j = 0; j < vout.length; j++) {
-          let { asset, address } = vout[j];
-          // Save vout Info
-          var addressRow = await AddressModel.findOne({ asset, address });
-          if (!addressRow) {
-            addressRow = new AddressModel({
-              asset, address,
-              txsIn: [],
-              txsOut: []
-            });
-          }
-          if (addressRow.txsOut.indexOf(txid) == -1) {
-            addressRow.txsOut.push(txid);
-            try {
-              await addressRow.save();
-            }
-            catch (e) {
-              filelog(`address.save.txsOut: txid: ${txid}, error: `, e); // Should dump errors here
-              return;
-            }
-          }
-        }
-      }
-
       if (vin && vin.length > 0) {
         for (let j = 0; j < vin.length; j++) {
           var inTxid = vin[j].txid;
@@ -217,16 +192,62 @@ async function CheckUpdatedAddresses() {
               asset: inTxInfo.asset,
               address: inTxInfo.address,
               txsIn: [],
-              txsOut: []
+              txsOut: [],
+              txs: [],
             });
           }
-          if (addressRow.txsIn.indexOf(txid) == -1) {
-            addressRow.txsIn.push(txid);
+          if (addressRow.txs.indexOf(txid) == -1) {
+            addressRow.txs.push(txid);
             try {
               await addressRow.save();
             }
             catch (e) {
-              filelog(`addressRow.save.txsIn error: txid=${txid}, error: `, e); // Should dump errors here
+              filelog(`addressRow.save.txs error: addressRow=${addressRow}, error: `, e); // Should dump errors here
+              return;
+            }
+          }
+          if (addressRow.txsIn.indexOf({ txid, inIndex: j, value: inTxInfo.value }) == -1) {
+            addressRow.txsIn.push({ txid, inIndex: j, value: inTxInfo.value });
+            try {
+              await addressRow.save();
+            }
+            catch (e) {
+              filelog(`addressRow.save.txsIn error: addressRow=${addressRow}, error: `, e); // Should dump errors here
+              return;
+            }
+          }
+        }
+      }
+      if (vout && vout.length > 0) {
+        for (let j = 0; j < vout.length; j++) {
+          let { asset, address, value } = vout[j];
+          // Save vout Info
+          var addressRow = await AddressModel.findOne({ asset, address });
+          if (!addressRow) {
+            addressRow = new AddressModel({
+              asset, address,
+              txsIn: [],
+              txsOut: [],
+              txs: [],
+            });
+          }
+          if (addressRow.txs.indexOf(txid) == -1) {
+            addressRow.txs.push(txid);
+            try {
+              await addressRow.save();
+            }
+            catch (e) {
+              filelog(`addressRow.save.txs error: addressRow=${addressRow}, error: `, e); // Should dump errors here
+              return;
+            }
+          }
+          if (addressRow.txsOut.indexOf({ txid, outIndex: j, value }) == -1) {
+            addressRow.txsOut.push({ txid, outIndex: j, value });
+            try {
+              await addressRow.save();
+            }
+            catch (e) {
+              filelog(`addressRow.save.txsOut error: addressRow=${addressRow}, error: `, e); // Should dump errors here
               return;
             }
           }
