@@ -2,7 +2,6 @@ var config = require("../config");
 var localNode = config.localNode;
 
 var TransactionModel = require("../model/transactions");
-var TokenModel = require("../model/tokens");
 var TxServiceInofModel = require("../model/txServiceInfo");
 
 var fs = require('fs');
