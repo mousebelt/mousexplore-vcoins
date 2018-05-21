@@ -212,6 +212,7 @@ async function CheckUpdatedAddresses() {
           filelog(`error in getrawtransaction: i=${i}, txid=${txid}, lasttxid:${lastTxid}, lasttxoffset:${lastTxOffset}`, error);
         }
         
+        if (!txInfo) continue;
         var vin = txInfo.vin;
         var vout = txInfo.vout;
         // Save Address Info
