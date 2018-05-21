@@ -1,8 +1,7 @@
 var config = require("../config");
-var localNode = config.localNode;
+var client = config.localNode;
 
 var TransactionModel = require("../model/transactions");
-var TokenModel = require("../model/tokens");
 var TxServiceInofModel = require("../model/txServiceInfo");
 
 var fs = require('fs');
@@ -18,7 +17,7 @@ function filelog(...params) { //
 var promisify = function promisify(fn, args) {
   return new Promise((resolve, reject) => {
     try {
-      client.call(fn, args, function(err, result) {
+      client.call(fn, args, function (err, result) {
         if (err) {
           reject(err);
         }
@@ -36,9 +35,7 @@ async function getTxServiceInfo() {
   try {
     txServiceInfo = await TxServiceInofModel.findOne();
     if (txServiceInfo) return txServiceInfo;
-    else return {
-      lastblock: 0,
-    }
+    else return { lastblock: -1 }
   }
   catch (e) {
     filelog("getTxServiceInfo error: ", e);
@@ -65,18 +62,20 @@ async function saveTxServiceInfo(lastblock) {
 
 async function CheckUpdatedTransactions() {
   filelog('CheckUpdatedTransactions starting...');
-  var lastblock = 0;
+  var lastblock;
   var txServiceInfo = await getTxServiceInfo();
   if (txServiceInfo) {
     lastblock = txServiceInfo.lastblock;
+  } else {
+    filelog({ txServiceInfo });
+    return;
   }
-  filelog({ txServiceInfo });
 
   try {
     var blockCount = await promisify("getblockcount", []);
     if (blockCount) {
       var limit = lastblock + config.TX_CRON_BLOCK_COUNT;
-      for (let i = lastblock; i < blockCount && i <= limit; i++) {
+      for (let i = lastblock + 1; i < blockCount && i <= limit; i++) {
         try {
           var blockhash = await promisify("getblockhash", [i]);
           var blockdata = await promisify("getblock", [blockhash]);
@@ -84,15 +83,11 @@ async function CheckUpdatedTransactions() {
 
           for (let j = 0; j < txs.length; j++) {
             let txid = txs[j]
-            
+
             // Save Transaction Info
             var txRow = await TransactionModel.findOne({ txid });
             if (!txRow) {
-
-              txRow = new TransactionModel({
-                txid
-              });
-
+              txRow = new TransactionModel({ txid });
               try {
                 await txRow.save();
               }
@@ -109,15 +104,15 @@ async function CheckUpdatedTransactions() {
           }
         }
         catch (e) {
-          filelog('localNode getBlock error: ', e); // Should dump errors here
+          filelog('client getBlock error: ', e); // Should dump errors here
           return;
         }
       }
     } else {
-      filelog('localNode getBlockCount: blockcount is empty'); // Should dump errors here
+      filelog('client getBlockCount: blockcount is empty'); // Should dump errors here
     }
   } catch (error) {
-    filelog('localNode getBlockCount error: ', error); // Should dump errors here
+    filelog('client getBlockCount error: ', error); // Should dump errors here
   }
 }
 

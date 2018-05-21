@@ -575,7 +575,7 @@ exports.postTxs = async function (req, res) {
 
           var txs = [];
           for (let i = 0; i < rows.length; i ++) {
-            var tx = await promisify("getrawtransaction", [rows[i], 1]);
+            var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
             txs.push(tx);
           }
           return res.json({ status: 200, msg: "success", data: txs });
