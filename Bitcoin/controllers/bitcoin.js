@@ -2,6 +2,8 @@
 var config = require("../config");
 const client = config.localNode;
 
+const TransactionModel = require("../model/transactions");
+
 // var TransactionModel = require('../model/transactions');
 
 var promisify = function promisify(fn, args) {
@@ -547,3 +549,43 @@ exports.getBlockTransactions = async (req, res) => {
     return res.json({ status: 400, msg: "errors", data: error });
   }
 };
+
+exports.postTxs = async function (req, res) {
+  var offset = Number(req.body.offset);
+  var count = Number(req.body.count);
+  var sort = Number(req.body.sort);
+
+  // validation
+  if (!offset) offset = 0;
+  if (!count || count == 0) count = 10;
+
+  // condition
+  var condition;
+  if (sort) condition = { updatedAt: -1 }; // Desc order
+  else condition = { updatedAt: 1 }; // Asc order
+
+  // logic
+  try {
+    TransactionModel.find()
+      .sort(condition)
+      .skip(offset)
+      .limit(count)
+      .exec(async function (error, rows) {
+        if (!error) {
+
+          var txs = [];
+          for (let i = 0; i < rows.length; i ++) {
+            var tx = await promisify("getrawtransaction", [rows[i], 1]);
+            txs.push(tx);
+          }
+          return res.json({ status: 200, msg: "success", data: txs });
+        }
+        else {
+          console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
+          return res.json({ status: 400, msg: 'errors', data: error });
+        }
+      });
+  } catch (error) {
+    return res.json({ status: 400, msg: 'errors', data: error });
+  }
+}
