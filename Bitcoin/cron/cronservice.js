@@ -132,8 +132,8 @@ async function CheckUpdatedTransactions() {
                 await txRow.save();
               }
               catch (e) {
-                filelog(`transaction save error: txid=${txid}, error: `, e); // Should dump errors here
-                return;
+                filelog(`transaction save error: i=${i}, j=${j}, txid=${txid}`); // Should dump errors here
+                throw e;
               }
             }
           }
@@ -144,15 +144,15 @@ async function CheckUpdatedTransactions() {
           }
         }
         catch (e) {
-          filelog('client getBlock error: ', e); // Should dump errors here
-          return;
+          filelog(`client getBlock error: i=${i}`);
+          throw e;
         }
       }
     } else {
-      filelog('client getBlockCount: blockcount is empty'); // Should dump errors here
+      throw 'client getBlockCount: blockcount is empty'; // Should dump errors here
     }
   } catch (error) {
-    filelog('client getBlockCount error: ', error); // Should dump errors here
+    filelog('CheckUpdatedTransactions error: ', error); // Should dump errors here
   }
 }
 
