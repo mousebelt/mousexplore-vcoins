@@ -123,7 +123,6 @@ async function CheckUpdatedTransactions() {
 
           for (let j = 0; j < txs.length; j++) {
             let txid = txs[j]
-
             // Save Transaction Info
             var txRow = await TransactionModel.findOne({ txid });
             if (!txRow) {
@@ -132,8 +131,8 @@ async function CheckUpdatedTransactions() {
                 await txRow.save();
               }
               catch (e) {
-                filelog(`transaction save error: txid=${txid}, error: `, e); // Should dump errors here
-                return;
+                filelog(`transaction save error: i=${i}, j=${j}, txid=${txid}`); // Should dump errors here
+                throw e;
               }
             }
           }
@@ -144,19 +143,20 @@ async function CheckUpdatedTransactions() {
           }
         }
         catch (e) {
-          filelog('client getBlock error: ', e); // Should dump errors here
-          return;
+          filelog(`client getBlock error: i=${i}`);
+          throw e;
         }
       }
     } else {
-      filelog('client getBlockCount: blockcount is empty'); // Should dump errors here
+      throw 'client getBlockCount: blockcount is empty'; // Should dump errors here
     }
   } catch (error) {
-    filelog('client getBlockCount error: ', error); // Should dump errors here
+    filelog('CheckUpdatedTransactions error: ', error); // Should dump errors here
   }
 }
 
 async function CheckUpdatedAddresses() {
+  // TODO: solve genesis block coinbase transactions - 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b
   filelog('CheckUpdatedAddresses starting...');
 
   var lastTxid, lastTxOffset;
@@ -174,13 +174,45 @@ async function CheckUpdatedAddresses() {
   if (arrTxs && arrTxs.length > 0) {
     for (let i = 0; i < arrTxs.length; i++) {
       let { txid } = arrTxs[i];
-
       try {
-        var txInfo = await promisify("getrawtransaction", [txid, 1]);
-        if (!txInfo) {
-          throw 'txInfo is null !'
+        var txInfo;
+        // if (txid == '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b') {
+        //   txInfo = {
+        //     "txid": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+        //     "version": 1,
+        //     "locktime": 0,
+        //     "vin": [
+        //       {
+        //         "coinbase": "04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73",
+        //         "sequence": 4294967295
+        //       }
+        //     ],
+        //     "vout": [
+        //       {
+        //         "value": 50.00000000,
+        //         "n": 0,
+        //         "scriptPubKey": {
+        //           "asm": "04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f OP_CHECKSIG",
+        //           "hex": "4104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac",
+        //           "reqSigs": 1,
+        //           "type": "pubkey",
+        //           "addresses": [
+        //             "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+        //           ]
+        //         }
+        //       }
+        //     ]
+        //   }
+        // } else {
+        //   txInfo = await promisify("getrawtransaction", [txid, 1]);
+        // }
+        try {
+          txInfo = await promisify("getrawtransaction", [txid, 1]);
+        } catch (error) {
+          filelog(`error in getrawtransaction: i=${i}, txid=${txid}, lasttxid:${lastTxid}, lasttxoffset:${lastTxOffset}`, error);
         }
-
+        
+        if (!txInfo) continue;
         var vin = txInfo.vin;
         var vout = txInfo.vout;
         // Save Address Info
@@ -188,11 +220,11 @@ async function CheckUpdatedAddresses() {
           for (let j = 0; j < vin.length; j++) {
             var inTxid = vin[j].txid;
             var inVout = Number(vin[j].vout);
-
-            if (!inTxid && inTxid != '' && inVout >= 0) continue;
+            if (!inTxid || inTxid == '' || inVout < 0) continue;
             var inTxInfo = await promisify("gettxout", [inTxid, inVout]);
             if (!inTxInfo) {
-              throw `inTxInfo not found. inTxid=${inTxid}`;
+              continue;
+              // throw `inTxInfo not found. inTxid=${inTxid}`;
             }
 
             var addresses = inTxInfo.scriptPubKey.addresses;
@@ -205,8 +237,8 @@ async function CheckUpdatedAddresses() {
                   txs: [],
                 });
               }
-              if (addressRow.txs.indexOf(addresses[k]) == -1) {
-                addressRow.txs.push(addresses[k]);
+              if (addressRow.txs.indexOf(txid) == -1) {
+                addressRow.txs.push(txid);
                 try {
                   await addressRow.save();
                 }
@@ -230,8 +262,8 @@ async function CheckUpdatedAddresses() {
                   txs: [],
                 });
               }
-              if (addressRow.txs.indexOf(addresses[k]) == -1) {
-                addressRow.txs.push(addresses[k]);
+              if (addressRow.txs.indexOf(txid) == -1) {
+                addressRow.txs.push(txid);
                 try {
                   await addressRow.save();
                 }
@@ -271,7 +303,7 @@ async function addressService() {
 }
 
 exports.start_cronService = async function () {
-  filelog("Start neo cron service");
+  filelog("Start cron service");
 
   transactionService();
   addressService();
