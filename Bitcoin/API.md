@@ -1089,24 +1089,28 @@ tx: {
 ```
 
 
-<a name="postTxs"/>
 
-- postTxs
+## Get Bitcoin transaction by offset, count, order
 ```
-/**
- * POST /txs
- * Get tx list from offset and count
- * 
- * @param {Number} offset: 0
- * @param {Number} count: 10
- * @param {Boolean} sort: If true, newest order. If false, oldest order.
- * 
- * @return
- * { "status": "200", "msg": "success", 
- *   "data": [txs]
- * }
- * 
- * tx: {
+ POST /txs
+```
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+offset | Number | NO | offset, default: 0
+count | Number | NO | count, default: 10
+sort | Boolean | NO | sort, default: 0, 0 => ASC, 1 => DESC
+
+### RETURN
+
+* for successed case
+
+```javascript
+{ status: 200, msg: 'sccuess', data: [txs] }
+
+tx: {
             "txid": "3bf8c518a7a1187287516da67cb96733697b1d83eb937e68ae39bd4c08e563b7",
             "hash": "3bf8c518a7a1187287516da67cb96733697b1d83eb937e68ae39bd4c08e563b7",
             "version": 1,
@@ -1141,5 +1145,10 @@ tx: {
             "time": 1337966144,
             "blocktime": 1337966144
         }
- */
+```
+
+* for failed case
+
+```javascript
+{ status: 400, msg: 'errors', data: err }
 ```
