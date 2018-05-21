@@ -622,7 +622,7 @@ exports.postAddressTransactions = async function (req, res) {
       for (let i = 0; i < txs.length; i++) {
         var txid = txs[i];
         var txInfo = await promisify("getrawtransaction", [txid, 1]);
-        toReturn.push(tx);
+        toReturn.push(txInfo);
       }
       return res.json({ status: 200, msg: 'success', data: { total, txs: toReturn } });
     } else {
@@ -644,7 +644,7 @@ exports.postAddressTransactions = async function (req, res) {
       for (let i = txs.length - 1; i >= 0; i++) {
         var txid = txs[i];
         var txInfo = await promisify("getrawtransaction", [txid, 1]);
-        toReturn.push(tx);
+        toReturn.push(txInfo);
       }
       return res.json({ status: 200, msg: 'success', data: { total, txs: toReturn } });
     }
