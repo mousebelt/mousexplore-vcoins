@@ -1,5 +1,5 @@
 var config = require("../config");
-var localNode = config.localNode;
+var client = config.localNode;
 
 var TransactionModel = require("../model/transactions");
 var TxServiceInofModel = require("../model/txServiceInfo");
@@ -108,15 +108,15 @@ async function CheckUpdatedTransactions() {
           }
         }
         catch (e) {
-          filelog('localNode getBlock error: ', e); // Should dump errors here
+          filelog('client getBlock error: ', e); // Should dump errors here
           return;
         }
       }
     } else {
-      filelog('localNode getBlockCount: blockcount is empty'); // Should dump errors here
+      filelog('client getBlockCount: blockcount is empty'); // Should dump errors here
     }
   } catch (error) {
-    filelog('localNode getBlockCount error: ', error); // Should dump errors here
+    filelog('client getBlockCount error: ', error); // Should dump errors here
   }
 }
 
