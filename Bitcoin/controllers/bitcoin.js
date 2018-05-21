@@ -3,6 +3,7 @@ var config = require("../config");
 const client = config.localNode;
 
 const TransactionModel = require("../model/transactions");
+const AddressModel = require("../model/address");
 
 // var TransactionModel = require('../model/transactions');
 
@@ -553,7 +554,7 @@ exports.getBlockTransactions = async (req, res) => {
 exports.postTxs = async function (req, res) {
   var offset = Number(req.body.offset);
   var count = Number(req.body.count);
-  var sort = Number(req.body.sort);
+  var order = Number(req.body.order);
 
   // validation
   if (!offset) offset = 0;
@@ -561,8 +562,8 @@ exports.postTxs = async function (req, res) {
 
   // condition
   var condition;
-  if (sort) condition = { updatedAt: -1 }; // Desc order
-  else condition = { updatedAt: 1 }; // Asc order
+  if (order) condition = { updatedAt: 1 }; // Desc order
+  else condition = { updatedAt: -1 }; // Asc order
 
   // logic
   try {
@@ -614,7 +615,7 @@ exports.postAddressTransactions = async function (req, res) {
             total: { $size: "$txs" }
           }
         }
-      ])
+      ]);
       let { txs, total } = addrTxResult[0];
 
       var toReturn = [];
@@ -628,19 +629,6 @@ exports.postAddressTransactions = async function (req, res) {
       offset = (-1) * offset - count;
       var addrTxResult = await AddressModel.aggregate([
         {
-          $match: { asset, address }
-        },
-        {
-          $project: {
-            txs: { $slice: ["$txs", offset, count] },
-            total: { $size: "$txs" }
-          }
-        }
-      ])
-      let { txs, total } = addrTxResult[0];
-
-      var addrTxResult = await AddressModel.aggregate([
-        {
           $match: { address }
         },
         {
@@ -649,7 +637,7 @@ exports.postAddressTransactions = async function (req, res) {
             total: { $size: "$txs" }
           }
         }
-      ])
+      ]);
       let { txs, total } = addrTxResult[0];
 
       var toReturn = [];
