@@ -1,18 +1,16 @@
 var mongoose = require("mongoose");
 
 var addressSchema = new mongoose.Schema({
-    asset: String, // 0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7
-    address: String, // Ae2d6qj91YL3LVUMkza7WQsaTYjzjHm4z1
+  address: String, // 1BW18n7MfpU35q4MTBSk8pse3XzQF8XvzT
 
-    txsIn: [String],
-    txsOut: [String],
+  txs: [String], // txid array
 
-    updatedAt: Date
+  updatedAt: Date
 });
 
 addressSchema.pre('save', function (next) {
-    this.updatedAt = new Date();
-    next();
+  this.updatedAt = new Date();
+  next();
 });
 
 var Address = mongoose.model("Address", addressSchema);
