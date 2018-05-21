@@ -1,4 +1,4 @@
-var btcController = require('../controllers/litecoin');
+var ltcController = require('../controllers/litecoin');
 
 module.exports = function (app) {
     const prefix = '/api/v1';
@@ -6,36 +6,38 @@ module.exports = function (app) {
     //// RPC Call apis ////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    app.post(prefix + '/getnewaddress', btcController.getnewaddress);
-    app.post(prefix + '/setaccount', btcController.setaccount);
-    app.post(prefix + '/settxfee', btcController.setTxFee);
-    app.post(prefix + '/getreceivedbyaccount', btcController.getReceivedByAccount);
-    app.post(prefix + '/getreceivedbyaddress', btcController.getReceivedByAddress);
-    app.get(prefix + '/getaccountbalance', btcController.getAccountBalance);
-    app.get(prefix + '/getalltransactionsbyaccount', btcController.getAllTransactionsByAccount);
-    app.get(prefix + '/getaccount/:address', btcController.getAccount);
-    app.get(prefix + '/getaccountaddress/:account', btcController.getAccountAddress);
-    app.get(prefix + '/getaddressesbyaccount/:account', btcController.getAccountByAddress);
-    app.get(prefix + '/getblockcount', btcController.getBlockCount);
-    app.get(prefix + '/getbestblockhash', btcController.getBestBlockHash);
-    app.get(prefix + '/getblock/:hash', btcController.getBlock);
-    app.get(prefix + '/getblockhash/:index', btcController.getBlockHash);
-    app.get(prefix + '/gettransaction/:txid', btcController.getTransaction);
-    app.get(prefix + '/getrawtransaction/:txid', btcController.getRawTransaction);
-    app.get(prefix + '/listaccounts', btcController.listAccounts);
-    app.get(prefix + '/listsinceblock', btcController.listSinceBlock);
-    app.post(prefix + '/sendfrom', btcController.sendFrom);
-    app.post(prefix + '/sendmany', btcController.sendMany);
-    app.post(prefix + '/sendtoaddress', btcController.sendToAddress);
-    app.post(prefix + '/listtransactions', btcController.listTransactions);
+    app.post(prefix + '/getnewaddress', ltcController.getnewaddress);
+    app.post(prefix + '/setaccount', ltcController.setaccount);
+    app.post(prefix + '/settxfee', ltcController.setTxFee);
+    app.post(prefix + '/getreceivedbyaccount', ltcController.getReceivedByAccount);
+    app.post(prefix + '/getreceivedbyaddress', ltcController.getReceivedByAddress);
+    app.get(prefix + '/getaccountbalance', ltcController.getAccountBalance);
+    app.get(prefix + '/getalltransactionsbyaccount', ltcController.getAllTransactionsByAccount);
+    app.get(prefix + '/getaccount/:address', ltcController.getAccount);
+    app.get(prefix + '/getaccountaddress/:account', ltcController.getAccountAddress);
+    app.get(prefix + '/getaddressesbyaccount/:account', ltcController.getAccountByAddress);
+    app.get(prefix + '/getblockcount', ltcController.getBlockCount);
+    app.get(prefix + '/getbestblockhash', ltcController.getBestBlockHash);
+    app.get(prefix + '/getblock/:hash', ltcController.getBlock);
+    app.get(prefix + '/getblockhash/:index', ltcController.getBlockHash);
+    app.get(prefix + '/gettransaction/:txid', ltcController.getTransaction);
+    app.get(prefix + '/getrawtransaction/:txid', ltcController.getRawTransaction);
+    app.get(prefix + '/listaccounts', ltcController.listAccounts);
+    app.get(prefix + '/listsinceblock', ltcController.listSinceBlock);
+    app.post(prefix + '/sendfrom', ltcController.sendFrom);
+    app.post(prefix + '/sendmany', ltcController.sendMany);
+    app.post(prefix + '/sendtoaddress', ltcController.sendToAddress);
+    app.post(prefix + '/listtransactions', ltcController.listTransactions);
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     //// Utility apis ////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    app.get(prefix + '/blocks/latest/:count', btcController.getBlocksLatest);
-    app.get(prefix + '/blocks', btcController.getBlocks);
-    app.get(prefix + '/block/:height', btcController.getBlockHeight);
-    app.get(prefix + '/transaction/:txid', btcController.getTransactionInfo);
-    app.get(prefix + '/block/transactions/:height', btcController.getBlockTransactions);
+    app.get(prefix + '/blocks/latest/:count', ltcController.getBlocksLatest);
+    app.get(prefix + '/blocks', ltcController.getBlocks);
+    app.get(prefix + '/block/:height', ltcController.getBlockHeight);
+    app.get(prefix + '/transaction/:txid', ltcController.getTransactionInfo);
+    app.get(prefix + '/block/transactions/:height', ltcController.getBlockTransactions);
+    app.post(prefix + '/txs', ltcController.postTxs);
+    app.post(prefix + '/address/txs', ltcController.postAddressTransactions);
 }
