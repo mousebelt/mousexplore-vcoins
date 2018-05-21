@@ -598,7 +598,7 @@ exports.postTx = async function (req, res) {
  * 
  * @param {Number} offset: 0
  * @param {Number} count: 10
- * @param {Boolean} sort: If true, newest order. If false, oldest order.
+ * @param {Boolean} order: If false, newest order. If true, oldest order.
  * 
  * @return
  * { "status": "200", "msg": "success", 
@@ -624,7 +624,7 @@ exports.postTx = async function (req, res) {
 exports.postTxs = async function (req, res) {
   var offset = Number(req.body.offset);
   var count = Number(req.body.count);
-  var sort = Number(req.body.sort);
+  var order = Number(req.body.order);
 
   // validation
   if (!offset) offset = 0;
@@ -632,8 +632,8 @@ exports.postTxs = async function (req, res) {
 
   // condition
   var condition;
-  if (sort) condition = { updatedAt: -1 }; // Desc order
-  else condition = { updatedAt: 1 }; // Asc order
+  if (order) condition = { updatedAt: 1 }; 
+  else condition = { updatedAt: -1 }; 
 
   // logic
   try {
