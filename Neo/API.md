@@ -547,7 +547,7 @@ neo-vcoin apis
  * 
  * @param {Number} offset: 0
  * @param {Number} count: 10
- * @param {Boolean} sort: If true, newest order. If false, oldest order.
+ * @param {Boolean} order: If false, newest order. If true, oldest order.
  * 
  * @return
  * { "status": "200", "msg": "success", 
