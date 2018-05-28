@@ -8,6 +8,7 @@ vcoin apis
 [Make Transaction](#make-transaction)  
 [Get Updated Transaction](#get-updated-transaction)  
 [Get Block list](#get-block-list)  
+[Get Block list from offset and count](#get-block-list-from-offset-and-count)  
 [Get Latest Blocks](#get-latest-blocks)  
 [Get Block Detail](#get-block-detail)  
 [Get transactions from blocknumber](#get-transactions-from-blocknumber)  
@@ -200,6 +201,44 @@ count | Number | YES | count of blocks to get
           },
         ...
     ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+## Get Block list from offset and count
+```
+ GET /api/v1/blocks
+```
+
+get block list in latest order from offset and count.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+offset | Number | Yes | 0 | start block number
+count | Number | Yes | 10 | count of blocks to get 
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{ status: 200, msg: 'success', data: [block] }
+
+block = {
+    height,
+    hash,
+    time
 }
 ```
 
