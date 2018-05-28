@@ -471,7 +471,7 @@ exports.getBlocks = async (req, res) => {
   var count = Number(req.query.count);
 
   if (!offset) offset = 0;
-  if (!count || count <= 0) count = 25;
+  if (!count || count <= 0) count = 10;
 
   try {
     var blockCount = await promisify("getblockcount", []);
