@@ -489,7 +489,11 @@ exports.getBlocks = async (req, res) => {
       var hash = await promisify("getblockhash", [index]);
       if (hash) {
         var block = await promisify("getblock", [hash]);
-        if (block) arrBlocks.push(block);
+        if (block) arrBlocks.push({
+          height: block.height,
+          hash: block.hash,
+          time: block.time
+        });
       }
     }
 
