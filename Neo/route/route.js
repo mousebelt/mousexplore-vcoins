@@ -27,6 +27,7 @@ module.exports = function (app) {
   //// Utility apis ////
 
   app.post(prefix + '/blocks/latest', neoNodeController.postBlocksLatest);
+  app.get(prefix + '/blocks', neoNodeController.getBlocks);
   app.post(prefix + '/blocks', neoNodeController.postBlocks);
   app.post(prefix + '/block', neoNodeController.postBlock);
   app.post(prefix + '/block/txs', neoNodeController.postBlockTxs);

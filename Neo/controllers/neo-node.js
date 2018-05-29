@@ -429,6 +429,53 @@ exports.postBlocks = async function (req, res) {
 }
 
 /**
+ * GET /blocks 
+ * Get block list
+ * 
+ * @param {Number} offset
+ * @param {Number} count
+ * 
+ * @return
+ * { status: 200, msg: 'success', data: [block] }
+  block = {
+    height,
+    hash,
+    time
+  }
+*/
+exports.getBlocks = async function (req, res) {
+  var offset = Number(req.query.offset);
+  var count = Number(req.query.count);
+
+  if (!offset) offset = 0;
+  if (!count || count <= 0) count = 10;
+
+  // logic
+  var blockCount = await localNode.getBlockCount();
+  if (!blockCount) {
+    return res.json({ status: 400, msg: 'Error in getting block count' });
+  }
+
+  // logic
+  var blocks = [];
+  for (let i = 0; i < count; i++) {
+    var height = blockCount - offset - i;
+    if (height < 0) break;
+
+    var block = await localNode.getBlockByHeight(height, 1);
+    if (block) {
+      blocks.push({
+        height,
+        hash: block.hash,
+        time: block.time
+      });
+    }
+  }
+
+  return res.json({ status: 200, msg: 'success', data: blocks });
+}
+
+/**
  * POST /block
  * Get block info from hash or index
  * 
@@ -632,8 +679,8 @@ exports.postTxs = async function (req, res) {
 
   // condition
   var condition;
-  if (order) condition = { updatedAt: 1 }; 
-  else condition = { updatedAt: -1 }; 
+  if (order) condition = { updatedAt: 1 };
+  else condition = { updatedAt: -1 };
 
   // logic
   try {
