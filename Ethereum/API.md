@@ -12,7 +12,7 @@ vcoin apis
 [Get Latest Blocks](#get-latest-blocks)  
 [Get Block Detail](#get-block-detail)  
 [Get transactions from blocknumber](#get-transactions-from-blocknumber)  
-[Get transaction list](#get-transaction-list)  
+[Get transaction list by offset, count, order](#get-transaction-list)  
 [Get transaction list From Account](#get-transaction-list-from-account)  
 [Get transaction count From Account](#get-transaction-count-from-account)  
 [Get tx info from txHash](#get-tx-info-from-txhash)  
@@ -434,19 +434,20 @@ blockNumber | Number | YES | block number
 }
 ```
 
-## Get transaction list
+## Get transaction list by offset, count, order
 ```
- POST /api/v1/txs
+ GET /api/v1/transactions
 ```
 
-Get list of specified transactions.
+Get transaction list.
 
 ### QUERY PARAMS
 
-Name | Type | Mandatory | Description
+Name | Type | Mandatory | Default | Description
 ------------ | ------------ | ------------ | ------------
-offset | Number | YES | offset from latest transaction
-count | Number | YES | count of blocks to get 
+offset | Number | NO | 0 | offset
+count | Number | NO | 10 | transaction count
+order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 
 ### RETURN
 
@@ -455,6 +456,7 @@ count | Number | YES | count of blocks to get
 
 ```javascript
 {
+"status": 200,
 "msg": "success",
 "data": [
         {   
@@ -475,7 +477,9 @@ count | Number | YES | count of blocks to get
 
 ```javascript
 {
-  "error": ""   //error message
+  "status": 400,
+  "msg": "error msg",
+  "data": error   //error message
 }
 ```
 

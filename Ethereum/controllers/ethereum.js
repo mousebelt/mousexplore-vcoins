@@ -402,7 +402,7 @@ exports.getblockdetail = async function (req, res) {
 * @return transaction information
 * 
 */
-exports.getTransactions = async function (req, res) {
+exports.postTransactions = async function (req, res) {
   var blockNumber = req.body.blockNumber;
 
   try {
@@ -440,29 +440,38 @@ exports.getTransactions = async function (req, res) {
   }
 }
 
+/**
+ * Get transaction list by offset, count, order
+ * 
+ * @param {Number} offset
+ * @param {Number} count
+ * @param {Number} order
+ * 
+ * returns transaction list
+ */
+exports.getTransactions = async function (req, res) {
+  var offset = Number(req.query.offset);
+  var count = Number(req.query.count);
+  var order = Number(req.query.order);
 
-/*
-* Get transactions list
-* @offset transaction offset from latest
-* @count transaction count
-* @return transactions list
-* 
-*/
-exports.getTransactionList = async function (req, res) {
-  var offset = req.body.offset;
-  var count = req.body.count;
+  if (!offset) offset = 0;
+  if (!count || count <= 0) count = 10;
+  // condition
+  var condition;
+  if (order) condition = { timestamp: 1 };
+  else condition = { timestamp: -1 };
 
   TransactionModel.find()
-    .sort({ timestamp: -1 })
+    .sort(condition)
     .skip(offset)
     .limit(count)
     .exec(function (error, transactions) {
       if (!error) {
-        res.status(200).json({ msg: "success", data: transactions });
+        res.json({ status: 200, msg: "success", data: transactions });
       }
       else {
         console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
-        res.status(400).json({ error: error });
+        res.json({ status: 400, msg: 'errors', data: error });
       }
     });
 }
