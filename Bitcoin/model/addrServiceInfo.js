@@ -3,7 +3,7 @@ var mongoose = require("mongoose");
 var addressServiceInfoSchema = new mongoose.Schema({
   lastTxid: String,
   lastTxOffset: Number,
-  updatedAt: Number
+  updatedAt: Date
 });
 
 addressServiceInfoSchema.pre('save', function (next) {

@@ -10,7 +10,7 @@ const AddressModel = require("../model/address");
 var promisify = function promisify(fn, args) {
   return new Promise((resolve, reject) => {
     try {
-      client.call(fn, args, function (err, result) {
+      client.call(fn, args, function(err, result) {
         if (err) {
           reject(err);
         }
@@ -30,7 +30,7 @@ exports.getnewaddress = (req, res) => {
   const account = req.body.account;
 
   try {
-    client.call("getnewaddress", [account], function (err, result) {
+    client.call("getnewaddress", [account], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -46,7 +46,7 @@ exports.setaccount = (req, res) => {
   const address = req.body.address;
 
   try {
-    client.call("setaccount", [address, account], function (err, result) {
+    client.call("setaccount", [address, account], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -61,7 +61,7 @@ exports.setTxFee = (req, res) => {
   const fee = req.body.fee;
 
   try {
-    client.call("settxfee", [Number(fee)], function (err, result) {
+    client.call("settxfee", [Number(fee)], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -79,7 +79,7 @@ exports.getReceivedByAccount = (req, res) => {
   if (!minconf) minconf = 1;
 
   try {
-    client.call("getreceivedbyaccount", [account, Number(minconf)], function (
+    client.call("getreceivedbyaccount", [account, Number(minconf)], function(
       err,
       result
     ) {
@@ -100,7 +100,7 @@ exports.getReceivedByAddress = (req, res) => {
   if (!minconf) minconf = 1;
 
   try {
-    client.call("getreceivedbyaddress", [address, Number(minconf)], function (
+    client.call("getreceivedbyaddress", [address, Number(minconf)], function(
       err,
       result
     ) {
@@ -121,7 +121,7 @@ exports.getAccountBalance = (req, res) => {
   if (!minconf) minconf = 1;
 
   try {
-    client.call("getbalance", [account, Number(minconf)], function (
+    client.call("getbalance", [account, Number(minconf)], function(
       err,
       result
     ) {
@@ -147,7 +147,7 @@ exports.getAllTransactionsByAccount = (req, res) => {
     client.call(
       "listtransactions",
       [account, Number(count), Number(from)],
-      function (err, result) {
+      function(err, result) {
         if (err) {
           return res.json({ status: 400, msg: "errors", data: err });
         }
@@ -163,7 +163,7 @@ exports.getAccount = (req, res) => {
   const address = req.params.address;
 
   try {
-    client.call("getaccount", [address], function (err, result) {
+    client.call("getaccount", [address], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -178,7 +178,7 @@ exports.getAccountAddress = (req, res) => {
   const account = req.params.account;
 
   try {
-    client.call("getaccountaddress", [account], function (err, result) {
+    client.call("getaccountaddress", [account], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -193,7 +193,7 @@ exports.getAccountByAddress = (req, res) => {
   const account = req.params.account;
 
   try {
-    client.call("getaddressesbyaccount", [account], function (err, result) {
+    client.call("getaddressesbyaccount", [account], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -206,7 +206,7 @@ exports.getAccountByAddress = (req, res) => {
 
 exports.getBlockCount = (req, res) => {
   try {
-    client.call("getblockcount", [], function (err, result) {
+    client.call("getblockcount", [], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -219,7 +219,7 @@ exports.getBlockCount = (req, res) => {
 
 exports.getBestBlockHash = (req, res) => {
   try {
-    client.call("getbestblockhash", [], function (err, result) {
+    client.call("getbestblockhash", [], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -234,7 +234,7 @@ exports.getBlock = (req, res) => {
   const hash = req.params.hash;
 
   try {
-    client.call("getblock", [hash], function (err, result) {
+    client.call("getblock", [hash], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -249,7 +249,7 @@ exports.getBlockHash = (req, res) => {
   const index = req.params.index;
 
   try {
-    client.call("getblockhash", [Number(index)], function (err, result) {
+    client.call("getblockhash", [Number(index)], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -264,7 +264,7 @@ exports.getTransaction = (req, res) => {
   const txid = req.params.txid;
 
   try {
-    client.call("gettransaction", [txid], function (err, result) {
+    client.call("gettransaction", [txid], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -280,7 +280,7 @@ exports.getRawTransaction = (req, res) => {
   var verbose = req.query.verbose;
 
   try {
-    client.call("getrawtransaction", [txid, Number(verbose)], function (
+    client.call("getrawtransaction", [txid, Number(verbose)], function(
       err,
       result
     ) {
@@ -299,7 +299,7 @@ exports.listAccounts = (req, res) => {
   if (!minconf) minconf = 1;
 
   try {
-    client.call("listaccounts", [Number(minconf)], function (err, result) {
+    client.call("listaccounts", [Number(minconf)], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -331,7 +331,7 @@ exports.sendFrom = (req, res) => {
         comment,
         commentto
       ],
-      function (err, result) {
+      function(err, result) {
         if (err) {
           return res.json({ status: 400, msg: "errors", data: err });
         }
@@ -354,7 +354,7 @@ exports.sendMany = (req, res) => {
     client.call(
       "sendmany",
       [fromaccount, toaddresses, Number(minconf), comment],
-      function (err, result) {
+      function(err, result) {
         if (err) {
           return res.json({ status: 400, msg: "errors", data: err });
         }
@@ -375,7 +375,7 @@ exports.sendToAddress = (req, res) => {
     client.call(
       "sendtoaddress",
       [toaddress, Number(amount), comment, commentto],
-      function (err, result) {
+      function(err, result) {
         if (err) {
           return res.json({ status: 400, msg: "errors", data: err });
         }
@@ -399,7 +399,7 @@ exports.listTransactions = (req, res) => {
     client.call(
       "listtransactions",
       [account, Number(count), Number(from)],
-      function (err, result) {
+      function(err, result) {
         if (err) {
           return res.json({ status: 400, msg: "errors", data: err });
         }
@@ -416,7 +416,7 @@ exports.listSinceBlock = (req, res) => {
   const confirm = req.query.confirm;
 
   try {
-    client.call("listsinceblock", [blockhash, Number(confirm)], function (
+    client.call("listsinceblock", [blockhash, Number(confirm)], function(
       err,
       result
     ) {
@@ -523,7 +523,7 @@ exports.getTransactionInfo = (req, res) => {
   const txid = req.params.txid;
 
   try {
-    client.call("getrawtransaction", [txid, 1], function (err, result) {
+    client.call("getrawtransaction", [txid, 1], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
@@ -560,19 +560,17 @@ exports.getBlockTransactions = async (req, res) => {
   }
 };
 
-exports.postTxs = async function (req, res) {
-  var offset = Number(req.body.offset);
-  var count = Number(req.body.count);
-  var order = Number(req.body.order);
+exports.getTransactions = async function(req, res) {
+  var offset = Number(req.query.offset);
+  var count = Number(req.query.count);
+  var order = Number(req.query.order);
 
-  // validation
   if (!offset) offset = 0;
-  if (!count || count == 0) count = 10;
-
+  if (!count || count <= 0) count = 10;
   // condition
   var condition;
-  if (order) condition = { updatedAt: 1 }; // Desc order
-  else condition = { updatedAt: -1 }; // Asc order
+  if (order) condition = { updatedAt: 1 };
+  else condition = { updatedAt: -1 };
 
   // logic
   try {
@@ -580,40 +578,40 @@ exports.postTxs = async function (req, res) {
       .sort(condition)
       .skip(offset)
       .limit(count)
-      .exec(async function (error, rows) {
+      .exec(async function(error, rows) {
         if (!error) {
-
           var txs = [];
           for (let i = 0; i < rows.length; i++) {
             var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
             txs.push(tx);
           }
           return res.json({ status: 200, msg: "success", data: txs });
-        }
-        else {
-          console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
-          return res.json({ status: 400, msg: 'errors', data: error });
+        } else {
+          console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
+          return res.json({ status: 400, msg: "errors", data: error });
         }
       });
   } catch (error) {
-    return res.json({ status: 400, msg: 'errors', data: error });
+    return res.json({ status: 400, msg: "errors", data: error });
   }
-}
+};
 
-exports.postAddressTransactions = async function (req, res) {
+exports.postAddressTransactions = async function(req, res) {
   var address = req.body.address;
   var offset = Number(req.body.offset);
   var count = Number(req.body.count);
   var order = Number(req.body.order);
 
   // validation
-  if (!address || address == '') return res.json({ status: 400, msg: 'address is empty !' });
+  if (!address || address == "")
+    return res.json({ status: 400, msg: "address is empty !" });
   if (!offset) offset = 0;
   if (!count || count == 0) count = 10;
 
   // logic
   try {
-    if (order > 0) { // Oldest first
+    if (order > 0) {
+      // Oldest first
       var addrTxResult = await AddressModel.aggregate([
         {
           $match: { address }
@@ -633,9 +631,13 @@ exports.postAddressTransactions = async function (req, res) {
         var txInfo = await promisify("getrawtransaction", [txid, 1]);
         toReturn.push(txInfo);
       }
-      return res.json({ status: 200, msg: 'success', data: { total, txs: toReturn } });
+      return res.json({
+        status: 200,
+        msg: "success",
+        data: { total, txs: toReturn }
+      });
     } else {
-      offset = (-1) * offset - count;
+      offset = -1 * offset - count;
       var addrTxResult = await AddressModel.aggregate([
         {
           $match: { address }
@@ -655,9 +657,13 @@ exports.postAddressTransactions = async function (req, res) {
         var txInfo = await promisify("getrawtransaction", [txid, 1]);
         toReturn.push(txInfo);
       }
-      return res.json({ status: 200, msg: 'success', data: { total, txs: toReturn } });
+      return res.json({
+        status: 200,
+        msg: "success",
+        data: { total, txs: toReturn }
+      });
     }
   } catch (error) {
-    return res.json({ status: 400, msg: 'error occured !' });
+    return res.json({ status: 400, msg: "error occured !" });
   }
-}
+};
