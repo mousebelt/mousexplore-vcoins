@@ -467,20 +467,33 @@ exports.getBlocksLatest = async (req, res) => {
 };
 
 exports.getBlocks = async (req, res) => {
-  const height = Number(req.query.height);
-  const count = Number(req.query.count);
+  var offset = Number(req.query.offset);
+  var count = Number(req.query.count);
+
+  if (!offset) offset = 0;
+  if (!count || count <= 0) count = 10;
 
   try {
+    var blockCount = await promisify("getblockcount", []);
+    if (!blockCount) {
+      return res.json({ status: 400, msg: "empty blockcount !" });
+    }
+
+    var height = blockCount - offset;
     // get block count
     var arrBlocks = [];
-    for (var i = 0; i < count; i++) {
+    for (var i = 1; i <= count; i++) {
       var index = height - i;
       if (index < 0) break;
 
       var hash = await promisify("getblockhash", [index]);
       if (hash) {
         var block = await promisify("getblock", [hash]);
-        if (block) arrBlocks.push(block);
+        if (block) arrBlocks.push({
+          height: block.height,
+          hash: block.hash,
+          time: block.time
+        });
       }
     }
 
