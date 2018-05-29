@@ -38,7 +38,7 @@ vcoin apis
 [Get Bitcoin block info from given block height](#get-bitcoin-block-info-from-given-block-height)  
 [Get transaction by txid](#get-transaction-by-txid)  
 [Get Bitcoin transaction by block height](#get-bitcoin-transaction-by-block-height)  
-[Get Bitcoin transaction by offset, count, sort](#get-bitcoin-transaction-by-offset-count-order)  
+[Get transactions by offset, count, order](#get-transactions-by-offset-count-order)  
 [Get Bitcoin address related transaction by offset, count, order](#get-bitcoin-address-related-transaction-by-offset-count-order)  
 
 
@@ -1093,25 +1093,25 @@ tx: {
 
 
 
-## Get Bitcoin transaction by offset, count, order
+## Get transactions by offset, count, order
 ```
- POST /txs
+ GET /transactions
 ```
 
 ### QUERY PARAMS
 
-Name | Type | Mandatory | Description
+Name | Type | Mandatory | Default | Description
 ------------ | ------------ | ------------ | ------------
-offset | Number | NO | offset, default: 0
-count | Number | NO | count, default: 10
-order | Boolean | NO | default: 0, 0 => newest first, 1 => oldest first
+offset | Number | NO | 0 | offset
+count | Number | NO | 10 | transaction count
+order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 
 ### RETURN
 
 * for successed case
 
 ```javascript
-{ status: 200, msg: 'sccuess', data: [txs] }
+{ status: 200, msg: 'sccuess', data: [transaction] }
 
 tx: {
             "txid": "3bf8c518a7a1187287516da67cb96733697b1d83eb937e68ae39bd4c08e563b7",
