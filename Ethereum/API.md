@@ -12,7 +12,7 @@ vcoin apis
 [Get Latest Blocks](#get-latest-blocks)  
 [Get Block Detail](#get-block-detail)  
 [Get transactions from blocknumber](#get-transactions-from-blocknumber)  
-[Get transaction list by offset, count, order](#get-transaction-list)  
+[Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
 [Get transaction list From Account](#get-transaction-list-from-account)  
 [Get transaction count From Account](#get-transaction-count-from-account)  
 [Get tx info from txHash](#get-tx-info-from-txhash)  
