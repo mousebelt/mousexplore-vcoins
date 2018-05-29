@@ -665,19 +665,19 @@ exports.postTx = async function (req, res) {
 }
 
 /**
- * POST /txs
- * Get tx list from offset and count
+ * GET /transactions
+ * Get transaction list by offset, count, order
  * 
  * @param {Number} offset: 0
  * @param {Number} count: 10
- * @param {Boolean} order: If false, newest order. If true, oldest order.
+ * @param {Number} order
  * 
  * @return
  * { "status": "200", "msg": "success", 
- *   "data": [txs]
+ *   "data": [transaction]
  * }
  * 
- * tx: {
+ * transaction: {
         "_id": "5afa852c31a9a73db264d7ff",
         "txid": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
         "size": 107,
@@ -693,19 +693,17 @@ exports.postTx = async function (req, res) {
         "__v": 0
     }
  */
-exports.postTxs = async function (req, res) {
-  var offset = Number(req.body.offset);
-  var count = Number(req.body.count);
-  var order = Number(req.body.order);
+exports.getTransactions = async function (req, res) {
+  var offset = Number(req.query.offset);
+  var count = Number(req.query.count);
+  var order = Number(req.query.order);
 
-  // validation
   if (!offset) offset = 0;
-  if (!count || count == 0) count = 10;
-
+  if (!count || count <= 0) count = 10;
   // condition
   var condition;
-  if (order) condition = { updatedAt: 1 };
-  else condition = { updatedAt: -1 };
+  if (order) condition = { blockTime: 1 };
+  else condition = { blockTime: -1 };
 
   // logic
   try {
