@@ -560,19 +560,17 @@ exports.getBlockTransactions = async (req, res) => {
   }
 };
 
-exports.postTxs = async function (req, res) {
-  var offset = Number(req.body.offset);
-  var count = Number(req.body.count);
-  var order = Number(req.body.order);
+exports.getTransactions = async function(req, res) {
+  var offset = Number(req.query.offset);
+  var count = Number(req.query.count);
+  var order = Number(req.query.order);
 
-  // validation
   if (!offset) offset = 0;
-  if (!count || count == 0) count = 10;
-
+  if (!count || count <= 0) count = 10;
   // condition
   var condition;
-  if (order) condition = { updatedAt: 1 }; // Desc order
-  else condition = { updatedAt: -1 }; // Asc order
+  if (order) condition = { updatedAt: 1 };
+  else condition = { updatedAt: -1 };
 
   // logic
   try {
@@ -580,25 +578,27 @@ exports.postTxs = async function (req, res) {
       .sort(condition)
       .skip(offset)
       .limit(count)
-      .exec(async function (error, rows) {
+      .exec(async function(error, rows) {
         if (!error) {
-
           var txs = [];
           for (let i = 0; i < rows.length; i++) {
-            var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-            txs.push(tx);
+            try {
+              var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
+              txs.push(tx);
+            } catch (error) {
+              console.log('get transaction error: ', error)
+            }
           }
           return res.json({ status: 200, msg: "success", data: txs });
-        }
-        else {
-          console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
-          return res.json({ status: 400, msg: 'errors', data: error });
+        } else {
+          console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
+          return res.json({ status: 400, msg: "errors", data: error });
         }
       });
   } catch (error) {
-    return res.json({ status: 400, msg: 'errors', data: error });
+    return res.json({ status: 400, msg: "errors", data: error });
   }
-}
+};
 
 exports.postAddressTransactions = async function (req, res) {
   var address = req.body.address;
