@@ -24,6 +24,7 @@ neo-vcoin apis
 
 ### Utility apis
 [postBlocksLatest](#postBlocksLatest)  
+[get latest blocks from offset, count](#getBlocks)  
 [postBlocks](#postBlocks)  
 [postBlock](#postBlock)  
 [postBlockTxs](#postBlockTxs)  
@@ -348,6 +349,30 @@ neo-vcoin apis
             "confirmations": 1,
             "nextblockhash": "0x4530743a9a497b77c24249e995b832e7216e6a0283ca6a4a0b7bfb19c54c4566"
         }
+ */
+```
+
+<a name="getBlocks"/>
+
+- get latest blocks from offset, count
+```
+/**
+ * GET /blocks 
+ * get latest blocks from offset, count
+ * 
+ * @param {Number} offset
+ * @param {Number} count
+ * 
+ * @param {Number} offset
+ * @param {Number} count
+ * 
+ * @return
+ * { status: 200, msg: 'success', data: [block] }
+  block = {
+    height,
+    hash,
+    time
+  }
  */
 ```
 
