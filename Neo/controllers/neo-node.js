@@ -464,13 +464,7 @@ exports.getBlocks = async function (req, res) {
 
     try {
       var block = await localNode.getBlockByHeight(height, 1);
-      if (block) {
-        blocks.push({
-          height,
-          hash: block.hash,
-          time: block.time
-        });
-      }
+      if (block) blocks.push(block);
     } catch (error) {
       console.log('error occured: ', error);
     }

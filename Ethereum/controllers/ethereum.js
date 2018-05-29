@@ -203,14 +203,7 @@ exports.getBlocks = function (req, res) {
           if (height < 0) break;
 
           var blockdata = await web3.eth.getBlock(height, true);
-
-          var time = blockdata.timestamp;
-
-          blocks.push({
-            height: blockdata.number,
-            hash: blockdata.hash,
-            time: blockdata.timestamp
-          });
+          if (blockdata) blocks.push(blockdata);
         }
 
         res.status(200).json({ status: 200, msg: "success", data: blocks });
