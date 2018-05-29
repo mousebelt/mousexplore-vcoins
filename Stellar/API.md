@@ -47,7 +47,7 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 "status": 200,
 "msg": "success",
 "next": "23442324233",
-"next": "23442324128",
+"prev": "23442324128",
 "data": [
         {   
 		  "sequence": "17730975", "timeStamp": "1472533979", 
