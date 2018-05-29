@@ -38,6 +38,6 @@ module.exports = function (app) {
   app.get(prefix + '/block/:height', ltcController.getBlockHeight);
   app.get(prefix + '/transaction/:txid', ltcController.getTransactionInfo);
   app.get(prefix + '/block/transactions/:height', ltcController.getBlockTransactions);
-  app.post(prefix + '/txs', ltcController.postTxs);
+  app.get(prefix + '/transactions', ltcController.getTransactions);
   app.post(prefix + '/address/txs', ltcController.postAddressTransactions);
 }
