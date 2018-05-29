@@ -38,7 +38,7 @@ vcoin apis
 [Get Bitcoin block info from given block height](#get-bitcoin-block-info-from-given-block-height)  
 [Get transaction by txid](#get-transaction-by-txid)  
 [Get Bitcoin transaction by block height](#get-bitcoin-transaction-by-block-height)  
-[Get transactions by offset, count, order](#get-bitcoin-transaction-by-offset-count-order)  
+[Get transactions by offset, count, order](#get-transactions-by-offset-count-order)  
 [Get Bitcoin address related transaction by offset, count, order](#get-bitcoin-address-related-transaction-by-offset-count-order)  
 
 
