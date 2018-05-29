@@ -33,7 +33,7 @@ module.exports = function (app) {
   app.post(prefix + '/block/txs', neoNodeController.postBlockTxs);
   app.post(prefix + '/tx', neoNodeController.postTx);
 
-  app.post(prefix + '/txs', neoNodeController.postTxs);
+  app.get(prefix + '/transactions', neoNodeController.getTransactions);
 
   app.post(prefix + '/address/txs', neoNodeController.postAddressTransactions);
 

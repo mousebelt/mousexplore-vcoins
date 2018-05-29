@@ -29,7 +29,7 @@ neo-vcoin apis
 [postBlock](#postBlock)  
 [postBlockTxs](#postBlockTxs)  
 [postTx](#postTx)  
-[postTxs](#postTxs)  
+[get transactions by offset, count, order](#getTransactions)  
 [postAddressTransactions](#postAddressTransactions)  
 
 
@@ -589,18 +589,22 @@ neo-vcoin apis
  */
 ```
 
-<a name="postTxs"/>
+<a name="getTransactions"/>
 
-- postTxs
+- get transactions by offset, count, order
+
 ```
-/**
- * POST /txs
- * Get tx list from offset and count
- * 
- * @param {Number} offset: 0
- * @param {Number} count: 10
- * @param {Boolean} order: If false, newest order. If true, oldest order.
- * 
+GET /transactions
+get transactions by offset, count, order
+```
+
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------
+offset | Number | NO | 0 | offset
+count | Number | NO | 10 | transaction count
+order | Number | NO | 0 | 0 => newest first, 1 => oldest first
+
+```
  * @return
  * { "status": "200", "msg": "success", 
  *   "data": [txs]
