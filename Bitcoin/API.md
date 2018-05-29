@@ -34,7 +34,7 @@ vcoin apis
 
 ## Utility apis
 [Get latest blocks](#get-latest-blocks)  
-[Get latest blocks from offset and count](#get-bitcoin-blocks-from-offset-and-count)  
+[Get latest blocks from offset and count](#get-latest-blocks-from-offset-and-count)  
 [Get Bitcoin block info from given block height](#get-bitcoin-block-info-from-given-block-height)  
 [Get transaction by txid](#get-transaction-by-txid)  
 [Get Bitcoin transaction by block height](#get-bitcoin-transaction-by-block-height)  
