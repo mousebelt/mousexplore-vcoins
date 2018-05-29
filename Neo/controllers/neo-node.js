@@ -458,17 +458,21 @@ exports.getBlocks = async function (req, res) {
 
   // logic
   var blocks = [];
-  for (let i = 0; i < count; i++) {
+  for (let i = 1; i <= count; i++) {
     var height = blockCount - offset - i;
     if (height < 0) break;
 
-    var block = await localNode.getBlockByHeight(height, 1);
-    if (block) {
-      blocks.push({
-        height,
-        hash: block.hash,
-        time: block.time
-      });
+    try {
+      var block = await localNode.getBlockByHeight(height, 1);
+      if (block) {
+        blocks.push({
+          height,
+          hash: block.hash,
+          time: block.time
+        });
+      }
+    } catch (error) {
+      console.log('error occured: ', error);
     }
   }
 
