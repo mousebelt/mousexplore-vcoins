@@ -582,8 +582,12 @@ exports.getTransactions = async function(req, res) {
         if (!error) {
           var txs = [];
           for (let i = 0; i < rows.length; i++) {
-            var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-            txs.push(tx);
+            try {
+              var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
+              txs.push(tx);
+            } catch (error) {
+              console.log('get transaction error: ', error)
+            }
           }
           return res.json({ status: 200, msg: "success", data: txs });
         } else {
