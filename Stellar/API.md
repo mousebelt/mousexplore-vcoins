@@ -25,16 +25,16 @@ Stellar apis
 ## Get latest ledgers
 
 ```
-/api/v1/ledgers/latest
+GET /api/v1/ledgers/latest
 ```
 Get latest ledger list.
 
 ### QUERY PARAMS
 
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-count | Number | YES | ledger count to get
-cursor | String | YES | 0 for first page, and next or prev value of response of this api
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+count | Number | No | 10 | ledger count to get
+cursor | String | No| 0 | 0 for first page, and next or prev value of response of this api
 
 
 ### RETURN
@@ -44,6 +44,7 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 
 ```javascript
 {
+"status": 200,
 "msg": "success",
 "next": "23442324233",
 "next": "23442324128",
