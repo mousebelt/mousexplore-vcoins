@@ -234,19 +234,19 @@ exports.getLatestTransactions = function(req, res) {
 
       var records = body._embedded.records;
 
-      var transactions = [];
-      for (let i = 0; i < records.length; i++) {
-        let info = records[i];
-        transactions.push({
-          hash: info.hash,
-          account: info.source_account,
-          ledger: info.ledger,
-          operations: info.operation_count,
-          timestamp: info.created_at
-        });
-      }
+      // var transactions = [];
+      // for (let i = 0; i < records.length; i++) {
+      //   let info = records[i];
+      //   transactions.push({
+      //     hash: info.hash,
+      //     account: info.source_account,
+      //     ledger: info.ledger,
+      //     operations: info.operation_count,
+      //     timestamp: info.created_at
+      //   });
+      // }
       res
-        .json({ status: 200, msg: "success", next: next, prev: prev, data: transactions });
+        .json({ status: 200, msg: "success", next: next, prev: prev, data: records, body });
     } else {
       console.log("getLatestTransactions error: ", error);
       res.status(400).json({ error: error });
