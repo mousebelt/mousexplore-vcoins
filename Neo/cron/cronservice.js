@@ -125,7 +125,6 @@ async function CheckUpdatedTransactions() {
               }
               catch (e) {
                 filelog(`transaction save error: txid=${txid}, error: `, e); // Should dump errors here
-                return;
               }
             }
 
@@ -134,16 +133,14 @@ async function CheckUpdatedTransactions() {
             lastTxIndex = j;
             await saveTxServiceInfo(lastblock, lastTxIndex);
           }
-
-          if (lastblock != i || lastTxIndex != 0) {
-            lastblock = i;
-            lastTxIndex = 0;
-            await saveTxServiceInfo(lastblock, lastTxIndex);
-          }
         }
         catch (e) {
           filelog('localNode getBlockByHeight error: ', e); // Should dump errors here
-          return;
+        }
+        if (lastblock != i || lastTxIndex != 0) {
+          lastblock = i;
+          lastTxIndex = 0;
+          await saveTxServiceInfo(lastblock, lastTxIndex);
         }
       }
     } else {
@@ -180,7 +177,6 @@ async function CheckUpdatedAddresses() {
           var inTx = await TransactionModel.findOne({ txid: inTxid });
           if (!inTx) {
             filelog(`inTx not found. inTxid=${inTxid}`);
-            return;
           }
 
           var inTxInfo = inTx.vout[inVout];
@@ -202,7 +198,6 @@ async function CheckUpdatedAddresses() {
             }
             catch (e) {
               filelog(`addressRow.save.txs error: addressRow=${addressRow}, error: `, e); // Should dump errors here
-              return;
             }
           }
           if (addressRow.txsIn.indexOf({ txid, inIndex: j, value: inTxInfo.value }) == -1) {
@@ -212,7 +207,6 @@ async function CheckUpdatedAddresses() {
             }
             catch (e) {
               filelog(`addressRow.save.txsIn error: addressRow=${addressRow}, error: `, e); // Should dump errors here
-              return;
             }
           }
         }
@@ -237,7 +231,6 @@ async function CheckUpdatedAddresses() {
             }
             catch (e) {
               filelog(`addressRow.save.txs error: addressRow=${addressRow}, error: `, e); // Should dump errors here
-              return;
             }
           }
           if (addressRow.txsOut.indexOf({ txid, outIndex: j, value }) == -1) {
@@ -247,7 +240,6 @@ async function CheckUpdatedAddresses() {
             }
             catch (e) {
               filelog(`addressRow.save.txsOut error: addressRow=${addressRow}, error: `, e); // Should dump errors here
-              return;
             }
           }
         }
