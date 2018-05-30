@@ -3,21 +3,6 @@ var config = require('../config');
 const localNode = config.localNode;
 const client = config.client;
 
-var promisify = function promisify(fn, args) {
-  return new Promise((resolve, reject) => {
-    try {
-      client.call(fn, args, function (err, result) {
-        if (err) {
-          reject(err);
-        }
-        resolve(result);
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Client RPC Call apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -447,7 +447,7 @@ exports.postTransactions = async function (req, res) {
  * @param {Number} count
  * @param {Number} order
  * 
- * returns transaction list
+ * @returns transaction list
  */
 exports.getTransactions = async function (req, res) {
   var offset = Number(req.query.offset);
@@ -465,14 +465,25 @@ exports.getTransactions = async function (req, res) {
     .sort(condition)
     .skip(offset)
     .limit(count)
-    .exec(function (error, transactions) {
-      if (!error) {
-        res.json({ status: 200, msg: "success", data: transactions });
-      }
-      else {
+    .exec(async function (error, rows) {
+      if (error) {
         console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
-        res.json({ status: 400, msg: 'errors', data: error });
+        return res.json({ status: 400, msg: 'errors', data: error });
       }
+      var txs = [];
+      for (let i = 0; i < rows.length; i++) {
+        try {
+          var tx = await web3.eth.getTransaction(rows[i]['hash'])
+          txs.push(tx);
+        } catch (error) {
+          console.log('get transaction error: ', error);
+          txs.push({
+            hash: rows[i].hash,
+            error: true
+          })
+        }
+      }
+      return res.json({ status: 200, msg: "success", data: txs });
     });
 }
 

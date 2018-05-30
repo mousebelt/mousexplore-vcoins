@@ -433,38 +433,6 @@ exports.listSinceBlock = (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Utility apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
-exports.getBlocksLatest = async (req, res) => {
-  const count = Number(req.params.count);
-
-  if (count == 0) count = 10;
-
-  try {
-    // get block count
-    var blockCount = await promisify("getblockcount", []);
-    if (!blockCount) {
-      return res.json({ status: 400, msg: "empty blockcount !" });
-    }
-
-    var arrBlocks = [];
-    for (var i = 1; i <= count; i++) {
-      var index = blockCount - i;
-
-      // promisify('getblockhash', [index])
-      //   .then(result => console.log(result))
-      //   .catch(e => console.log(e));
-
-      var hash = await promisify("getblockhash", [index]);
-      if (hash) {
-        var block = await promisify("getblock", [hash]);
-        if (block) arrBlocks.push(block);
-      }
-    }
-
-    return res.json({ status: 200, msg: "sccuess", data: arrBlocks });
-  } catch (error) {
-    return res.json({ status: 400, msg: error });
-  }
-};
 
 exports.getBlocks = async (req, res) => {
   var offset = Number(req.query.offset);

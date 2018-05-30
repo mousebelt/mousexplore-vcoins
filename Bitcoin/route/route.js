@@ -33,7 +33,6 @@ module.exports = function (app) {
     //// Utility apis ////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    app.get(prefix + '/blocks/latest/:count', btcController.getBlocksLatest);
     app.get(prefix + '/blocks', btcController.getBlocks);
     app.get(prefix + '/block/:height', btcController.getBlockHeight);
     app.get(prefix + '/transaction/:txid', btcController.getTransactionInfo);

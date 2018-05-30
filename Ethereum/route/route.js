@@ -1,5 +1,3 @@
-
-
 var EthereumController = require('../controllers/ethereum');
 
 module.exports = function (app) {
@@ -12,12 +10,12 @@ module.exports = function (app) {
 
     //api for block explorer
     app.get('/api/v1/blocks', EthereumController.getBlocks);
-    
+    app.get('/api/v1/transactions', EthereumController.getTransactions);
+
     app.post('/api/v1/blocks', EthereumController.blocklist);
     app.post('/api/v1/blocks/latest', EthereumController.latestblocks);
     app.post('/api/v1/block', EthereumController.getblockdetail);
     app.post('/api/v1/block/txs', EthereumController.postTransactions);
-    app.get('/api/v1/transactions', EthereumController.getTransactions);
     app.post('/api/v1/account/txs', EthereumController.getTransactionsFromAccount);
     app.post('/api/v1/account/txcount', EthereumController.getTransactionCountFromAccount);
     app.post('/api/v1/tx', EthereumController.getTransactionInfo);
