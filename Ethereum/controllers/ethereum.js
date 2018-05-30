@@ -470,20 +470,20 @@ exports.getTransactions = async function (req, res) {
         console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
         return res.json({ status: 400, msg: 'errors', data: error });
       }
-      // var txs = [];
-      // for (let i = 0; i < rows.length; i++) {
-      //   try {
-      //     var tx = await web3.eth.getTransaction(rows[i]['hash'])
-      //     txs.push(tx);
-      //   } catch (error) {
-      //     console.log('get transaction error: ', error);
-      //     txs.push({
-      //       hash: rows[i].hash,
-      //       error: true
-      //     })
-      //   }
-      // }
-      return res.json({ status: 200, msg: "success", data: rows });
+      var txs = [];
+      for (let i = 0; i < rows.length; i++) {
+        try {
+          var tx = await web3.eth.getTransaction(rows[i]['hash'])
+          txs.push(tx);
+        } catch (error) {
+          console.log('get transaction error: ', error);
+          txs.push({
+            hash: rows[i].hash,
+            error: true
+          })
+        }
+      }
+      return res.json({ status: 200, msg: "success", data: txs });
     });
 }
 
