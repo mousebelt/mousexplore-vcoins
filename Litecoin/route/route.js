@@ -33,11 +33,10 @@ module.exports = function (app) {
   //// Utility apis ////
   ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-  app.get(prefix + '/blocks/latest/:count', ltcController.getBlocksLatest);
   app.get(prefix + '/blocks', ltcController.getBlocks);
+  app.get(prefix + '/transactions', ltcController.getTransactions);
   app.get(prefix + '/block/:height', ltcController.getBlockHeight);
   app.get(prefix + '/transaction/:txid', ltcController.getTransactionInfo);
   app.get(prefix + '/block/transactions/:height', ltcController.getBlockTransactions);
-  app.get(prefix + '/transactions', ltcController.getTransactions);
   app.post(prefix + '/address/txs', ltcController.postAddressTransactions);
 }
