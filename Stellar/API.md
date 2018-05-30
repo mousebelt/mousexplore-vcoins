@@ -51,6 +51,23 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 "prev": "23442324128",
 "data": [ledger]
 }
+
+ledger = {
+	"id": "60c6f04a605a79d386214c46775f02a850f13860dd336ed44e48cb2e964bd765",
+	"paging_token": "38693085491757056",
+	"hash": "60c6f04a605a79d386214c46775f02a850f13860dd336ed44e48cb2e964bd765",
+	"prev_hash": "6ffaea6716c56d792e7f9f31191355b62a9454db4a0ec2240307baf652cef834",
+	"sequence": 9008936,
+	"transaction_count": 4,
+	"operation_count": 48,
+	"closed_at": "2018-05-17T09:04:35Z",
+	"total_coins": "103927355953.6556009",
+	"fee_pool": "1898328354.2316593",
+	"base_fee_in_stroops": 100,
+	"base_reserve_in_stroops": 5000000,
+	"max_tx_set_size": 200,
+	"protocol_version": 9,
+}
 ```
 
 * for failed case
@@ -131,6 +148,18 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 "next": "23442324233",
 "next": "23442324128",
 "data": [transaction]
+}
+
+transaction: {
+	"id": "e974960c67a19311b2ef507a8ecaf7efc0e504de07de6982a556e8030c380d70",
+	"paging_token": "38693085491765248",
+	"hash": "e974960c67a19311b2ef507a8ecaf7efc0e504de07de6982a556e8030c380d70",
+	"ledger": 9008936,
+	"created_at": "2018-05-17T09:04:35Z",
+	"source_account": "GCTHNQGSSHOKSLHN75ZLRRCAZYKD3TCNQ57NKOB4SWNXXTDTTL23TUEN",
+	"source_account_sequence": "37537369921953584",
+	"fee_paid": 3800,
+	"operation_count": 38,
 }
 ```
 
