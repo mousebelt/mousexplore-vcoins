@@ -1051,7 +1051,7 @@ tx: {
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Default | Description
------------- | ------------ | ------------ | ------------
+------------ | ------------ | ------------ | ------------ | ------------
 offset | Number | NO | 0 | offset
 count | Number | NO | 10 | transaction count
 order | Number | NO | 0 | 0 => newest first, 1 => oldest first
