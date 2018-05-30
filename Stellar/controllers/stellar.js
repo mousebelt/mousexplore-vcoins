@@ -109,19 +109,19 @@ exports.getLatestLedgers = function(req, res) {
 
       var records = body._embedded.records;
 
-      var ledgers = [];
-      for (let i = 0; i < records.length; i++) {
-        let ledgerinfo = records[i];
-        ledgers.push({
-          sequence: ledgerinfo.sequence,
-          timeStamp: ledgerinfo.closed_at,
-          transactions: ledgerinfo.transaction_count,
-          operations: ledgerinfo.operation_count
-        });
-      }
+      // var ledgers = [];
+      // for (let i = 0; i < records.length; i++) {
+      //   let ledgerinfo = records[i];
+      //   ledgers.push({
+      //     sequence: ledgerinfo.sequence,
+      //     timeStamp: ledgerinfo.closed_at,
+      //     transactions: ledgerinfo.transaction_count,
+      //     operations: ledgerinfo.operation_count
+      //   });
+      // }
       res
         .status(200)
-        .json({ status: 200, msg: "success", next, prev, data: ledgers });
+        .json({ status: 200, msg: "success", next, prev, data: records, body });
     } else {
       console.log("getLatestLedgers error: ", error);
       res.status(400).json({ error: error });
