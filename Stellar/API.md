@@ -2,9 +2,9 @@
 Stellar apis
 
 # Summary
-[Get latest ledgers](#get-latest-ledgers)  
+[Get ledgers](#get-ledgers)  
+[Get transactions](#get-transactions)  
 [Get ledger](#get-ledger)  
-[Get Latest transactions](#get-latest-transactions)  
 [Get transactions by ledger](#get-transactions-by-ledger)  
 [Get Latest operations](#get-latest-operations)  
 [Get operations by transaction](#get-operations-by-transaction)  
@@ -22,18 +22,19 @@ Stellar apis
 
 # API Details
 
-## Get latest ledgers
+## Get ledgers
 
 ```
 GET /api/v1/ledgers
 ```
-Get latest ledger list.
+Get ledger list.
 
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Default | Description
 ------------ | ------------ | ------------ | ------------ | ------------
 count | Number | No | 10 | ledger count to get
+order | Number | No | 0 | 0 => newest first, 1 => oldest first
 cursor | String | No| 0 | 0 for first page, and next or prev value of response of this api
 
 
@@ -48,15 +49,7 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 "msg": "success",
 "next": "23442324233",
 "prev": "23442324128",
-"data": [
-        {   
-		  "sequence": "17730975", "timeStamp": "1472533979", 
-		  "hash": "16a77f2b7d8d7a0204585ab1c3c73da73746dbb1e93ac2fd7e0ab8c3303657cf"
-		  "transactions": 10, 
-		  "operations": 22, 
-        },
-        ...
-    ]
+"data": [ledger]
 }
 ```
 
@@ -68,7 +61,6 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
   "error": ""   //error message
 }
 ```
-
 
 
 ## Get ledger
@@ -114,7 +106,7 @@ ledger | String | YES | sequence or hash
 ```
 
 
-## Get Latest transactions
+## Get transactions
 
 GET /api/v1/transactions
 
@@ -122,8 +114,10 @@ GET /api/v1/transactions
 
 Name | Type | Mandatory | Default | Description
 ------------ | ------------ | ------------ | ------------ | ------------
-count | Number | No | 10 | count of transactions
-cursor | String | No | 0 | 0 for first page, and next or prev value of response of this api
+count | Number | No | 10 | ledger count to get
+order | Number | No | 0 | 0 => newest first, 1 => oldest first
+cursor | String | No| 0 | 0 for first page, and next or prev value of response of this api
+
 
 ### RETURN
 
@@ -132,19 +126,11 @@ cursor | String | No | 0 | 0 for first page, and next or prev value of response 
 
 ```javascript
 {
+"status": 200,
 "msg": "success",
 "next": "23442324233",
 "next": "23442324128",
-"data": [
-        {   
-		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		  "timeStamp": "2015-09-24T10:07:09Z",
-		  "operations": 11,
-		  "ledger": 17733198,
-        },
-        ...
-    ]
+"data": [transaction]
 }
 ```
 

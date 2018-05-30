@@ -83,18 +83,24 @@ function getCursor(url) {
   return c;
 }
 
-/*
-* Get latest ledger list.
-* @param count count of list to get.
-* @param cursor page token to start to get ledgers.
-* @return list of ledger information same as the https://steexp.com/ledgers
-*/
+/**
+ * get ledgers
+ * 
+ * @param {Number} count 
+ * @param {Number} order 
+ * @param {String} cursor
+ * 
+ * @returns ledgers 
+ */
 exports.getLatestLedgers = function(req, res) {
   var count = Number(req.query.count);
+  var order = Number(req.query.order);
   var cursor = req.query.cursor;
   if (!count || count <= 0) count = 10;
+  if (order > 0) order = 'asc';
+  else order = 'desc';
 
-  var url = urlAPI + "ledgers?limit=" + count + "&order=desc";
+  var url = urlAPI + "ledgers?limit=" + count + `&order=${order}`;
   url += cursor ? "&cursor=" + cursor : "";
 
   request(url, function(error, response, body) {
@@ -121,7 +127,7 @@ exports.getLatestLedgers = function(req, res) {
       // }
       res
         .status(200)
-        .json({ status: 200, msg: "success", next, prev, data: records, body });
+        .json({ status: 200, msg: "success", next, prev, data: records });
     } else {
       console.log("getLatestLedgers error: ", error);
       res.status(400).json({ error: error });
@@ -208,18 +214,25 @@ exports.getLedgerDetail = function(req, res) {
     });
 };
 
-/*
-* Get all latest transactions.
-* @param count: count of list to get.
-* @param cursor: page token to start to get transactions.
-* @return transactions 
-*/
+/**
+ * Get transactions.
+ * 
+ * @param {Number} count
+ * @param {Number} order
+ * @param {String} cursor
+ * 
+ * @returns transactions
+ */
 exports.getLatestTransactions = function(req, res) {
   var count = Number(req.query.count);
-  if (!count || count <= 0) count = 10;
+  var order = Number(req.query.order);
   var cursor = req.query.cursor;
 
-  var url = urlAPI + "transactions?limit=" + count + "&order=desc";
+  if (!count || count <= 0) count = 10;
+  if (order > 0) order = 'asc';
+  else order = 'desc';
+
+  var url = urlAPI + "transactions?limit=" + count + `&order=${order}`;
   url += cursor ? "&cursor=" + cursor : "";
 
   request(url, function(error, response, body) {
@@ -246,7 +259,7 @@ exports.getLatestTransactions = function(req, res) {
       //   });
       // }
       res
-        .json({ status: 200, msg: "success", next: next, prev: prev, data: records, body });
+        .json({ status: 200, msg: "success", next: next, prev: prev, data: records });
     } else {
       console.log("getLatestTransactions error: ", error);
       res.status(400).json({ error: error });
