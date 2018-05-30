@@ -116,12 +116,14 @@ ledger | String | YES | sequence or hash
 
 ## Get Latest transactions
 
+GET /api/v1/transactions
+
 ### QUERY PARAMS
 
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-count | Number | YES | count of transactions
-cursor | String | YES | 0 for first page, and next or prev value of response of this api
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+count | Number | No | 10 | count of transactions
+cursor | String | No | 0 | 0 for first page, and next or prev value of response of this api
 
 ### RETURN
 
