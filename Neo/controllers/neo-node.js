@@ -6,6 +6,21 @@ const client = config.client;
 var TransactionModel = require('../model/transactions');
 var AddressModel = require('../model/address');
 
+var promisify = function promisify(fn, args) {
+  return new Promise((resolve, reject) => {
+    try {
+      client.call(fn, args, function (err, result) {
+        if (err) {
+          reject(err);
+        }
+        resolve(result);
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+};
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// RPC Call apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -608,23 +623,24 @@ exports.postTx = async function (req, res) {
  * 
  * @return
  * { "status": "200", "msg": "success", 
- *   "data": [transaction]
+ *   "data": [tx]
  * }
  * 
- * transaction: {
-        "_id": "5afa852c31a9a73db264d7ff",
-        "txid": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
-        "size": 107,
-        "type": "RegisterTransaction",
+ * tx: {
+        "txid": "0x6d1cc3aa44b218e1fe052fa3c06c8a0009bfc2c91676c977d80e3d2d8388e2ee",
+        "size": 10,
+        "type": "MinerTransaction",
         "version": 0,
+        "attributes": [],
         "vin": [],
         "vout": [],
         "sys_fee": "0",
         "net_fee": "0",
-        "blockIndex": 0,
-        "blockTime": 1468595301,
-        "updatedAt": "2018-05-15T06:58:52.181Z",
-        "__v": 0
+        "scripts": [],
+        "nonce": 870829101,
+        "blockhash": "0xbe18be00b930b4147195a25608d69c35ba4e8273779db75c87c66310971e1f96",
+        "confirmations": 221559,
+        "blocktime": 1478762561
     }
  */
 exports.getTransactions = async function (req, res) {
@@ -645,27 +661,28 @@ exports.getTransactions = async function (req, res) {
       .sort(condition)
       .skip(offset)
       .limit(count)
-      .exec(function (error, rows) {
+      .exec(async function (error, rows) {
         if (error) {
           console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
           return res.json({ status: 400, msg: 'errors', data: error });
         }
 
-        var transactions = [];
-        for (let index = 0; index < rows.length; index++) {
-          const row = rows[index];
+        var txs = [];
+        for (let i = 0; i < rows.length; i++) {
+          const row = rows[i];
 
           try {
-            var tx = await localNode.getRawTransaction(row['txid'], 1);
-            transactions.push(tx);
+            var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
+            txs.push(tx);
           } catch (error) {
-            transactions.push({
-              txid: row['txid'],
-              error: true
-            });
+            console.log('get transaction error: ', error);
+            txs.push({
+              txid: rows[i].txid,
+              unknown: true
+            })
           }
         }
-        return res.json({ status: 200, msg: "success", data: transactions });
+        return res.json({ status: 200, msg: "success", data: txs });
         // return res.json({ status: 200, msg: "success", data: rows });
       });
   } catch (error) {

@@ -1,5 +1,3 @@
-
-
 var EthereumController = require('../controllers/ethereum');
 
 module.exports = function (app) {

@@ -1063,7 +1063,7 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 ```javascript
 { status: 200, msg: 'sccuess', data: [transaction] }
 
-tx: {
+transaction: {
             "txid": "3bf8c518a7a1187287516da67cb96733697b1d83eb937e68ae39bd4c08e563b7",
             "hash": "3bf8c518a7a1187287516da67cb96733697b1d83eb937e68ae39bd4c08e563b7",
             "version": 1,
