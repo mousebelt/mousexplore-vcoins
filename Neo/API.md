@@ -551,7 +551,7 @@ get transactions by offset, count, order
 ```
 
 Name | Type | Mandatory | Default | Description
------------- | ------------ | ------------ | ------------
+------------ | ------------ | ------------ | ------------ | ------------
 offset | Number | NO | 0 | offset
 count | Number | NO | 10 | transaction count
 order | Number | NO | 0 | 0 => newest first, 1 => oldest first
@@ -563,19 +563,20 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
  * }
  * 
  * tx: {
-        "_id": "5afa852c31a9a73db264d7ff",
-        "txid": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
-        "size": 107,
-        "type": "RegisterTransaction",
+        "txid": "0x6d1cc3aa44b218e1fe052fa3c06c8a0009bfc2c91676c977d80e3d2d8388e2ee",
+        "size": 10,
+        "type": "MinerTransaction",
         "version": 0,
+        "attributes": [],
         "vin": [],
         "vout": [],
         "sys_fee": "0",
         "net_fee": "0",
-        "blockIndex": 0,
-        "blockTime": 1468595301,
-        "updatedAt": "2018-05-15T06:58:52.181Z",
-        "__v": 0
+        "scripts": [],
+        "nonce": 870829101,
+        "blockhash": "0xbe18be00b930b4147195a25608d69c35ba4e8273779db75c87c66310971e1f96",
+        "confirmations": 221559,
+        "blocktime": 1478762561
     }
  */
 ```
