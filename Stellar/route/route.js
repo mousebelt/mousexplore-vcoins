@@ -1,12 +1,13 @@
 var StellarController = require('../controllers/stellar');
 
 module.exports = function (app) {
+    app.get('/api/v1/ledgers', StellarController.getLatestLedgers);
+    app.get('/api/v1/transactions', StellarController.getLatestTransactions);
+
     app.get('/api/get_address_balance/:address', StellarController.getBalance);
     app.post('/api/create_account', StellarController.createAccount);
-    app.get('/api/v1/ledgers/latest', StellarController.getLatestLedgers);
     app.post('/api/v1/ledger', StellarController.getLedgerDetail);
     app.post('/api/v1/ledger/txs', StellarController.getTransactionsForLedger);
-    app.get('/api/v1/transactions', StellarController.getLatestTransactions);
     app.post('/api/v1/txs/operations', StellarController.getOperationsForTransaction);
     app.post('/api/v1/operations', StellarController.getOperations);
     app.post('/api/v1/tx', StellarController.getTransaction);

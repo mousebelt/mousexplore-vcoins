@@ -25,7 +25,7 @@ Stellar apis
 ## Get latest ledgers
 
 ```
-GET /api/v1/ledgers/latest
+GET /api/v1/ledgers
 ```
 Get latest ledger list.
 
