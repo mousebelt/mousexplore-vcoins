@@ -4,7 +4,9 @@ Stellar apis
 # Summary
 [Get ledgers](#get-ledgers)  
 [Get transactions](#get-transactions)  
-[Get ledger](#get-ledger)  
+[Get ledger by hash](#get-ledger-by-hash)  
+[Get ledger by height](#get-ledger-by-height)  
+
 [Get transactions by ledger](#get-transactions-by-ledger)  
 [Get Latest operations](#get-latest-operations)  
 [Get operations by transaction](#get-operations-by-transaction)  
@@ -51,23 +53,6 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 "prev": "23442324128",
 "data": [ledger]
 }
-
-ledger = {
-	"id": "60c6f04a605a79d386214c46775f02a850f13860dd336ed44e48cb2e964bd765",
-	"paging_token": "38693085491757056",
-	"hash": "60c6f04a605a79d386214c46775f02a850f13860dd336ed44e48cb2e964bd765",
-	"prev_hash": "6ffaea6716c56d792e7f9f31191355b62a9454db4a0ec2240307baf652cef834",
-	"sequence": 9008936,
-	"transaction_count": 4,
-	"operation_count": 48,
-	"closed_at": "2018-05-17T09:04:35Z",
-	"total_coins": "103927355953.6556009",
-	"fee_pool": "1898328354.2316593",
-	"base_fee_in_stroops": 100,
-	"base_reserve_in_stroops": 5000000,
-	"max_tx_set_size": 200,
-	"protocol_version": 9,
-}
 ```
 
 * for failed case
@@ -80,14 +65,19 @@ ledger = {
 ```
 
 
-## Get ledger
+## Get ledger by hash
 
-Get ledger info.
+```
+GET /api/v1/ledger/:hash
+```
+
+Get ledger by hash.
+
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-ledger | String | YES | sequence or hash
+hash | String | YES | ledger hash
 
 
 ### RETURN
@@ -97,19 +87,9 @@ ledger | String | YES | sequence or hash
 
 ```javascript
 {
-"msg": "success",
-"data":{   
-		  "sequence": "17730975", "timeStamp": "1472533979", 
-		  "hash": "16a77f2b7d8d7a0204585ab1c3c73da73746dbb1e93ac2fd7e0ab8c3303657cf"
-		  "prev_hash": "4b0b8bace3b2438b2404776ce57643966855487ba6384724a3c664c7aa4cd9e4",
-		  "feePool": "1,437,655.968",
-		  "baseFee": "100 stroops",
-		  "baseReserve": "0.5 XLM",
-		  "maxTransactions": "50 per ledger",
-		  "totalCoins": "103,906,864,158.029",
-		  "transactions": 10, 
-		  "operations": 22, 
-        },
+	status: 200,
+	"msg": "success",
+	"data": ledger
 }
 ```
 
@@ -122,6 +102,43 @@ ledger | String | YES | sequence or hash
 }
 ```
 
+
+## Get ledger by height
+
+```
+GET /api/v1/ledger-height/:height
+```
+
+Get ledger by height.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+height | Number | YES | ledger sequence
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+	status: 200,
+	"msg": "success",
+	"data": ledger
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
 
 ## Get transactions
 
