@@ -18,7 +18,6 @@ module.exports = function (app) {
   app.get(prefix + '/getaddressesbyaccount/:account', ltcController.getAccountByAddress);
   app.get(prefix + '/getblockcount', ltcController.getBlockCount);
   app.get(prefix + '/getbestblockhash', ltcController.getBestBlockHash);
-  app.get(prefix + '/getblock/:hash', ltcController.getBlock);
   app.get(prefix + '/getblockhash/:index', ltcController.getBlockHash);
   app.get(prefix + '/gettransaction/:txid', ltcController.getTransaction);
   app.get(prefix + '/getrawtransaction/:txid', ltcController.getRawTransaction);
@@ -35,7 +34,10 @@ module.exports = function (app) {
 
   app.get(prefix + '/blocks', ltcController.getBlocks);
   app.get(prefix + '/transactions', ltcController.getTransactions);
-  app.get(prefix + '/block/:height', ltcController.getBlockHeight);
+
+  app.get(prefix + '/block/:hash', ltcController.getBlock);
+  app.get(prefix + '/block-height/:height', ltcController.getBlockHeight);
+
   app.get(prefix + '/transaction/:txid', ltcController.getTransactionInfo);
   app.get(prefix + '/block/transactions/:height', ltcController.getBlockTransactions);
   app.post(prefix + '/address/txs', ltcController.postAddressTransactions);

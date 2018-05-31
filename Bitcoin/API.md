@@ -6,8 +6,6 @@ vcoin apis
 >api prefix: '/api/v1'  
 
 # Summary
-[RPC Call apis](#rpc-call-apis-1)  
-[Utility apis](#utility-apis-1)  
 ## RPC Call apis
 [getnewaddress](#getnewaddress)  
 [setaccount](#setaccount)  
@@ -21,7 +19,6 @@ vcoin apis
 [getaddressesbyaccount](#getaddressesbyaccount)  
 [getblockcount](#getblockcount)  
 [getbestblockhash](#getbestblockhash)  
-[getblock](#getblock)  
 [getblockhash](#getblockhash)  
 [gettransaction](#gettransaction)  
 [getrawtransaction](#getrawtransaction)  
@@ -34,10 +31,11 @@ vcoin apis
 
 ## Utility apis
 [Get latest blocks from offset and count](#get-latest-blocks-from-offset-and-count)  
-[Get Bitcoin block info from given block height](#get-bitcoin-block-info-from-given-block-height)  
+[Get transactions by offset, count, order](#get-transactions-by-offset-count-order)  
+[Get block by hash](#get-block-by-hash)  
+[Get block by height](#get-block-by-height)  
 [Get transaction by txid](#get-transaction-by-txid)  
 [Get Bitcoin transaction by block height](#get-bitcoin-transaction-by-block-height)  
-[Get transactions by offset, count, order](#get-transactions-by-offset-count-order)  
 [Get Bitcoin address related transaction by offset, count, order](#get-bitcoin-address-related-transaction-by-offset-count-order)  
 
 
@@ -397,9 +395,9 @@ version 0.9 Returns the hash of the best (tip) block in the longest block chain.
 { status: 400, msg: 'errors', data: err }
 ```
 
-## getblock
+## get block by hash
 ```
- GET /getblock/:hash
+ GET /block/:hash
 ```
 
 `<hash>`
@@ -868,9 +866,9 @@ block: {
 { status: 400, msg: 'errors', data: err }
 ```
 
-## Get Bitcoin block info from given block height
+## Get block by height
 ```
- GET /block/:height
+ GET /block-height/:height
 ```
 
 ### QUERY PARAMS
