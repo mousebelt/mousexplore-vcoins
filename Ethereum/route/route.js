@@ -9,7 +9,6 @@ module.exports = function (app) {
     app.post('/api/get_updated_transaction', EthereumController.getUpdatedTransactions);
 
     app.post('/api/v1/blocks', EthereumController.blocklist);
-    app.post('/api/v1/account/txs', EthereumController.getTransactionsFromAccount);
     app.post('/api/v1/account/txcount', EthereumController.getTransactionCountFromAccount);
 
     //api for token related
@@ -24,4 +23,5 @@ module.exports = function (app) {
     app.get('/api/v1/blockdetails/:hash', EthereumController.getBlockDetails);
     app.get('/api/v1/tx/:hash', EthereumController.getTransactionInfo);
     app.get('/api/v1/txdetails/:hash', EthereumController.getTransactionDetails);
+    app.get('/api/v1/address/txs/:address', EthereumController.getTransactionsFromAccount);
 }
