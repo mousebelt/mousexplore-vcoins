@@ -6,6 +6,16 @@ vcoin apis
 >api prefix: '/api/v1'  
 
 # Summary
+## Utility apis
+[Get latest blocks from offset and count](#get-latest-blocks-from-offset-and-count)  
+[Get transactions by offset, count, order](#get-transactions-by-offset-count-order)  
+[Get block by hash](#get-block-by-hash)  
+[Get block by height](#get-block-by-height)  
+
+[Get transaction by txid](#get-transaction-by-txid)  
+[Get Bitcoin transaction by block height](#get-bitcoin-transaction-by-block-height)  
+[Get Bitcoin address related transaction by offset, count, order](#get-bitcoin-address-related-transaction-by-offset-count-order)  
+
 ## RPC Call apis
 [getnewaddress](#getnewaddress)  
 [setaccount](#setaccount)  
@@ -28,15 +38,6 @@ vcoin apis
 [sendmany](#sendmany)  
 [sendtoaddress](#sendtoaddress)  
 [listtransactions](#listtransactions)  
-
-## Utility apis
-[Get latest blocks from offset and count](#get-latest-blocks-from-offset-and-count)  
-[Get transactions by offset, count, order](#get-transactions-by-offset-count-order)  
-[Get block by hash](#get-block-by-hash)  
-[Get block by height](#get-block-by-height)  
-[Get transaction by txid](#get-transaction-by-txid)  
-[Get Bitcoin transaction by block height](#get-bitcoin-transaction-by-block-height)  
-[Get Bitcoin address related transaction by offset, count, order](#get-bitcoin-address-related-transaction-by-offset-count-order)  
 
 
 ***
