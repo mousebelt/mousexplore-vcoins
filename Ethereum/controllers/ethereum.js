@@ -306,7 +306,7 @@ exports.getTransactionsFromAccount = async function (req, res) {
       .sort(cond)
       .skip(offset)
       .limit(count)
-      .exec(function (error, rows) {
+      .exec(async function (error, rows) {
         if (error) {
           console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
           return res.json({ status: 400, msg: "errors", data: error });
