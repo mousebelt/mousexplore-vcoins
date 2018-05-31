@@ -5,8 +5,10 @@ vcoin apis
 # Summary
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
 [Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
-[Get block by height](#get-block-by-height)  
-[Get block by hash](#get-block-by-hash)  
+[Get block by hash or height](#get-block-by-hash-or-height)  
+[Get block details by hash or height](#get-block-details-by-hash-or-height)  
+[Get transaction from hash](#get-transaction-from-hash)  
+[Get transaction details from hash](#get-transaction-details-from-hash)  
 
 [Get Balance](#get-balance)  
 [Create Account](#create-account)  
@@ -17,11 +19,233 @@ vcoin apis
 [Get transactions from blocknumber](#get-transactions-from-blocknumber)  
 [Get transaction list From Account](#get-transaction-list-from-account)  
 [Get transaction count From Account](#get-transaction-count-from-account)  
-[Get tx info from txHash](#get-tx-info-from-txhash)  
 
 ***
 
 # API Details
+
+
+## Get Block list from offset and count
+```
+ GET /api/v1/blocks
+```
+
+get block list in latest order from offset and count.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+offset | Number | Yes | 0 | start block number
+count | Number | Yes | 10 | count of blocks to get 
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{ status: 200, msg: 'success', data: { total, [block] } }
+
+block = {
+            "difficulty": "2609994988",
+            "extraData": "0xda83010807846765746888676f312e31302e318777696e646f7773",
+            "gasLimit": 58000000,
+            "gasUsed": 5233537,
+            "hash": "0xe3b092cff27d1c3488a7043173c8d4ab016ac9c8a3a6b2ee43087946e792e1bf",
+            "logsBloom": "0x0000080000...",
+            "miner": "0xe24246e6dCBb07BC15A1f9C3833fc1877DF4c80e",
+            "mixHash": "0x64a8f940cf2e65c719526f505292e4af9229a72477559da720bb0b9c2454c447",
+            "nonce": "0x937b2b8a430d1eeb",
+            "number": 3332474,
+            "parentHash": "0x38cd4923a32040c54957da1fa8ce37f2dd109f314b5eeba18a36fc407c5cc3e5",
+            "receiptsRoot": "0xdde230f13416b1aa7fbc249cc01f42cb249a2c3ce25b4c411322858f990897f1",
+            "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+            "size": 21803,
+            "stateRoot": "0x716e7237186911968b734006e2ff76b6b7b84525dff883fc5d0adf82e067d12e",
+            "timestamp": 1527583261,
+            "totalDifficulty": "8399454833308733",
+            "transactions": [transaction],
+            "transactionsRoot": "0x75a94c75fb1e56c1d14961308da23e36586fbf824e42d316ea4744ccf7959991",
+            "uncles": []
+        }
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+
+## Get transaction list by offset, count, order
+```
+ GET /api/v1/transactions
+```
+
+Get transaction list.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------
+offset | Number | NO | 0 | offset
+count | Number | NO | 10 | transaction count
+order | Number | NO | 0 | 0 => newest first, 1 => oldest first
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"status": 200,
+"msg": "success",
+"data": { total, [transaction] }
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "status": 400,
+  "msg": "error msg",
+  "data": error   //error message
+}
+```
+
+
+## Get Block by hash or height
+```
+ GET /api/v1/block/:hash
+```
+
+Get block by hash or height
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+hash | String | YES | block hash or block number
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+  status: 200,
+  "msg": "success",
+  "data": block
+}
+```
+
+## Get block details by hash or height
+```
+ GET /api/v1/blockdetails/:hash
+```
+
+Get block details by hash or height
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+hash | String | YES | block hash or block number
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+  status: 200,
+  "msg": "success",
+  "data": blockdetails
+}
+```
+
+
+## Get transaction from hash
+```
+ GET /api/v1/tx/:hash
+```
+
+Get transaction from hash
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+hash | String | YES | transaction hash
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{ status: 200, msg: "success", data: transaction }
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+## Get transaction details from hash
+```
+ GET /api/v1/txdetails/:hash
+```
+
+Get transaction details from hash
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+hash | String | YES | transaction hash
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{ status: 200, msg: "success", data: txdetails }
+
+txdetails = {
+  transactionfields,
+  block, 
+  txreceipt,
+  fee
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
 
 ## Get Balance
 ```
@@ -215,78 +439,6 @@ count | Number | YES | count of blocks to get
 }
 ```
 
-## Get Block list from offset and count
-```
- GET /api/v1/blocks
-```
-
-get block list in latest order from offset and count.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Default | Description
------------- | ------------ | ------------ | ------------ | ------------
-offset | Number | Yes | 0 | start block number
-count | Number | Yes | 10 | count of blocks to get 
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{ status: 200, msg: 'success', data: [block] }
-
-block = {
-            "difficulty": "2609994988",
-            "extraData": "0xda83010807846765746888676f312e31302e318777696e646f7773",
-            "gasLimit": 58000000,
-            "gasUsed": 5233537,
-            "hash": "0xe3b092cff27d1c3488a7043173c8d4ab016ac9c8a3a6b2ee43087946e792e1bf",
-            "logsBloom": "0x0000080000008a0000000000000040000202000000000010000000000000000000000080000000000000008000000000000100000000000000000000000400400000000000200000000000080000000000000000200500000000000000000000000000000200002000020000000008200000000000004000100000100000000000000000100100000000000000000c0400000000000000010004000000080000000080000000000000000000008000000000000000000000000000000100000000100a02000200000000000008000000000000020000000000000000100060000000000000000000000000040000000001000000000000000000000000000000",
-            "miner": "0xe24246e6dCBb07BC15A1f9C3833fc1877DF4c80e",
-            "mixHash": "0x64a8f940cf2e65c719526f505292e4af9229a72477559da720bb0b9c2454c447",
-            "nonce": "0x937b2b8a430d1eeb",
-            "number": 3332474,
-            "parentHash": "0x38cd4923a32040c54957da1fa8ce37f2dd109f314b5eeba18a36fc407c5cc3e5",
-            "receiptsRoot": "0xdde230f13416b1aa7fbc249cc01f42cb249a2c3ce25b4c411322858f990897f1",
-            "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-            "size": 21803,
-            "stateRoot": "0x716e7237186911968b734006e2ff76b6b7b84525dff883fc5d0adf82e067d12e",
-            "timestamp": 1527583261,
-            "totalDifficulty": "8399454833308733",
-            "transactions": [
-                {
-                    "blockHash": "0xe3b092cff27d1c3488a7043173c8d4ab016ac9c8a3a6b2ee43087946e792e1bf",
-                    "blockNumber": 3332474,
-                    "from": "0x4B8E0fCDdca42a238DA3b930d0a5543B6B0e7A19",
-                    "gas": 6721975,
-                    "gasPrice": "100000000000",
-                    "hash": "0x204e704b27602180d7bd11d5575449022b30b02124c6f10704bfbb3e60949ce8",
-                    "input": "0x60806040526103e96004556103e9600555600060065560006007556000600855336000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550610b208061006e6000396000f300608060405260043610610149576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680630a8256331461014e5780630ba3c8ac1461017b5780632ce62e50146101a65780633f252506146101f35780634cb81417146102205780634d717c681461024d578063554fe557146102785780635c2b1119146102c35780635f92cf2b146102ee5780636a19e6de1461035b5780636fdbd52a146103a657806379ba5097146103d35780638da5cb5b146103ea57806393a332801461044157806399e6f76d1461046c578063a439847814610497578063a91f14cc146104c4578063acc1ed32146104ef578063bd773a7a1461051a578063cbe5486814610545578063d4ee1d9014610572578063d6c7a59b146105c9578063e8a96b46146105f4578063eb63eadd14610661578063f2fde38b146106a2575b600080fd5b34801561015a57600080fd5b50610179600480360381019080803590602001909291905050506106e5565b005b34801561018757600080fd5b506101906106f9565b6040518082815260200191505060405180910390f35b3480156101b257600080fd5b506101f160048036038101908080359060200190929190803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610703565b005b3480156101ff57600080fd5b5061021e60048036038101908080359060200190929190505050610763565b005b34801561022c57600080fd5b5061024b60048036038101908080359060200190929190505050610777565b005b34801561025957600080fd5b5061026261078b565b6040518082815260200191505060405180910390f35b34801561028457600080fd5b506102ad6004803603810190808035906020019092919080359060200190929190505050610791565b6040518082815260200191505060405180910390f35b3480156102cf57600080fd5b506102d86107b8565b6040518082815260200191505060405180910390f35b3480156102fa57600080fd5b50610319600480360381019080803590602001909291905050506107c2565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561036757600080fd5b5061039060048036038101908080359060200190929190803590602001909291905050506107f5565b6040518082815260200191505060405180910390f35b3480156103b257600080fd5b506103d160048036038101908080359060200190929190505050610821565b005b3480156103df57600080fd5b506103e8610835565b005b3480156103f657600080fd5b506103ff610937565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561044d57600080fd5b5061045661095c565b6040518082815260200191505060405180910390f35b34801561047857600080fd5b50610481610962565b6040518082815260200191505060405180910390f35b3480156104a357600080fd5b506104c26004803603810190808035906020019092919050505061096c565b005b3480156104d057600080fd5b506104d9610976565b6040518082815260200191505060405180910390f35b3480156104fb57600080fd5b5061050461097c565b6040518082815260200191505060405180910390f35b34801561052657600080fd5b5061052f610982565b6040518082815260200191505060405180910390f35b34801561055157600080fd5b5061057060048036038101908080359060200190929190505050610988565b005b34801561057e57600080fd5b5061058761099c565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b3480156105d557600080fd5b506105de6109c2565b6040518082815260200191505060405180910390f35b34801561060057600080fd5b5061061f600480360381019080803590602001909291905050506109cc565b604051808273ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16815260200191505060405180910390f35b34801561066d57600080fd5b506106a0600480360381019080803590602001909291908035906020019092919080359060200190929190505050610a09565b005b3480156106ae57600080fd5b506106e3600480360381019080803573ffffffffffffffffffffffffffffffffffffffff169060200190929190505050610a4a565b005b600115156106ef57fe5b8060088190555050565b6000600754905090565b6001151561070d57fe5b806003600084815260200190815260200160002060006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055505050565b6001151561076d57fe5b8060048190555050565b6001151561078157fe5b8060078190555050565b60065481565b6002602052816000526040600020816008811015156107ac57fe5b01600091509150505481565b6000600454905090565b60036020528060005260406000206000915054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000600260008481526020019081526020016000208260088110151561081757fe5b0154905092915050565b6001151561082b57fe5b8060058190555050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff1614151561089157600080fd5b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff166000806101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff1602179055506000600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550565b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b60045481565b6000600854905090565b8060068190555050565b60075481565b60085481565b60055481565b6001151561099257fe5b8060068190555050565b600160009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1681565b6000600554905090565b60006003600083815260200190815260200160002060009054906101000a900473ffffffffffffffffffffffffffffffffffffffff169050919050565b60011515610a1357fe5b600882101515610a1f57fe5b806002600085815260200190815260200160002083600881101515610a4057fe5b0181905550505050565b60011515610a5457fe5b6000809054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff1614151515610ab057600080fd5b80600160006101000a81548173ffffffffffffffffffffffffffffffffffffffff021916908373ffffffffffffffffffffffffffffffffffffffff160217905550505600a165627a7a7230582030a8696067780fc1d67e60146922903f04fecf62e1d15bf5a312dadca8df3fc30029",
-                    "nonce": 227,
-                    "to": null,
-                    "transactionIndex": 0,
-                    "value": "0",
-                    "v": "0x2a",
-                    "r": "0x97538fc245070412cc153bd130c9875684da92e7052431e811fcb400af27abe1",
-                    "s": "0x4c9caaeeb82e2559e43c08b9464def81cbddf065e0b242bfb990de9b3b9df0e9"
-                },
-            ],
-            "transactionsRoot": "0x75a94c75fb1e56c1d14961308da23e36586fbf824e42d316ea4744ccf7959991",
-            "uncles": []
-        }
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
 
 ## Get Latest Blocks
 ```
@@ -335,142 +487,6 @@ count | Number | YES | count of blocks to get
 }
 ```
 
-## Get Block by hash
-```
- GET /api/v1/block/:hash
-```
-
-Get block by hash.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-hash | String | YES | block hash
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-  status: 200,
-  "msg": "success",
-  "data": block
-}
-
-block =  {
-        "difficulty": "2491701778",
-        "extraData": "0xda83010807846765746888676f312e31302e318777696e646f7773",
-        "gasLimit": 69822376,
-        "gasUsed": 380803,
-        "hash": "0xc3e4a0062bd4f07ca83bbd803201c939f454e002a839d1a1db3516ca8549a90b",
-        "logsBloom": "0x00000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000008000000000000000000000000000000000000000000000000020000000000000000000800000000000000400000020010000000000000000000000000000000000000000000000000000000000000000000000000400080100000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000800040000000000000020000000000000000000000000000000000000000000000000000000000000000000",
-        "miner": "0xe24246e6dCBb07BC15A1f9C3833fc1877DF4c80e",
-        "mixHash": "0x1bcd3eeefc87c8d753205194a7b75f8935f45e3c849850adb226c51a4e68e15a",
-        "nonce": "0xf7d7564feb25d1c0",
-        "number": 3345120,
-        "parentHash": "0xed1a6328aab46b17604cc6b91329f68a29588ba3f1bdbad6808ae34e0cdbb230",
-        "receiptsRoot": "0xe65654cab99e49aa06ddb19d4ecc87b8b84dd1ac0897ee80241876df2aaa08c4",
-        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-        "size": 2020,
-        "stateRoot": "0xce268ab8aab38b36f1e66882b2ec030d527101a9c39ba17784b12618215dc993",
-        "timestamp": 1527753924,
-        "totalDifficulty": "8437350175819964",
-        "transactions": [
-            "0x1b528ec2c7aa7608719493b3d54f2594761b09a2c466d9c0a7692a6c60c27026",
-            "0x31ee61a0629b912e10480e719c7b1864f140ba38e0560c621b85862887112b54",
-            "0x9b17fbebf3ca494d0f5fe60b36ca10f2586d4bb7760e34a82fbb870afa1de6d8",
-            "0xf3965f2e1904ae4273d36d4ac12fda4e525d8ee07747862c66a895dbbe965250",
-            "0xe0f33ccfbc32b367488eab33089deca0d1cfb7b76b83990d16a4b025aac5abed",
-            "0x73a64fd2ad429af4a72bb194a18070989de8d3ba9ad313536e129371e39180e5",
-            "0x630bbd384efa7ea4eba0f4c60bd8e513895ab0d9b6c1b6730ca22d97accd190a",
-            "0x811bf1637394367d47f6192e0b61dd0d8282c7bfecf52ff190c20a85ab2303dd",
-            "0x22e5e4b1f20da7019eda4b9cebc90b9b552ca0f7250392b2efdff202523df1a5",
-            "0x947734fe6f5e46491cde12c16be9b7a0e733846c755a127cb286958977be2a4b",
-            "0xba6b79c217f3837abf4ccbeea166e6fe13e46f7f0d3ec382982117ee8e5ec391",
-            "0x174a1216341da800a419911302782591819c83720a89e96395a95ceecc44bf98",
-            "0x4131d5e02551e1ad0cde1bd53c51ba38a7ef3c0ea529738721f379ba79d2a3bc"
-        ],
-        "transactionsRoot": "0x2dfce38f39adbd3ad1406c2d232585f95700feb84bfd41fb67e62ecc1139e44b",
-        "uncles": []
-    }
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-## Get Block by height
-```
- GET /api/v1/block-height/:height
-```
-
-Get block by height.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-height | Number | YES | block hash
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-  status: 200,
-  "msg": "success",
-  "data": block
-}
-
-block =  {
-        "difficulty": "2491701778",
-        "extraData": "0xda83010807846765746888676f312e31302e318777696e646f7773",
-        "gasLimit": 69822376,
-        "gasUsed": 380803,
-        "hash": "0xc3e4a0062bd4f07ca83bbd803201c939f454e002a839d1a1db3516ca8549a90b",
-        "logsBloom": "0x00000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000020000000000008000000000000000000000000000000000000000000000000020000000000000000000800000000000000400000020010000000000000000000000000000000000000000000000000000000000000000000000000400080100000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000800040000000000000020000000000000000000000000000000000000000000000000000000000000000000",
-        "miner": "0xe24246e6dCBb07BC15A1f9C3833fc1877DF4c80e",
-        "mixHash": "0x1bcd3eeefc87c8d753205194a7b75f8935f45e3c849850adb226c51a4e68e15a",
-        "nonce": "0xf7d7564feb25d1c0",
-        "number": 3345120,
-        "parentHash": "0xed1a6328aab46b17604cc6b91329f68a29588ba3f1bdbad6808ae34e0cdbb230",
-        "receiptsRoot": "0xe65654cab99e49aa06ddb19d4ecc87b8b84dd1ac0897ee80241876df2aaa08c4",
-        "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
-        "size": 2020,
-        "stateRoot": "0xce268ab8aab38b36f1e66882b2ec030d527101a9c39ba17784b12618215dc993",
-        "timestamp": 1527753924,
-        "totalDifficulty": "8437350175819964",
-        "transactions": [
-            "0x1b528ec2c7aa7608719493b3d54f2594761b09a2c466d9c0a7692a6c60c27026",
-            "0x31ee61a0629b912e10480e719c7b1864f140ba38e0560c621b85862887112b54",
-            "0x9b17fbebf3ca494d0f5fe60b36ca10f2586d4bb7760e34a82fbb870afa1de6d8",
-            "0xf3965f2e1904ae4273d36d4ac12fda4e525d8ee07747862c66a895dbbe965250",
-            "0xe0f33ccfbc32b367488eab33089deca0d1cfb7b76b83990d16a4b025aac5abed",
-            "0x73a64fd2ad429af4a72bb194a18070989de8d3ba9ad313536e129371e39180e5",
-            "0x630bbd384efa7ea4eba0f4c60bd8e513895ab0d9b6c1b6730ca22d97accd190a",
-            "0x811bf1637394367d47f6192e0b61dd0d8282c7bfecf52ff190c20a85ab2303dd",
-            "0x22e5e4b1f20da7019eda4b9cebc90b9b552ca0f7250392b2efdff202523df1a5",
-            "0x947734fe6f5e46491cde12c16be9b7a0e733846c755a127cb286958977be2a4b",
-            "0xba6b79c217f3837abf4ccbeea166e6fe13e46f7f0d3ec382982117ee8e5ec391",
-            "0x174a1216341da800a419911302782591819c83720a89e96395a95ceecc44bf98",
-            "0x4131d5e02551e1ad0cde1bd53c51ba38a7ef3c0ea529738721f379ba79d2a3bc"
-        ],
-        "transactionsRoot": "0x2dfce38f39adbd3ad1406c2d232585f95700feb84bfd41fb67e62ecc1139e44b",
-        "uncles": []
-    }
-```
 
 * for failed case
 `status code:` 400
@@ -526,63 +542,6 @@ blockNumber | Number | YES | block number
   "error": ""   //error message
 }
 ```
-
-## Get transaction list by offset, count, order
-```
- GET /api/v1/transactions
-```
-
-Get transaction list.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Default | Description
------------- | ------------ | ------------ | ------------
-offset | Number | NO | 0 | offset
-count | Number | NO | 10 | transaction count
-order | Number | NO | 0 | 0 => newest first, 1 => oldest first
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"status": 200,
-"msg": "success",
-"data": [
-        {
-            "blockHash": "0xd1ec5d68877579967475fd8f61dcb30d67adda75d12d9e8f38121ba9c5b2ed6e",
-            "blockNumber": 599196,
-            "from": "0x6d87462cB31C1217cf1eD61B4FCC37F823c61624",
-            "gas": 38336,
-            "gasPrice": "200000000000",
-            "hash": "0x713a625707a6e69de8d818b05f5c7f7a703ee73109c161fa519a2f554ce61e0c",
-            "input": "0x66697820746573746e65742121210000",
-            "nonce": 4309,
-            "to": "0x6D87462CB31C1217CF1Ed61B4Fcc37F823c61625",
-            "transactionIndex": 8,
-            "value": "0",
-            "v": "0x1b",
-            "r": "0xed9429a49926e3ddb9bc164b5ab873603a869b44b4060371e616b0f2846d7488",
-            "s": "0x153294251e901c784d5dd7da8cb0c1c171a15577b31e90679bcbf0957a8154f1",
-        ...
-    ]
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "status": 400,
-  "msg": "error msg",
-  "data": error   //error message
-}
-```
-
 
 ## Get transaction list From Account
 ```
@@ -654,61 +613,6 @@ account | String | YES | account address
 {
 "msg": "success",
 "data": 50
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
-
-
-## Get tx info from txHash
-```
- POST /api/v1/tx
-```
-
-Get list of specified transactions.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-txHash | String | YES | hash value
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": [
-        {   
-          "txHash": "0x9cd48d513a081e7832088e152e26ca46f05dc062b36d9e983a0c6049a2f56cbd",
-          "timeStamp": "1472533979",
-          "txReceipt Status": "Success",
-          "block": "5558044 (70 block confirmations)",
-          "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
-          "to": "0x1a7208627ffe43a69f13f3c393a41712fa4a7831"
-          "value": "0.09 Ether ($71.87)"
-          "gasLimit": 120000,
-          "gasUsedByTxn": 87221,
-          "gasPrice": "0.000000003 Ether (3 Gwei)",
-          "actualTxCostFee": "0.000261663 Ether ($0.21)",
-          "nonce": 574,
-          "inputData": "Function: miningTen() MethodID: 0xcc4bf6a3"
-          },
-        ...
-    ]
 }
 ```
 
