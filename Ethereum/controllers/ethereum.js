@@ -1,80 +1,82 @@
-var config = require('../config/common').info;
-var web3 = require('../config/common').web3;
+var config = require("../config/common").info;
+var web3 = require("../config/common").web3;
 var TransactionModel = require("../model/transactions");
 var TokenModel = require("../model/tokens");
 
-exports.getBalance = function (req, res) {
+exports.getBalance = function(req, res) {
   var addr = req.params.address;
 
   // Show the address in the console.
   //console.log('Address:', addr);
 
   // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.getBalance(addr, function (error, result) {
+  web3.eth.getBalance(addr, function(error, result) {
     if (!error) {
-      var ethervalue = web3.utils.fromWei(result, 'ether');
+      var ethervalue = web3.utils.fromWei(result, "ether");
       //console.log('Ether:', ethervalue); // Show the ether balance after converting it from Wei
       res.status(200).json({ balance: ethervalue });
-    }
-    else {
-      console.log('we have a promblem: ', error); // Should dump errors here
+    } else {
+      console.log("we have a promblem: ", error); // Should dump errors here
       res.status(400).json({ error: error });
     }
   });
-}
+};
 
-exports.createAccount = function (req, res) {
+exports.createAccount = function(req, res) {
   console.log("createAccount");
 
   // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.personal.newAccount(config.mainpass, function (error, result) {
+  web3.eth.personal.newAccount(config.mainpass, function(error, result) {
     if (!error) {
-      console.log('New Account:', result);
+      console.log("New Account:", result);
       res.status(200).json({ address: result });
-    }
-    else {
-      console.log('createAccount error: ', error); // Should dump errors here
+    } else {
+      console.log("createAccount error: ", error); // Should dump errors here
       res.status(400).json({ error: error });
     }
   });
-}
+};
 
 //to enable calls of personal functions, need to set --rpcapi eth,web3,personal when call geth
-exports.sendTransaction = function (req, res) {
+exports.sendTransaction = function(req, res) {
   console.log("sendTransaction", req.body);
   var from = req.body.from;
   var to = req.body.to;
   var value = req.body.value;
   // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.personal.unlockAccount(from, config.mainpass, function (error, result) {
+  web3.eth.personal.unlockAccount(from, config.mainpass, function(
+    error,
+    result
+  ) {
     if (!error) {
-      console.log('Unlocked Account: ', result);
-      web3.eth.sendTransaction({
-        from: from,
-        to: to,
-        value: web3.utils.toWei(value),
-      }, function (err, hash) {
-        if (!err) {
-          console.log("Send transaction: ", hash);
-          res.status(200).json({ hash: hash });
+      console.log("Unlocked Account: ", result);
+      web3.eth.sendTransaction(
+        {
+          from: from,
+          to: to,
+          value: web3.utils.toWei(value)
+        },
+        function(err, hash) {
+          if (!err) {
+            console.log("Send transaction: ", hash);
+            res.status(200).json({ hash: hash });
+          } else {
+            console.log("error: ", err);
+            res.status(400).json({ error: error });
+          }
         }
-        else {
-          console.log('error: ', err);
-          res.status(400).json({ error: error });
-        }
-      })
-    }
-    else {
-      console.log('we have a promblem: ', error); // Should dump errors here
+      );
+    } else {
+      console.log("we have a promblem: ", error); // Should dump errors here
       res.status(400).json({ error: error });
     }
   });
-}
+};
 
-exports.getUpdatedTransactions = function (req, res) {
+exports.getUpdatedTransactions = function(req, res) {
   var blocknum = req.body.blocknum;
 
-  var lastblock = web3.eth.getBlockNumber(async function (error, number) {
+  var lastblock = web3.eth.getBlockNumber(async function(error, number) {
     //console.log("lastblock= ", number);
 
     if (!error) {
@@ -86,19 +88,16 @@ exports.getUpdatedTransactions = function (req, res) {
         }
 
         res.status(200).json({ lastblock: number, data: blocks });
-      }
-      catch (e) {
-        console.log('we have a promblem: ', e); // Should dump errors here
+      } catch (e) {
+        console.log("we have a promblem: ", e); // Should dump errors here
         res.status(400).json({ error: e });
       }
-    }
-    else {
-      console.log('we have a promblem: ', error); // Should dump errors here
+    } else {
+      console.log("we have a promblem: ", error); // Should dump errors here
       res.status(400).json({ error: error });
     }
   });
-
-}
+};
 
 /*
 * Get blocklist of specified count of blocks from certain number.
@@ -112,11 +111,11 @@ exports.getUpdatedTransactions = function (req, res) {
 *   GasPrice is GWei unit
 *   Reward cannot be retrieved from node. Maybe should get it from etherscan
 */
-exports.blocklist = function (req, res) {
+exports.blocklist = function(req, res) {
   var blocknum = req.body.blocknum;
   var count = req.body.count;
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async function(error, number) {
     if (!error) {
       try {
         console.log("last number " + number);
@@ -155,24 +154,22 @@ exports.blocklist = function (req, res) {
             blockMiner: Miner,
             gasUsed: GasUsed,
             gasLimit: GasLimit,
-            avgGasPrice: GasPrice.toFixed(2),
+            avgGasPrice: GasPrice.toFixed(2)
           });
         }
 
         console.log("blocks: ", blocks);
         res.status(200).json({ msg: "success", data: blocks });
-      }
-      catch (e) {
-        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+      } catch (e) {
+        console.log("blocklist: we have a promblem: ", e); // Should dump errors here
         res.status(400).json({ error: e });
       }
-    }
-    else {
-      console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+    } else {
+      console.log("getBlockNumber: we have a promblem: ", error); // Should dump errors here
       res.status(400).json({ error: error });
     }
   });
-}
+};
 
 /**
  * Get latest blocklist from offset and count.
@@ -221,14 +218,14 @@ exports.blocklist = function (req, res) {
             "uncles": []
         }
  */
-exports.getBlocks = function (req, res) {
+exports.getBlocks = function(req, res) {
   var offset = Number(req.query.offset);
   var count = Number(req.query.count);
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async function(error, number) {
     if (!error) {
       try {
         var blocks = [];
@@ -241,18 +238,16 @@ exports.getBlocks = function (req, res) {
         }
 
         res.status(200).json({ status: 200, msg: "success", data: blocks });
-      }
-      catch (e) {
-        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+      } catch (e) {
+        console.log("blocklist: we have a promblem: ", e); // Should dump errors here
         res.status(400).json({ error: e });
       }
-    }
-    else {
-      console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+    } else {
+      console.log("getBlockNumber: we have a promblem: ", error); // Should dump errors here
       res.status(400).json({ error: error });
     }
   });
-}
+};
 
 /*
 * Get Latest blocklist of specified count of blocks
@@ -265,16 +260,15 @@ exports.getBlocks = function (req, res) {
 *   GasPrice is GWei unit
 *   Reward cannot be retrieved from node. Maybe should get it from etherscan
 */
-exports.latestblocks = function (req, res) {
+exports.latestblocks = function(req, res) {
   var count = req.body.count;
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async function(error, number) {
     if (!error) {
       try {
         console.log("last number " + number);
 
-        if (count > number + 1)
-          count = number + 1;
+        if (count > number + 1) count = number + 1;
 
         var blocks = [];
         for (let i = number; i > number - count; i--) {
@@ -311,90 +305,44 @@ exports.latestblocks = function (req, res) {
             blockMiner: Miner,
             gasUsed: GasUsed,
             gasLimit: GasLimit,
-            avgGasPrice: GasPrice.toFixed(2),
+            avgGasPrice: GasPrice.toFixed(2)
           });
         }
 
         console.log("blocks: ", blocks);
         res.status(200).json({ msg: "success", data: blocks });
-      }
-      catch (e) {
-        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+      } catch (e) {
+        console.log("blocklist: we have a promblem: ", e); // Should dump errors here
         res.status(400).json({ error: e });
       }
-    }
-    else {
-      console.log('getBlockNumber: we have a promblem: ', error); // Should dump errors here
+    } else {
+      console.log("getBlockNumber: we have a promblem: ", error); // Should dump errors here
       res.status(400).json({ error: error });
     }
   });
-}
+};
 
-/*
-* Get block detail
-* @blockNumber block number.
-* @return block detail information
-* 
-* comment to internal transactions: 
-*   There's not currently any way to do this using the web3 API. 
-    Internal transactions, despite the name (which isn't part of the yellowpaper; 
-    it's a convention people have settled on) aren't actual transactions, 
-    and aren't included directly in the blockchain; 
-    they're value transfers that were initiated by executing a contract.
-
-    As such, they're not stored explicitly anywhere: 
-    they're the effects of running the transaction in question on the blockchain state. 
-    Blockchain explorers like etherscan obtain them by running a modified node with an instrumented EVM, 
-    which record all the value transfers that took place as part of transaction execution, 
-    storing them separately.
-*/
-exports.getblockdetail = async function (req, res) {
-  var blockNumber = req.body.blocknum;
+exports.getBlockByHash = async function(req, res) {
+  var hash = req.params.hash;
 
   try {
-    var blockdata = await web3.eth.getBlock(blockNumber, false);
-
-    var timestamp = blockdata.timestamp;
-    var txn = blockdata.transactions.length;
-    var Uncles = blockdata.uncles.length;
-    var hash = blockdata.hash;
-    var parentHash = blockdata.parentHash;
-    var sha3Uncles = blockdata.sha3Uncles;
-    var Miner = blockdata.miner;
-    var difficulty = blockdata.difficulty;
-    var totalDifficulty = blockdata.totalDifficulty;
-    var size = blockdata.size;
-    var nonce = blockdata.nonce;
-    var extraData = blockdata.extraData;
-    var GasUsed = blockdata.gasUsed;
-    var GasLimit = blockdata.gasLimit;
-
-
-    var blockdetail = {
-      blockNumber: blockNumber,
-      timeStamp: timestamp,
-      transactions: txn,
-      hash: hash,
-      parentHash: parentHash,
-      sha3Uncles: sha3Uncles,
-      minedBy: Miner,
-      difficulty: difficulty,
-      totalDifficulty, totalDifficulty,
-      size: size,
-      gasUsed: GasUsed,
-      gasLimit: GasLimit,
-      nonce: nonce,
-      extraData: extraData
-    };
-
-    console.log("data: ", blockdetail);
-    res.status(200).json({ msg: "success", data: blockdetail });
-  }
-  catch (e) {
-    console.log('blockdeatil: we have a promblem: ', e); // Should dump errors here
+    var blockdata = await web3.eth.getBlock(hash, false);
+    res.json({ status: 200, msg: "success", data: blockdata });
+  } catch (e) {
     res.status(400).json({ error: e });
   }
-}
+};
+
+exports.getBlockByHeight = async function(req, res) {
+  var height = Number(req.params.height);
+
+  try {
+    var blockdata = await web3.eth.getBlock(height, false);
+    res.json({ status: 200, msg: "success", data: blockdata });
+  } catch (e) {
+    res.status(400).json({ error: e });
+  }
+};
 
 /*
 * Get transactions of blocknumber
@@ -402,7 +350,7 @@ exports.getblockdetail = async function (req, res) {
 * @return transaction information
 * 
 */
-exports.postTransactions = async function (req, res) {
+exports.postTransactions = async function(req, res) {
   var blockNumber = req.body.blockNumber;
 
   try {
@@ -428,28 +376,27 @@ exports.postTransactions = async function (req, res) {
         to: transaction.to,
         value: transaction.value / 1e18,
         txFee: fee
-      })
+      });
     }
 
     console.log("data: ", txnlist);
     res.status(200).json({ msg: "success", data: txnlist });
-  }
-  catch (e) {
-    console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+  } catch (e) {
+    console.log("blocklist: we have a promblem: ", e); // Should dump errors here
     res.status(400).json({ error: e });
   }
-}
+};
 
 /**
  * Get transaction list by offset, count, order
- * 
+ *
  * @param {Number} offset
  * @param {Number} count
  * @param {Number} order
- * 
+ *
  * @returns transaction list
  */
-exports.getTransactions = async function (req, res) {
+exports.getTransactions = async function(req, res) {
   var offset = Number(req.query.offset);
   var count = Number(req.query.count);
   var order = Number(req.query.order);
@@ -465,27 +412,27 @@ exports.getTransactions = async function (req, res) {
     .sort(condition)
     .skip(offset)
     .limit(count)
-    .exec(async function (error, rows) {
+    .exec(async function(error, rows) {
       if (error) {
-        console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
-        return res.json({ status: 400, msg: 'errors', data: error });
+        console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
+        return res.json({ status: 400, msg: "errors", data: error });
       }
       var txs = [];
       for (let i = 0; i < rows.length; i++) {
         try {
-          var tx = await web3.eth.getTransaction(rows[i]['hash'])
+          var tx = await web3.eth.getTransaction(rows[i]["hash"]);
           txs.push(tx);
         } catch (error) {
-          console.log('get transaction error: ', error);
+          console.log("get transaction error: ", error);
           txs.push({
             hash: rows[i].hash,
             error: true
-          })
+          });
         }
       }
       return res.json({ status: 200, msg: "success", data: txs });
     });
-}
+};
 
 /*
 * Get transactions list from Account
@@ -495,7 +442,7 @@ exports.getTransactions = async function (req, res) {
 * @return transactions list
 * 
 */
-exports.getTransactionsFromAccount = async function (req, res) {
+exports.getTransactionsFromAccount = async function(req, res) {
   var account = req.body.account;
   var offset = req.body.offset;
   var count = req.body.count;
@@ -505,17 +452,15 @@ exports.getTransactionsFromAccount = async function (req, res) {
     .sort({ timestamp: -1 })
     .skip(offset)
     .limit(count)
-    .exec(function (error, transactions) {
+    .exec(function(error, transactions) {
       if (!error) {
         res.status(200).json({ msg: "success", data: transactions });
-      }
-      else {
-        console.log('getTransactionsFromAccount: we have a promblem: ', error); // Should dump errors here
+      } else {
+        console.log("getTransactionsFromAccount: we have a promblem: ", error); // Should dump errors here
         res.status(400).json({ error: error });
       }
     });
-}
-
+};
 
 /*
 * Get transactions count from Account
@@ -523,22 +468,21 @@ exports.getTransactionsFromAccount = async function (req, res) {
 * @return count
 * 
 */
-exports.getTransactionCountFromAccount = async function (req, res) {
+exports.getTransactionCountFromAccount = async function(req, res) {
   var account = req.body.account;
 
   TransactionModel.find()
     .or([{ from: account }, { to: account }])
     .sort({ timestamp: -1 })
-    .exec(function (error, transactions) {
+    .exec(function(error, transactions) {
       if (!error) {
         res.status(200).json({ msg: "success", data: transactions.length });
-      }
-      else {
-        console.log('getTransactionsFromAccount: we have a promblem: ', error); // Should dump errors here
+      } else {
+        console.log("getTransactionsFromAccount: we have a promblem: ", error); // Should dump errors here
         res.status(400).json({ error: error });
       }
     });
-}
+};
 
 /*
 * Get transactions info
@@ -546,10 +490,10 @@ exports.getTransactionCountFromAccount = async function (req, res) {
 * @return transaction detail info
 * 
 */
-exports.getTransactionInfo = function (req, res) {
+exports.getTransactionInfo = function(req, res) {
   var txHash = req.body.txHash;
 
-  web3.eth.getTransaction(txHash, async function (error, transaction) {
+  web3.eth.getTransaction(txHash, async function(error, transaction) {
     if (!error) {
       try {
         let blocknumber = transaction.blockNumber;
@@ -564,92 +508,87 @@ exports.getTransactionInfo = function (req, res) {
         fee = fee / 1e18;
 
         let txinfo = {
-          "txHash": transaction.hash,
-          "timeStamp": timestamp,
-          "status": txreceipt.status,
-          "block": blocknumber,
-          "from": transaction.from,
-          "to": transaction.to,
-          "value": transaction.value / 1e18,
-          "gasLimit": transaction.gas,
-          "gasUsedByTxn": txreceipt.gasUsed,
-          "gasPrice": transaction.gasPrice,
-          "actualTxCostFee": fee,
-          "nonce": transaction.nonce,
-          "inputData": transaction.input
+          txHash: transaction.hash,
+          timeStamp: timestamp,
+          status: txreceipt.status,
+          block: blocknumber,
+          from: transaction.from,
+          to: transaction.to,
+          value: transaction.value / 1e18,
+          gasLimit: transaction.gas,
+          gasUsedByTxn: txreceipt.gasUsed,
+          gasPrice: transaction.gasPrice,
+          actualTxCostFee: fee,
+          nonce: transaction.nonce,
+          inputData: transaction.input
         };
 
         console.log("txinfo: ", txinfo);
         res.status(200).json({ msg: "success", data: txinfo });
-      }
-      catch (e) {
-        console.log('blocklist: we have a promblem: ', e); // Should dump errors here
+      } catch (e) {
+        console.log("blocklist: we have a promblem: ", e); // Should dump errors here
         res.status(400).json({ error: e });
       }
-    }
-    else {
-      console.log('getTransaction: we have a promblem: ', error); // Should dump errors here
+    } else {
+      console.log("getTransaction: we have a promblem: ", error); // Should dump errors here
       res.status(400).json({ error: error });
     }
   });
-}
-
-
+};
 
 //api for token related
-exports.getTokenList = function (req, res) {
+exports.getTokenList = function(req, res) {
   TokenModel.find()
     .sort({ symbol: 1 })
-    .exec(function (error, tokens) {
+    .exec(function(error, tokens) {
       if (!error) {
         console.log(tokens);
         res.status(200).json({ msg: "success", data: tokens });
-      }
-      else {
-        console.log('getTokenList: we have a promblem: ', error); // Should dump errors here
+      } else {
+        console.log("getTokenList: we have a promblem: ", error); // Should dump errors here
         res.status(400).json({ error: error });
       }
     });
-}
+};
 
-exports.addToken = function (req, res) {
+exports.addToken = function(req, res) {
   var symbol = req.body.symbol;
   var address = req.body.address;
 
-  TokenModel.find({ symbol: symbol, address: address })
-    .exec(function (error, tokens) {
-      if (!error) {
-        if (tokens.length) {
-          console.log('addToken: token already exsit'); // Should dump errors here
-          res.status(400).json({ error: "token already exsit" });
-          return;
-        }
-
-        var newToken = new TokenModel({ symbol: symbol, address: address });
-        newToken.save(function (err, token) {
-          res.status(200).json({ msg: "success", data: token });
-        });
+  TokenModel.find({ symbol: symbol, address: address }).exec(function(
+    error,
+    tokens
+  ) {
+    if (!error) {
+      if (tokens.length) {
+        console.log("addToken: token already exsit"); // Should dump errors here
+        res.status(400).json({ error: "token already exsit" });
+        return;
       }
-      else {
-        console.log('addToken: we have a promblem: ', error); // Should dump errors here
-        res.status(400).json({ error: error });
-      }
-    })
-}
 
-exports.removeToken = function (req, res) {
+      var newToken = new TokenModel({ symbol: symbol, address: address });
+      newToken.save(function(err, token) {
+        res.status(200).json({ msg: "success", data: token });
+      });
+    } else {
+      console.log("addToken: we have a promblem: ", error); // Should dump errors here
+      res.status(400).json({ error: error });
+    }
+  });
+};
+
+exports.removeToken = function(req, res) {
   var symbol = req.body.symbol;
   var address = req.body.address;
 
-  TokenModel.findOneAndRemove({ symbol: symbol, address: address })
-    .exec(function (error, tokens) {
+  TokenModel.findOneAndRemove({ symbol: symbol, address: address }).exec(
+    function(error, tokens) {
       if (!error) {
         res.status(200).json({ msg: "success" });
-      }
-      else {
-        console.log('removeToken: we have a promblem: ', error); // Should dump errors here
+      } else {
+        console.log("removeToken: we have a promblem: ", error); // Should dump errors here
         res.status(400).json({ error: error });
       }
-    })
-
-}
+    }
+  );
+};

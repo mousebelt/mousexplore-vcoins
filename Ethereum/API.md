@@ -3,16 +3,17 @@
 vcoin apis  
 
 # Summary
+[Get block list from offset and count](#get-block-list-from-offset-and-count)  
+[Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
+[Get block by hash](#get-block-by-hash)  
+
 [Get Balance](#get-balance)  
 [Create Account](#create-account)  
 [Make Transaction](#make-transaction)  
 [Get Updated Transaction](#get-updated-transaction)  
 [Get Block list](#get-block-list)  
-[Get Block list from offset and count](#get-block-list-from-offset-and-count)  
 [Get Latest Blocks](#get-latest-blocks)  
-[Get Block Detail](#get-block-detail)  
 [Get transactions from blocknumber](#get-transactions-from-blocknumber)  
-[Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
 [Get transaction list From Account](#get-transaction-list-from-account)  
 [Get transaction count From Account](#get-transaction-count-from-account)  
 [Get tx info from txHash](#get-tx-info-from-txhash)  
@@ -333,18 +334,18 @@ count | Number | YES | count of blocks to get
 }
 ```
 
-## Get Block Detail
+## Get Block by hash
 ```
- POST /api/v1/block
+ GET /api/v1/block/:hash
 ```
 
-Get block info from blockNumber.
+Get block by hash.
 
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-blocknum | Number | YES | start block number
+hash | String | YES | block hash
 
 
 ### RETURN
@@ -354,27 +355,9 @@ blocknum | Number | YES | start block number
 
 ```javascript
 {
-"msg": "success",
-"data": [
-        {   
-           blockNumber: "5556102", 
-           timeStamp: "1472533979", 
-           transactions: 260, 
-           hash: "0x1716fe362ce1711ccc7727d72f1becd8d585318dcae48c714d7b7b25f7c3d6ae", 
-           parentHash: "0x3c192dfa22e832633723b57897cd9e00024a0ed341e2de274d2bbeeee5921bbe", 
-           sha3Uncles: "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347", 
-           minedBy: "0xb2930b35844a230f00e51431acae96fe543a0347", 
-           difficulty: "3,162,739,934,758,047", 
-           totalDifficulty: "4,003,097,177,949,420,847,497", 
-           size: "38742 bytes", 
-           gasUsed: "7,993,537 (99.92%)", 
-           gasLimit: "8,000,029", 
-           nonce: "0xa9cdfb1c086bb04b", 
-           unclesReward: "0", 
-           extraData: "0x73656f3234242342e34242323d324324"
-          },
-        ...
-    ]
+  status: 200,
+  "msg": "success",
+  "data": block
 }
 ```
 
@@ -387,6 +370,41 @@ blocknum | Number | YES | start block number
 }
 ```
 
+## Get Block by height
+```
+ GET /api/v1/block-height/:height
+```
+
+Get block by height.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+height | Number | YES | block hash
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+  status: 200,
+  "msg": "success",
+  "data": block
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
 
 ## Get transactions from blocknumber
 ```
