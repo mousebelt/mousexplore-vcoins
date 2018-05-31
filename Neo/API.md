@@ -102,7 +102,7 @@ neo-vcoin apis
 /**
  * @description Get block by hash
  * 
- * @method GET /block-height/:hash
+ * @method GET /block/:hash
  *
  * @return
  * { "status": 200, "msg": "success", "data": block }

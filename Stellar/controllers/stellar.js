@@ -178,35 +178,28 @@ exports.getLatestLedgers = function(req, res) {
 */
 };
 
-/*
-* Get ledger info.
-* @param ledger   hash or sequence.
-* @return ledger information 
-*/
-exports.getLedgerDetail = function(req, res) {
-  var ledger = req.body.ledger;
-
+exports.getLedgerByHash = function(req, res) {
+  var hash = req.params.hash;
   server
     .ledgers()
-    .ledger(ledger)
+    .ledger(hash)
     .call()
-    .then(function(ledgerResult) {
-      console.log(ledgerResult);
-      var info = {
-        sequence: ledgerResult.sequence,
-        timeStamp: ledgerResult.closed_at,
-        hash: ledgerResult.hash,
-        prevHash: ledgerResult.prev_hash,
-        feePool: ledgerResult.fee_pool,
-        baseFee: ledgerResult.base_fee_in_stroops,
-        baseReserve: ledgerResult.base_reserve_in_stroops,
-        maxTransactions: ledgerResult.max_tx_set_size,
-        totalCoins: ledgerResult.total_coins,
-        transactions: ledgerResult.transaction_count,
-        operations: ledgerResult.operation_count
-      };
-
-      res.status(200).json({ msg: "success", data: info });
+    .then(function(result) {
+      res.json({ status: 200, msg: "success", data: result });
+    })
+    .catch(function(err) {
+      console.log(err);
+      res.status(400).json({ error: err });
+    });
+};
+exports.getLedgerByHeight = function(req, res) {
+  var height = Number(req.params.height);
+  server
+    .ledgers()
+    .ledger(height)
+    .call()
+    .then(function(result) {
+      res.json({ status: 200, msg: "success", data: result });
     })
     .catch(function(err) {
       console.log(err);
