@@ -9,13 +9,12 @@ vcoin apis
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
 [Get transaction from hash](#get-transaction-from-hash)  
 [Get transaction details from hash](#get-transaction-details-from-hash)  
+[Get address related transaction by offset, count, order](#Get-address-related-transaction-by-offset-count-order)  
 
 [Get Balance](#get-balance)  
 [Create Account](#create-account)  
 [Make Transaction](#make-transaction)  
 [Get Updated Transaction](#get-updated-transaction)  
-[Get transaction list From Account](#get-transaction-list-from-account)  
-[Get transaction count From Account](#get-transaction-count-from-account)  
 
 ***
 
@@ -310,6 +309,43 @@ txdetails = {
 }
 ```
 
+
+## Get address related transaction by offset, count, order
+```
+ GET /api/v1/address/txs/:address
+```
+
+Get address related transactions
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+offset | Number | NO | 0 | offset
+count | Number | NO | 10 | transaction count
+order | Number | NO | 0 | 0 => newest first, 1 => oldest first
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data":  { total, [transaction] } 
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
 ## Get Balance
 ```
 GET /api/get_address_balance/:address
@@ -442,88 +478,6 @@ blocknum | Number | YES | start block number
         },
         ...
     ]
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
-## Get transaction list From Account
-```
- POST /api/v1/account/txs
-```
-
-Get list of transactions of an account.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-account | String | YES | account address
-offset | Number | YES | offset from latest transaction
-count | Number | YES | count of blocks to get 
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": [
-        {   
-          "blocknumber": "2165403", "timestamp": "1472533979",
-          "hash": "0x98db583e5ff636b78",
-          "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
-          "to": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6",
-          "value": "0.007792298571672 Ether"
-          "fee": "0.000084"
-          },
-        ...
-    ]
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
-## Get transaction count From Account
-```
- POST /api/v1/account/txcount
-```
-
-Get count of transactions of an account.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-account | String | YES | account address
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": 50
 }
 ```
 

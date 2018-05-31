@@ -285,32 +285,50 @@ exports.getTransactions = async function (req, res) {
   }
 };
 
-/*
-* Get transactions list from Account
-* @account: account address to get transactions
-* @offset: offset to get list
-* @count transaction count
-* @return transactions list
-* 
-*/
 exports.getTransactionsFromAccount = async function (req, res) {
-  var account = req.body.account;
-  var offset = req.body.offset;
-  var count = req.body.count;
+  var address = req.params.address;
+  var offset = Number(req.query.offset);
+  var count = Number(req.query.count);
+  var order = Number(req.query.order);
 
-  TransactionModel.find()
-    .or([{ from: account }, { to: account }])
-    .sort({ timestamp: -1 })
-    .skip(offset)
-    .limit(count)
-    .exec(function (error, transactions) {
-      if (!error) {
-        res.status(200).json({ msg: "success", data: transactions });
-      } else {
-        console.log("getTransactionsFromAccount: we have a promblem: ", error); // Should dump errors here
-        res.status(400).json({ error: error });
-      }
-    });
+  if (!offset) offset = 0;
+  if (!count || count <= 0) count = 10;
+
+  var cond;
+  if (order > 0) cond = { timestamp: 1 };
+  else cond = { timestamp: -1 };
+
+  try {
+    var total = await TransactionModel.find().or([{ from: address }, { to: address }]).count();
+
+    var txs = TransactionModel.find()
+      .or([{ from: address }, { to: address }])
+      .sort(cond)
+      .skip(offset)
+      .limit(count)
+      .exec(async function (error, rows) {
+        if (error) {
+          console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
+          return res.json({ status: 400, msg: "errors", data: error });
+        }
+        var txs = [];
+        for (let i = 0; i < rows.length; i++) {
+          try {
+            var tx = await web3.eth.getTransaction(rows[i]["hash"]);
+            txs.push(tx);
+          } catch (error) {
+            console.log("get transaction error: ", error);
+            txs.push({
+              hash: rows[i].hash,
+              error: true
+            });
+          }
+        }
+        return res.json({ status: 200, msg: "success", data: { total, txs } });
+      });
+  } catch (error) {
+    res.json({ status: 400, msg: "Error in reading transactions !", data: error });
+  }
 };
 
 /*
