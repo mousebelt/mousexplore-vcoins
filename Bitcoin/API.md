@@ -265,6 +265,60 @@ txid | String | YES | txid
 
 ```javascript
 { status: 200, msg: 'sccuess', data: txdetails }
+
+txdetails = {
+        "txid": "ebd04978a24bb39e1b3d60dba0d4363cae48a66101532ba3a0376e2b8ec9d751",
+        "hash": "ebd04978a24bb39e1b3d60dba0d4363cae48a66101532ba3a0376e2b8ec9d751",
+        "version": 2,
+        "size": 226,
+        "vsize": 226,
+        "locktime": 0,
+        "vin": [
+            {
+                "txid": "b349fe10539ed7df62d69c3cb96d801a25f0b5e8442793660fdacd08c1c40207",
+                "vout": 1,
+                "scriptSig": {
+                    "asm": "3045022100f3448e427fcef9b63f56d4365bbcc6073166a3918d73f8feb6cc541c5a71f16b0220217fa75e5201d49850db2d258234db57e58ee36ae1de98375d6b496fddfb4c17[ALL] 03c38205e5b9b5cf8f91f90ca38d79a7ab6d3b168e1b25bd5f4be0d615f0b47a44",
+                    "hex": "483045022100f3448e427fcef9b63f56d4365bbcc6073166a3918d73f8feb6cc541c5a71f16b0220217fa75e5201d49850db2d258234db57e58ee36ae1de98375d6b496fddfb4c17012103c38205e5b9b5cf8f91f90ca38d79a7ab6d3b168e1b25bd5f4be0d615f0b47a44"
+                },
+                "sequence": 4294967295,
+                "address": {
+                    "value": 67.15217239,
+                    "n": 1,
+                    "scriptPubKey": {
+                        "asm": "OP_DUP OP_HASH160 d8e04f20c9a44ecc18656cb2bb58f2ff58a6dc54 OP_EQUALVERIFY OP_CHECKSIG",
+                        "hex": "76a914d8e04f20c9a44ecc18656cb2bb58f2ff58a6dc5488ac",
+                        "reqSigs": 1,
+                        "type": "pubkeyhash",
+                        "addresses": [
+                            "1LmjfhrnJcq9Te3h7x7cDQcXPneqS1jTJc"
+                        ]
+                    }
+                }
+            }
+        ],
+        "vout": [
+            {
+                "value": 0.100297,
+                "n": 0,
+                "scriptPubKey": {
+                    "asm": "OP_DUP OP_HASH160 a602a4bfa9cbe00e80be128973b407389e5177bd OP_EQUALVERIFY OP_CHECKSIG",
+                    "hex": "76a914a602a4bfa9cbe00e80be128973b407389e5177bd88ac",
+                    "reqSigs": 1,
+                    "type": "pubkeyhash",
+                    "addresses": [
+                        "1G8nLXDHN33MTV2RG3A9grWPtdjWZc8WB2"
+                    ]
+                }
+            }, ...
+        ],
+        "hex": "02000000010702c4c108cdda0f66932744e8b5f0251a806db93c9cd662dfd79e5310fe49b3010000006b483045022100f3448e427fcef9b63f56d4365bbcc6073166a3918d73f8feb6cc541c5a71f16b0220217fa75e5201d49850db2d258234db57e58ee36ae1de98375d6b496fddfb4c17012103c38205e5b9b5cf8f91f90ca38d79a7ab6d3b168e1b25bd5f4be0d615f0b47a44ffffffff02840a9900000000001976a914a602a4bfa9cbe00e80be128973b407389e5177bd88ac3384a78f010000001976a91488b10e923ba601f0560a9e934079ba40e3c5debc88ac00000000",
+        "blockhash": "00000000000000000033d469c86c974d60cb12a3d58f305b1f8a1705469b378d",
+        "confirmations": 4,
+        "time": 1527771199,
+        "blocktime": 1527771199
+    }
+}
 ```
 
 * for failed case

@@ -261,6 +261,21 @@ exports.getBlockDetails = async (req, res) => {
     for (let i = 0; i < block.tx.length; i++) {
       try {
         var tx = await promisify("getrawtransaction", [block.tx[i], 1]);
+
+        if (tx && tx.vin && tx.vin.length > 0) {
+          var vins = [];
+          for (let j = 0; j < tx.vin.length; j++) {
+            _vinItem = tx.vin[j];
+            try {
+              if(_vinItem['txid'] && _vinItem['vout']) {
+                var out = await promisify("getrawtransaction", [_vinItem['txid'], 1]);
+                _vinItem.address = out.vout[_vinItem['vout']];
+              }
+            } catch (error) { }
+            vins.push(_vinItem);
+          }
+          tx.vin = vins;
+        }
         txs.push(tx);
       } catch (error) {
         console.log(error);
