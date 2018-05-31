@@ -230,14 +230,44 @@ exports.getBestBlockHash = (req, res) => {
   }
 };
 
-exports.getBlock = (req, res) => {
-  const hash = req.params.hash;
+exports.getBlock = async (req, res) => {
+  var hash = req.params.hash;
 
   try {
+    if (hash.length < 10) {
+      hash = await promisify("getblockhash", [Number(hash)]);
+    }
+
     client.call("getblock", [hash], function(err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
+
+      return res.json({ status: 200, msg: "sccuess", data: result });
+    });
+  } catch (error) {
+    return res.json({ status: 400, msg: "errors", data: error });
+  }
+};
+
+exports.getBlockDetails = async (req, res) => {
+  var hash = req.params.hash;
+  try {
+    if (hash.length < 10) {
+      hash = await promisify("getblockhash", [Number(hash)]);
+    }
+    client.call("getblock", [hash], async function(err, result) {
+      if (err) {
+        return res.json({ status: 400, msg: "errors", data: err });
+      }
+      var txs = [];
+      for (let i = 0; i < result.tx.length; i++) {
+        try {
+          var tx = await promisify("getrawtransaction", [result.tx[i], 1]);
+          txs.push(tx);
+        } catch (error) {}
+      }
+      result.tx = txs;
       return res.json({ status: 200, msg: "sccuess", data: result });
     });
   } catch (error) {
@@ -466,26 +496,6 @@ exports.getBlocks = async (req, res) => {
   }
 };
 
-exports.getBlockHeight = async (req, res) => {
-  const height = Number(req.params.height);
-
-  try {
-    var hash = await promisify("getblockhash", [Number(height)]);
-    if (hash) {
-      var block = await promisify("getblock", [hash]);
-      return res.json({ status: 200, msg: "sccuess", data: block });
-    }
-
-    return res.json({
-      status: 400,
-      msg: "errors",
-      data: "no existing block !"
-    });
-  } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
-  }
-};
-
 exports.getTransactionInfo = (req, res) => {
   const txid = req.params.txid;
 
@@ -553,12 +563,12 @@ exports.getTransactions = async function(req, res) {
               var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
               txs.push(tx);
             } catch (error) {
-              console.log('get transaction error: ', error);
+              console.log("get transaction error: ", error);
               txs.push({
                 txid: rows[i].txid,
                 hash: rows[i].txid,
                 unknown: true
-              })
+              });
             }
           }
           return res.json({ status: 200, msg: "success", data: txs });
