@@ -14,9 +14,6 @@ vcoin apis
 [Create Account](#create-account)  
 [Make Transaction](#make-transaction)  
 [Get Updated Transaction](#get-updated-transaction)  
-[Get Block list](#get-block-list)  
-[Get Latest Blocks](#get-latest-blocks)  
-[Get transactions from blocknumber](#get-transactions-from-blocknumber)  
 [Get transaction list From Account](#get-transaction-list-from-account)  
 [Get transaction count From Account](#get-transaction-count-from-account)  
 
@@ -458,157 +455,6 @@ blocknum | Number | YES | start block number
 ```
 
 
-## Get Block list
-```
- POST /api/v1/blocklisr
-```
-
-get block list of count blocks started from blockNumber.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-blocknum | Number | YES | start block number
-count | Number | YES | count of blocks to get 
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": [
-        {   
-           blockNumber: "5556102", 
-           timeStamp: "1472533979", 
-           txn: 260, 
-           uncles: 1, 
-           blockMiner: "0x13a06d3dfe21e0db5c016c03ea7d2509f7f8d1e3",
-           gasUsed: "7985391", 
-           gasLimit: 7992222, 
-           avgGasPrice: "8.66"
-          },
-        ...
-    ]
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
-## Get Latest Blocks
-```
- POST /api/v1/blocks/latest
-```
-
-get block list of latest blocks.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-count | Number | YES | count of blocks to get 
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": [
-        {   
-           blockNumber: "5556102", 
-           timeStamp: "1472533979", 
-           txn: 260, 
-           uncles: 1, 
-           blockMiner: "0x13a06d3dfe21e0db5c016c03ea7d2509f7f8d1e3",
-           gasUsed: "7985391", 
-           gasLimit: 7992222, 
-           avgGasPrice: "8.66"
-          },
-        ...
-    ]
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-## Get transactions from blocknumber
-```
- POST /api/v1/block/txs
-```
-
-Get transactions from blockNumber.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-blockNumber | Number | YES | block number
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": [
-        {   
-          "status": true
-          "blockNumber": "2165403", "timeStamp": "1472533979",
-          "txHash": "0x98db583e5ff636b78",
-          "from": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6"
-          "to": "0xaa7a7c2decb180f68f11e975e6d92b5dc06083a6",
-          "value": "0.007792298571672 Ether"
-          "txFee": "0.000084"
-          },
-        ...
-    ]
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
 ## Get transaction list From Account
 ```
  POST /api/v1/account/txs
@@ -654,7 +500,6 @@ count | Number | YES | count of blocks to get
   "error": ""   //error message
 }
 ```
-
 
 
 ## Get transaction count From Account
