@@ -256,20 +256,18 @@ exports.getBlockDetails = async (req, res) => {
     if (hash.length < 10) {
       hash = await promisify("getblockhash", [Number(hash)]);
     }
-    client.call("getblock", [hash], async function(err, result) {
-      if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+    var block = await promisify("getblock", [hash]);
+    var txs = [];
+    for (let i = 0; i < block.tx.length; i++) {
+      try {
+        var tx = await promisify("getrawtransaction", [block.tx[i], 1]);
+        txs.push(tx);
+      } catch (error) {
+        console.log(error);
       }
-      var txs = [];
-      for (let i = 0; i < result.tx.length; i++) {
-        try {
-          var tx = await promisify("getrawtransaction", [result.tx[i], 1]);
-          txs.push(tx);
-        } catch (error) {}
-      }
-      result.tx = txs;
-      return res.json({ status: 200, msg: "sccuess", data: result });
-    });
+    }
+    block.tx = txs;
+    return res.json({ status: 200, msg: "sccuess", data: block });
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
@@ -498,7 +496,6 @@ exports.getBlocks = async (req, res) => {
 
 exports.getTransactionInfo = (req, res) => {
   const txid = req.params.txid;
-
   try {
     client.call("getrawtransaction", [txid, 1], function(err, result) {
       if (err) {
@@ -511,27 +508,11 @@ exports.getTransactionInfo = (req, res) => {
   }
 };
 
-exports.getBlockTransactions = async (req, res) => {
-  const height = req.params.height;
-
+exports.getTransactionDetails = async (req, res) => {
+  const txid = req.params.txid;
   try {
-    var hash = await promisify("getblockhash", [Number(height)]);
-    if (hash) {
-      var block = await promisify("getblock", [hash]);
-      var txs = block["tx"];
-      var arrTxs = [];
-      for (var i = 0; i < txs.length; i++) {
-        var txInfo = await promisify("getrawtransaction", [txs[i], 1]);
-        arrTxs.push(txInfo);
-      }
-      return res.json({ status: 200, msg: "success", data: arrTxs });
-    }
-
-    return res.json({
-      status: 400,
-      msg: "errors",
-      data: "no existing block !"
-    });
+    var txInfo = await promisify("getrawtransaction", [txid, 1]);
+    return res.json({ status: 200, msg: "sccuess", data: txInfo });
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
@@ -582,17 +563,14 @@ exports.getTransactions = async function(req, res) {
   }
 };
 
-exports.postAddressTransactions = async function(req, res) {
-  var address = req.body.address;
-  var offset = Number(req.body.offset);
-  var count = Number(req.body.count);
-  var order = Number(req.body.order);
+exports.getAddressTransactions = async function(req, res) {
+  var address = req.params.address;
+  var offset = Number(req.query.offset);
+  var count = Number(req.query.count);
+  var order = Number(req.query.order);
 
-  // validation
-  if (!address || address == "")
-    return res.json({ status: 400, msg: "address is empty !" });
   if (!offset) offset = 0;
-  if (!count || count == 0) count = 10;
+  if (!count || count <= 0) count = 10;
 
   // logic
   try {
