@@ -11,7 +11,6 @@ module.exports = function (app) {
 
   //Block
   app.get(prefix + '/lastblockhash', neoNodeController.getLastBlockHash);
-  app.get(prefix + '/blockbyheight', neoNodeController.getBlockByHeight);
   app.get(prefix + '/blockcount', neoNodeController.getBlockCount);
   app.get(prefix + '/blockhashbyheight', neoNodeController.getBlockHashByHeight);
 
@@ -25,12 +24,12 @@ module.exports = function (app) {
   app.get(prefix + '/txout', neoNodeController.getTxOut);
 
   //// Utility apis ////
-
   app.get(prefix + '/blocks', neoNodeController.getBlocks);
   app.get(prefix + '/transactions', neoNodeController.getTransactions);
+  app.get(prefix + '/block-height/:height', neoNodeController.getBlockByHeight);
+  app.get(prefix + '/block/:hash', neoNodeController.getBlockByHash);
 
   app.post(prefix + '/blocks', neoNodeController.postBlocks);
-  app.post(prefix + '/block', neoNodeController.postBlock);
   app.post(prefix + '/block/txs', neoNodeController.postBlockTxs);
   app.post(prefix + '/tx', neoNodeController.postTx);
 
