@@ -258,26 +258,28 @@ async function CheckUpdatedAddresses() {
           if (vout && vout.length > 0) {
             for (let j = 0; j < vout.length; j++) {
               var addresses = vout[j].scriptPubKey.addresses;
-              for (let k = 0; k < addresses.length; k++) {
-                // Save Info
-                var addressRow = await AddressModel.findOne({
-                  address: addresses[k]
-                });
-                if (!addressRow) {
-                  addressRow = new AddressModel({
-                    address: addresses[k],
-                    txs: []
+              if (!addresses || addresses.length > 0) {
+                for (let k = 0; k < addresses.length; k++) {
+                  // Save Info
+                  var addressRow = await AddressModel.findOne({
+                    address: addresses[k]
                   });
-                }
-                if (addressRow.txs.indexOf(txid) == -1) {
-                  addressRow.txs.push(txid);
-                  try {
-                    await addressRow.save();
-                  } catch (e) {
-                    filelog(
-                      `addressRow.save.txs error: i=${i}, j=${j}, k=${k} addressRow=${addressRow}`
-                    ); // Should dump errors here
-                    throw e;
+                  if (!addressRow) {
+                    addressRow = new AddressModel({
+                      address: addresses[k],
+                      txs: []
+                    });
+                  }
+                  if (addressRow.txs.indexOf(txid) == -1) {
+                    addressRow.txs.push(txid);
+                    try {
+                      await addressRow.save();
+                    } catch (e) {
+                      filelog(
+                        `addressRow.save.txs error: i=${i}, j=${j}, k=${k} addressRow=${addressRow}`
+                      ); // Should dump errors here
+                      throw e;
+                    }
                   }
                 }
               }
