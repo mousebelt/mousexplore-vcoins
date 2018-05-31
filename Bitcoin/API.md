@@ -292,7 +292,7 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 * for successed case
 
 ```javascript
-{ status: 200, msg: 'sccuess', data: [txs] }
+{ status: 200, msg: 'sccuess', data: { total, [transaction] } }
 ```
 
 * for failed case

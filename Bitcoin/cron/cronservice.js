@@ -258,7 +258,7 @@ async function CheckUpdatedAddresses() {
           if (vout && vout.length > 0) {
             for (let j = 0; j < vout.length; j++) {
               var addresses = vout[j].scriptPubKey.addresses;
-              if (!addresses || addresses.length > 0) {
+              if (addresses && addresses.length > 0) {
                 for (let k = 0; k < addresses.length; k++) {
                   // Save Info
                   var addressRow = await AddressModel.findOne({

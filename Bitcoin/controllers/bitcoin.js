@@ -616,7 +616,7 @@ exports.getAddressTransactions = async function(req, res) {
       let { txs, total } = addrTxResult[0];
 
       var toReturn = [];
-      for (let i = txs.length - 1; i >= 0; i++) {
+      for (let i = txs.length - 1; i >= 0; i--) {
         var txid = txs[i];
         var txInfo = await promisify("getrawtransaction", [txid, 1]);
         toReturn.push(txInfo);
