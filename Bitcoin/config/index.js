@@ -12,7 +12,7 @@ module.exports = {
   db: "mongodb://localhost:27017/bitcoindb",
 
   // CRON_SLEEP_TIME: 500,	//if we decrease this to 100ms, cronservice has trouble after some time.
-  TX_CRON_TIME: 15 * 1000, //if we decrease this to 100ms, cronservice has trouble after some time.
+  TX_CRON_TIME: 10 * 1000, //if we decrease this to 100ms, cronservice has trouble after some time.
   TX_CRON_BLOCK_COUNT: 100, // block count per one running
 
   ADDR_CRON_TIME: 10 * 1000, //if we decrease this to 100ms, cronservice has trouble after some time.
