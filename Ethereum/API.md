@@ -361,7 +361,9 @@ address | STRING | YES | address to get balance
 
 ```javascript
 {
-  "balance": 0.2   //ether value of balance 
+  status: 200,
+  msg: 'success',
+  data: 0.2   //ether value of balance 
 }
 ```
 

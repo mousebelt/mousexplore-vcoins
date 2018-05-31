@@ -14,7 +14,7 @@ exports.getBalance = function (req, res) {
     if (!error) {
       var ethervalue = web3.utils.fromWei(result, "ether");
       //console.log('Ether:', ethervalue); // Show the ether balance after converting it from Wei
-      res.status(200).json({ status: 200, msg: 'success', balance: ethervalue });
+      res.status(200).json({ status: 200, msg: 'success', data: ethervalue });
     } else {
       console.log("we have a promblem: ", error); // Should dump errors here
       res.status(400).json({ error: error });
