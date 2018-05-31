@@ -107,6 +107,23 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 "msg": "success",
 "data": { total, [transaction] }
 }
+
+transaction = {
+        "blockHash": "0x5621793adbf64e139ccc2af202b3a1ab09febc5593f7c659e277658aae1a0da0",
+        "blockNumber": 1432232,
+        "from": "0x07d914A675F0CB82590E6D6a02A501301A066a2b",
+        "gas": 600000,
+        "gasPrice": "40000000000",
+        "hash": "0x739b685867c94d426d68e163b94ee7c301e2b34cca0e4a458f572bdabd066d87",
+        "input": "0x34a4f35a00000000000000000000000000000000000000000000000000000000178b38c0dea101e427b0bd1a370654f3f125d4e913cda80d70b4e9f834fc250a400900c8",
+        "nonce": 2,
+        "to": "0xE26B3678FEF015f3122e78f9d85b292ce45975B1",
+        "transactionIndex": 0,
+        "value": "0",
+        "v": "0x1c",
+        "r": "0xe4d4efd0552250b2a425d724948b8018ce9bb75a5dc15892b38e9d0683f4d46d",
+        "s": "0x6978c715fb9be617374a73e5542085de93c9abf0e8a3f171805a1956ccbe318c"
+    }
 ```
 
 * for failed case
@@ -231,11 +248,60 @@ hash | String | YES | transaction hash
 { status: 200, msg: "success", data: txdetails }
 
 txdetails = {
-  transactionfields,
-  block, 
-  txreceipt,
-  fee
-}
+        "blockHash": "0x2d4d8f99a59dd855da527d11c01c72b8a9b681dfe3b112cd46060deb9f0a9603",
+        "blockNumber": 1436757,
+        "from": "0xd9E4e366a70Feb4D13933399703D8Dd2CFcD9231",
+        "gas": 4000000,
+        "gasPrice": "100000000000",
+        "hash": "0xdeb182f3c5c47d6740b3783c22fb3f57c02bb7a74958e825f8deaf9ef185aca2",
+        "input": "0x60606040000096c77",
+        "nonce": 946,
+        "to": null,
+        "transactionIndex": 0,
+        "value": "0",
+        "v": "0x1b",
+        "r": "0x65f980b4ad5ccad642cc04829787848f0bd3c55525327a28035d23d6e1ddf15",
+        "s": "0xda02c456ddedb993c3c54da5e29043b349f9e3408749427f83aa3b145ba0a5b",
+        "block": {
+            "difficulty": "2434506459",
+            "extraData": "0x526f707374656e20506f6f6c",
+            "gasLimit": 4712388,
+            "gasUsed": 3517959,
+            "hash": "0x2d4d8f99a59dd855da527d11c01c72b8a9b681dfe3b112cd46060deb9f0a9603",
+            "logsBloom": "0x00000000000...",
+            "miner": "0xF4D8e706CfB25c0DECBbDd4D2E2Cc10C66376a3F",
+            "mixHash": "0xb33d84636d7b7d41f45093bcbe73284285f317569637755114f560e2c802d41e",
+            "nonce": "0xdaf25055dd665da4",
+            "number": 1436757,
+            "parentHash": "0xbf0bbc5e2f439aafca0a7bd78c29906ec8ae6f1b53db6403767317f3a41eba61",
+            "receiptsRoot": "0xc845daf74e712229153a3f99ec489dbe961197aae6b8bb93d1ae5048395bf4ea",
+            "sha3Uncles": "0x1dcc4de8dec75d7aab85b567b6ccd41ad312451b948a7413f0a142fd40d49347",
+            "size": 13339,
+            "stateRoot": "0x01ecd4589889f0f578b23bdb31002b37a34ccaf3bb640c38ef2ccc0d81c71dfa",
+            "timestamp": 1501978275,
+            "totalDifficulty": "1594978033867895",
+            "transactions": [
+                "0xdeb182f3c5c47d6740b3783c22fb3f57c02bb7a74958e825f8deaf9ef185aca2"
+            ],
+            "transactionsRoot": "0xc2b2d441d77d7ea0136acc55e3d4e48b4d3edb683e0a9cb29184e2fc5898e227",
+            "uncles": []
+        },
+        "txreceipt": {
+            "blockHash": "0x2d4d8f99a59dd855da527d11c01c72b8a9b681dfe3b112cd46060deb9f0a9603",
+            "blockNumber": 1436757,
+            "contractAddress": "0xeeE100FCCF4456ea093A86f98D816daef2A0E460",
+            "cumulativeGasUsed": 3517959,
+            "from": "0xd9e4e366a70feb4d13933399703d8dd2cfcd9231",
+            "gasUsed": 3517959,
+            "logs": [],
+            "logsBloom": "0x000...",
+            "root": "0x63d4f4764c22da919f41b9d6565f3fd03c65f6ab85c8a2325e9b29f1b47a790c",
+            "to": null,
+            "transactionHash": "0xdeb182f3c5c47d6740b3783c22fb3f57c02bb7a74958e825f8deaf9ef185aca2",
+            "transactionIndex": 0
+        },
+        "fee": 351795900000000000
+    }
 ```
 
 * for failed case

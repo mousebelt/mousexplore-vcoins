@@ -462,18 +462,14 @@ exports.getTransactionInfo = function (req, res) {
   });
 };
 
-exports.getTransactionDetails = function (req, res) {
+exports.getTransactionDetails = async function (req, res) {
   var hash = req.params.hash;
 
-  web3.eth.getTransaction(hash, async function (error, transaction) {
-    if (error) {
-      console.log("getTransaction: we have a promblem: ", error); // Should dump errors here
-      res.status(400).json({ error: error });
-    }
-
+  try {
+    var transaction = await web3.eth.getTransaction(hash);
     try {
-      var blockdata = await web3.eth.getBlock(transaction.blockNumber, true);
-      let txreceipt = await web3.eth.getTransactionReceipt(txHash);
+      var blockdata = await web3.eth.getBlock(transaction.blockNumber, false);
+      let txreceipt = await web3.eth.getTransactionReceipt(hash);
 
       let fee = txreceipt.gasUsed * transaction.gasPrice;
       // fee = fee / 1e18;
@@ -481,9 +477,12 @@ exports.getTransactionDetails = function (req, res) {
       transaction.block = blockdata;
       transaction.txreceipt = txreceipt;
       transaction.fee = fee;
-    } catch (e) {}
+    } catch (e) { }
     res.status(200).json({ msg: "success", data: transaction });
-  });
+  } catch (error) {
+    console.log("getTransaction: we have a promblem: ", error); // Should dump errors here
+    res.status(400).json({ error: error });
+  }
 };
 
 //api for token related
