@@ -2,7 +2,6 @@ var EthereumController = require('../controllers/ethereum');
 
 module.exports = function (app) {
     //account related
-    app.get('/api/get_address_balance/:address', EthereumController.getBalance);
     app.post('/api/create_account', EthereumController.createAccount);
 
     app.post('/api/make_transaction', EthereumController.sendTransaction);
@@ -23,4 +22,5 @@ module.exports = function (app) {
     app.get('/api/v1/tx/:hash', EthereumController.getTransactionInfo);
     app.get('/api/v1/txdetails/:hash', EthereumController.getTransactionDetails);
     app.get('/api/v1/address/txs/:address', EthereumController.getTransactionsFromAccount);
+    app.get('/api/v1/balance/:address', EthereumController.getBalance);
 }
