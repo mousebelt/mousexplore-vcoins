@@ -2,7 +2,7 @@ var mongoose = require("mongoose");
 
 var txServiceInfoSchema = new mongoose.Schema({
 	lastblock: Number,
-	updatedAt: Date
+	updatedAt: Date,
 });
 
 txServiceInfoSchema.pre('save', function(next) {
