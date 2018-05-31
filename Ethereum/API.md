@@ -9,7 +9,7 @@ vcoin apis
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
 [Get transaction from hash](#get-transaction-from-hash)  
 [Get transaction details from hash](#get-transaction-details-from-hash)  
-[Get address related transaction by offset, count, order](#Get-address-related-transaction-by-offset-count-order)  
+[Get address related transaction by offset, count, order](#get-address-related-transaction-by-offset-count-order)  
 
 [Get Balance](#get-balance)  
 [Create Account](#create-account)  
