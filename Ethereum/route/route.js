@@ -9,8 +9,6 @@ module.exports = function (app) {
     app.post('/api/get_updated_transaction', EthereumController.getUpdatedTransactions);
 
     app.post('/api/v1/blocks', EthereumController.blocklist);
-    app.post('/api/v1/blocks/latest', EthereumController.latestblocks);
-    app.post('/api/v1/block/txs', EthereumController.postTransactions);
     app.post('/api/v1/account/txs', EthereumController.getTransactionsFromAccount);
     app.post('/api/v1/account/txcount', EthereumController.getTransactionCountFromAccount);
 

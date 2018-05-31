@@ -210,79 +210,6 @@ exports.getBlocks = function (req, res) {
   });
 };
 
-/*
-* Get Latest blocklist of specified count of blocks
-* @param count count of list to get.
-* @return list of block information same as the etherscan.io
-* Here are some differences:
-*   Age is second unit.
-*   Miner is address, not the name. In etherscan, name is only comment from user on site. 
-*       refer: https://ethereum.stackexchange.com/questions/2620/how-can-i-add-my-name-next-to-address-on-etherscan
-*   GasPrice is GWei unit
-*   Reward cannot be retrieved from node. Maybe should get it from etherscan
-*/
-exports.latestblocks = function (req, res) {
-  var count = req.body.count;
-
-  web3.eth.getBlockNumber(async function (error, number) {
-    if (!error) {
-      try {
-        console.log("last number " + number);
-
-        if (count > number + 1) count = number + 1;
-
-        var blocks = [];
-        for (let i = number; i > number - count; i--) {
-          var blockdata = await web3.eth.getBlock(i, true);
-
-          var Height = blockdata.number;
-          var Age = blockdata.timestamp;
-          var txn = blockdata.transactions.length;
-          var Uncles = blockdata.uncles.length;
-          var Miner = blockdata.miner;
-          var GasUsed = blockdata.gasUsed;
-          var GasLimit = blockdata.gasLimit;
-
-          var Reward = 0;
-          var gas = 0;
-          for (let j = 0; j < txn; j++) {
-            let hash = blockdata.transactions[j].hash;
-            let gasprice = blockdata.transactions[j].gasPrice;
-            let transaction = await web3.eth.getTransactionReceipt(hash);
-
-            let price = gasprice * transaction.gasUsed;
-            gas += transaction.gasUsed;
-            Reward += price / 1000000000;
-          }
-
-          var GasPrice = txn ? Reward / gas : 0;
-          Reward = Reward / 1000000000;
-
-          blocks.push({
-            blockNumber: Height,
-            timeStamp: Age,
-            txn: txn,
-            uncles: Uncles,
-            blockMiner: Miner,
-            gasUsed: GasUsed,
-            gasLimit: GasLimit,
-            avgGasPrice: GasPrice.toFixed(2)
-          });
-        }
-
-        console.log("blocks: ", blocks);
-        res.status(200).json({ msg: "success", data: blocks });
-      } catch (e) {
-        console.log("blocklist: we have a promblem: ", e); // Should dump errors here
-        res.status(400).json({ error: e });
-      }
-    } else {
-      console.log("getBlockNumber: we have a promblem: ", error); // Should dump errors here
-      res.status(400).json({ error: error });
-    }
-  });
-};
-
 exports.getBlockByHash = async function (req, res) {
   var hash = req.params.hash;
   try {
@@ -302,49 +229,6 @@ exports.getBlockDetails = async function (req, res) {
 
     res.json({ status: 200, msg: "success", data: blockdata });
   } catch (e) {
-    res.status(400).json({ error: e });
-  }
-};
-
-/*
-* Get transactions of blocknumber
-* @blockNumber block number.
-* @return transaction information
-* 
-*/
-exports.postTransactions = async function (req, res) {
-  var blockNumber = req.body.blockNumber;
-
-  try {
-    var blockdata = await web3.eth.getBlock(blockNumber, true);
-    var timestamp = blockdata.timestamp;
-    var transactions = blockdata.transactions;
-
-    var txnlist = [];
-    for (let i = 0; i < transactions.length; i++) {
-      let transaction = transactions[i];
-      let hash = transaction.hash;
-      let txreceipt = await web3.eth.getTransactionReceipt(hash);
-
-      let fee = txreceipt.gasUsed * transaction.gasPrice;
-      fee = fee / 1e18;
-
-      txnlist.push({
-        status: txreceipt.status,
-        blockNumber: blockNumber,
-        timeStamp: timestamp,
-        txHash: hash,
-        from: transaction.from,
-        to: transaction.to,
-        value: transaction.value / 1e18,
-        txFee: fee
-      });
-    }
-
-    console.log("data: ", txnlist);
-    res.status(200).json({ msg: "success", data: txnlist });
-  } catch (e) {
-    console.log("blocklist: we have a promblem: ", e); // Should dump errors here
     res.status(400).json({ error: e });
   }
 };
