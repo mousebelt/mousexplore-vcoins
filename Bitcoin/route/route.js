@@ -18,7 +18,6 @@ module.exports = function (app) {
     app.get(prefix + '/getaddressesbyaccount/:account', btcController.getAccountByAddress);
     app.get(prefix + '/getblockcount', btcController.getBlockCount);
     app.get(prefix + '/getbestblockhash', btcController.getBestBlockHash);
-    app.get(prefix + '/getblock/:hash', btcController.getBlock);
     app.get(prefix + '/getblockhash/:index', btcController.getBlockHash);
     app.get(prefix + '/gettransaction/:txid', btcController.getTransaction);
     app.get(prefix + '/getrawtransaction/:txid', btcController.getRawTransaction);
@@ -34,9 +33,12 @@ module.exports = function (app) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     app.get(prefix + '/blocks', btcController.getBlocks);
-    app.get(prefix + '/block/:height', btcController.getBlockHeight);
+    app.get(prefix + '/transactions', btcController.getTransactions);
+
+    app.get(prefix + '/block/:hash', btcController.getBlock);
+    app.get(prefix + '/block-height/:height', btcController.getBlockHeight);
+
     app.get(prefix + '/transaction/:txid', btcController.getTransactionInfo);
     app.get(prefix + '/block/transactions/:height', btcController.getBlockTransactions);
-    app.get(prefix + '/transactions', btcController.getTransactions);
     app.post(prefix + '/address/txs', btcController.postAddressTransactions);
 }
