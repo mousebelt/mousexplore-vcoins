@@ -69,23 +69,10 @@ exports.getLastBlockHash = function (req, res) {
   });
 }
 
-exports.getBlockByHeight = (req, res) => {
-  var height = Number(req.params.height);
-  try {
-    client.call("getblock", [height, 1], function (err, result) {
-      if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
-      }
-      return res.json({ status: 200, msg: "sccuess", data: result });
-    });
-  } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
-  }
-};
-
 exports.getBlockByHash = (req, res) => {
   var hash = req.params.hash;
   try {
+    if (hash.length < 10) hash = Number(hash);
     client.call("getblock", [hash, 1], function (err, result) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
