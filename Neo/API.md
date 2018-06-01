@@ -7,6 +7,7 @@ neo-vcoin apis
 [get latest blocks from offset, count](#getBlocks)  
 [get transactions by offset, count, order](#getTransactions)  
 [get block by hash or height](#getBlockByHash)  
+[get block details by hash or height](#getBlockDetails)  
 
 [postBlocks](#postBlocks)  
 [postBlock](#postBlock)  
