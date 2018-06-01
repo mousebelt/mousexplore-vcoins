@@ -69,25 +69,8 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 ```
  * @return
  * { "status": "200", "msg": "success", 
- *   "data": { total, result: [transaction] }
+ *   "data": { total, result: [txdetails] }
  * }
- * 
- * transaction: {
-        "txid": "0x6d1cc3aa44b218e1fe052fa3c06c8a0009bfc2c91676c977d80e3d2d8388e2ee",
-        "size": 10,
-        "type": "MinerTransaction",
-        "version": 0,
-        "attributes": [],
-        "vin": [],
-        "vout": [],
-        "sys_fee": "0",
-        "net_fee": "0",
-        "scripts": [],
-        "nonce": 870829101,
-        "blockhash": "0xbe18be00b930b4147195a25608d69c35ba4e8273779db75c87c66310971e1f96",
-        "confirmations": 221559,
-        "blocktime": 1478762561
-    }
  */
 ```
 
@@ -115,6 +98,8 @@ GET /blockdetails/:hash
 ```
  * return
  * { "status": "200", "msg": "success", "data": blockdetails }
+
+ blockdetails = block & txdetails
 ```
 
 <a name="getTx"/>
@@ -155,7 +140,7 @@ count | Number | NO | 10 | transaction count
 order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 
 ```
-return: { status: 200, msg: 'success', data: { total, result: [transaction] } }
+return: { status: 200, msg: 'success', data: { total, result: [txdetails] } }
 ```
 
 <a name="getBalance"/>

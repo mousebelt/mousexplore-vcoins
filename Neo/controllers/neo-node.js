@@ -513,17 +513,18 @@ exports.getTransactions = async function (req, res) {
         var txs = [];
         for (let i = 0; i < rows.length; i++) {
           const row = rows[i];
-
-          try {
-            var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-            txs.push(tx);
-          } catch (error) {
-            console.log("get transaction error: ", error);
-            txs.push({
-              txid: rows[i].txid,
-              unknown: true
-            });
-          }
+          var tx = await getTxDetailsFunc(row.txid);
+          if (tx) txs.push(tx);
+          // try {
+          //   var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
+          //   txs.push(tx);
+          // } catch (error) {
+          //   console.log("get transaction error: ", error);
+          //   txs.push({
+          //     txid: rows[i].txid,
+          //     unknown: true
+          //   });
+          // }
         }
         return res.json({
           status: 200,
@@ -613,16 +614,18 @@ exports.getAddressTransactions = async function (req, res) {
       var toReturn = [];
       for (let i = 0; i < txs.length; i++) {
         var txid = txs[i];
-        try {
-          var tx = await promisify("getrawtransaction", [txid, 1]);
-          toReturn.push(tx);
-        } catch (error) {
-          console.log("get transaction error: ", error);
-          toReturn.push({
-            txid,
-            unknown: true
-          });
-        }
+        var tx = await getTxDetailsFunc(txid);
+        toReturn.push(tx);
+        // try {
+        //   var tx = await promisify("getrawtransaction", [txid, 1]);
+        //   toReturn.push(tx);
+        // } catch (error) {
+        //   console.log("get transaction error: ", error);
+        //   toReturn.push({
+        //     txid,
+        //     unknown: true
+        //   });
+        // }
       }
       return res.json({
         status: 200,
@@ -647,16 +650,18 @@ exports.getAddressTransactions = async function (req, res) {
       var toReturn = [];
       for (let i = txs.length - 1; i >= 0; i--) {
         var txid = txs[i];
-        try {
-          var tx = await promisify("getrawtransaction", [txid, 1]);
-          toReturn.push(tx);
-        } catch (error) {
-          console.log("get transaction error: ", error);
-          toReturn.push({
-            txid,
-            unknown: true
-          });
-        }
+        var tx = await getTxDetailsFunc(txid);
+        toReturn.push(tx);
+        // try {
+        //   var tx = await promisify("getrawtransaction", [txid, 1]);
+        //   toReturn.push(tx);
+        // } catch (error) {
+        //   console.log("get transaction error: ", error);
+        //   toReturn.push({
+        //     txid,
+        //     unknown: true
+        //   });
+        // }
       }
       return res.json({
         status: 200,

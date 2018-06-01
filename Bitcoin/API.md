@@ -87,7 +87,7 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 * for successed case
 
 ```javascript
-{ status: 200, msg: 'sccuess', data: { total, result: [transaction] } } 
+{ status: 200, msg: 'sccuess', data: { total, result: [txdetails] } } 
 
 transaction =  {
             "txid": "56e7db1e3a768c93f01eea5da9a05e5a81456a4b3fac9e6be7259fbaf51896d6",
@@ -104,7 +104,20 @@ transaction =  {
                         "asm": "3046022100c0cf29040adeb2a2129a7727293e14b2b4e62244ba69e5f2f89fcd3f5d74aaab022100adc994726c5ced5d5585a42116195cab89f40e8feca44a1bf321fbf2503bb469[ALL] 04668b56640591d3bb5ab7de7ab0b02274637a7254ca70e48e2c498f121e1946d4b6dffa84f559aca1984a7c9824b15884d81304307167d920ab5eb9520ebadb3f",
                         "hex": "493046022100c0cf29040adeb2a2129a7727293e14b2b4e62244ba69e5f2f89fcd3f5d74aaab022100adc994726c5ced5d5585a42116195cab89f40e8feca44a1bf321fbf2503bb469014104668b56640591d3bb5ab7de7ab0b02274637a7254ca70e48e2c498f121e1946d4b6dffa84f559aca1984a7c9824b15884d81304307167d920ab5eb9520ebadb3f"
                     },
-                    "sequence": 4294967295
+                    "sequence": 4294967295,
+                    "address": {
+                        "value": 0.94,
+                        "n": 0,
+                        "scriptPubKey": {
+                            "asm": "OP_DUP OP_HASH160 ec50a57158bd1216679f50bba749f75f111ff5ea OP_EQUALVERIFY OP_CHECKSIG",
+                            "hex": "76a914ec50a57158bd1216679f50bba749f75f111ff5ea88ac",
+                            "reqSigs": 1,
+                            "type": "pubkeyhash",
+                            "addresses": [
+                                "1NYX5fzzjGhEkbRhmEx9eTw3sojFu2mArJ"
+                            ]
+                        }
+                    }
                 }
             ],
             "vout": [
@@ -345,7 +358,7 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 * for successed case
 
 ```javascript
-{ status: 200, msg: 'sccuess', data: { total, result: [transaction] } }
+{ status: 200, msg: 'sccuess', data: { total, result: [txdetails] } }
 ```
 
 * for failed case
