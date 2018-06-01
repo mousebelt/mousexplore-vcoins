@@ -267,7 +267,7 @@ exports.getBlockDetails = async (req, res) => {
           for (let j = 0; j < tx.vin.length; j++) {
             var _vinItem = tx.vin[j];
             try {
-              if (_vinItem["txid"] && _vinItem["vout"]) {
+              if (_vinItem["txid"] !== undefined && _vinItem["vout"] !== undefined) {
                 var out = await promisify("getrawtransaction", [
                   _vinItem["txid"],
                   1
@@ -539,7 +539,7 @@ exports.getTransactionDetails = async (req, res) => {
       for (let j = 0; j < tx.vin.length; j++) {
         var _vinItem = tx.vin[j];
         try {
-          if (_vinItem["txid"] && _vinItem["vout"]) {
+          if (_vinItem["txid"] !== undefined && _vinItem["vout"] !== undefined) {
             var out = await promisify("getrawtransaction", [
               _vinItem["txid"],
               1

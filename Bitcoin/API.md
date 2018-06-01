@@ -203,7 +203,7 @@ block = {
             "version": 536870912,
             "versionHex": "20000000",
             "merkleroot": "1fc02f10960eac65367e0386c862961d48924dd20c0ec6d20559b8ca86f5b312",
-            "tx": [transaction],
+            "tx": [txdetails],
             "time": 1527764842,
             "mediantime": 1527763207,
             "nonce": 3743760219,
