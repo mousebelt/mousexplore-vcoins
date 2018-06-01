@@ -120,7 +120,54 @@ GET /block/:hash
  * @return
  * { "status": "200", "msg": "success", "data": block }
  * 
- * block: {}
+ * block: {
+        "hash": "0x6a3daf003164ba1712ea754287d30a4a13409ff4eff90ba232387893266663c5",
+        "size": 686,
+        "version": 0,
+        "previousblockhash": "0xf86dccb73d9243728d38b5067c40bf3989a7dfe8a98afd049b7633b568fe0415",
+        "merkleroot": "0xbe5521026ff50d8a90dc8296af013a50b5a676e555411f603217e2f7e01ef278",
+        "time": 1483559504,
+        "index": 345346,
+        "nonce": "b7c506092abc14fa",
+        "nextconsensus": "APyEx5f4Zm4oCHwFWiSTaph1fPBxZacYVR",
+        "script": {
+            "invocation": "9f7...",
+            "verification": "7ae..."
+        },
+        "tx": [
+            {
+                "txid": "0xbe5521026ff50d8a90dc8296af013a50b5a676e555411f603217e2f7e01ef278",
+                "size": 10,
+                "type": "MinerTransaction",
+                "version": 0,
+                "attributes": [],
+                "vin": [],
+                "vout": [],
+                "sys_fee": "0",
+                "net_fee": "0",
+                "scripts": [],
+                "nonce": 716969210
+            }
+        ],
+        "confirmations": 1,
+        "nextblockhash": "0xdeeeae0dd7b3a89d81b8e36425f2ac971b8b22c3ba7f73d460c480640da089f9"
+    }
+ */
+```
+
+<a name="getBlockDetails"/>
+
+- get block details by hash or height
+
+```
+GET /blockdetails/:hash
+```
+
+```
+ * @return
+ * { "status": "200", "msg": "success", "data": blockdetails }
+ * 
+ * blockdetails = block
  */
 ```
 

@@ -84,6 +84,21 @@ exports.getBlockByHash = (req, res) => {
   }
 };
 
+exports.getBlockDetails = (req, res) => {
+  var hash = req.params.hash;
+  try {
+    if (hash.length < 10) hash = Number(hash);
+    client.call("getblock", [hash, 1], function (err, result) {
+      if (err) {
+        return res.json({ status: 400, msg: "errors", data: err });
+      }
+      return res.json({ status: 200, msg: "sccuess", data: result });
+    });
+  } catch (error) {
+    return res.json({ status: 400, msg: "errors", data: error });
+  }
+};
+
 /**
  * @description Gets the number of blocks.
  * 
