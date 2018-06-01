@@ -198,7 +198,7 @@ exports.getBlocks = function (req, res) {
           if (blockdata) blocks.push(blockdata);
         }
 
-        res.json({ status: 200, msg: "success", data: { total: number, blocks } });
+        res.json({ status: 200, msg: "success", data: { total: number, result: blocks } });
       } catch (e) {
         console.log("blocklist: we have a promblem: ", e); // Should dump errors here
         res.status(400).json({ error: e });
@@ -278,7 +278,7 @@ exports.getTransactions = async function (req, res) {
             });
           }
         }
-        return res.json({ status: 200, msg: "success", data: { total, txs } });
+        return res.json({ status: 200, msg: "success", data: { total, result: txs } });
       });
   } catch (error) {
     return res.json({ status: 400, msg: "Error occured !", data: error });
@@ -324,7 +324,7 @@ exports.getTransactionsFromAccount = async function (req, res) {
             });
           }
         }
-        return res.json({ status: 200, msg: "success", data: { total, txs } });
+        return res.json({ status: 200, msg: "success", data: { total, result: txs } });
       });
   } catch (error) {
     res.json({ status: 400, msg: "Error in reading transactions !", data: error });

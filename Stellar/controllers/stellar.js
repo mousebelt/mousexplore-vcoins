@@ -180,31 +180,22 @@ exports.getLatestLedgers = function(req, res) {
 
 exports.getLedgerByHash = function(req, res) {
   var hash = req.params.hash;
-  server
-    .ledgers()
-    .ledger(hash)
-    .call()
-    .then(function(result) {
-      res.json({ status: 200, msg: "success", data: result });
-    })
-    .catch(function(err) {
-      console.log(err);
-      res.status(400).json({ error: err });
-    });
-};
-exports.getLedgerByHeight = function(req, res) {
-  var height = Number(req.params.height);
-  server
-    .ledgers()
-    .ledger(height)
-    .call()
-    .then(function(result) {
-      res.json({ status: 200, msg: "success", data: result });
-    })
-    .catch(function(err) {
-      console.log(err);
-      res.status(400).json({ error: err });
-    });
+  try {
+    if(hash.length <10) hash = Number(hash);
+    server
+      .ledgers()
+      .ledger(hash)
+      .call()
+      .then(function(result) {
+        res.json({ status: 200, msg: "success", data: result });
+      })
+      .catch(function(err) {
+        console.log(err);
+        res.status(400).json({ error: err });
+      });
+  } catch (error) {
+    res.status(400).json({ error });
+  }
 };
 
 /**

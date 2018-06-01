@@ -267,11 +267,14 @@ exports.getBlockDetails = async (req, res) => {
           for (let j = 0; j < tx.vin.length; j++) {
             _vinItem = tx.vin[j];
             try {
-              if(_vinItem['txid'] && _vinItem['vout']) {
-                var out = await promisify("getrawtransaction", [_vinItem['txid'], 1]);
-                _vinItem.address = out.vout[_vinItem['vout']];
+              if (_vinItem["txid"] && _vinItem["vout"]) {
+                var out = await promisify("getrawtransaction", [
+                  _vinItem["txid"],
+                  1
+                ]);
+                _vinItem.address = out.vout[_vinItem["vout"]];
               }
-            } catch (error) { }
+            } catch (error) {}
             vins.push(_vinItem);
           }
           tx.vin = vins;
@@ -503,7 +506,11 @@ exports.getBlocks = async (req, res) => {
       }
     }
 
-    return res.json({ status: 200, msg: "sccuess", data: arrBlocks });
+    return res.json({
+      status: 200,
+      msg: "sccuess",
+      data: { total: blockCount, result: arrBlocks }
+    });
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
@@ -547,6 +554,7 @@ exports.getTransactions = async function(req, res) {
 
   // logic
   try {
+    var total = await TransactionModel.find().count();
     TransactionModel.find()
       .sort(condition)
       .skip(offset)
@@ -567,7 +575,11 @@ exports.getTransactions = async function(req, res) {
               });
             }
           }
-          return res.json({ status: 200, msg: "success", data: txs });
+          return res.json({
+            status: 200,
+            msg: "success",
+            data: { total, result: txs }
+          });
         } else {
           console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
           return res.json({ status: 400, msg: "errors", data: error });
@@ -613,7 +625,7 @@ exports.getAddressTransactions = async function(req, res) {
       return res.json({
         status: 200,
         msg: "success",
-        data: { total, txs: toReturn }
+        data: { total, result: toReturn }
       });
     } else {
       offset = -1 * offset - count;
@@ -639,7 +651,7 @@ exports.getAddressTransactions = async function(req, res) {
       return res.json({
         status: 200,
         msg: "success",
-        data: { total, txs: toReturn }
+        data: { total, result: toReturn }
       });
     }
   } catch (error) {

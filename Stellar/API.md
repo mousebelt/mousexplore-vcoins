@@ -4,8 +4,7 @@ Stellar apis
 # Summary
 [Get ledgers](#get-ledgers)  
 [Get transactions](#get-transactions)  
-[Get ledger by hash](#get-ledger-by-hash)  
-[Get ledger by height](#get-ledger-by-height)  
+[Get ledger by hash or height](#get-ledger-by-hash-or-height)  
 
 [Get transactions by ledger](#get-transactions-by-ledger)  
 [Get Latest operations](#get-latest-operations)  
@@ -65,58 +64,17 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 ```
 
 
-## Get ledger by hash
+## Get ledger by hash or height
 
 ```
 GET /api/v1/ledger/:hash
 ```
 
-Get ledger by hash.
-
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-hash | String | YES | ledger hash
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-	status: 200,
-	"msg": "success",
-	"data": ledger
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
-## Get ledger by height
-
-```
-GET /api/v1/ledger-height/:height
-```
-
-Get ledger by height.
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-height | Number | YES | ledger sequence
-
+hash | String | YES | ledger hash or height
 
 ### RETURN
 

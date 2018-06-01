@@ -12,7 +12,6 @@ vcoin apis
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
 [Get transaction by txid](#get-transaction-by-txid)  
 [Get transaction details by txid](#get-transaction-details-by-txid)  
-
 [Get address related transaction by offset, count, order](#get-address-related-transaction-by-offset-count-order)  
 
 
@@ -36,7 +35,7 @@ count | Number | No | 10 | block count
 * for successed case
 
 ```javascript
-{ status: 200, msg: 'sccuess', data: [block] }
+{ status: 200, msg: 'sccuess', data: { total, result: [block] } }
 
 block = {
             "hash": "000000000000000000319967fddc5cd030ec5663914f237989043e467355a1e2",
@@ -88,7 +87,7 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 * for successed case
 
 ```javascript
-{ status: 200, msg: 'sccuess', data: [transaction] }
+{ status: 200, msg: 'sccuess', data: { total, result: [transaction] } } 
 
 transaction =  {
             "txid": "56e7db1e3a768c93f01eea5da9a05e5a81456a4b3fac9e6be7259fbaf51896d6",
@@ -346,7 +345,7 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 * for successed case
 
 ```javascript
-{ status: 200, msg: 'sccuess', data: { total, [transaction] } }
+{ status: 200, msg: 'sccuess', data: { total, result: [transaction] } }
 ```
 
 * for failed case
