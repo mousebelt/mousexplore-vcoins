@@ -21,6 +21,37 @@ var promisify = function promisify(fn, args) {
   });
 };
 
+async function getTxOutFunc(txid, vout) {
+  try {
+    if (txid !== undefined && vout !== undefined) {
+      var out = await promisify("getrawtransaction", [txid, 1]);
+      return out.vout[vout] ? out.vout[vout] : undefined;
+    }
+  } catch (error) { }
+  return undefined;
+}
+
+async function getTxDetailsFunc(txid) {
+  try {
+    var tx = await promisify("getrawtransaction", [txid, 1]);
+
+    if (tx && tx.vin && tx.vin.length > 0) {
+      var vins = [];
+      for (let j = 0; j < tx.vin.length; j++) {
+        var vin = tx.vin[j];
+        var address = await getTxOutFunc(vin['txid'], vin['vout']);
+        if (address) vin.address = address;
+        vins.push(vin);
+      }
+      tx.vin = vins;
+    }
+    return tx;
+  } catch (error) {
+    console.log(error);
+  }
+  return undefined;
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// RPC Call apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -89,37 +120,6 @@ exports.getBlockByHash = (req, res) => {
     return res.json({ status: 400, msg: "errors", data: error });
   }
 };
-
-async function getTxOutFunc(txid, vout) {
-  try {
-    if (txid !== undefined && vout !== undefined) {
-      var out = await promisify("getrawtransaction", [txid, 1]);
-      return out.vout[vout] ? out.vout[vout] : undefined;
-    }
-  } catch (error) { }
-  return undefined;
-}
-
-async function getTxDetailsFunc(txid) {
-  try {
-    var tx = await promisify("getrawtransaction", [txid, 1]);
-
-    if (tx && tx.vin && tx.vin.length > 0) {
-      var vins = [];
-      for (let j = 0; j < tx.vin.length; j++) {
-        var vin = tx.vin[j];
-        var address = await getTxOutFunc(vin['txid'], vin['vout']);
-        if (address) vin.address = address;
-        vins.push(vin);
-      }
-      tx.vin = vins;
-    }
-    return tx;
-  } catch (error) {
-    console.log(error);
-  }
-  return undefined;
-}
 
 exports.getBlockDetails = async (req, res) => {
   var hash = req.params.hash;
