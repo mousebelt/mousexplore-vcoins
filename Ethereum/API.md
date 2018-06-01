@@ -37,7 +37,7 @@ count | Number | Yes | 10 | count of blocks to get
 `status code:` 200
 
 ```javascript
-{ status: 200, msg: 'success', data: { total, [block] } }
+{ status: 200, msg: 'success', data: { total, result: [block] } }
 
 block = {
             "difficulty": "2609994988",
@@ -97,7 +97,7 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 {
 "status": 200,
 "msg": "success",
-"data": { total, [transaction] }
+"data": { total, result: [transaction] }
 }
 
 transaction = {
@@ -329,7 +329,7 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 ```javascript
 {
 "msg": "success",
-"data":  { total, [transaction] } 
+"data":  { total, result: [transaction] } 
 }
 ```
 
