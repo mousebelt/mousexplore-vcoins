@@ -131,7 +131,7 @@ GET /tx/:txid
 
 - get transaction details by txid
 ```
-GET /tx/:txid
+GET /txdetails/:txid
 
  * return
  * { "status": "200", "msg": "success", "data": txdetails }
