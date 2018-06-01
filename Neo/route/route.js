@@ -26,8 +26,8 @@ module.exports = function (app) {
   //// Utility apis ////
   app.get(prefix + '/blocks', neoNodeController.getBlocks);
   app.get(prefix + '/transactions', neoNodeController.getTransactions);
-  app.get(prefix + '/block-height/:height', neoNodeController.getBlockByHeight);
   app.get(prefix + '/block/:hash', neoNodeController.getBlockByHash);
+  app.get(prefix + '/blockdetails/:hash', neoNodeController.getBlockDetails);
 
   app.post(prefix + '/blocks', neoNodeController.postBlocks);
   app.post(prefix + '/block/txs', neoNodeController.postBlockTxs);
