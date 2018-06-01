@@ -420,6 +420,7 @@ exports.getTxDetails = async function(req, res) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
+      
       return res.json({ status: 200, msg: "sccuess", data: result });
     });
   } catch (error) {

@@ -265,7 +265,7 @@ exports.getBlockDetails = async (req, res) => {
         if (tx && tx.vin && tx.vin.length > 0) {
           var vins = [];
           for (let j = 0; j < tx.vin.length; j++) {
-            _vinItem = tx.vin[j];
+            var _vinItem = tx.vin[j];
             try {
               if (_vinItem["txid"] && _vinItem["vout"]) {
                 var out = await promisify("getrawtransaction", [
@@ -533,8 +533,26 @@ exports.getTransactionInfo = (req, res) => {
 exports.getTransactionDetails = async (req, res) => {
   const txid = req.params.txid;
   try {
-    var txInfo = await promisify("getrawtransaction", [txid, 1]);
-    return res.json({ status: 200, msg: "sccuess", data: txInfo });
+    var tx = await promisify("getrawtransaction", [txid, 1]);
+    if (tx && tx.vin && tx.vin.length > 0) {
+      var vins = [];
+      for (let j = 0; j < tx.vin.length; j++) {
+        var _vinItem = tx.vin[j];
+        try {
+          if (_vinItem["txid"] && _vinItem["vout"]) {
+            var out = await promisify("getrawtransaction", [
+              _vinItem["txid"],
+              1
+            ]);
+            _vinItem.address = out.vout[_vinItem["vout"]];
+          }
+        } catch (error) {}
+        vins.push(_vinItem);
+      }
+      tx.vin = vins;
+    }
+
+    return res.json({ status: 200, msg: "sccuess", data: tx });
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
