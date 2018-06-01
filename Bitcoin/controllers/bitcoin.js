@@ -618,17 +618,19 @@ exports.getTransactions = async function (req, res) {
         if (!error) {
           var txs = [];
           for (let i = 0; i < rows.length; i++) {
-            try {
-              var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-              txs.push(tx);
-            } catch (error) {
-              console.log("get transaction error: ", error);
-              txs.push({
-                txid: rows[i].txid,
-                hash: rows[i].txid,
-                unknown: true
-              });
-            }
+            var tx = await getTxDetailsFunc(rows[i].txid);
+            if (tx) txs.push(tx);
+            // try {
+            //   var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
+            //   txs.push(tx);
+            // } catch (error) {
+            //   console.log("get transaction error: ", error);
+            //   txs.push({
+            //     txid: rows[i].txid,
+            //     hash: rows[i].txid,
+            //     unknown: true
+            //   });
+            // }
           }
           return res.json({
             status: 200,
@@ -700,7 +702,7 @@ exports.getAddressTransactions = async function (req, res) {
       var toReturn = [];
       for (let i = txs.length - 1; i >= 0; i--) {
         var txid = txs[i];
-        var txInfo = await promisify("getrawtransaction", [txid, 1]);
+        var txInfo = await getTxDetailsFunc(txid);
         toReturn.push(txInfo);
       }
       return res.json({
