@@ -18,6 +18,8 @@ mongoose.connect(config.db, function (err, db) {
   });
 });
 
+app.use(require('cors')());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true

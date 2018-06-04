@@ -23,6 +23,8 @@ mongoose.connect("mongodb://localhost:27017/ethertransactions", function(err, db
 
 });
 
+app.use(require('cors')());
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
