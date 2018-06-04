@@ -69,25 +69,8 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 ```
  * @return
  * { "status": "200", "msg": "success", 
- *   "data": { total, result: [transaction] }
+ *   "data": { total, result: [txdetails] }
  * }
- * 
- * transaction: {
-        "txid": "0x6d1cc3aa44b218e1fe052fa3c06c8a0009bfc2c91676c977d80e3d2d8388e2ee",
-        "size": 10,
-        "type": "MinerTransaction",
-        "version": 0,
-        "attributes": [],
-        "vin": [],
-        "vout": [],
-        "sys_fee": "0",
-        "net_fee": "0",
-        "scripts": [],
-        "nonce": 870829101,
-        "blockhash": "0xbe18be00b930b4147195a25608d69c35ba4e8273779db75c87c66310971e1f96",
-        "confirmations": 221559,
-        "blocktime": 1478762561
-    }
  */
 ```
 
@@ -115,6 +98,8 @@ GET /blockdetails/:hash
 ```
  * return
  * { "status": "200", "msg": "success", "data": blockdetails }
+
+ blockdetails = block & txdetails
 ```
 
 <a name="getTx"/>
@@ -131,10 +116,49 @@ GET /tx/:txid
 
 - get transaction details by txid
 ```
-GET /tx/:txid
+GET /txdetails/:txid
 
  * return
  * { "status": "200", "msg": "success", "data": txdetails }
+
+ txdetails = {
+        "txid": "0x4d072dd2c362f84edebb637b3d2085fab3d31e31f85c4b3ae29236163502512f",
+        "size": 296,
+        "type": "ContractTransaction",
+        "version": 0,
+        "attributes": [],
+        "vin": [
+            {
+                "txid": "0x5dcb045017f2cce0403747d153d616113e30cd7a02e4e29f9a0babac23e4b582",
+                "vout": 0,
+                "address": {
+                    "n": 0,
+                    "asset": "0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7",
+                    "value": "28.54029216",
+                    "address": "AK3tAKzmKvjeDeLx33SfKh1VZxgR6Vf7dp"
+                }
+            },...
+        ],
+        "vout": [
+            {
+                "n": 0,
+                "asset": "0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7",
+                "value": "36",
+                "address": "AQBnkfJmP2NrYMB8UxVgW5sMfZjE3SVPdf"
+            },...
+        ],
+        "sys_fee": "0",
+        "net_fee": "0",
+        "scripts": [
+            {
+                "invocation": "40e5459f25b2f6f627562673f79df7fcd43380d5ecd61ed88e2003eb5e688c48bb2958acaa0a7cfdd21ddaacca5ab36c7b6bc7959c151e3424be9e4169bc3eb4dc",
+                "verification": "21039453ace186f4662574dd95ebdd26fd7df4f42218266928a7612290343bb5f560ac"
+            }
+        ],
+        "blockhash": "0x41ffc368fd33e512263f5f32e3b22c1d57affd2866a32c1ca3480ce06aca13bc",
+        "confirmations": 254241,
+        "blocktime": 1479737124
+    }
 ```
 
 <a name="getAddressTransactions"/>
@@ -155,7 +179,7 @@ count | Number | NO | 10 | transaction count
 order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 
 ```
-return: { status: 200, msg: 'success', data: { total, result: [transaction] } }
+return: { status: 200, msg: 'success', data: { total, result: [txdetails] } }
 ```
 
 <a name="getBalance"/>

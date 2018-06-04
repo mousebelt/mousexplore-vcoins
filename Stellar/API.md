@@ -4,7 +4,7 @@ Stellar apis
 # Summary
 [Get ledgers](#get-ledgers)  
 [Get transactions](#get-transactions)  
-[Get ledger by hash or height](#get-ledger-by-hash-or-height)  
+[Get ledger by sequence](#get-ledger-by-sequence)  
 
 [Get transactions by ledger](#get-transactions-by-ledger)  
 [Get Latest operations](#get-latest-operations)  
@@ -46,11 +46,29 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 
 ```javascript
 {
-"status": 200,
-"msg": "success",
-"next": "23442324233",
-"prev": "23442324128",
-"data": [ledger]
+	"status": 200,
+	"msg": "success",
+	"next": "23442324233",
+	"prev": "23442324128",
+	"data": [ledger]
+}
+
+ledger = {
+	"id": "60c6f04a605a79d386214c46775f02a850f13860dd336ed44e48cb2e964bd765",
+	"paging_token": "38693085491757056",
+	"hash": "60c6f04a605a79d386214c46775f02a850f13860dd336ed44e48cb2e964bd765",
+	"prev_hash": "6ffaea6716c56d792e7f9f31191355b62a9454db4a0ec2240307baf652cef834",
+	"sequence": 9008936,
+	"transaction_count": 4,
+	"operation_count": 48,
+	"closed_at": "2018-05-17T09:04:35Z",
+	"total_coins": "103927355953.6556009",
+	"fee_pool": "1898328354.2316593",
+	"base_fee_in_stroops": 100,
+	"base_reserve_in_stroops": 5000000,
+	"max_tx_set_size": 200,
+	"protocol_version": 9,
+	"header_xdr": "AAAACW/66mcWxW15Ln+fMRkTVbYqlFTbSg7CJAMHuvZSzvg0Xn3YSHB7YrP7YWziXaoUzUxQOQcsG+BaCVHrI/9wPNoAAAAAWv1FowAAAAAAAAAAonXt0GxxROR/l2yXHhQ3lWWcVXs2z++ZlJ0BZpnst3nLsM1CabXmJhg16YMxBpmYK8QRSaEQjiaEjcPD7hBh3gCJdygObD3LzKHX6QBDcTIgNdYxAAAAywAAAAAABhlSAAAAZABMS0AAAADIORwT2/1p/akUncaBeY/PhGpo10g0yo20+/6K1IRr2MQrUJpxoqHTizDJsmkOabKYhxI2Cn44fgM4OMsTcA28gkRVYvtG/DiPztct0Z3hhWAhKFy/HGS3lJ6mGwkyVR2WrynUSxzFDOgJ9lU4y3coHHDSucvnHfkbUeAwNZLhfSAAAAAA"
 }
 ```
 
@@ -64,17 +82,17 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 ```
 
 
-## Get ledger by hash or height
+## Get ledger by sequence
 
 ```
-GET /api/v1/ledger/:hash
+GET /api/v1/ledger/:sequence
 ```
 
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-hash | String | YES | ledger hash or height
+sequence | Number | YES | ledger sequence
 
 ### RETURN
 
@@ -125,16 +143,24 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 "data": [transaction]
 }
 
-transaction: {
-	"id": "e974960c67a19311b2ef507a8ecaf7efc0e504de07de6982a556e8030c380d70",
-	"paging_token": "38693085491765248",
-	"hash": "e974960c67a19311b2ef507a8ecaf7efc0e504de07de6982a556e8030c380d70",
+transaction = {
+	"id": "93c2d119d15ee12cacaa12944dd0ba653da7cd8d5970a38968cbddd156d3308d",
+	"paging_token": "38693085491773440",
+	"hash": "93c2d119d15ee12cacaa12944dd0ba653da7cd8d5970a38968cbddd156d3308d",
 	"ledger": 9008936,
 	"created_at": "2018-05-17T09:04:35Z",
-	"source_account": "GCTHNQGSSHOKSLHN75ZLRRCAZYKD3TCNQ57NKOB4SWNXXTDTTL23TUEN",
-	"source_account_sequence": "37537369921953584",
-	"fee_paid": 3800,
-	"operation_count": 38,
+	"source_account": "GBILND6UWKZCYUE7YRZHS5DBEYM6U4R4SWO73PODLYZVXNKHS4NVSE5X",
+	"source_account_sequence": "37676561222087438",
+	"fee_paid": 100,
+	"operation_count": 1,
+	"envelope_xdr": "AAA==...",
+	"result_xdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
+	"result_meta_xdr": "AA=...",
+	"fee_meta_xdr": "AAA==...",
+	"memo_type": "none",
+	"signatures": [
+		"Hh+czcfw48I+Y5bRbdRBvO/k6/OXaLMGxRXZJwWjlPTl3ErLCT91EnWMdWo+ztwSbhSIZhHAikL2bFJJ1ORoBw=="
+	]
 }
 ```
 
