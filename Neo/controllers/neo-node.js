@@ -416,6 +416,17 @@ exports.getBlocks = async function (req, res) {
 
       try {
         var block = await localNode.getBlockByHeight(height, 1);
+
+        var txs = block.tx;
+        if (txs && txs.length > 0) {
+          var newTxs = [];
+          for (let j = 0; j < txs.length; j++) {
+            newTxs.push(txs[j].txid);
+          }
+
+          block.tx = newTxs;
+        }
+
         if (block) blocks.push(block);
       } catch (error) {
         console.log("error occured: ", error);

@@ -57,7 +57,7 @@ block = {
             "stateRoot": "0x716e7237186911968b734006e2ff76b6b7b84525dff883fc5d0adf82e067d12e",
             "timestamp": 1527583261,
             "totalDifficulty": "8399454833308733",
-            "transactions": [transaction],
+            "transactions": [txhash],
             "transactionsRoot": "0x75a94c75fb1e56c1d14961308da23e36586fbf824e42d316ea4744ccf7959991",
             "uncles": []
         }

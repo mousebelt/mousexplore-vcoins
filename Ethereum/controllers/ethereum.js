@@ -194,7 +194,7 @@ exports.getBlocks = function (req, res) {
           var height = number - offset - i;
           if (height < 0) break;
 
-          var blockdata = await web3.eth.getBlock(height, true);
+          var blockdata = await web3.eth.getBlock(height, false);
           if (blockdata) blocks.push(blockdata);
         }
 
