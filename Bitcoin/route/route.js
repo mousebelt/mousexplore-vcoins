@@ -32,6 +32,7 @@ module.exports = function (app) {
     //// Utility apis ////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    app.get(prefix + '/search/:key', btcController.getSearch);
     app.get(prefix + '/blocks', btcController.getBlocks);
     app.get(prefix + '/transactions', btcController.getTransactions);
     app.get(prefix + '/block/:hash', btcController.getBlock);

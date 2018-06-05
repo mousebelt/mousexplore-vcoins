@@ -13,6 +13,7 @@ vcoin apis
 [Get transaction by txid](#get-transaction-by-txid)  
 [Get transaction details by txid](#get-transaction-details-by-txid)  
 [Get address related transaction by offset, count, order](#get-address-related-transaction-by-offset-count-order)  
+[search](#search)  
 
 
 ***
@@ -359,6 +360,32 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 
 ```javascript
 { status: 200, msg: 'sccuess', data: { total, result: [txdetails] } }
+```
+
+* for failed case
+
+```javascript
+{ status: 400, msg: 'errors', data: err }
+```
+
+
+## Search
+```
+ GET /search/:key
+```
+
+key param can be txid or blockNo, blockHash, address.
+
+### RETURN
+
+* for successed case
+
+```javascript
+{ status: 200, msg: 'sccuess', data: { type, result: info } }
+
+type = 'block' => info = blockdetails
+type = 'transaction' => info = txdetails
+type = 'address' => info = addressInfo
 ```
 
 * for failed case
