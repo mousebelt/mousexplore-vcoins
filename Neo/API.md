@@ -11,6 +11,7 @@ neo-vcoin apis
 [get transaction by txid](#getTx)  
 [get transaction details by txid](#getTxDetails)  
 [get address related transactions](#getAddressTransactions)  
+[search](#search)  
 
 ***
 
@@ -199,4 +200,19 @@ Returns the balance of the corresponding asset in the wallet, based on the speci
     "Balance": "1.01",
     "Confirmed": "1.01"
     }
+```
+
+<a name="search"/>
+
+- Search
+```
+ GET /search/:key
+
+key param can be txid or blockNo, blockHash, address.
+
+{ status: 200, msg: 'sccuess', data: { type, result: info } }
+
+type = 'block' => info = blockdetails
+type = 'transaction' => info = txdetails
+type = 'address' => info = addressInfo
 ```
