@@ -52,6 +52,22 @@ async function getTxDetailsFunc(txid) {
   return undefined;
 }
 
+async function getBlockDetailsFunc(hash) {
+  try {
+    if (hash.length < 10) hash = Number(hash);
+    var block = await promisify('getblock', [hash, 1]);
+    var txs = [];
+    for (let i = 0; i < block.tx.length; i++) {
+      var txdetails = await getTxDetailsFunc(block.tx[i]);
+      txs.push(txdetails);
+    }
+    block.tx = txs;
+    return block;
+  } catch (error) {
+    return undefined;
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// RPC Call apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -123,19 +139,10 @@ exports.getBlockByHash = (req, res) => {
 
 exports.getBlockDetails = async (req, res) => {
   var hash = req.params.hash;
-  try {
-    if (hash.length < 10) hash = Number(hash);
-    var block = await promisify('getblock', [hash, 1]);
-    var txs = [];
-    for (let i = 0; i < block.tx.length; i++) {
-      var txdetails = await getTxDetailsFunc(block.tx[i]);
-      txs.push(txdetails);
-    }
-    block.tx = txs;
-    return res.json({ status: 200, msg: "sccuess", data: block });
-  } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
-  }
+
+  var block = await getBlockDetailsFunc(hash);
+  if (block) return res.json({ status: 200, msg: "sccuess", data: block });
+  return res.json({ status: 400, msg: "errors" });
 };
 
 /**
@@ -682,5 +689,37 @@ exports.getAddressTransactions = async function (req, res) {
     }
   } catch (error) {
     return res.json({ status: 400, msg: "error occured !" });
+  }
+};
+
+exports.getSearch = async (req, res) => {
+  var key = req.params.key;
+
+  try {
+    if (key.length < 10) {
+      // block process
+      key = Number(key);
+
+      var block = await getBlockDetailsFunc(key);
+      if (block) return res.json({ status: 200, msg: "sccuess", data: { result: block, type: 'block' } });
+      return res.json({ status: 400, msg: "Error occured !" });
+    } else if (key.length >= 25 && key.length <= 34) {
+      // address process
+      return res.json({ status: 200, msg: "sccuess", data: { result: `address is not implemented yet, address: ${key} !`, type: 'address' } });
+    } else if (key.length >= 64 && key.length <= 66) { // block or txid process
+      // txdetails
+      var txdetails = await getTxDetailsFunc(key);
+      if (txdetails) return res.json({ status: 200, msg: "sccuess", data: { result: txdetails, type: 'transaction' } });
+
+      // block details
+      var block = await getBlockDetailsFunc(key);
+      if (block) return res.json({ status: 200, msg: "sccuess", data: { result: block, type: 'block' } });
+
+      return res.json({ status: 400, msg: "No result !" });
+    } else {
+      return res.json({ status: 400, msg: "search key is not correct !" });
+    }
+  } catch (error) {
+    return res.json({ status: 400, msg: "errors", data: error });
   }
 };

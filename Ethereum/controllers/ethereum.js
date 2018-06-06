@@ -3,6 +3,46 @@ var web3 = require("../config/common").web3;
 var TransactionModel = require("../model/transactions");
 var TokenModel = require("../model/tokens");
 
+async function getTransactionDetailsFunc (hash) {
+  try {
+    var transaction = await web3.eth.getTransaction(hash);
+    try {
+      var blockdata = await web3.eth.getBlock(transaction.blockNumber, false);
+      let txreceipt = await web3.eth.getTransactionReceipt(hash);
+
+      let fee = txreceipt.gasUsed * transaction.gasPrice;
+      // fee = fee / 1e18;
+
+      transaction.block = blockdata;
+      transaction.txreceipt = txreceipt;
+      transaction.fee = fee;
+    } catch (e) { }
+    return transaction;
+  } catch (error) {
+    console.log("getTransaction: we have a promblem: ", error); // Should dump errors here
+    return undefined;
+  }
+}
+
+exports.getBalance = function (req, res) {
+  var addr = req.params.address;
+
+  // Show the address in the console.
+  //console.log('Address:', addr);
+
+  // Use Wb3 to get the balance of the address, convert it and then show it in the console.
+  web3.eth.getBalance(addr, function (error, result) {
+    if (!error) {
+      var ethervalue = web3.utils.fromWei(result, "ether");
+      //console.log('Ether:', ethervalue); // Show the ether balance after converting it from Wei
+      res.status(200).json({ status: 200, msg: 'success', data: ethervalue });
+    } else {
+      console.log("we have a promblem: ", error); // Should dump errors here
+      res.status(400).json({ error: error });
+    }
+  });
+};
+
 exports.getBalance = function (req, res) {
   var addr = req.params.address;
 
@@ -367,24 +407,10 @@ exports.getTransactionInfo = function (req, res) {
 exports.getTransactionDetails = async function (req, res) {
   var hash = req.params.hash;
 
-  try {
-    var transaction = await web3.eth.getTransaction(hash);
-    try {
-      var blockdata = await web3.eth.getBlock(transaction.blockNumber, false);
-      let txreceipt = await web3.eth.getTransactionReceipt(hash);
-
-      let fee = txreceipt.gasUsed * transaction.gasPrice;
-      // fee = fee / 1e18;
-
-      transaction.block = blockdata;
-      transaction.txreceipt = txreceipt;
-      transaction.fee = fee;
-    } catch (e) { }
-    res.status(200).json({ msg: "success", data: transaction });
-  } catch (error) {
-    console.log("getTransaction: we have a promblem: ", error); // Should dump errors here
-    res.status(400).json({ error: error });
-  }
+  var transaction = await getTransactionDetailsFunc(hash);
+  if (transaction) return res.json({ status: 200, msg: "success", data: transaction });
+  
+  return res.json({ status: 400, msg: 'errors' });
 };
 
 //api for token related
@@ -442,4 +468,36 @@ exports.removeToken = function (req, res) {
       }
     }
   );
+};
+
+exports.getSearch = async (req, res) => {
+  var key = req.params.key;
+
+  try {
+    if (key.length < 10) {
+      // block process
+      key = Number(key);
+      var blockdata = await web3.eth.getBlock(key, true);
+      return res.json({ status: 200, msg: "success", data: blockdata });
+    } else if (key.length >= 40 && key.length <= 42) {
+      // address process
+      return res.json({ status: 200, msg: "sccuess", data: { result: `address is not implemented yet, address: ${key} !`, type: 'address' } });
+    } else if (key.length >= 64 && key.length <= 66) { // block or txid process
+      // txdetails
+      var txdetails = await getTransactionDetailsFunc(key);
+      if (txdetails) return res.json({ status: 200, msg: "sccuess", data: { result: txdetails, type: 'transaction' } });
+
+      // block details
+      try {
+        var block = await web3.eth.getBlock(key, true);
+        if (block) return res.json({ status: 200, msg: "sccuess", data: { result: block, type: 'block' } });
+      } catch (error) {}
+
+      return res.json({ status: 400, msg: "No result !" });
+    } else {
+      return res.json({ status: 400, msg: "search key is not correct !" });
+    }
+  } catch (error) {
+    return res.json({ status: 400, msg: "errors", data: error });
+  }
 };

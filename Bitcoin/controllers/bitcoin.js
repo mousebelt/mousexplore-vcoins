@@ -53,6 +53,24 @@ async function getTxDetailsFunc(txid) {
   return undefined;
 }
 
+async function getBlockDetailsFunc(hash) {
+  try {
+    if (hash.length < 10) {
+      hash = await promisify("getblockhash", [Number(hash)]);
+    }
+    var block = await promisify("getblock", [hash]);
+    var txs = [];
+    for (let i = 0; i < block.tx.length; i++) {
+      var txdetails = await getTxDetailsFunc(block.tx[i]);
+      if (txdetails) txs.push(txdetails);
+    }
+    block.tx = txs;
+    return block;
+  } catch (error) {
+    return undefined;
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// RPC Call apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,45 +301,10 @@ exports.getBlock = async (req, res) => {
 
 exports.getBlockDetails = async (req, res) => {
   var hash = req.params.hash;
-  try {
-    if (hash.length < 10) {
-      hash = await promisify("getblockhash", [Number(hash)]);
-    }
-    var block = await promisify("getblock", [hash]);
-    var txs = [];
-    for (let i = 0; i < block.tx.length; i++) {
-      var txdetails = await getTxDetailsFunc(block.tx[i]);
-      if (txdetails) txs.push(txdetails);
-      // try {
-      //   var tx = await promisify("getrawtransaction", [block.tx[i], 1]);
 
-      //   if (tx && tx.vin && tx.vin.length > 0) {
-      //     var vins = [];
-      //     for (let j = 0; j < tx.vin.length; j++) {
-      //       var _vinItem = tx.vin[j];
-      //       try {
-      //         if (_vinItem["txid"] !== undefined && _vinItem["vout"] !== undefined) {
-      //           var out = await promisify("getrawtransaction", [
-      //             _vinItem["txid"],
-      //             1
-      //           ]);
-      //           _vinItem.address = out.vout[_vinItem["vout"]];
-      //         }
-      //       } catch (error) {}
-      //       vins.push(_vinItem);
-      //     }
-      //     tx.vin = vins;
-      //   }
-      //   txs.push(tx);
-      // } catch (error) {
-      //   console.log(error);
-      // }
-    }
-    block.tx = txs;
-    return res.json({ status: 200, msg: "sccuess", data: block });
-  } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
-  }
+  var block = await getBlockDetailsFunc(hash);
+  if (block) return res.json({ status: 200, msg: "sccuess", data: block });
+  return res.json({ status: 400, msg: "Error occured !" });
 };
 
 exports.getBlockHash = (req, res) => {
@@ -512,6 +495,38 @@ exports.listSinceBlock = (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Utility apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+exports.getSearch = async (req, res) => {
+  var key = req.params.key;
+
+  try {
+    if (key.length < 10) {
+      // block process
+      key = Number(key);
+
+      var block = await getBlockDetailsFunc(key);
+      if (block) return res.json({ status: 200, msg: "sccuess", data: { result: block, type: 'block' } });
+      return res.json({ status: 400, msg: "Error occured !" });
+    } else if (key.length >= 25 && key.length <= 34) {
+      // address process
+      return res.json({ status: 200, msg: "sccuess", data: { result: `address is not implemented yet, address: ${key} !`, type: 'address' } });
+    } else if (key.length >= 64 && key.length <= 66) { // block or txid process
+      // txdetails
+      var txdetails = await getTxDetailsFunc(key);
+      if (txdetails) return res.json({ status: 200, msg: "sccuess", data: { result: txdetails, type: 'transaction' } });
+
+      // block details
+      var block = await getBlockDetailsFunc(key);
+      if (block) return res.json({ status: 200, msg: "sccuess", data: { result: block, type: 'block' } });
+
+      return res.json({ status: 400, msg: "No result !" });
+    } else {
+      return res.json({ status: 400, msg: "search key is not correct !" });
+    }
+  } catch (error) {
+    return res.json({ status: 400, msg: "errors", data: error });
+  }
+};
+
 exports.getBlocks = async (req, res) => {
   var offset = Number(req.query.offset);
   var count = Number(req.query.count);
@@ -569,30 +584,6 @@ exports.getTransactionDetails = async (req, res) => {
   if (txdetails) return res.json({ status: 200, msg: "sccuess", data: txdetails });
 
   return res.json({ status: 400, msg: "errors" });
-  // try {
-  //   var tx = await promisify("getrawtransaction", [txid, 1]);
-  //   if (tx && tx.vin && tx.vin.length > 0) {
-  //     var vins = [];
-  //     for (let j = 0; j < tx.vin.length; j++) {
-  //       var _vinItem = tx.vin[j];
-  //       try {
-  //         if (_vinItem["txid"] !== undefined && _vinItem["vout"] !== undefined) {
-  //           var out = await promisify("getrawtransaction", [
-  //             _vinItem["txid"],
-  //             1
-  //           ]);
-  //           _vinItem.address = out.vout[_vinItem["vout"]];
-  //         }
-  //       } catch (error) {}
-  //       vins.push(_vinItem);
-  //     }
-  //     tx.vin = vins;
-  //   }
-
-  //   return res.json({ status: 200, msg: "sccuess", data: tx });
-  // } catch (error) {
-  //   return res.json({ status: 400, msg: "errors", data: error });
-  // }
 };
 
 exports.getTransactions = async function (req, res) {

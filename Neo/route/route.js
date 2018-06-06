@@ -97,4 +97,5 @@ module.exports = function(app) {
   app.get(prefix + "/txdetails/:txid", neoNodeController.getTxDetails);
   app.get(prefix + "/address/txs/:address", neoNodeController.getAddressTransactions);
   app.get(prefix + "/balance/:assetId", neoNodeController.getBalance);
+  app.get(prefix + "/search/:key", neoNodeController.getSearch);
 };
