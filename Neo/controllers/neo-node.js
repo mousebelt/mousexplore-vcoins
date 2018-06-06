@@ -54,7 +54,7 @@ async function getTxDetailsFunc(txid) {
 
 async function getBlockDetailsFunc(hash) {
   try {
-    if (hash.length < 10) hash = Number(hash);
+    if (String(hash).length < 10) hash = Number(hash);
     var block = await promisify('getblock', [hash, 1]);
     var txs = [];
     for (let i = 0; i < block.tx.length; i++) {
@@ -698,8 +698,6 @@ exports.getSearch = async (req, res) => {
   try {
     if (key.length < 10) {
       // block process
-      key = Number(key);
-
       var block = await getBlockDetailsFunc(key);
       if (block) return res.json({ status: 200, msg: "sccuess", data: { result: block, type: 'block' } });
       return res.json({ status: 400, msg: "Error occured !" });

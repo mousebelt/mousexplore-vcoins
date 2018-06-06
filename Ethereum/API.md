@@ -11,6 +11,7 @@ vcoin apis
 [Get transaction details from hash](#get-transaction-details-from-hash)  
 [Get address related transaction by offset, count, order](#get-address-related-transaction-by-offset-count-order)  
 [Get Balance](#get-balance)  
+[search](#search)  
 
 ***
 
@@ -374,4 +375,30 @@ address | STRING | YES | address to get balance
 {
   "error": ""   //error message
 }
+```
+
+
+## Search
+```
+ GET /search/:key
+```
+
+key param can be txid or blockNo, blockHash, address.
+
+### RETURN
+
+* for successed case
+
+```javascript
+{ status: 200, msg: 'sccuess', data: { type, result: info } }
+
+type = 'block' => info = blockdetails
+type = 'transaction' => info = txdetails
+type = 'address' => info = addressInfo
+```
+
+* for failed case
+
+```javascript
+{ status: 400, msg: 'errors', data: err }
 ```
