@@ -5,6 +5,7 @@ module.exports = function (app) {
     app.get('/api/v1/transactions', StellarController.getLatestTransactions);
     app.get('/api/v1/ledger/:hash', StellarController.getLedgerByHash);
     app.get('/api/v1/balance/:address', StellarController.getBalance);
+    app.get('/api/v1/search/:key', StellarController.getSearch);
 
     app.post('/api/create_account', StellarController.createAccount);
     app.post('/api/v1/ledger/txs', StellarController.getTransactionsForLedger);
