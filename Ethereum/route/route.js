@@ -23,4 +23,5 @@ module.exports = function (app) {
     app.get('/api/v1/txdetails/:hash', EthereumController.getTransactionDetails);
     app.get('/api/v1/address/txs/:address', EthereumController.getTransactionsFromAccount);
     app.get('/api/v1/balance/:address', EthereumController.getBalance);
+    app.get('/api/v1/search/:key', EthereumController.getSearch);
 }
