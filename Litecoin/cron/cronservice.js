@@ -1,3 +1,4 @@
+const _ = require('lodash');
 var config = require("../config");
 var client = config.localNode;
 
@@ -5,6 +6,8 @@ var TransactionModel = require("../model/transactions");
 var TxServiceInofModel = require("../model/txServiceInfo");
 var AddressModel = require("../model/address");
 var AddrServiceInofModel = require("../model/addrServiceInfo");
+
+var UtilsModule = require("../modules/utils");
 
 var fs = require("fs");
 var Log = require("log"),
@@ -15,25 +18,10 @@ var Log = require("log"),
 // log = new Log('debug');
 
 function filelog(...params) {
-  //
   log.info(...params);
-  // console.log(...params);
 }
 
-var promisify = function promisify(fn, args) {
-  return new Promise((resolve, reject) => {
-    try {
-      client.call(fn, args, function(err, result) {
-        if (err) {
-          reject(err);
-        }
-        resolve(result);
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
+var promisify = UtilsModule.promisify;
 
 ////////////////////////////////////////////////////////////////////////////
 
@@ -49,7 +37,7 @@ async function getTxServiceInfo() {
 }
 
 async function saveTxServiceInfo(lastblock) {
-  await TxServiceInofModel.findOne(async function(e, info) {
+  await TxServiceInofModel.findOne(async function (e, info) {
     if (!e) {
       if (info) {
         info.set({ lastblock });
@@ -79,7 +67,7 @@ async function getAddrServiceInfo() {
 }
 
 async function saveAddrServiceInfo(lastTxid, lastTxOffset) {
-  await AddrServiceInofModel.findOne(async function(e, info) {
+  await AddrServiceInofModel.findOne(async function (e, info) {
     if (!e) {
       if (info) {
         info.set({
@@ -100,7 +88,6 @@ async function saveAddrServiceInfo(lastTxid, lastTxOffset) {
 }
 
 async function CheckUpdatedTransactions() {
-  filelog("CheckUpdatedTransactions starting...");
   var lastblock;
   var txServiceInfo = await getTxServiceInfo();
   if (txServiceInfo) {
@@ -154,8 +141,6 @@ async function CheckUpdatedTransactions() {
 
 async function CheckUpdatedAddresses() {
   // TODO: solve genesis block coinbase transactions - 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b
-  filelog("CheckUpdatedAddresses starting...");
-
   var lastTxid, lastTxOffset;
   var serviceInfo = await getAddrServiceInfo();
   if (serviceInfo) {
@@ -175,39 +160,39 @@ async function CheckUpdatedAddresses() {
       let { txid } = arrTxs[i];
       try {
         var txInfo;
-        // if (txid == '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b') {
-        //   txInfo = {
-        //     "txid": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
-        //     "version": 1,
-        //     "locktime": 0,
-        //     "vin": [
-        //       {
-        //         "coinbase": "04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73",
-        //         "sequence": 4294967295
-        //       }
-        //     ],
-        //     "vout": [
-        //       {
-        //         "value": 50.00000000,
-        //         "n": 0,
-        //         "scriptPubKey": {
-        //           "asm": "04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f OP_CHECKSIG",
-        //           "hex": "4104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac",
-        //           "reqSigs": 1,
-        //           "type": "pubkey",
-        //           "addresses": [
-        //             "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
-        //           ]
-        //         }
-        //       }
-        //     ]
-        //   }
-        // } else {
-        //   txInfo = await promisify("getrawtransaction", [txid, 1]);
-        // }
         try {
           txInfo = await promisify("getrawtransaction", [txid, 1]);
         } catch (error) {
+          // if (txid == '4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b') {
+          //   txInfo = {
+          //     "txid": "4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b",
+          //     "version": 1,
+          //     "locktime": 0,
+          //     "vin": [
+          //       {
+          //         "coinbase": "04ffff001d0104455468652054696d65732030332f4a616e2f32303039204368616e63656c6c6f72206f6e206272696e6b206f66207365636f6e64206261696c6f757420666f722062616e6b73",
+          //         "sequence": 4294967295
+          //       }
+          //     ],
+          //     "vout": [
+          //       {
+          //         "value": 50.00000000,
+          //         "n": 0,
+          //         "scriptPubKey": {
+          //           "asm": "04678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5f OP_CHECKSIG",
+          //           "hex": "4104678afdb0fe5548271967f1a67130b7105cd6a828e03909a67962e0ea1f61deb649f6bc3f4cef38c4f35504e51ec112de5c384df7ba0b8d578a4c702b6bf11d5fac",
+          //           "reqSigs": 1,
+          //           "type": "pubkey",
+          //           "addresses": [
+          //             "1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa"
+          //           ]
+          //         }
+          //       }
+          //     ]
+          //   }
+          // } else {
+          //   txInfo = await promisify("getrawtransaction", [txid, 1]);
+          // }
           filelog(
             `error in getrawtransaction: i=${i}, txid=${txid}, lasttxid:${lastTxid}, lasttxoffset:${lastTxOffset}`,
             error
@@ -223,13 +208,17 @@ async function CheckUpdatedAddresses() {
               var inTxid = vin[j].txid;
               var inVout = Number(vin[j].vout);
               if (!inTxid || inTxid == "" || inVout < 0) continue;
-              var inTxInfo = await promisify("gettxout", [inTxid, inVout]);
+              var inTxInfo = await UtilsModule.getTxOutFunc(inTxid, inVout);
+              // var inTxInfo = await promisify("gettxout", [inTxid, inVout]);
               if (!inTxInfo) {
+                filelog(
+                  `inTxInfo not found. inTxid=${inTxid}, vout: ${inVout}`
+                );
                 continue;
-                // throw `inTxInfo not found. inTxid=${inTxid}`;
               }
 
               var addresses = inTxInfo.scriptPubKey.addresses;
+              var value = inTxInfo.value;
               for (let k = 0; k < addresses.length; k++) {
                 // Save Info
                 var addressRow = await AddressModel.findOne({
@@ -238,19 +227,30 @@ async function CheckUpdatedAddresses() {
                 if (!addressRow) {
                   addressRow = new AddressModel({
                     address: addresses[k],
-                    txs: []
+                    txs: [],
+                    txsIn: [],
+                    txsOut: []
                   });
                 }
                 if (addressRow.txs.indexOf(txid) == -1) {
                   addressRow.txs.push(txid);
-                  try {
-                    await addressRow.save();
-                  } catch (e) {
-                    filelog(
-                      `vin addressRow.save.txs error: i=${i}, j=${j}, k=${k}, addressRow=${addressRow}`
-                    ); // Should dump errors here
-                    throw e;
-                  }
+                }
+
+                var index = _.findIndex(addressRow.txsIn, function (o) { return o.txid == inTxid && o.vout == inVout; });
+                if (index == -1) {
+                  addressRow.txsIn.push({
+                    txid: inTxid, vout: inVout, value
+                  });
+                } else {
+                  addressRow.txsIn[index].value += value;
+                }
+                try {
+                  await addressRow.save();
+                } catch (e) {
+                  filelog(
+                    `vin addressRow.save.txs vin error: i=${i}, j=${j}, k=${k}, addressRow=${addressRow}`
+                  ); // Should dump errors here
+                  throw e;
                 }
               }
             }
@@ -258,6 +258,7 @@ async function CheckUpdatedAddresses() {
           if (vout && vout.length > 0) {
             for (let j = 0; j < vout.length; j++) {
               var addresses = vout[j].scriptPubKey.addresses;
+              var value = vout[j].value;
               if (addresses && addresses.length > 0) {
                 for (let k = 0; k < addresses.length; k++) {
                   // Save Info
@@ -272,14 +273,21 @@ async function CheckUpdatedAddresses() {
                   }
                   if (addressRow.txs.indexOf(txid) == -1) {
                     addressRow.txs.push(txid);
-                    try {
-                      await addressRow.save();
-                    } catch (e) {
-                      filelog(
-                        `addressRow.save.txs error: i=${i}, j=${j}, k=${k} addressRow=${addressRow}`
-                      ); // Should dump errors here
-                      throw e;
-                    }
+                  }
+
+                  var index = _.findIndex(addressRow.txsOut, function (o) { return o.txid == txid && o.vout == j; });
+                  if (index == -1) {
+                    addressRow.txsOut.push({ txid, vout: j, value });
+                  } else {
+                    addressRow.txsOut[index].value += value;
+                  }
+                  try {
+                    await addressRow.save();
+                  } catch (e) {
+                    filelog(
+                      `addressRow.save.txs vout error: i=${i}, j=${j}, k=${k} addressRow=${addressRow}`
+                    ); // Should dump errors here
+                    throw e;
                   }
                 }
               }
@@ -299,22 +307,16 @@ async function CheckUpdatedAddresses() {
 }
 
 async function transactionService() {
-  filelog("Start transaction service ...");
   await CheckUpdatedTransactions();
   setTimeout(transactionService, config.TX_CRON_TIME);
-  filelog("Done transaction service .");
 }
 
 async function addressService() {
-  filelog("Start address service ...");
   await CheckUpdatedAddresses();
   setTimeout(addressService, config.ADDR_CRON_TIME);
-  filelog("Done address service .");
 }
 
-exports.start_cronService = async function() {
-  filelog("Start cron service");
-
+exports.start_cronService = async function () {
   transactionService();
   addressService();
 };
