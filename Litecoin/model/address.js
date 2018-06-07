@@ -4,6 +4,17 @@ var addressSchema = new mongoose.Schema({
   address: String, // 1BW18n7MfpU35q4MTBSk8pse3XzQF8XvzT
 
   txs: [String], // txid array
+  txsIn: [{
+    txid: String,
+    vout: Number,
+    value: Number,
+  }],
+
+  txsOut: [{
+    txid: String,
+    vout: Number,
+    value: Number,
+  }],
 
   updatedAt: Date
 });

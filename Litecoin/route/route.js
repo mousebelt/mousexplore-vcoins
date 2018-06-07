@@ -40,4 +40,5 @@ module.exports = function (app) {
     app.get(prefix + '/tx/:txid', ltcController.getTransactionInfo);
     app.get(prefix + '/txdetails/:txid', ltcController.getTransactionDetails);
     app.get(prefix + '/address/txs/:address', ltcController.getAddressTransactions);
+    app.get(prefix + '/balance/:address', ltcController.getBalance);
 }
