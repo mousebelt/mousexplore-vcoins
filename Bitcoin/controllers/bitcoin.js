@@ -571,22 +571,13 @@ exports.getTransactions = async function(req, res) {
         if (!error) {
           var txs = [];
           for (let i = 0; i < rows.length; i++) {
-            // var tx = await UtilsModule.getTxDetailsFunc(rows[i].txid);
-            try {
-              var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-              if (tx) txs.push(tx);
-            } catch (error) {}
+            var tx = await UtilsModule.getTxDetailsFunc(rows[i].txid);
+            if (tx) txs.push(tx);
+            
             // try {
             //   var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-            //   txs.push(tx);
-            // } catch (error) {
-            //   console.log("get transaction error: ", error);
-            //   txs.push({
-            //     txid: rows[i].txid,
-            //     hash: rows[i].txid,
-            //     unknown: true
-            //   });
-            // }
+            //   if (tx) txs.push(tx);
+            // } catch (error) {}
           }
           return res.json({
             status: 200,
