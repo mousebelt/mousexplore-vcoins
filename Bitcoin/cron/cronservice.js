@@ -207,7 +207,7 @@ async function CheckUpdatedAddresses() {
               var inTxid = vin[j].txid;
               var inVout = Number(vin[j].vout);
               if (!inTxid || inTxid == "" || inVout < 0) continue;
-              var inTxInfo = await promisify("gettxout", [inTxid, inVout]);
+              var inTxInfo = await UtilsModule.getTxOutFunc(inTxid, inVout);
               if (!inTxInfo) {
                 filelog(
                   `inTxInfo not found. inTxid=${inTxid}, vout: ${inVout}`
