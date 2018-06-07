@@ -217,6 +217,7 @@ async function CheckUpdatedAddresses() {
               }
 
               var addresses = inTxInfo.scriptPubKey.addresses;
+              var value = inTxInfo.value;
               for (let k = 0; k < addresses.length; k++) {
                 // Save Info
                 var addressRow = await AddressModel.findOne({
@@ -234,9 +235,9 @@ async function CheckUpdatedAddresses() {
                   addressRow.txs.push(txid);
                 }
                 if (
-                  addressRow.txsIn.indexOf({ txid: inTxid, vout: inVout }) == -1
+                  addressRow.txsIn.indexOf({ txid: inTxid, vout: inVout, value }) == -1
                 ) {
-                  addressRow.txsIn.push({ txid: inTxid, vout: inVout });
+                  addressRow.txsIn.push({ txid: inTxid, vout: inVout, value });
                 }
                 try {
                   await addressRow.save();
@@ -267,8 +268,8 @@ async function CheckUpdatedAddresses() {
                   if (addressRow.txs.indexOf(txid) == -1) {
                     addressRow.txs.push(txid);
                   }
-                  if (addressRow.txsOut.indexOf({txid, vout: j}) == -1) {
-                    addressRow.txsOut.push({txid, vout: j});
+                  if (addressRow.txsOut.indexOf({txid, vout: j, value}) == -1) {
+                    addressRow.txsOut.push({txid, vout: j, value});
                   }
                   try {
                     await addressRow.save();

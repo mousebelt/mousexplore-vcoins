@@ -7,11 +7,13 @@ var addressSchema = new mongoose.Schema({
   txsIn: [{
     txid: String,
     vout: Number,
+    value: Number,
   }],
 
   txsOut: [{
     txid: String,
     vout: Number,
+    value: Number,
   }],
 
   updatedAt: Date
