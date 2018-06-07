@@ -407,12 +407,10 @@ Get balance of the address
 * for successed case
 
 ```javascript
-{ status: 200, msg: 'sccuess', 
-    data: {
-        "balance": 50,
-        "received": 50,
-        "spent": 0
-    } 
+{ 
+    status: 200, 
+    msg: 'sccuess', 
+    data: { address, balance, total_received, total_spent, balance, n_tx }
 }
 ```
 

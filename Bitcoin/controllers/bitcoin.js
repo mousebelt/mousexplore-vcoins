@@ -671,20 +671,20 @@ exports.getBalance = async function (req, res) {
     var addrRow = await AddressModel.findOne({ address });
     if (!addrRow) return res.json({ status: 400, msg: "No address in db !" });
 
-    var received = 0;
+    var total_received = 0;
     for (let i = 0; i < addrRow.txsOut.length; i++) {
       var { txid, vout, value } = addrRow.txsOut[i];
-      received += value;
+      total_received += value;
     }
 
-    var spent = 0;
+    var total_spent = 0;
     for (let i = 0; i < addrRow.txsIn.length; i++) {
       var { txid, vout, value } = addrRow.txsIn[i];
-      spent += value;
+      total_spent += value;
     }
 
-    var balance = received - spent;
-    return res.json({ status: 200, msg: 'success', data: { balance, received, spent } });
+    var balance = total_received - total_spent;
+    return res.json({ status: 200, msg: 'success', data: { address, balance, total_received, total_spent, balance, n_tx: addrRow.txs.length } });
   } catch (error) {
     return res.json({ status: 400, msg: "error occured !" });
   }
