@@ -2,10 +2,10 @@
 var config = require("../config");
 const client = config.localNode;
 
-exports.promisify = function promisify(fn, args) {
+function promisify(fn, args) {
   return new Promise((resolve, reject) => {
     try {
-      client.call(fn, args, function (err, result) {
+      client.call(fn, args, function(err, result) {
         if (err) {
           reject(err);
         }
@@ -15,19 +15,19 @@ exports.promisify = function promisify(fn, args) {
       reject(error);
     }
   });
-};
+}
 
-exports.getTxOutFunc = async function getTxOutFunc(txid, vout) {
+async function getTxOutFunc(txid, vout) {
   try {
     if (txid !== undefined && vout !== undefined) {
       var out = await promisify("getrawtransaction", [txid, 1]);
       return out.vout[vout] ? out.vout[vout] : undefined;
     }
-  } catch (error) { }
+  } catch (error) {}
   return undefined;
 }
 
-exports.getTxDetailsFunc = async function getTxDetailsFunc(txid) {
+async function getTxDetailsFunc(txid) {
   try {
     var tx = await promisify("getrawtransaction", [txid, 1]);
 
@@ -35,7 +35,7 @@ exports.getTxDetailsFunc = async function getTxDetailsFunc(txid) {
       var vins = [];
       for (let j = 0; j < tx.vin.length; j++) {
         var vin = tx.vin[j];
-        var address = await getTxOutFunc(vin['txid'], vin['vout']);
+        var address = await getTxOutFunc(vin["txid"], vin["vout"]);
         if (address) vin.address = address;
         vins.push(vin);
       }
@@ -48,7 +48,7 @@ exports.getTxDetailsFunc = async function getTxDetailsFunc(txid) {
   return undefined;
 }
 
-exports.getBlockDetailsFunc = async function getBlockDetailsFunc(hash) {
+async function getBlockDetailsFunc(hash) {
   try {
     if (String(hash).length < 10) {
       hash = await promisify("getblockhash", [Number(hash)]);
@@ -65,3 +65,8 @@ exports.getBlockDetailsFunc = async function getBlockDetailsFunc(hash) {
     return undefined;
   }
 }
+
+exports.promisify = promisify;
+exports.getTxOutFunc = getTxOutFunc;
+exports.getTxDetailsFunc = getTxDetailsFunc;
+exports.getBlockDetailsFunc = getBlockDetailsFunc;
