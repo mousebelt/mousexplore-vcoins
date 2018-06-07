@@ -1,3 +1,4 @@
+const _ = require('lodash');
 var config = require("../config");
 var client = config.localNode;
 
@@ -36,7 +37,7 @@ async function getTxServiceInfo() {
 }
 
 async function saveTxServiceInfo(lastblock) {
-  await TxServiceInofModel.findOne(async function(e, info) {
+  await TxServiceInofModel.findOne(async function (e, info) {
     if (!e) {
       if (info) {
         info.set({ lastblock });
@@ -66,7 +67,7 @@ async function getAddrServiceInfo() {
 }
 
 async function saveAddrServiceInfo(lastTxid, lastTxOffset) {
-  await AddrServiceInofModel.findOne(async function(e, info) {
+  await AddrServiceInofModel.findOne(async function (e, info) {
     if (!e) {
       if (info) {
         info.set({
@@ -217,6 +218,7 @@ async function CheckUpdatedAddresses() {
               }
 
               var addresses = inTxInfo.scriptPubKey.addresses;
+              var value = inTxInfo.value;
               for (let k = 0; k < addresses.length; k++) {
                 // Save Info
                 var addressRow = await AddressModel.findOne({
@@ -233,10 +235,14 @@ async function CheckUpdatedAddresses() {
                 if (addressRow.txs.indexOf(txid) == -1) {
                   addressRow.txs.push(txid);
                 }
-                if (
-                  addressRow.txsIn.indexOf({ txid: inTxid, vout: inVout }) == -1
-                ) {
-                  addressRow.txsIn.push({ txid: inTxid, vout: inVout });
+
+                var index = _.findIndex(addressRow.txsIn, function (o) { return o.txid == inTxid && o.vout == inVout; });
+                if (index == -1) {
+                  addressRow.txsIn.push({
+                    txid: inTxid, vout: inVout, value
+                  });
+                } else {
+                  addressRow.txsIn[index].value += value;
                 }
                 try {
                   await addressRow.save();
@@ -252,6 +258,7 @@ async function CheckUpdatedAddresses() {
           if (vout && vout.length > 0) {
             for (let j = 0; j < vout.length; j++) {
               var addresses = vout[j].scriptPubKey.addresses;
+              var value = vout[j].value;
               if (addresses && addresses.length > 0) {
                 for (let k = 0; k < addresses.length; k++) {
                   // Save Info
@@ -267,8 +274,12 @@ async function CheckUpdatedAddresses() {
                   if (addressRow.txs.indexOf(txid) == -1) {
                     addressRow.txs.push(txid);
                   }
-                  if (addressRow.txsOut.indexOf({txid, vout: j}) == -1) {
-                    addressRow.txsOut.push({txid, vout: j});
+
+                  var index = _.findIndex(addressRow.txsOut, function (o) { return o.txid == txid && o.vout == j; });
+                  if (index == -1) {
+                    addressRow.txsOut.push({ txid, vout: j, value });
+                  } else {
+                    addressRow.txsOut[index].value += value;
                   }
                   try {
                     await addressRow.save();
@@ -278,7 +289,7 @@ async function CheckUpdatedAddresses() {
                     ); // Should dump errors here
                     throw e;
                   }
-              }
+                }
               }
             }
           }
@@ -305,7 +316,7 @@ async function addressService() {
   setTimeout(addressService, config.ADDR_CRON_TIME);
 }
 
-exports.start_cronService = async function() {
+exports.start_cronService = async function () {
   transactionService();
   addressService();
 };

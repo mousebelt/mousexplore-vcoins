@@ -40,4 +40,5 @@ module.exports = function (app) {
     app.get(prefix + '/tx/:txid', btcController.getTransactionInfo);
     app.get(prefix + '/txdetails/:txid', btcController.getTransactionDetails);
     app.get(prefix + '/address/txs/:address', btcController.getAddressTransactions);
+    app.get(prefix + '/balance/:address', btcController.getBalance);
 }
