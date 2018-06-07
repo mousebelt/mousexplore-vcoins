@@ -56,23 +56,6 @@ async function getBlockDetailsFunc(hash) {
   try {
     if (String(hash).length < 10) hash = Number(hash);
     var block = await promisify('getblock', [hash, 1]);
-    var txs = [];
-    for (let i = 0; i < block.tx.length; i++) {
-      var tx = block.tx[i];
-      if (tx && tx.vin && tx.vin.length > 0) {
-        var vins = [];
-        for (let j = 0; j < tx.vin.length; j++) {
-          var vin = tx.vin[j];
-          var address = await getTxOutFunc(vin['txid'], vin['vout']);
-          if (address) vin.address = address;
-          vins.push(vin);
-        }
-        tx.vin = vins;
-      }
-  
-      txs.push(tx);
-    }
-    block.tx = txs;
     return block;
   } catch (error) {
     return undefined;
