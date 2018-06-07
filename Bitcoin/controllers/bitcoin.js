@@ -5,71 +5,11 @@ const client = config.localNode;
 const TransactionModel = require("../model/transactions");
 const AddressModel = require("../model/address");
 
+const UtilsModule = require("../modules/utils");
+
 // var TransactionModel = require('../model/transactions');
 
-var promisify = function promisify(fn, args) {
-  return new Promise((resolve, reject) => {
-    try {
-      client.call(fn, args, function (err, result) {
-        if (err) {
-          reject(err);
-        }
-        resolve(result);
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
-
-async function getTxOutFunc(txid, vout) {
-  try {
-    if (txid !== undefined && vout !== undefined) {
-      var out = await promisify("getrawtransaction", [txid, 1]);
-      return out.vout[vout] ? out.vout[vout] : undefined;
-    }
-  } catch (error) { }
-  return undefined;
-}
-
-async function getTxDetailsFunc(txid) {
-  try {
-    var tx = await promisify("getrawtransaction", [txid, 1]);
-
-    if (tx && tx.vin && tx.vin.length > 0) {
-      var vins = [];
-      for (let j = 0; j < tx.vin.length; j++) {
-        var vin = tx.vin[j];
-        var address = await getTxOutFunc(vin['txid'], vin['vout']);
-        if (address) vin.address = address;
-        vins.push(vin);
-      }
-      tx.vin = vins;
-    }
-    return tx;
-  } catch (error) {
-    console.log(error);
-  }
-  return undefined;
-}
-
-async function getBlockDetailsFunc(hash) {
-  try {
-    if (String(hash).length < 10) {
-      hash = await promisify("getblockhash", [Number(hash)]);
-    }
-    var block = await promisify("getblock", [hash]);
-    var txs = [];
-    for (let i = 0; i < block.tx.length; i++) {
-      var txdetails = await getTxDetailsFunc(block.tx[i]);
-      if (txdetails) txs.push(txdetails);
-    }
-    block.tx = txs;
-    return block;
-  } catch (error) {
-    return undefined;
-  }
-}
+var promisify = UtilsModule.promisify;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// RPC Call apis ////
@@ -302,7 +242,7 @@ exports.getBlock = async (req, res) => {
 exports.getBlockDetails = async (req, res) => {
   var hash = req.params.hash;
 
-  var block = await getBlockDetailsFunc(hash);
+  var block = await UtilsModule.getBlockDetailsFunc(hash);
   if (block) return res.json({ status: 200, msg: "sccuess", data: block });
   return res.json({ status: 400, msg: "Error occured !" });
 };
@@ -501,7 +441,7 @@ exports.getSearch = async (req, res) => {
   try {
     if (key.length < 10) {
       // block process
-      var block = await getBlockDetailsFunc(key);
+      var block = await UtilsModule.getBlockDetailsFunc(key);
       if (block) return res.json({ status: 200, msg: "sccuess", data: { result: block, type: 'block' } });
       return res.json({ status: 400, msg: "Error occured !" });
     } else if (key.length >= 25 && key.length <= 34) {
@@ -509,11 +449,11 @@ exports.getSearch = async (req, res) => {
       return res.json({ status: 200, msg: "sccuess", data: { result: `address is not implemented yet, address: ${key} !`, type: 'address' } });
     } else if (key.length >= 64 && key.length <= 66) { // block or txid process
       // txdetails
-      var txdetails = await getTxDetailsFunc(key);
+      var txdetails = await UtilsModule.getTxDetailsFunc(key);
       if (txdetails) return res.json({ status: 200, msg: "sccuess", data: { result: txdetails, type: 'transaction' } });
 
       // block details
-      var block = await getBlockDetailsFunc(key);
+      var block = await UtilsModule.getBlockDetailsFunc(key);
       if (block) return res.json({ status: 200, msg: "sccuess", data: { result: block, type: 'block' } });
 
       return res.json({ status: 400, msg: "No result !" });
@@ -578,7 +518,7 @@ exports.getTransactionInfo = (req, res) => {
 
 exports.getTransactionDetails = async (req, res) => {
   const txid = req.params.txid;
-  var txdetails = await getTxDetailsFunc(txid);
+  var txdetails = await UtilsModule.getTxDetailsFunc(txid);
   if (txdetails) return res.json({ status: 200, msg: "sccuess", data: txdetails });
 
   return res.json({ status: 400, msg: "errors" });
@@ -607,7 +547,7 @@ exports.getTransactions = async function (req, res) {
         if (!error) {
           var txs = [];
           for (let i = 0; i < rows.length; i++) {
-            var tx = await getTxDetailsFunc(rows[i].txid);
+            var tx = await UtilsModule.getTxDetailsFunc(rows[i].txid);
             if (tx) txs.push(tx);
             // try {
             //   var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
@@ -691,7 +631,7 @@ exports.getAddressTransactions = async function (req, res) {
       var toReturn = [];
       for (let i = txs.length - 1; i >= 0; i--) {
         var txid = txs[i];
-        var txInfo = await getTxDetailsFunc(txid);
+        var txInfo = await UtilsModule.getTxDetailsFunc(txid);
         toReturn.push(txInfo);
       }
       return res.json({
