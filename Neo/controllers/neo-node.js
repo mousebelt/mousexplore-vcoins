@@ -58,8 +58,19 @@ async function getBlockDetailsFunc(hash) {
     var block = await promisify('getblock', [hash, 1]);
     var txs = [];
     for (let i = 0; i < block.tx.length; i++) {
-      var txdetails = await getTxDetailsFunc(block.tx[i]);
-      txs.push(txdetails);
+      var tx = block.tx[i];
+      if (tx && tx.vin && tx.vin.length > 0) {
+        var vins = [];
+        for (let j = 0; j < tx.vin.length; j++) {
+          var vin = tx.vin[j];
+          var address = await getTxOutFunc(vin['txid'], vin['vout']);
+          if (address) vin.address = address;
+          vins.push(vin);
+        }
+        tx.vin = vins;
+      }
+  
+      txs.push(tx);
     }
     block.tx = txs;
     return block;
@@ -126,11 +137,21 @@ exports.getBlockByHash = (req, res) => {
   var hash = req.params.hash;
   try {
     if (hash.length < 10) hash = Number(hash);
-    client.call("getblock", [hash, 1], function (err, result) {
+    client.call("getblock", [hash, 1], function (err, block) {
       if (err) {
         return res.json({ status: 400, msg: "errors", data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      var txs = block.tx;
+      if (txs && txs.length > 0) {
+        var newTxs = [];
+        for (let j = 0; j < txs.length; j++) {
+          newTxs.push(txs[j].txid);
+        }
+
+        block.tx = newTxs;
+      }
+
+      return res.json({ status: 200, msg: "sccuess", data: block });
     });
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });

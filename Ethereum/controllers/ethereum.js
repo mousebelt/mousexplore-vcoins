@@ -254,7 +254,7 @@ exports.getBlockByHash = async function (req, res) {
   var hash = req.params.hash;
   try {
     if (hash.length < 10) hash = Number(hash);
-    var blockdata = await web3.eth.getBlock(hash, true);
+    var blockdata = await web3.eth.getBlock(hash, false);
     res.json({ status: 200, msg: "success", data: blockdata });
   } catch (e) {
     res.status(400).json({ error: e });
