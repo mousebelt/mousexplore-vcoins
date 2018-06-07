@@ -87,7 +87,6 @@ async function saveAddrServiceInfo(lastTxid, lastTxOffset) {
 }
 
 async function CheckUpdatedTransactions() {
-  filelog("CheckUpdatedTransactions starting...");
   var lastblock;
   var txServiceInfo = await getTxServiceInfo();
   if (txServiceInfo) {
@@ -141,8 +140,6 @@ async function CheckUpdatedTransactions() {
 
 async function CheckUpdatedAddresses() {
   // TODO: solve genesis block coinbase transactions - 4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b
-  filelog("CheckUpdatedAddresses starting...");
-
   var lastTxid, lastTxOffset;
   var serviceInfo = await getAddrServiceInfo();
   if (serviceInfo) {
@@ -308,8 +305,6 @@ async function addressService() {
 }
 
 exports.start_cronService = async function() {
-  filelog("Start cron service");
-
   transactionService();
   addressService();
 };
