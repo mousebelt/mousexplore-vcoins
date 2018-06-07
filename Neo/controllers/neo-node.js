@@ -535,18 +535,14 @@ exports.getTransactions = async function (req, res) {
         var txs = [];
         for (let i = 0; i < rows.length; i++) {
           const row = rows[i];
-          var tx = await getTxDetailsFunc(row.txid);
-          if (tx) txs.push(tx);
-          // try {
-          //   var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-          //   txs.push(tx);
-          // } catch (error) {
-          //   console.log("get transaction error: ", error);
-          //   txs.push({
-          //     txid: rows[i].txid,
-          //     unknown: true
-          //   });
-          // }
+          // var tx = await getTxDetailsFunc(row.txid);
+          // if (tx) txs.push(tx);
+          try {
+            var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
+            txs.push(tx);
+          } catch (error) {
+            console.log("get transaction error: ", error);
+          }
         }
         return res.json({
           status: 200,
