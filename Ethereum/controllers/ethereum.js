@@ -352,13 +352,10 @@ exports.getTransactionsFromAccount = async function (req, res) {
         for (let i = 0; i < rows.length; i++) {
           try {
             var tx = await web3.eth.getTransaction(rows[i]["hash"]);
+            tx.timestamp = rows[i]['timestamp'];
             txs.push(tx);
           } catch (error) {
             console.log("get transaction error: ", error);
-            txs.push({
-              hash: rows[i].hash,
-              error: true
-            });
           }
         }
         return res.json({ status: 200, msg: "success", data: { total, result: txs } });
