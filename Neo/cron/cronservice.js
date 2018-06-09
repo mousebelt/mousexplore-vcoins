@@ -7,6 +7,8 @@ var TokenModel = require("../model/tokens");
 var TxServiceInofModel = require("../model/txServiceInfo");
 var AddrServiceInofModel = require("../model/addrServiceInfo");
 
+var UtilsModule = require("../modules/utils");
+
 var fs = require('fs');
 var Log = require('log'),
   log = new Log('debug', fs.createWriteStream(__dirname + '/debug.log', { flags: 'a' }));
@@ -88,14 +90,12 @@ async function saveAddrServiceInfo(lastTxid, lastTxOffset) {
 }
 
 async function CheckUpdatedTransactions() {
-  filelog('CheckUpdatedTransactions starting...');
   var lastblock = 0, lastTxIndex = 0;
   var txServiceInfo = await getTxServiceInfo();
   if (txServiceInfo) {
     lastblock = txServiceInfo.lastblock;
     lastTxIndex = txServiceInfo.lastTxIndex;
   }
-  filelog({ txServiceInfo });
 
   try {
     var blockCount = await localNode.getBlockCount();
@@ -113,11 +113,15 @@ async function CheckUpdatedTransactions() {
             // Save Transaction Info
             var txRow = await TransactionModel.findOne({ txid });
             if (!txRow) {
-
+              var asset;
+              try {
+                asset = vout[0].asset;
+              } catch (error) { }
               txRow = new TransactionModel({
                 txid, size, type, version, vin, vout, sys_fee, net_fee, nonce,
                 blockIndex: blockdata.index,
-                blockTime: blockdata.time
+                blockTime: blockdata.time,
+                asset
               });
 
               try {
@@ -152,15 +156,12 @@ async function CheckUpdatedTransactions() {
 }
 
 async function CheckUpdatedAddresses() {
-  filelog('CheckUpdatedAddresses starting...');
-
   var lastTxid = "", lastTxOffset = 0;
   var serviceInfo = await getAddrServiceInfo();
   if (serviceInfo) {
     lastTxid = serviceInfo.lastTxid;
     lastTxOffset = serviceInfo.lastTxOffset;
   }
-  filelog({ serviceInfo });
 
   var arrTxs = await TransactionModel.find().skip(lastTxOffset).limit(config.ADDR_CRON_TX_COUNT);
 
@@ -254,17 +255,13 @@ async function CheckUpdatedAddresses() {
 }
 
 async function transactionService() {
-  filelog("Start transaction service ...");
   await CheckUpdatedTransactions();
   setTimeout(transactionService, config.TX_CRON_TIME);
-  filelog("Done transaction service .");
 }
 
 async function addressService() {
-  filelog("Start address service ...");
   await CheckUpdatedAddresses();
   setTimeout(addressService, config.ADDR_CRON_TIME);
-  filelog("Done address service .");
 }
 
 exports.start_cronService = async function () {

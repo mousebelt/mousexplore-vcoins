@@ -1,6 +1,7 @@
 # Public Rest API for Ethereum Node
 
 vcoin apis  
+>prefix: /api/v1  
 
 # Summary
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
@@ -21,7 +22,7 @@ vcoin apis
 
 ## Get Block list from offset and count
 ```
- GET /api/v1/blocks
+ GET /blocks
 ```
 
 get block list in latest order from offset and count.
@@ -77,7 +78,7 @@ block = {
 
 ## Get transaction list by offset, count, order
 ```
- GET /api/v1/transactions
+ GET /transactions
 ```
 
 Get transaction list.
@@ -134,7 +135,7 @@ transaction = {
 
 ## Get Block by hash or height
 ```
- GET /api/v1/block/:hash
+ GET /block/:hash
 ```
 
 Get block by hash or height
@@ -161,7 +162,7 @@ hash | String | YES | block hash or block number
 
 ## Get block details by hash or height
 ```
- GET /api/v1/blockdetails/:hash
+ GET /blockdetails/:hash
 ```
 
 Get block details by hash or height
@@ -189,7 +190,7 @@ hash | String | YES | block hash or block number
 
 ## Get transaction from hash
 ```
- GET /api/v1/tx/:hash
+ GET /tx/:hash
 ```
 
 Get transaction from hash
@@ -221,7 +222,7 @@ hash | String | YES | transaction hash
 
 ## Get transaction details from hash
 ```
- GET /api/v1/txdetails/:hash
+ GET /txdetails/:hash
 ```
 
 Get transaction details from hash
@@ -310,7 +311,7 @@ txdetails = {
 
 ## Get address related transaction by offset, count, order
 ```
- GET /api/v1/address/txs/:address
+ GET /address/txs/:address
 ```
 
 Get address related transactions
@@ -346,7 +347,7 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
 
 ## Get Balance
 ```
-GET /api/v1/balance/:address
+GET /balance/:address
 ```
 Get balance of specified address as unit of ETH.
 
