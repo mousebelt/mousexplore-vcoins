@@ -6,61 +6,12 @@ const client = config.client;
 var TransactionModel = require("../model/transactions");
 var AddressModel = require("../model/address");
 
-var promisify = function promisify(fn, args) {
-  return new Promise((resolve, reject) => {
-    try {
-      client.call(fn, args, function (err, result) {
-        if (err) {
-          reject(err);
-        }
-        resolve(result);
-      });
-    } catch (error) {
-      reject(error);
-    }
-  });
-};
+var UtilsModule = require("../modules/utils");
 
-async function getTxOutFunc(txid, vout) {
-  try {
-    if (txid !== undefined && vout !== undefined) {
-      var out = await promisify("getrawtransaction", [txid, 1]);
-      return out.vout[vout] ? out.vout[vout] : undefined;
-    }
-  } catch (error) { }
-  return undefined;
-}
-
-async function getTxDetailsFunc(txid) {
-  try {
-    var tx = await promisify("getrawtransaction", [txid, 1]);
-
-    if (tx && tx.vin && tx.vin.length > 0) {
-      var vins = [];
-      for (let j = 0; j < tx.vin.length; j++) {
-        var vin = tx.vin[j];
-        var address = await getTxOutFunc(vin['txid'], vin['vout']);
-        if (address) vin.address = address;
-        vins.push(vin);
-      }
-      tx.vin = vins;
-    }
-    return tx;
-  } catch (error) {
-    console.log(error);
-  }
-  return undefined;
-}
-
-async function getBlockDetailsFunc(hash) {
-  try {
-    if (String(hash).length < 10) hash = Number(hash);
-    var block = await promisify('getblock', [hash, 1]);
-    return block;
-  } catch (error) {
-    return undefined;
-  }
-}
+var promisify = UtilsModule.promisify;
+var getTxOutFunc = UtilsModule.getTxOutFunc;
+var getTxDetailsFunc = UtilsModule.getTxDetailsFunc;
+var getBlockDetailsFunc = UtilsModule.getBlockDetailsFunc;
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// RPC Call apis ////

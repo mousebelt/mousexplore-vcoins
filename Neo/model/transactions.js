@@ -13,6 +13,9 @@ var transactionSchema = new mongoose.Schema({
 	
 	blockIndex: Number,
 	blockTime: Number,
+
+	asset: String,
+
 	updatedAt: Date
 });
 
