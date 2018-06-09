@@ -1,0 +1,12 @@
+[Unit]
+Description=neo
+ 
+[Service]
+Type=simple
+User=root
+Restart=always
+WorkingDirectory=/home/ubuntu/neo-cli
+ExecStart=/usr/bin/dotnet neo-cli.dll /rpc
+ 
+[Install]
+WantedBy=default.target
