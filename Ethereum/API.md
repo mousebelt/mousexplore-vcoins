@@ -11,7 +11,7 @@ vcoin apis
 [Get transaction from hash](#get-transaction-from-hash)  
 [Get transaction details from hash](#get-transaction-details-from-hash)  
 [Get transactions from account by offset, count, order](#get-transactions-from-account-by-offset-count-order)  
-[Get transaction count from account](#get-transaction-count-from-account)
+[Get transaction count from account](#get-transaction-count-from-account)  
 [Get Balance](#get-balance)  
 [Search](#search)  
 [Send signed transaction](#send-signed-transaction)  
@@ -87,7 +87,7 @@ Get transaction list.
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Default | Description
------------- | ------------ | ------------ | ------------
+------------ | ------------ | ------------ | ------------ | ------------
 contract | String | NO | 0 | address of specified contract
 offset | Number | NO | 0 | offset
 count | Number | NO | 10 | transaction count
