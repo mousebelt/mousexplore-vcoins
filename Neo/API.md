@@ -5,7 +5,7 @@ neo-vcoin apis
 ## Summary
 ### Utility apis
 [get latest blocks from offset, count](#getBlocks)  
-[get transactions by offset, count, order](#getTransactions)  
+[get transactions by offset, count, order, contract](#getTransactions)  
 [get block by hash or height](#getBlockByHash)  
 [get block details by hash or height](#getBlockDetails)  
 [get transaction by txid](#getTx)  
@@ -55,7 +55,7 @@ count | Number | NO | 10 | block count
 
 <a name="getTransactions"/>
 
-- get transactions by offset, count, order
+- get transactions by offset, count, order, contract
 
 ```
 GET /transactions
@@ -66,7 +66,7 @@ Name | Type | Mandatory | Default | Description
 offset | Number | NO | 0 | offset
 count | Number | NO | 10 | transaction count
 order | Number | NO | 0 | 0 => newest first, 1 => oldest first
-token_hash | String | NO | undefined | undefined => all transactions
+contract | String | NO | undefined | contract address. undefined => all transactions
 
 ```
  * @return
