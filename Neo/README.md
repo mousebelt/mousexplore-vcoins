@@ -40,9 +40,9 @@ testnet config (json-rpc port: 20332)
 https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 
 >cp ./neo.service /etc/systemd/system/neo.service
->systemctl daemon-reload
->systemctl enable neo.service
->systemctl start neo
+>systemctl daemon-reload  
+>systemctl enable neo.service  
+>systemctl start neo  
 
 * check the status
 >service neo status
