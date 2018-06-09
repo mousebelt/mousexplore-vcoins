@@ -17,32 +17,31 @@ var getBlockDetailsFunc = UtilsModule.getBlockDetailsFunc;
 //// RPC Call apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//Asset
-/**
- * @description Returns the balance of the corresponding asset in the wallet, based on the specified asset number.
- * 
- * @method GET /balance
- * 
- * @param {String} assetId : "025d82f7b00a9ff1cfe709abe3c4741a105d067178e645bc3ebad9bc79af47d4" 
- * 
- * @return
- * { "status": 200, "msg": "success", "data": balance }
- * 
- * balance: {
-    "Balance": "1.01",
-    "Confirmed": "1.01"
+exports.getBalance = async function (req, res) {
+  var address = req.params.address;
+
+  // logic
+  try {
+    var addrRow = await AddressModel.findOne({ address });
+    if (!addrRow) return res.json({ status: 400, msg: "No address in db !" });
+
+    var total_received = 0;
+    for (let i = 0; i < addrRow.txsOut.length; i++) {
+      var value = addrRow.txsOut[i].value;
+      total_received += value;
     }
- */
-exports.getBalance = function (req, res) {
-  var assetId = req.params.assetId;
-  localNode
-    .getBalance(assetId)
-    .then(function (result) {
-      res.json({ status: 200, msg: "success", data: result });
-    })
-    .catch(function (err) {
-      res.json({ status: 400, msg: "errors", data: err });
-    });
+
+    var total_spent = 0;
+    for (let i = 0; i < addrRow.txsIn.length; i++) {
+      var value = addrRow.txsIn[i].value;
+      total_spent += value;
+    }
+
+    var balance = total_received - total_spent;
+    return res.json({ status: 200, msg: 'success', data: { address, balance, total_received, total_spent, balance, n_tx: addrRow.txs.length } });
+  } catch (error) {
+    return res.json({ status: 400, msg: "error occured !" });
+  }
 };
 
 //Block
@@ -473,7 +472,7 @@ exports.getTransactions = async function (req, res) {
   else condition = { blockTime: -1 };
 
   var findCond = {};
-  if (contract && contract!='') findCond = {asset: contract};
+  if (contract && contract != '') findCond = { asset: contract };
   // logic
   try {
     var total = await TransactionModel.find(findCond).count();

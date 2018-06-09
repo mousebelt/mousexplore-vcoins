@@ -7,12 +7,12 @@ var addressSchema = new mongoose.Schema({
   txsIn: [{
     txid: String,
     inIndex: Number,
-    value: String, // value of asset & address
+    value: Number, // value of asset & address
   }],
   txsOut: [{
     txid: String,
     outIndex: Number,
-    value: String
+    value: Number
   }],
   txs: [String],
 
