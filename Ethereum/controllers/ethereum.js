@@ -16,7 +16,7 @@ async function getTransactionDetailsFunc(hash) {
       transaction.block = blockdata;
       transaction.txreceipt = txreceipt;
       transaction.fee = fee;
-    } catch (e) {}
+    } catch (e) { }
     return transaction;
   } catch (error) {
     console.log("getTransaction: we have a promblem: ", error); // Should dump errors here
@@ -24,14 +24,14 @@ async function getTransactionDetailsFunc(hash) {
   }
 }
 
-exports.getBalance = function(req, res) {
+exports.getBalance = function (req, res) {
   var addr = req.params.address;
 
   // Show the address in the console.
   //console.log('Address:', addr);
 
   // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.getBalance(addr, function(error, result) {
+  web3.eth.getBalance(addr, function (error, result) {
     if (!error) {
       var ethervalue = web3.utils.fromWei(result, "ether");
       //console.log('Ether:', ethervalue); // Show the ether balance after converting it from Wei
@@ -43,14 +43,14 @@ exports.getBalance = function(req, res) {
   });
 };
 
-exports.getBalance = function(req, res) {
+exports.getBalance = function (req, res) {
   var addr = req.params.address;
 
   // Show the address in the console.
   //console.log('Address:', addr);
 
   // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.getBalance(addr, function(error, result) {
+  web3.eth.getBalance(addr, function (error, result) {
     if (!error) {
       var ethervalue = web3.utils.fromWei(result, "ether");
       //console.log('Ether:', ethervalue); // Show the ether balance after converting it from Wei
@@ -62,11 +62,11 @@ exports.getBalance = function(req, res) {
   });
 };
 
-exports.createAccount = function(req, res) {
+exports.createAccount = function (req, res) {
   console.log("createAccount");
 
   // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.personal.newAccount(config.mainpass, function(error, result) {
+  web3.eth.personal.newAccount(config.mainpass, function (error, result) {
     if (!error) {
       console.log("New Account:", result);
       return res.json({ status: 200, msg: "success", data: result });
@@ -78,13 +78,13 @@ exports.createAccount = function(req, res) {
 };
 
 //to enable calls of personal functions, need to set --rpcapi eth,web3,personal when call geth
-exports.sendTransaction = function(req, res) {
+exports.sendTransaction = function (req, res) {
   console.log("sendTransaction", req.body);
   var from = req.body.from;
   var to = req.body.to;
   var value = req.body.value;
   // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.personal.unlockAccount(from, config.mainpass, function(
+  web3.eth.personal.unlockAccount(from, config.mainpass, function (
     error,
     result
   ) {
@@ -96,7 +96,7 @@ exports.sendTransaction = function(req, res) {
           to: to,
           value: web3.utils.toWei(value)
         },
-        function(err, hash) {
+        function (err, hash) {
           if (!err) {
             console.log("Send transaction: ", hash);
             return res.json({ status: 200, msg: "success", data: hash });
@@ -121,10 +121,10 @@ exports.sendTransaction = function(req, res) {
   });
 };
 
-exports.getUpdatedTransactions = function(req, res) {
+exports.getUpdatedTransactions = function (req, res) {
   var blocknum = req.body.blocknum;
 
-  var lastblock = web3.eth.getBlockNumber(async function(error, number) {
+  var lastblock = web3.eth.getBlockNumber(async function (error, number) {
     //console.log("lastblock= ", number);
 
     if (!error) {
@@ -163,11 +163,11 @@ exports.getUpdatedTransactions = function(req, res) {
 *   GasPrice is GWei unit
 *   Reward cannot be retrieved from node. Maybe should get it from etherscan
 */
-exports.blocklist = function(req, res) {
+exports.blocklist = function (req, res) {
   var blocknum = req.body.blocknum;
   var count = req.body.count;
 
-  web3.eth.getBlockNumber(async function(error, number) {
+  web3.eth.getBlockNumber(async function (error, number) {
     if (!error) {
       try {
         console.log("last number " + number);
@@ -231,14 +231,14 @@ exports.blocklist = function(req, res) {
  *
  * @returns { status: 200, msg: 'success', data: [block] }
  */
-exports.getBlocks = function(req, res) {
+exports.getBlocks = function (req, res) {
   var offset = Number(req.query.offset);
   var count = Number(req.query.count);
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
 
-  web3.eth.getBlockNumber(async function(error, number) {
+  web3.eth.getBlockNumber(async function (error, number) {
     if (!error) {
       try {
         var blocks = [];
@@ -266,7 +266,7 @@ exports.getBlocks = function(req, res) {
   });
 };
 
-exports.getBlockByHash = async function(req, res) {
+exports.getBlockByHash = async function (req, res) {
   var hash = req.params.hash;
   try {
     if (hash.length < 10) hash = Number(hash);
@@ -277,7 +277,7 @@ exports.getBlockByHash = async function(req, res) {
   }
 };
 
-exports.getBlockDetails = async function(req, res) {
+exports.getBlockDetails = async function (req, res) {
   var hash = req.params.hash;
   try {
     if (hash.length < 10) hash = Number(hash);
@@ -298,7 +298,7 @@ exports.getBlockDetails = async function(req, res) {
  *
  * @returns transaction list
  */
-exports.getTransactions = async function(req, res) {
+exports.getTransactions = async function (req, res) {
   var offset = Number(req.query.offset);
   var count = Number(req.query.count);
   var order = Number(req.query.order);
@@ -316,7 +316,7 @@ exports.getTransactions = async function(req, res) {
       .sort(condition)
       .skip(offset)
       .limit(count)
-      .exec(async function(error, rows) {
+      .exec(async function (error, rows) {
         if (error) {
           console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
           return res.json({ status: 400, msg: "DB error !", data: error });
@@ -342,7 +342,7 @@ exports.getTransactions = async function(req, res) {
   }
 };
 
-exports.getTransactionsFromAccount = async function(req, res) {
+exports.getTransactionsFromAccount = async function (req, res) {
   var address = req.params.address;
   var offset = Number(req.query.offset);
   var count = Number(req.query.count);
@@ -365,7 +365,7 @@ exports.getTransactionsFromAccount = async function(req, res) {
       .sort(cond)
       .skip(offset)
       .limit(count)
-      .exec(async function(error, rows) {
+      .exec(async function (error, rows) {
         if (error) {
           console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
           return res.json({ status: 400, msg: "DB error !", data: error });
@@ -401,13 +401,13 @@ exports.getTransactionsFromAccount = async function(req, res) {
 * @return count
 * 
 */
-exports.getTransactionCountFromAccount = async function(req, res) {
+exports.getTransactionCountFromAccount = async function (req, res) {
   var account = req.body.account;
 
   TransactionModel.find()
     .or([{ from: account }, { to: account }])
     .sort({ timestamp: -1 })
-    .exec(function(error, transactions) {
+    .exec(function (error, transactions) {
       if (!error) {
         return res.json({
           status: 200,
@@ -421,9 +421,9 @@ exports.getTransactionCountFromAccount = async function(req, res) {
     });
 };
 
-exports.getTransactionInfo = function(req, res) {
+exports.getTransactionInfo = function (req, res) {
   var hash = req.params.hash;
-  web3.eth.getTransaction(hash, async function(error, transaction) {
+  web3.eth.getTransaction(hash, async function (error, transaction) {
     if (error) {
       console.log("getTransaction: we have a promblem: ", error); // Should dump errors here
       return res.json({
@@ -436,7 +436,7 @@ exports.getTransactionInfo = function(req, res) {
   });
 };
 
-exports.getTransactionDetails = async function(req, res) {
+exports.getTransactionDetails = async function (req, res) {
   var hash = req.params.hash;
 
   var transaction = await getTransactionDetailsFunc(hash);
@@ -447,10 +447,10 @@ exports.getTransactionDetails = async function(req, res) {
 };
 
 //api for token related
-exports.getTokenList = function(req, res) {
+exports.getTokenList = function (req, res) {
   TokenModel.find()
     .sort({ symbol: 1 })
-    .exec(function(error, tokens) {
+    .exec(function (error, tokens) {
       if (!error) {
         console.log(tokens);
         return res.json({ status: 200, msg: "success", data: tokens });
@@ -461,11 +461,11 @@ exports.getTokenList = function(req, res) {
     });
 };
 
-exports.addToken = function(req, res) {
+exports.addToken = function (req, res) {
   var symbol = req.body.symbol;
   var address = req.body.address;
 
-  TokenModel.find({ symbol: symbol, address: address }).exec(function(
+  TokenModel.find({ symbol: symbol, address: address }).exec(function (
     error,
     tokens
   ) {
@@ -476,7 +476,7 @@ exports.addToken = function(req, res) {
       }
 
       var newToken = new TokenModel({ symbol: symbol, address: address });
-      newToken.save(function(err, token) {
+      newToken.save(function (err, token) {
         return res.json({ status: 200, msg: "success", data: token });
       });
     } else {
@@ -486,12 +486,12 @@ exports.addToken = function(req, res) {
   });
 };
 
-exports.removeToken = function(req, res) {
+exports.removeToken = function (req, res) {
   var symbol = req.body.symbol;
   var address = req.body.address;
 
   TokenModel.findOneAndRemove({ symbol: symbol, address: address }).exec(
-    function(error, tokens) {
+    function (error, tokens) {
       if (!error) {
         return res.json({ status: 200, msg: "success" });
       } else {
@@ -541,7 +541,7 @@ exports.getSearch = async (req, res) => {
             msg: "sccuess",
             data: { result: block, type: "block" }
           });
-      } catch (error) {}
+      } catch (error) { }
 
       return res.json({ status: 400, msg: "No result !" });
     } else {
@@ -549,5 +549,19 @@ exports.getSearch = async (req, res) => {
     }
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
+  }
+};
+
+exports.postSendSignedTransaction = function (req, res) {
+  var raw = req.body.raw;
+
+  try {
+    await web3.eth.sendSignedTransaction(raw)
+      .on('receipt', (receipt) => {
+        console.log(JSON.stringify(receipt));
+        return res.json({ status: 200, msg: "success", data: receipt });
+      });
+  } catch (error) {
+    return res.json({ status: 400, msg: "Error !", data: error });
   }
 };

@@ -11,7 +11,8 @@ vcoin apis
 [Get transaction details from hash](#get-transaction-details-from-hash)  
 [Get address related transaction by offset, count, order](#get-address-related-transaction-by-offset-count-order)  
 [Get Balance](#get-balance)  
-[search](#search)  
+[Search](#search)  
+[Send signed transaction](#send-signed-transaction)  
 
 ***
 
@@ -395,6 +396,27 @@ key param can be txid or blockNo, blockHash, address.
 type = 'block' => info = blockdetails
 type = 'transaction' => info = txdetails
 type = 'address' => info = addressInfo
+```
+
+* for failed case
+
+```javascript
+{ status: 400, msg: 'errors', data: err }
+```
+
+## Send signed transaction
+```
+ POST /sendsignedtransaction
+```
+
+Send signed transaction by raw data.
+
+### RETURN
+
+* for successed case
+
+```javascript
+{ status: 200, msg: 'sccuess', data: receipt }
 ```
 
 * for failed case
