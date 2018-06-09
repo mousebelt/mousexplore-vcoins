@@ -6,7 +6,7 @@ Type=simple
 User=root
 Restart=always
 WorkingDirectory=/home/ubuntu/neo-cli
-ExecStart=/usr/bin/dotnet neo-cli.dll /rpc
- 
+ExecStart=/usr/bin/dotnet /home/ubuntu/neo-cli/neo-cli.dll /rpc
+
 [Install]
 WantedBy=default.target
