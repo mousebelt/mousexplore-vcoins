@@ -558,8 +558,10 @@ exports.postSendSignedTransaction = function (req, res) {
   try {
     await web3.eth.sendSignedTransaction(raw)
       .on('receipt', (receipt) => {
-        console.log(JSON.stringify(receipt));
-        return res.json({ status: 200, msg: "success", data: receipt });
+        // console.log(JSON.stringify(receipt));
+        if (receipt)
+          return res.json({ status: 200, msg: "success", data: receipt });
+        return res.json({ status: 400, msg: "Empty receipt !" });
       });
   } catch (error) {
     return res.json({ status: 400, msg: "Error !", data: error });

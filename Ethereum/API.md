@@ -411,6 +411,13 @@ type = 'address' => info = addressInfo
 
 Send signed transaction by raw data.
 
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+raw | STRING | YES | raw data
+
+
 ### RETURN
 
 * for successed case
