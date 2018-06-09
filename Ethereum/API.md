@@ -10,7 +10,8 @@ vcoin apis
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
 [Get transaction from hash](#get-transaction-from-hash)  
 [Get transaction details from hash](#get-transaction-details-from-hash)  
-[Get address related transaction by offset, count, order](#get-address-related-transaction-by-offset-count-order)  
+[Get transactions from account by offset, count, order](#get-transactions-from-account-by-offset-count-order)  
+[Get transaction count from account](#get-transaction-count-from-account)
 [Get Balance](#get-balance)  
 [Search](#search)  
 [Send signed transaction](#send-signed-transaction)  
@@ -309,7 +310,7 @@ txdetails = {
 ```
 
 
-## Get address related transaction by offset, count, order
+## Get transactions from account by offset, count, order
 ```
  GET /address/txs/:address
 ```
@@ -344,6 +345,40 @@ order | Number | NO | 0 | 0 => newest first, 1 => oldest first
   "error": ""   //error message
 }
 ```
+
+## Get transaction count From Account
+```
+ GET /address/gettransactioncount/:address
+```
+
+Get count of transactions of an account.
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+address | String | YES | account address
+
+### RETURN
+
+* for successed case
+
+```javascript
+{
+  "status": 200
+  "msg": "success",
+  "data": 50
+}
+```
+
+* for failed case
+
+```javascript
+{
+  "status": 200
+  "msg": "fail",
+  "error": "invalid parameters"   //error message
+}
 
 ## Get Balance
 ```

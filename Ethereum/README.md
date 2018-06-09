@@ -541,7 +541,7 @@ count | Number | YES | count of blocks to get
 
 ## Get transaction count From Account
 ```
- POST /api/v1/account/txcount
+ GET /api/v1/address/gettransactioncount/:address
 ```
 
 Get count of transactions of an account.
@@ -550,26 +550,27 @@ Get count of transactions of an account.
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-account | String | YES | account address
+address | String | YES | account address
 
 ### RETURN
 
 * for successed case
-`status code:` 200
 
 ```javascript
 {
-"msg": "success",
-"data": 50
+  "status": 200
+  "msg": "success",
+  "data": 50
 }
 ```
 
 * for failed case
-`status code:` 400
 
 ```javascript
 {
-  "error": ""   //error message
+  "status": 200
+  "msg": "fail",
+  "error": "invalid parameters"   //error message
 }
 ```
 
