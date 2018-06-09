@@ -395,31 +395,29 @@ exports.getTransactionsFromAccount = async function (req, res) {
   }
 };
 
+
 /*
-* Get transactions count from Account
-* @account: account address to get transactions
-* @return count
+* Get transacti0n count from Account
+* @account: account address to get transaction count
+* @return transaction count
 * 
 */
-exports.getTransactionCountFromAccount = async function (req, res) {
-  var account = req.body.account;
+exports.getTransactionCount = async function (req, res) {
+  var address = req.params.address;
 
-  TransactionModel.find()
-    .or([{ from: account }, { to: account }])
-    .sort({ timestamp: -1 })
-    .exec(function (error, transactions) {
-      if (!error) {
-        return res.json({
-          status: 200,
-          msg: "success",
-          data: transactions.length
-        });
-      } else {
-        console.log("getTransactionsFromAccount: we have a promblem: ", error); // Should dump errors here
-        return res.json({ status: 400, msg: "DB error !", data: error });
-      }
-    });
-};
+  web3.eth.getTransactionCount(address, async function(error, count) {
+    if (!error) {
+      return res.json({
+        status: 200,
+        msg: "success",
+        data: count
+      });
+    } else {
+      console.log("getTransactionCount: we have a promblem: ", error); // Should dump errors here
+      return res.json({ status: 400, msg: "fail", data: error });
+    }
+  })
+}
 
 exports.getTransactionInfo = function (req, res) {
   var hash = req.params.hash;
