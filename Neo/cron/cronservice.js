@@ -172,15 +172,10 @@ async function CheckUpdatedAddresses() {
       // Save Address Info
       if (vin && vin.length > 0) {
         for (let j = 0; j < vin.length; j++) {
-          var inTxid = vin[j].txid;
-          var inVout = vin[j].vout;
+          // var inTx = await TransactionModel.findOne({ txid: inTxid });
+          var inTxInfo = await UtilsModule.getTxOutFunc(vin[j].txid, vin[j].vout)
+          if (!inTxInfo) continue;
 
-          var inTx = await TransactionModel.findOne({ txid: inTxid });
-          if (!inTx) {
-            filelog(`inTx not found. inTxid=${inTxid}`);
-          }
-
-          var inTxInfo = inTx.vout[inVout];
           // Save Info
           var addressRow = await AddressModel.findOne({ asset: inTxInfo.asset, address: inTxInfo.address });
           if (!addressRow) {
