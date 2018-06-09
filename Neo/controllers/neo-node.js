@@ -460,7 +460,7 @@ exports.getTxDetails = async function (req, res) {
     }
  */
 exports.getTransactions = async function (req, res) {
-  var token_hash = req.query.token_hash;
+  var contract = req.query.contract;
   var offset = Number(req.query.offset);
   var count = Number(req.query.count);
   var order = Number(req.query.order);
@@ -473,7 +473,7 @@ exports.getTransactions = async function (req, res) {
   else condition = { blockTime: -1 };
 
   var findCond = {};
-  if (token_hash && token_hash!='') findCond = {asset: token_hash};
+  if (contract && contract!='') findCond = {asset: contract};
   // logic
   try {
     var total = await TransactionModel.find(findCond).count();
