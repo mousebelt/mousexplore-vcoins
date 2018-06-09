@@ -552,7 +552,7 @@ exports.getSearch = async (req, res) => {
   }
 };
 
-exports.postSendSignedTransaction = function (req, res) {
+exports.postSendSignedTransaction = async function (req, res) {
   var raw = req.body.raw;
 
   try {
