@@ -292,6 +292,7 @@ exports.getBlockDetails = async function (req, res) {
 /**
  * Get transaction list by offset, count, order
  *
+ * @param {Number} contract
  * @param {Number} offset
  * @param {Number} count
  * @param {Number} order
@@ -299,6 +300,7 @@ exports.getBlockDetails = async function (req, res) {
  * @returns transaction list
  */
 exports.getTransactions = async function (req, res) {
+  var contract = Number(req.query.contract);
   var offset = Number(req.query.offset);
   var count = Number(req.query.count);
   var order = Number(req.query.order);
@@ -310,9 +312,15 @@ exports.getTransactions = async function (req, res) {
   if (order) condition = { timestamp: 1 };
   else condition = { timestamp: -1 };
 
+  var filter = {}
+  if (contract) {
+    filter = {from: contract, to: contract}
+  }
+
   try {
     var total = await TransactionModel.find().count();
     TransactionModel.find()
+      .or(filter)
       .sort(condition)
       .skip(offset)
       .limit(count)
