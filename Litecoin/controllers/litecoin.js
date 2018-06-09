@@ -674,13 +674,13 @@ exports.getBalance = async function (req, res) {
     var total_received = 0;
     for (let i = 0; i < addrRow.txsOut.length; i++) {
       var { txid, vout, value } = addrRow.txsOut[i];
-      total_received += value;
+      total_received += Number(value);
     }
 
     var total_spent = 0;
     for (let i = 0; i < addrRow.txsIn.length; i++) {
       var { txid, vout, value } = addrRow.txsIn[i];
-      total_spent += value;
+      total_spent += Number(value);
     }
 
     var balance = total_received - total_spent;

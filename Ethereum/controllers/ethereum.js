@@ -35,26 +35,7 @@ exports.getBalance = function (req, res) {
     if (!error) {
       var ethervalue = web3.utils.fromWei(result, "ether");
       //console.log('Ether:', ethervalue); // Show the ether balance after converting it from Wei
-      res.json({ status: 200, msg: "success", data: ethervalue });
-    } else {
-      console.log("we have a promblem: ", error); // Should dump errors here
-      return res.json({ status: 400, msg: "Error !", data: error });
-    }
-  });
-};
-
-exports.getBalance = function (req, res) {
-  var addr = req.params.address;
-
-  // Show the address in the console.
-  //console.log('Address:', addr);
-
-  // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.getBalance(addr, function (error, result) {
-    if (!error) {
-      var ethervalue = web3.utils.fromWei(result, "ether");
-      //console.log('Ether:', ethervalue); // Show the ether balance after converting it from Wei
-      return res.json({ status: 200, msg: "success", data: ethervalue });
+      res.json({ status: 200, msg: "success", data: { balance: ethervalue } });
     } else {
       console.log("we have a promblem: ", error); // Should dump errors here
       return res.json({ status: 400, msg: "Error !", data: error });
