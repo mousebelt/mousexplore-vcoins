@@ -21,7 +21,7 @@ https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 >cp ./geth.service /etc/systemd/system/geth.service  
 >systemctl daemon-reload  
 >systemctl enable geth.service  
-->systemctl start geth  
+>systemctl start geth  
  
 * check the status
 >service geth status
