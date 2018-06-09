@@ -684,6 +684,7 @@ exports.getBalance = async function (req, res) {
     }
 
     var balance = total_received - total_spent;
+    balance = Number(balance.toFixed(8));
     return res.json({ status: 200, msg: 'success', data: { address, balance, total_received, total_spent, balance, n_tx: addrRow.txs.length } });
   } catch (error) {
     return res.json({ status: 400, msg: "error occured !" });
