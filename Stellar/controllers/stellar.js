@@ -492,21 +492,19 @@ exports.getAccount = function (req, res) {
     .accountId(account)
     .call()
     .then(function (accountResult) {
-      console.log(accountResult);
-
       var info = {
         subentry_count: accountResult.subentry_count,
         flags: accountResult.flags,
         balances: accountResult.balances,
         thresholds: accountResult.thresholds,
-        signers: accountResult.signers
+        signers: accountResult.signers,
+        sequence: accountResult.sequence,
       };
 
       res.json({ status: 200, msg: "success", data: info });
     })
     .catch(function (err) {
-      console.log(err);
-      res.status(400).json({ error: err });
+      res.json({ status: 400, msg: 'Error !', data: err });
     });
 };
 
@@ -870,7 +868,7 @@ exports.getSearch = function (req, res) {
             fee: transactionResult.fee_paid
           };
 
-          res.status(200).json({ msg: "success", data: { result: info, type:  'transaction' } });
+          res.status(200).json({ msg: "success", data: { result: info, type: 'transaction' } });
         })
         .catch(function (err) {
           console.log(err);
