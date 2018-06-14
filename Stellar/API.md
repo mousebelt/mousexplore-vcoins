@@ -5,12 +5,12 @@ Stellar apis
 [Get ledgers](#get-ledgers)  
 [Get transactions](#get-transactions)  
 [Get ledger by sequence](#get-ledger-by-sequence)  
+[Get account information by accountID](#get-account-information-by-accountid)  
 
 [Get transactions by ledger](#get-transactions-by-ledger)  
 [Get Latest operations](#get-latest-operations)  
 [Get operations by transaction](#get-operations-by-transaction)  
 [Get transaction by transaction hash](#get-transaction-by-transaction-hash)  
-[Get account information by accountID](#get-account-information-by-accountid)  
 [Get operations by accountID](#get-operations-by-accountid)  
 [Get transactions by account](#get-transactions-by-account)  
 [Get payments by account](#get-payments-by-account)  
@@ -349,15 +349,7 @@ txHash | String | YES | hash of transaction
 
 ## Get account information by accountID
 
-/api/v1/account
-
-Get overview from account
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-account | String | YES | account ID
+GET /api/v1/account/:accountId
 
 
 ### RETURN
@@ -371,11 +363,6 @@ account | String | YES | account ID
 "data":
         {   
 		  "subentry_count": 1,
-		  "thresholds": {
-		    "low_threshold": 0,
-		    "med_threshold": 0,
-		    "high_threshold": 0
-		  },
 		  "flags": {
 		    "auth_required": false,
 		    "auth_revocable": false
@@ -393,6 +380,11 @@ account | String | YES | account ID
 		      "asset_type": "native"
 		    }
 		  ],
+		  "thresholds": {
+		    "low_threshold": 0,
+		    "med_threshold": 0,
+		    "high_threshold": 0
+		  },
 		  "signers": [
 		    {
 		      "public_key": "GBYLPSBGNBG2RNGOQ66RSSYLWOGD6MNYRFNEB4UH3QY6CBH5IPMPXIBH",
@@ -401,7 +393,7 @@ account | String | YES | account ID
 		      "type": "ed25519_public_key"
 		    }
 		  ],
-		  "data": {}
+		  "sequence": 344566789
         },
 }
 ```
