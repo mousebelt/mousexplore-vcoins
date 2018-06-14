@@ -485,7 +485,7 @@ exports.getTransaction = function (req, res) {
 * @return account info 
 */
 exports.getAccount = function (req, res) {
-  var account = req.body.account;
+  var account = req.params.account;
 
   server
     .accounts()
@@ -502,7 +502,7 @@ exports.getAccount = function (req, res) {
         signers: accountResult.signers
       };
 
-      res.status(200).json({ msg: "success", data: info });
+      res.json({ status: 200, msg: "success", data: info });
     })
     .catch(function (err) {
       console.log(err);

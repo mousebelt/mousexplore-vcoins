@@ -1,12 +1,18 @@
 [Unit]
-Description=neo
- 
+After=network-online.target
+Requires=network-online.target
+
 [Service]
-Type=simple
-User=root
-Restart=always
 WorkingDirectory=/home/ubuntu/neo-cli
-ExecStart=/usr/bin/dotnet /home/ubuntu/neo-cli/neo-cli.dll /rpc
+ExecStart=/usr/bin/dotnet neo-cli.dll /rpc
+ExecStop=kill -SIGINT `ps ax | grep neo-cli | grep -v grep | awk ‘{print $1}’`
+Restart=always
+StandardInput=tty-force
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=neoseed
+User=root
+Group=root
 
 [Install]
 WantedBy=default.target
