@@ -8,6 +8,8 @@ module.exports = function (app) {
     app.get('/api/v1/search/:key', StellarController.getSearch);
     app.get('/api/v1/account/:account', StellarController.getAccount);
 
+    app.post('/api/v1/transaction', StellarController.postTransaction);
+
     app.post('/api/create_account', StellarController.createAccount);
     app.post('/api/v1/ledger/txs', StellarController.getTransactionsForLedger);
     app.post('/api/v1/txs/operations', StellarController.getOperationsForTransaction);

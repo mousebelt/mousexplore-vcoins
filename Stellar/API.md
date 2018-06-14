@@ -6,6 +6,7 @@ Stellar apis
 [Get transactions](#get-transactions)  
 [Get ledger by sequence](#get-ledger-by-sequence)  
 [Get account information by accountID](#get-account-information-by-accountid)  
+[Post Transaction](#post-transaction)  
 
 [Get transactions by ledger](#get-transactions-by-ledger)  
 [Get Latest operations](#get-latest-operations)  
@@ -407,7 +408,49 @@ GET /api/v1/account/:accountId
 }
 ```
 
+## Post Transaction
 
+POST /api/v1/transaction
+
+
+Post transaction to stellar net
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+tx | String | YES | transaction data
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+	"status": 200,
+	"msg": "success",
+	"data": [
+		{   
+			"account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+			"timeStamp": "2015-09-24T10:07:09Z",
+			"type": 11,
+			"ledger": "payment",
+		},
+	],
+        ...
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  status: 400, msg: err_msg, data: error
+}
+```
 
 ## Get operations by accountID
 

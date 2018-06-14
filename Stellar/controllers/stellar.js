@@ -897,3 +897,14 @@ exports.getSearch = function (req, res) {
     res.json({ status: 400, msg: "Error !", data: error });
   }
 };
+
+exports.postTransaction = function (req, res) {
+  var tx = req.body.tx;
+  if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
+
+  server.submitTransaction(tx).then(function (result) {
+    res.json({ status: 200, msg: "success", data: result });
+  }).catch ((error) => {
+    res.json({ status: 400, msg: "Error !", data: error });
+  });
+};
