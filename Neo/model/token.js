@@ -1,8 +1,10 @@
 var mongoose = require("mongoose");
 
 var tokenSchema = new mongoose.Schema({
-  symbol: String,
-  address: String
+  name: String,
+  ticker: String,
+  asset: String,
+  type: String,
 });
 
 var Token = mongoose.model("Token", tokenSchema);
