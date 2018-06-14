@@ -1,18 +1,24 @@
 var mongoose = require("mongoose");
 
 var addressSchema = new mongoose.Schema({
-  asset: String, // 0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7
   address: String, // Ae2d6qj91YL3LVUMkza7WQsaTYjzjHm4z1
+
+  balance: [{
+    asset: String, // 0x602c79718b16e442de58778e148d0b1084e3b2dffd5de6b7b16cee7969282de7
+    value: Number,
+  }],
 
   txsIn: [{
     txid: String,
-    inIndex: Number,
+    n: Number,
     value: Number, // value of asset & address
+    asset: String,
   }],
   txsOut: [{
     txid: String,
-    outIndex: Number,
-    value: Number
+    n: Number,
+    value: Number,
+    asset: String
   }],
   txs: [String],
 
