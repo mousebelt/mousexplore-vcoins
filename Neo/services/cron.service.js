@@ -124,8 +124,8 @@ async function CheckUpdatedTransactions() {
       {
         for (let j = 0; j < vinDetails.length; j++) {
           var item = vinDetails[j];
-          if (!item || !item.asset || !item.value || !item.address || !item.txid || !item.vout) continue;
-
+          var value = Number(item.value);
+          if (!item || !item.asset || !value || !item.address || !item.txid || !item.vout) continue;
           // Save Info
           var addressRow = await AddressModel.findOne({ address: item.address });
           if (!addressRow) {
@@ -141,16 +141,16 @@ async function CheckUpdatedTransactions() {
             addressRow.txs.push(txid);
           }
           if (_.findIndex(addressRow.txsIn, function (o) { return o.txid == txid && o.n == j }) == -1) {
-            addressRow.txsIn.push({ txid, n: j, value: item.value, asset: item.asset });
+            addressRow.txsIn.push({ txid, n: j, value, asset: item.asset });
             // update balance
             var _index = _.findIndex(addressRow.balance, function (o) { return o.asset == item.asset });
             if (_index == -1) {
               var temp = {};
               temp.asset = item.asset;
-              temp.value = 0 - item.value;
+              temp.value = 0 - value;
               addressRow.balance.push(temp);
             } else {
-              addressRow.balance[_index].value -= item.value;
+              addressRow.balance[_index].value -= value;
             }
           }
 
@@ -160,7 +160,8 @@ async function CheckUpdatedTransactions() {
 
         for (let j = 0; j < vout.length; j++) {
           let { asset, address, value } = vout[j];
-          if (!asset || !address || value === undefined) continue;
+          value = Number(vout[j].value);
+          if (!asset || !address || !value) continue;
           // Save vout Info
           var addressRow = await AddressModel.findOne({ address });
           if (!addressRow) {

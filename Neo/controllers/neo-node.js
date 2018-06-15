@@ -5,6 +5,7 @@ const client = config.client;
 
 var TransactionModel = require("../model/transactions");
 var AddressModel = require("../model/address");
+var TokenModel = require("../model/token");
 
 var UtilsModule = require("../modules/utils");
 
@@ -25,20 +26,22 @@ exports.getBalance = async function (req, res) {
     var addrRow = await AddressModel.findOne({ address });
     if (!addrRow) return res.json({ status: 400, msg: "No address in db !" });
 
-    var total_received = 0;
-    for (let i = 0; i < addrRow.txsOut.length; i++) {
-      var value = addrRow.txsOut[i].value;
-      total_received += value;
+    // get tokens
+    var tokenRows = await TokenModel.find({});
+
+    var balance = [];
+    for (let i = 0; i < addrRow.balance.length; i++) {
+      var item = addrRow.balance[i];
+
+      var tokenRow = _.find(tokenRows, { 'asset': item.asset });
+      if (tokenRow) {
+        item.token = tokenRow;
+        item.ticker = tokenRow.ticker;
+      }
+      balance.push(item);
     }
 
-    var total_spent = 0;
-    for (let i = 0; i < addrRow.txsIn.length; i++) {
-      var value = addrRow.txsIn[i].value;
-      total_spent += value;
-    }
-
-    var balance = total_received - total_spent;
-    return res.json({ status: 200, msg: 'success', data: { address, balance, total_received, total_spent, balance, n_tx: addrRow.txs.length } });
+    return res.json({ status: 200, msg: 'success', data: { address, balance, n_tx: addrRow.txs.length } });
   } catch (error) {
     return res.json({ status: 400, msg: "error occured !" });
   }
@@ -472,7 +475,7 @@ exports.getTransactions = async function (req, res) {
   else condition = { blockTime: -1 };
 
   var findCond = {};
-  if (contract && contract != '') findCond = { asset: contract };
+  if (contract && contract != '') findCond = { assets: { $elemMatch: { $eq: contract } } };
   // logic
   try {
     var total = await TransactionModel.find(findCond).count();
