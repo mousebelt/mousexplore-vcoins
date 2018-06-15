@@ -1,4 +1,4 @@
-var lodash = require("lodash");
+var _ = require("lodash");
 
 var config = require("../config");
 var localNode = config.localNode;
@@ -11,7 +11,7 @@ var UtilsModule = require("../modules/utils");
 
 var fs = require('fs');
 var Log = require('log'),
-  log = new Log('debug', fs.createWriteStream(__dirname + '/debug.log', { flags: 'a' }));
+  log = new Log('debug', fs.createWriteStream('./cron.debug.log', { flags: 'a' }));
 // log = new Log('debug');
 
 function filelog(...params) { //
