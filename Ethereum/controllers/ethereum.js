@@ -24,23 +24,47 @@ async function getTransactionDetailsFunc(hash) {
   }
 }
 
-exports.getBalance = function (req, res) {
+exports.getBalance = async function (req, res) {
   var address = req.params.address;
 
-  // Show the address in the console.
-  //console.log('Address:', addr);
+  var balances = []
+  try {
+    // Use Wb3 to get the balance of the address, convert it and then show it in the console.
+    var ethBalance = await web3.eth.getBalance(address);
+    var ethervalue = web3.utils.fromWei(ethBalance, "ether");
+    balances["ETH"] = ethervalue
 
-  // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.getBalance(address, function (error, result) {
-    if (!error) {
-      var ethervalue = web3.utils.fromWei(result, "ether");
-      //console.log('Ether:', ethervalue); // Show the ether balance after converting it from Wei
-      res.json({ status: 200, msg: "success", data: { address, balance: ethervalue } });
-    } else {
-      console.log("we have a promblem: ", error); // Should dump errors here
-      return res.json({ status: 400, msg: "Error !", data: error });
+    var tokens = await TokenModel.find();
+
+    for (let i = 0; i < tokens.count; i ++) {
+      var token = tokens[i];
+      console.log(token.symbol);
+
+      if (address.slice(0, 2) == "0x") {
+        address = address.substring(2)
+      }
+
+      // '0x70a08231' is the contract 'balanceOf()' ERC20 token function in hex. A zero buffer is required and then we add the previously defined address with tokens
+      var contractData = ('0x70a08231000000000000000000000000' + address);
+
+      // Now we call the token contract with the variables from above, response will be a big number string 
+      var result = await web3.eth.call(token.address, contractData);
+
+      // Convert the result to a usable number string
+      var tokenBalance = web3.utils.toBN(result).toString(); 
+      // Change the string to be in Ether not Wei
+      tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
+      console.log(token.symbol + 'Tokens Owned: ' + tokenBalance); 
+      
+      balances[token.symbol] = tokenBalance;
     }
-  });
+
+    res.json({ status: 200, msg: "success", data: { balances: balances } });
+
+  } catch (e) {
+    console.log("we have a promblem: ", error); // Should dump errors here
+    return res.json({ status: 400, msg: "Error !", data: e });
+  }
 };
 
 exports.createAccount = function (req, res) {
