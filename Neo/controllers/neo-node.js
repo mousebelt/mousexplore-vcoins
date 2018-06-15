@@ -1,4 +1,5 @@
 // define local node object
+const _ = require('lodash');
 var config = require("../config");
 const localNode = config.localNode;
 const client = config.client;
