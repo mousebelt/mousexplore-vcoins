@@ -181,11 +181,11 @@ async function CheckUpdatedTransactions() {
             var _index = _.findIndex(addressRow.balance, function (o) { return o.asset == asset });
             if (_index == -1) {
               var temp = {};
-              temp.asset = item.asset;
-              temp.value = item.value;
+              temp.asset = asset;
+              temp.value = value;
               addressRow.balance.push(temp);
             } else {
-              addressRow.balance[_index].value += item.value;
+              addressRow.balance[_index].value += value;
             }
           }
 
