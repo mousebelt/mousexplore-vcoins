@@ -12,6 +12,7 @@ neo-vcoin apis
 [get transaction details by txid](#getTxDetails)  
 [get address related transactions](#getAddressTransactions)  
 [search](#search)  
+[Get the balance of the address](#getBalance)  
 
 ***
 
@@ -186,21 +187,18 @@ return: { status: 200, msg: 'success', data: { total, result: [txdetails] } }
 
 <a name="getBalance"/>
 
-- getBalance
+- Get the balance of the address.
 ```
- GET /balance
-
-Returns the balance of the corresponding asset in the wallet, based on the specified asset number.
-
- * @param {String} assetId : "025d82f7b00a9ff1cfe709abe3c4741a105d067178e645bc3ebad9bc79af47d4" 
- * 
- * @return
- * { "status": 200, "msg": "success", "data": balance }
- * 
- * balance: {
-    "Balance": "1.01",
-    "Confirmed": "1.01"
-    }
+ GET /balance/:address
+```
+```
+return { "status": 200, "msg": "success", "data": { address, balance, n_tx: addrRow.txs.length } }
+ balance: [
+     asset,
+     value,
+     ticker,
+     token
+ ]
 ```
 
 <a name="search"/>
