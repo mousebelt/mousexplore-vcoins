@@ -32,7 +32,9 @@ exports.getBalance = async function (req, res) {
 
     var balance = [];
     for (let i = 0; i < addrRow.balance.length; i++) {
-      var item = addrRow.balance[i];
+      var item = {};
+      item.asset = addrRow.balance[i].asset;
+      item.value = addrRow.balance[i].value;
 
       var tokenRow = _.find(tokenRows, { 'asset': item.asset });
       if (tokenRow) {
