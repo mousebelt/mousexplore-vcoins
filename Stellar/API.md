@@ -431,13 +431,7 @@ tx | String | YES | transaction data
 {
 	"status": 200,
 	"msg": "success",
-	"data": [
-		{   
-			"account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-			"timeStamp": "2015-09-24T10:07:09Z",
-			"type": 11,
-			"ledger": "payment",
-		},
+	"data": result,
 	],
         ...
 }
