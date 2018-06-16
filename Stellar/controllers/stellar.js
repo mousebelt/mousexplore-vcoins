@@ -360,23 +360,23 @@ exports.getOperations = function (req, res) {
 
       var records = body._embedded.records;
 
-      var operations = [];
-      for (let i = 0; i < records.length; i++) {
-        let info = records[i];
-        operations.push({
-          transaction: info.transaction_hash,
-          account: info.source_account,
-          type: info.type,
-          asset_type: info.asset_type,
-          asset_code: info.asset_code,
-          asset_issuer: info.asset_issuer,
-          from: info.from,
-          to: info.to,
-          amount: info.amount,
-          timestamp: info.created_at
-        });
-      }
-      res.json({ status: 200, msg: "success", data: { prev, next, result: operations } });
+      // var operations = [];
+      // for (let i = 0; i < records.length; i++) {
+      //   let info = records[i];
+      //   operations.push({
+      //     transaction: info.transaction_hash,
+      //     account: info.source_account,
+      //     type: info.type,
+      //     asset_type: info.asset_type,
+      //     asset_code: info.asset_code,
+      //     asset_issuer: info.asset_issuer,
+      //     from: info.from,
+      //     to: info.to,
+      //     amount: info.amount,
+      //     timestamp: info.created_at
+      //   });
+      // }
+      res.json({ status: 200, msg: "success", data: { prev, next, result: records } });
     } else {
       res.json({ status: 400, msg: 'Error !', data: error });
     }
