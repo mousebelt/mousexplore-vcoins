@@ -4,8 +4,6 @@ var TransactionModel = require("../model/transactions");
 var TokenModel = require("../model/tokens");
 
 /*
-geth --testnet --syncmode "fast" --rpc --rpcapi db,eth,net,web3,personal --cache=1024  --rpcport 8545 --rpcaddr 0.0.0.0 --rpccorsdomain "*
-testaccount 0xEc1A6b8FdaEb9285536695263ec736EEde60b277
 contract methodid
 dd62ed3e allowance(address,address)
 095ea7b3 approve(address,uint256)
@@ -71,12 +69,15 @@ exports.getBalance = async function (req, res) {
 
       // Convert the result to a usable number string
       var tokenBalance = web3.utils.toBN(result).toString(); 
-      console.log("balance: " + tokenBalance);
-      // Change the string to be in Ether not Wei
-      tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
-      console.log(token.symbol + ' Tokens Owned: ' + tokenBalance); 
-      
-      balances.push({symbol: token.symbol, balance: tokenBalance});
+      // console.log("balance: " + tokenBalance);
+
+      if (tokenBalance) {
+        // Change the string to be in Ether not Wei
+        tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
+        console.log(token.symbol + ' Tokens Owned: ' + tokenBalance); 
+        
+        balances.push({symbol: token.symbol, balance: tokenBalance});
+      }
     }
 
     // console.log(balances)
