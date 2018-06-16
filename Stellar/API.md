@@ -158,13 +158,13 @@ transaction = {
 	"source_account_sequence": "37676561222087438",
 	"fee_paid": 100,
 	"operation_count": 1,
-	"envelope_xdr": "AAA==...",
+	"envelope_xdr": "AAAAAFC2j9SysixQn8RyeXRhJhnqcjyVnf29w14zW7VHlxtZAAAAZACF2qIAADMOAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAAtdYXWC10qYa1qv557ecDDV+3nh1X/rE04it5XrMDkIMAAAACbkNudEdhbWVDb2luAAAAANbB3R4la0Re0aclrFcxYRZ6EvuynX9ctv/hAXlZTwWfAAAAAACYloAAAAAAAAAAAUeXG1kAAABAHh+czcfw48I+Y5bRbdRBvO/k6/OXaLMGxRXZJwWjlPTl3ErLCT91EnWMdWo+ztwSbhSIZhHAikL2bFJJ1ORoBw==",
 	"result_xdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
-	"result_meta_xdr": "AA=...",
-	"fee_meta_xdr": "AAA==...",
+	"result_meta_xdr": "AAAAAAAAAAEAAAAEAAAAAwCJdygAAAABAAAAAFC2j9SysixQn8RyeXRhJhnqcjyVnf29w14zW7VHlxtZAAAAAm5DbnRHYW1lQ29pbgAAAADWwd0eJWtEXtGnJaxXMWEWehL7sp1/XLb/4QF5WU8FnwAAATmpltyAf/////////8AAAABAAAAAAAAAAAAAAABAIl3KAAAAAEAAAAAULaP1LKyLFCfxHJ5dGEmGepyPJWd/b3DXjNbtUeXG1kAAAACbkNudEdhbWVDb2luAAAAANbB3R4la0Re0aclrFcxYRZ6EvuynX9ctv/hAXlZTwWfAAABOaj+RgB//////////wAAAAEAAAAAAAAAAAAAAAMAiXcoAAAAAQAAAAC11hdYLXSphrWq/nnt5wMNX7eeHVf+sTTiK3leswOQgwAAAAJuQ250R2FtZUNvaW4AAAAA1sHdHiVrRF7RpyWsVzFhFnoS+7Kdf1y2/+EBeVlPBZ8AAAE5klfvAH//////////AAAAAQAAAAAAAAAAAAAAAQCJdygAAAABAAAAALXWF1gtdKmGtar+ee3nAw1ft54dV/6xNOIreV6zA5CDAAAAAm5DbnRHYW1lQ29pbgAAAADWwd0eJWtEXtGnJaxXMWEWehL7sp1/XLb/4QF5WU8FnwAAATmS8IWAf/////////8AAAABAAAAAAAAAAA=",
+	"fee_meta_xdr": "AAAAAgAAAAMAiXcnAAAAAAAAAABQto/UsrIsUJ/Ecnl0YSYZ6nI8lZ39vcNeM1u1R5cbWQAAABdIYvbsAIXaogAAMw0AAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAiXcoAAAAAAAAAABQto/UsrIsUJ/Ecnl0YSYZ6nI8lZ39vcNeM1u1R5cbWQAAABdIYvaIAIXaogAAMw4AAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
 	"memo_type": "none",
 	"signatures": [
-		"Hh+czcfw48I+Y5bRbdRBvO/k6/OXaLMGxRXZJwWjlPTl3ErLCT91EnWMdWo+ztwSbhSIZhHAikL2bFJJ1ORoBw=="
+	"Hh+czcfw48I+Y5bRbdRBvO/k6/OXaLMGxRXZJwWjlPTl3ErLCT91EnWMdWo+ztwSbhSIZhHAikL2bFJJ1ORoBw=="
 	]
 }
 ```
@@ -242,16 +242,19 @@ count | Number | No | 10 | count of operations
 		next: "38693085491773441",
 		result: [
 			{
-				"transaction": "93c2d119d15ee12cacaa12944dd0ba653da7cd8d5970a38968cbddd156d3308d",
-				"account": "GBILND6UWKZCYUE7YRZHS5DBEYM6U4R4SWO73PODLYZVXNKHS4NVSE5X",
-				"type": "payment",
-				"asset_type": "credit_alphanum12",
-				"asset_code": "nCntGameCoin",
-				"asset_issuer": "GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB",
-				"from": "GBILND6UWKZCYUE7YRZHS5DBEYM6U4R4SWO73PODLYZVXNKHS4NVSE5X",
-				"to": "GC25MF2YFV2KTBVVVL7HT3PHAMGV7N46DVL75MJU4IVXSXVTAOIIHKCM",
-				"amount": "1.0000000",
-				"timestamp": "2018-05-17T09:04:35Z"
+				"id": "38693085491773441",
+                "paging_token": "38693085491773441",
+                "source_account": "GBILND6UWKZCYUE7YRZHS5DBEYM6U4R4SWO73PODLYZVXNKHS4NVSE5X",
+                "type": "payment",
+                "type_i": 1,
+                "created_at": "2018-05-17T09:04:35Z",
+                "transaction_hash": "93c2d119d15ee12cacaa12944dd0ba653da7cd8d5970a38968cbddd156d3308d",
+                "asset_type": "credit_alphanum12",
+                "asset_code": "nCntGameCoin",
+                "asset_issuer": "GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB",
+                "from": "GBILND6UWKZCYUE7YRZHS5DBEYM6U4R4SWO73PODLYZVXNKHS4NVSE5X",
+                "to": "GC25MF2YFV2KTBVVVL7HT3PHAMGV7N46DVL75MJU4IVXSXVTAOIIHKCM",
+                "amount": "1.0000000"
 			},
 			...
 		]
