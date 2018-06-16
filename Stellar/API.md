@@ -4,10 +4,10 @@ Stellar apis
 # Summary
 [Get ledgers](#get-ledgers)  
 [Get transactions](#get-transactions)  
-[Get ledger by sequence or hash](#get-ledger-by-sequence-or-hash)  
+[Get Latest operations](#get-latest-operations)  
+[Get ledger by sequence](#get-ledger-by-sequence)  
 [Get account information by accountID](#get-account-information-by-accountid)  
 [Post Transaction](#post-transaction)  
-[Get Latest operations](#get-latest-operations)  
 
 [Get transactions by ledger](#get-transactions-by-ledger)  
 [Get operations by transaction](#get-operations-by-transaction)  
@@ -85,40 +85,6 @@ ledger = {
 ```
 
 
-## Get ledger by sequence or hash
-
-```
-GET /api/v1/ledger/:sequence
-```
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-sequence | Number | YES | ledger sequence or hash
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-	status: 200,
-	"msg": "success",
-	"data": ledger
-}
-```
-
-* for failed case
-
-```javascript
-{
-	status: 400, msg: err_msg, data: error
-}
-```
-
-
 ## Get transactions
 
 GET /api/v1/transactions
@@ -176,47 +142,6 @@ transaction = {
 ```
 
 
-## Get transactions by ledger
-
-/api/v1/ledger/txs
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-ledger | String | YES | sequence or hash
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": [
-        {   
-		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		  "timeStamp": "2015-09-24T10:07:09Z",
-		  "operations": 11,
-        },
-        ...
-    ]
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
 ## Get Latest operations
 
 GET /api/v1/operations
@@ -269,6 +194,141 @@ count | Number | No | 10 | count of operations
 	status: 400,
 	msg: err_msg,
 	data: error
+}
+```
+
+
+## Get ledger by sequence
+
+```
+GET /api/v1/ledger/:sequence
+```
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+sequence | Number | YES | ledger sequence
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+	status: 200,
+	"msg": "success",
+	"data": ledger
+}
+```
+
+* for failed case
+
+```javascript
+{
+	status: 400, msg: err_msg, data: error
+}
+```
+
+
+## Get account information by accountID
+
+GET /api/v1/account/:account
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data":
+        {   
+		  "subentry_count": 1,
+		  "flags": {
+		    "auth_required": false,
+		    "auth_revocable": false
+		  },
+		  "balances": [
+		    {
+		      "balance": "49881.0000000",
+		      "limit": "922337203685.4775807",
+		      "asset_type": "credit_alphanum12",
+		      "asset_code": "nCntGameCoin",
+		      "asset_issuer": "GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB"
+		    },
+		    {
+		      "balance": "9999.9530300",
+		      "asset_type": "native"
+		    }
+		  ],
+		  "thresholds": {
+		    "low_threshold": 0,
+		    "med_threshold": 0,
+		    "high_threshold": 0
+		  },
+		  "signers": [
+		    {
+		      "public_key": "GBYLPSBGNBG2RNGOQ66RSSYLWOGD6MNYRFNEB4UH3QY6CBH5IPMPXIBH",
+		      "weight": 1,
+		      "key": "GBYLPSBGNBG2RNGOQ66RSSYLWOGD6MNYRFNEB4UH3QY6CBH5IPMPXIBH",
+		      "type": "ed25519_public_key"
+		    }
+		  ],
+		  "sequence": 344566789
+        },
+}
+```
+
+* for failed case
+
+```javascript
+{
+  status: 400, msg: err_msg, data: error
+}
+```
+
+
+## Get transactions by ledger
+
+/api/v1/ledger/txs
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+ledger | String | YES | sequence or hash
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+"msg": "success",
+"data": [
+        {   
+		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
+		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
+		  "timeStamp": "2015-09-24T10:07:09Z",
+		  "operations": 11,
+        },
+        ...
+    ]
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
 }
 ```
 
@@ -357,66 +417,6 @@ txHash | String | YES | hash of transaction
 ```
 
 
-
-## Get account information by accountID
-
-GET /api/v1/account/:accountId
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data":
-        {   
-		  "subentry_count": 1,
-		  "flags": {
-		    "auth_required": false,
-		    "auth_revocable": false
-		  },
-		  "balances": [
-		    {
-		      "balance": "49881.0000000",
-		      "limit": "922337203685.4775807",
-		      "asset_type": "credit_alphanum12",
-		      "asset_code": "nCntGameCoin",
-		      "asset_issuer": "GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB"
-		    },
-		    {
-		      "balance": "9999.9530300",
-		      "asset_type": "native"
-		    }
-		  ],
-		  "thresholds": {
-		    "low_threshold": 0,
-		    "med_threshold": 0,
-		    "high_threshold": 0
-		  },
-		  "signers": [
-		    {
-		      "public_key": "GBYLPSBGNBG2RNGOQ66RSSYLWOGD6MNYRFNEB4UH3QY6CBH5IPMPXIBH",
-		      "weight": 1,
-		      "key": "GBYLPSBGNBG2RNGOQ66RSSYLWOGD6MNYRFNEB4UH3QY6CBH5IPMPXIBH",
-		      "type": "ed25519_public_key"
-		    }
-		  ],
-		  "sequence": 344566789
-        },
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
 
 ## Post Transaction
 
