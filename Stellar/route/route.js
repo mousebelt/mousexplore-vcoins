@@ -5,12 +5,12 @@ module.exports = function (app) {
     app.get('/api/v1/transactions', StellarController.getLatestTransactions);
     app.get('/api/v1/operations', StellarController.getOperations);
     app.get('/api/v1/ledger/:sequence', StellarController.getLedgerBySequence);
-    app.get('/api/v1/ledger/txs/:ledger', StellarController.getTransactionsForLedger);
+    app.get('/api/v1/ledger/txs/:sequence', StellarController.getTransactionsForLedger);
     app.get('/api/v1/tx/:hash', StellarController.getTransaction);
     app.get('/api/v1/tx/operations/:hash', StellarController.getOperationsForTransaction);
-    app.get('/api/v1/balance/:address', StellarController.getBalance);
     app.get('/api/v1/search/:key', StellarController.getSearch);
-
+    app.get('/api/v1/balance/:address', StellarController.getBalance);
+    
     app.get('/api/v1/account/:account', StellarController.getAccount);
     app.post('/api/v1/transaction', StellarController.postTransaction);
 

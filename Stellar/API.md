@@ -4,14 +4,16 @@ Stellar apis
 # Summary
 [Get ledgers](#get-ledgers)  
 [Get transactions](#get-transactions)  
-[Get Latest operations](#get-latest-operations)  
+[Get latest operations](#get-latest-operations)  
 [Get ledger by sequence](#get-ledger-by-sequence)  
+[Get transactions by ledger sequence](#get-transactions-by-ledger-sequence)  
+[Get transaction by transaction hash](#get-transaction-by-transaction-hash)  
+[Get operations by transaction hash](#get-operations-by-transaction-hash)  
+[Search by key](#search-by-key)  
+[Get address balance](#get-address-balance)  
 [Get account information by accountID](#get-account-information-by-accountid)  
 [Post Transaction](#post-transaction)  
 
-[Get transactions by ledger](#get-transactions-by-ledger)  
-[Get operations by transaction](#get-operations-by-transaction)  
-[Get transaction by transaction hash](#get-transaction-by-transaction-hash)  
 [Get operations by accountID](#get-operations-by-accountid)  
 [Get transactions by account](#get-transactions-by-account)  
 [Get payments by account](#get-payments-by-account)  
@@ -130,7 +132,7 @@ transaction = {
 	"fee_meta_xdr": "AAAAAgAAAAMAiXcnAAAAAAAAAABQto/UsrIsUJ/Ecnl0YSYZ6nI8lZ39vcNeM1u1R5cbWQAAABdIYvbsAIXaogAAMw0AAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAiXcoAAAAAAAAAABQto/UsrIsUJ/Ecnl0YSYZ6nI8lZ39vcNeM1u1R5cbWQAAABdIYvaIAIXaogAAMw4AAAABAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
 	"memo_type": "none",
 	"signatures": [
-	"Hh+czcfw48I+Y5bRbdRBvO/k6/OXaLMGxRXZJwWjlPTl3ErLCT91EnWMdWo+ztwSbhSIZhHAikL2bFJJ1ORoBw=="
+		"Hh+czcfw48I+Y5bRbdRBvO/k6/OXaLMGxRXZJwWjlPTl3ErLCT91EnWMdWo+ztwSbhSIZhHAikL2bFJJ1ORoBw=="
 	]
 }
 ```
@@ -232,6 +234,225 @@ sequence | Number | YES | ledger sequence
 ```
 
 
+## Get transactions by ledger sequence
+
+GET /api/v1/ledger/txs/:sequence
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+sequence | String | YES | ledger sequence
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+	"status": 200,
+    "msg": "success",
+    "data": {
+        "total": 4,
+        "result": [{
+			"id": "1e0878471ae283b4d571279f2dde3472682b75cc3ee13ed42e577f30df3ae305",
+			"paging_token": "38693085491761152",
+			"hash": "1e0878471ae283b4d571279f2dde3472682b75cc3ee13ed42e577f30df3ae305",
+			"created_at": "2018-05-17T09:04:35Z",
+			"source_account": "GBBPUGFZQCQX4MCU5SJZECQZCAISVI6EQXQSW2MNJXPCK3QVSWGYYAA7",
+			"source_account_sequence": "26088580543788834",
+			"fee_paid": 100,
+			"operation_count": 1,
+			"envelope_xdr": "AAAAAEL6GLmAoX4wVOyTkgoZEBEqo8SF4StpjU3eJW4VlY2MAAAAZABcr20AAbciAAAAAAAAAAEAAAAVUDowLjA3NzIyODgyMTUyODgyMzA0AAAAAAAAAQAAAAAAAAABAAAAADq6ZK+15hYax6Lvzu03rl20FuNebgE1rt2f4/q6WkXQAAAAAlppZkNvaW4AAAAAAAAAAABC+hi5gKF+MFTsk5IKGRARKqPEheEraY1N3iVuFZWNjAAAAAAAAYagAAAAAAAAAAEVlY2MAAAAQIFezbpx2pl9s4obWe9j8nvjrfMwoyhI8GzW/ekpegy/WOWEUVJ44SUsQNrlJyBeE5aHLrMKL8nPbKUsv4czLws=",
+			"result_xdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
+			"result_meta_xdr": "AAAAAAAAAAEAAAACAAAAAwCJdycAAAABAAAAADq6ZK+15hYax6Lvzu03rl20FuNebgE1rt2f4/q6WkXQAAAAAlppZkNvaW4AAAAAAAAAAABC+hi5gKF+MFTsk5IKGRARKqPEheEraY1N3iVuFZWNjAAAAAAEHmHgf/////////8AAAABAAAAAAAAAAAAAAABAIl3KAAAAAEAAAAAOrpkr7XmFhrHou/O7TeuXbQW415uATWu3Z/j+rpaRdAAAAACWmlmQ29pbgAAAAAAAAAAAEL6GLmAoX4wVOyTkgoZEBEqo8SF4StpjU3eJW4VlY2MAAAAAAQf6IB//////////wAAAAEAAAAAAAAAAA==",
+			"fee_meta_xdr": "AAAAAgAAAAMAiXcnAAAAAAAAAABC+hi5gKF+MFTsk5IKGRARKqPEheEraY1N3iVuFZWNjAAADN7mdeIcAFyvbQABtyEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAiXcoAAAAAAAAAABC+hi5gKF+MFTsk5IKGRARKqPEheEraY1N3iVuFZWNjAAADN7mdeG4AFyvbQABtyIAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
+			"memo_type": "text",
+			"memo": "P:0.07722882152882304",
+			"signatures": [
+				"gV7NunHamX2zihtZ72Pye+Ot8zCjKEjwbNb96Sl6DL9Y5YRRUnjhJSxA2uUnIF4Tlocuswovyc9spSy/hzMvCw=="
+			],
+			"ledger_attr": 9008936
+		}, ...]
+	}
+			
+}
+```
+
+* for failed case
+
+```javascript
+{
+  status: 400, msg: err_msg, data: error
+}
+```
+
+
+## Get transaction by transaction hash
+
+GET /api/v1/tx/:hash
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+hash | String | YES | hash of transaction
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+	"status": 200,
+    "msg": "success",
+    "data": {
+		"id": "1e0878471ae283b4d571279f2dde3472682b75cc3ee13ed42e577f30df3ae305",
+        "paging_token": "38693085491761152",
+        "hash": "1e0878471ae283b4d571279f2dde3472682b75cc3ee13ed42e577f30df3ae305",
+        "created_at": "2018-05-17T09:04:35Z",
+        "source_account": "GBBPUGFZQCQX4MCU5SJZECQZCAISVI6EQXQSW2MNJXPCK3QVSWGYYAA7",
+        "source_account_sequence": "26088580543788834",
+        "fee_paid": 100,
+        "operation_count": 1,
+        "envelope_xdr": "AAAAAEL6GLmAoX4wVOyTkgoZEBEqo8SF4StpjU3eJW4VlY2MAAAAZABcr20AAbciAAAAAAAAAAEAAAAVUDowLjA3NzIyODgyMTUyODgyMzA0AAAAAAAAAQAAAAAAAAABAAAAADq6ZK+15hYax6Lvzu03rl20FuNebgE1rt2f4/q6WkXQAAAAAlppZkNvaW4AAAAAAAAAAABC+hi5gKF+MFTsk5IKGRARKqPEheEraY1N3iVuFZWNjAAAAAAAAYagAAAAAAAAAAEVlY2MAAAAQIFezbpx2pl9s4obWe9j8nvjrfMwoyhI8GzW/ekpegy/WOWEUVJ44SUsQNrlJyBeE5aHLrMKL8nPbKUsv4czLws=",
+        "result_xdr": "AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=",
+        "result_meta_xdr": "AAAAAAAAAAEAAAACAAAAAwCJdycAAAABAAAAADq6ZK+15hYax6Lvzu03rl20FuNebgE1rt2f4/q6WkXQAAAAAlppZkNvaW4AAAAAAAAAAABC+hi5gKF+MFTsk5IKGRARKqPEheEraY1N3iVuFZWNjAAAAAAEHmHgf/////////8AAAABAAAAAAAAAAAAAAABAIl3KAAAAAEAAAAAOrpkr7XmFhrHou/O7TeuXbQW415uATWu3Z/j+rpaRdAAAAACWmlmQ29pbgAAAAAAAAAAAEL6GLmAoX4wVOyTkgoZEBEqo8SF4StpjU3eJW4VlY2MAAAAAAQf6IB//////////wAAAAEAAAAAAAAAAA==",
+        "fee_meta_xdr": "AAAAAgAAAAMAiXcnAAAAAAAAAABC+hi5gKF+MFTsk5IKGRARKqPEheEraY1N3iVuFZWNjAAADN7mdeIcAFyvbQABtyEAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAEAiXcoAAAAAAAAAABC+hi5gKF+MFTsk5IKGRARKqPEheEraY1N3iVuFZWNjAAADN7mdeG4AFyvbQABtyIAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAA==",
+        "memo_type": "text",
+        "memo": "P:0.07722882152882304",
+        "signatures": [
+            "gV7NunHamX2zihtZ72Pye+Ot8zCjKEjwbNb96Sl6DL9Y5YRRUnjhJSxA2uUnIF4Tlocuswovyc9spSy/hzMvCw=="
+        ],
+		"ledger_attr": 9008936
+	}
+}
+```
+
+* for failed case
+
+```javascript
+{
+  status: 400, msg: err_msg, data: error
+}
+```
+
+
+## Get operations by transaction hash
+GET /api/v1/txs/operations/:hash
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+hash | String | YES | transaction hash
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+    "status": 200,
+    "msg": "success",
+    "data": {
+        "total": 1,
+        "result": [
+            {
+                "id": "38693085491761153",
+                "paging_token": "38693085491761153",
+                "source_account": "GBBPUGFZQCQX4MCU5SJZECQZCAISVI6EQXQSW2MNJXPCK3QVSWGYYAA7",
+                "type": "payment",
+                "type_i": 1,
+                "created_at": "2018-05-17T09:04:35Z",
+                "transaction_hash": "1e0878471ae283b4d571279f2dde3472682b75cc3ee13ed42e577f30df3ae305",
+                "asset_type": "credit_alphanum12",
+                "asset_code": "ZifCoin",
+                "asset_issuer": "GBBPUGFZQCQX4MCU5SJZECQZCAISVI6EQXQSW2MNJXPCK3QVSWGYYAA7",
+                "from": "GBBPUGFZQCQX4MCU5SJZECQZCAISVI6EQXQSW2MNJXPCK3QVSWGYYAA7",
+                "to": "GA5LUZFPWXTBMGWHULX453JXVZO3IFXDLZXACNNO3WP6H6V2LJC5BUV7",
+                "amount": "0.0100000"
+            }, ...
+        ]
+    }
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+## Search by key
+GET /api/v1/search/:key
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+key | String | YES | transaction hash or leder sequence or address
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{ status: 200, msg: "success", data: { result, type } }
+
+type = 'ledger' => result = ledger
+type = 'transaction' => result = transaction
+type = 'address' => result = address
+```
+
+* for failed case
+
+```javascript
+{
+  status: 400, msg: err_msg, data: error
+}
+```
+
+
+## Get address balance
+GET /api/v1/balance/:address
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Description
+------------ | ------------ | ------------ | ------------
+address | String | YES | account address
+
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{ status: 200, msg: "success", data: { balance } }
+```
+
+* for failed case
+
+```javascript
+{
+  status: 400, msg: err_msg, data: error
+}
+```
+
+
 ## Get account information by accountID
 
 GET /api/v1/account/:account
@@ -292,132 +513,6 @@ GET /api/v1/account/:account
 ```
 
 
-## Get transactions by ledger
-
-/api/v1/ledger/txs
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-ledger | String | YES | sequence or hash
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": [
-        {   
-		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		  "timeStamp": "2015-09-24T10:07:09Z",
-		  "operations": 11,
-        },
-        ...
-    ]
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
-## Get operations by transaction
-/api/v1/txs/operations
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-txHash | String | YES | sequence or hash
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": [
-        {   
-		   "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		   "type": "payment",
-		   "asset_type": 'credit_alphanum12',
-	       "asset_code": 'nCntGameCoin',
-	       "asset_issuer": 'GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB',
-	       "from": 'GAK3NSB43EVCZKDH4PYGJPCVPOYZ7X7KIR3ZTWSYRKRMJWGG5TABM6TH',
-	       "to": 'GCHKKQ5VWJBRQZHNMODO5BWYZKPNM2HDSJ26T4O644CNEQBYK7IXATKM',
-	       "amount": '2.0000000'
-		   "timeStamp": "2015-09-24T10:07:09Z"
-        },
-        ...
-    ]
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
-
-## Get transaction by transaction hash
-
-/api/v1/tx
-
-### QUERY PARAMS
-
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-txHash | String | YES | hash of transaction
-
-
-### RETURN
-
-* for successed case
-`status code:` 200
-
-```javascript
-{
-"msg": "success",
-"data": {   
-	   "timeStamp": "2015-09-24T10:07:09Z",
-	   "ledger": 17733198,
-	   "account": "GA4K4BUZ4SLAKQA5T2OE64FM3BWTUJXQQ3J4QPCEQBHCQZWQHRHGPPSO",
-	   "fee": 0.00004,
-	 },
-}
-```
-
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
-
-
-
 ## Post Transaction
 
 POST /api/v1/transaction
@@ -455,6 +550,7 @@ tx | String | YES | transaction data
   status: 400, msg: err_msg, data: error
 }
 ```
+
 
 ## Get operations by accountID
 

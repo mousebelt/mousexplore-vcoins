@@ -196,6 +196,7 @@ exports.getLatestLedgers = async function (req, res) {
 
 exports.getLedgerBySequence = function (req, res) {
   var sequence = req.params.sequence;
+  if (sequence.length < 10) sequence = Number(sequence);
   try {
     server
       .ledgers()
@@ -303,11 +304,12 @@ exports.getLatestTransactions = function (req, res) {
 * @return transactions of ledger 
 */
 exports.getTransactionsForLedger = function (req, res) {
-  var ledger = req.params.ledger;
+  var sequence = req.params.sequence;
 
+  if (sequence.length<10) sequence = Number(sequence);
   server
     .transactions()
-    .forLedger(ledger)
+    .forLedger(sequence)
     .call()
     .then(function (txResult) {
       var records = txResult.records;
@@ -322,7 +324,7 @@ exports.getTransactionsForLedger = function (req, res) {
       //     timestamp: info.created_at
       //   });
       // }
-      res.json({ status: 200, msg: "success", data: { total: transactions.length, result: transactions } });
+      res.json({ status: 200, msg: "success", data: { total: records.length, result: records } });
     })
     .catch(function (err) {
       res.json({ status: 400, msg: 'Error !', data: err });
@@ -456,7 +458,6 @@ exports.getOperationsForTransaction = function (req, res) {
 exports.getTransaction = function (req, res) {
   var hash = req.params.hash;
 
-  if (hash.length < 10) hash = Number(hash);
   server
     .transactions()
     .transaction(hash)
@@ -868,10 +869,10 @@ exports.getSearch = function (req, res) {
         .ledger(key)
         .call()
         .then(function (result) {
-          res.json({ status: 200, msg: "success", data: { result, type: 'block' } });
+          res.json({ status: 200, msg: "success", data: { result, type: 'ledger' } });
         })
         .catch(function (err) {
-          res.json({ status: 400, msg: "Get block error !", data: err });
+          res.json({ status: 400, msg: "Get ledger error !", data: err });
         });
     } else if (key.length <= 56) {
       // address
