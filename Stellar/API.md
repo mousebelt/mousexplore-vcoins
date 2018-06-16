@@ -50,9 +50,9 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 	"status": 200,
 	"msg": "success",
 	"data": { 
-		"next": "23442324233",
-		"prev": "23442324128",
-		total: 66666,
+		"next": "38693046837051392",
+        "prev": "38693085491757056",
+        "total": 9008936,
 		result: [ledger]
 	}
 }

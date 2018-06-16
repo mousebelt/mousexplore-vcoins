@@ -110,7 +110,6 @@ exports.getLatestLedgers = async function (req, res) {
     };
 
     var resp = await rp(options);
-    resp = JSON.parse(resp);
     var records = body._embedded.records;
     total = records[0].sequence;
   } catch (error) { 
