@@ -441,7 +441,23 @@ address | String | YES | account address
 `status code:` 200
 
 ```javascript
-{ status: 200, msg: "success", data: { balance } }
+{ 
+	status: 200, 
+	msg: "success", 
+	data: [
+		{
+			"balance": "99992764346.0000000",
+			"limit": "922337203685.4775807",
+			"asset_type": "credit_alphanum12",
+			"asset_code": "nCntGameCoin",
+			"asset_issuer": "GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB"
+		},
+		{
+			"balance": "9980.0503300",
+			"asset_type": "native"
+		}
+	]
+}
 ```
 
 * for failed case

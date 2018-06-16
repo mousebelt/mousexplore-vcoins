@@ -28,7 +28,7 @@ exports.getBalance = function (req, res) {
     // account.balances.forEach(function (balance) {
     //   console.log("Type:", balance.asset_type, ", Balance:", balance.balance);
     // });
-    res.json({ status: 200, msg: 'success', data: account });
+    res.json({ status: 200, msg: 'success', data: account.balances });
   }).catch(function (err) {
     res.json({ status: 400, msg: 'Error !', data: err });
   });
