@@ -4,7 +4,7 @@ Stellar apis
 # Summary
 [Get ledgers](#get-ledgers)  
 [Get transactions](#get-transactions)  
-[Get ledger by sequence](#get-ledger-by-sequence)  
+[Get ledger by sequence or hash](#get-ledger-by-sequence-or-hash)  
 [Get account information by accountID](#get-account-information-by-accountid)  
 [Post Transaction](#post-transaction)  
 [Get Latest operations](#get-latest-operations)  
@@ -49,9 +49,12 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 {
 	"status": 200,
 	"msg": "success",
-	"next": "23442324233",
-	"prev": "23442324128",
-	"data": [ledger]
+	"data": { 
+		"next": "23442324233",
+		"prev": "23442324128",
+		total: 66666,
+		result: [ledger]
+	}
 }
 
 ledger = {
@@ -74,16 +77,15 @@ ledger = {
 ```
 
 * for failed case
-`status code:` 400
 
 ```javascript
 {
-  "error": ""   //error message
+	status: 400, msg: err_msg, data: error
 }
 ```
 
 
-## Get ledger by sequence
+## Get ledger by sequence or hash
 
 ```
 GET /api/v1/ledger/:sequence
@@ -93,7 +95,7 @@ GET /api/v1/ledger/:sequence
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-sequence | Number | YES | ledger sequence
+sequence | Number | YES | ledger sequence or hash
 
 ### RETURN
 
@@ -109,13 +111,13 @@ sequence | Number | YES | ledger sequence
 ```
 
 * for failed case
-`status code:` 400
 
 ```javascript
 {
-  "error": ""   //error message
+	status: 400, msg: err_msg, data: error
 }
 ```
+
 
 ## Get transactions
 
@@ -137,11 +139,13 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 
 ```javascript
 {
-"status": 200,
-"msg": "success",
-"next": "23442324233",
-"next": "23442324128",
-"data": [transaction]
+	"status": 200,
+	"msg": "success",
+	"data": {
+		prev: "23442324233",
+		next: "23442324128",
+		result: [transaction]
+	}
 }
 
 transaction = {
@@ -166,12 +170,9 @@ transaction = {
 ```
 
 * for failed case
-`status code:` 400
 
 ```javascript
-{
-  "error": ""   //error message
-}
+{ status: 400, msg: err_msg, data: error }
 ```
 
 

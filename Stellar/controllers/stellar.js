@@ -1,3 +1,4 @@
+var rp = require('request-promise');
 var StellarSdk = require("stellar-sdk");
 var request = require("request");
 var requestpromise = require("request-promise");
@@ -92,7 +93,7 @@ function getCursor(url) {
  * 
  * @returns ledgers 
  */
-exports.getLatestLedgers = function (req, res) {
+exports.getLatestLedgers = async function (req, res) {
   var count = Number(req.query.count);
   var order = Number(req.query.order);
   var cursor = req.query.cursor;
@@ -100,6 +101,23 @@ exports.getLatestLedgers = function (req, res) {
   if (order > 0) order = 'asc';
   else order = 'desc';
 
+  // get total count
+  var total = undefined;
+  try {
+    var options = {
+      uri: `${config.url}ledgers?limit=1&order=desc`,
+      json: true
+    };
+
+    var resp = await rp(options);
+    resp = JSON.parse(resp);
+    var records = body._embedded.records;
+    total = records[0].sequence;
+  } catch (error) { 
+    return res.json({ status: 400, msg: 'Error in getting total count !', data: error });
+  }
+
+  // get data
   var url = urlAPI + "ledgers?limit=" + count + `&order=${order}`;
   url += cursor ? "&cursor=" + cursor : "";
 
@@ -125,12 +143,9 @@ exports.getLatestLedgers = function (req, res) {
       //     operations: ledgerinfo.operation_count
       //   });
       // }
-      res
-        .status(200)
-        .json({ status: 200, msg: "success", next, prev, data: records });
+      res.json({ status: 200, msg: "success", data: { next, prev, total, result: records } });
     } else {
-      console.log("getLatestLedgers error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: error });
     }
   });
 
@@ -190,11 +205,10 @@ exports.getLedgerByHash = function (req, res) {
         res.json({ status: 200, msg: "success", data: result });
       })
       .catch(function (err) {
-        console.log(err);
-        res.status(400).json({ error: err });
+        res.json({ status: 400, msg: 'Error !', data: err });
       });
   } catch (error) {
-    res.status(400).json({ error });
+    res.json({ status: 400, msg: 'Error !', data: error });
   }
 };
 
@@ -242,8 +256,7 @@ exports.getLatestTransactions = function (req, res) {
       //     timestamp: info.created_at
       //   });
       // }
-      res
-        .json({ status: 200, msg: "success", next: next, prev: prev, data: records });
+      res.json({ status: 200, msg: "success", data: { next, prev, result: records } });
     } else {
       console.log("getLatestTransactions error: ", error);
       res.status(400).json({ error: error });
@@ -898,7 +911,7 @@ exports.postTransaction = function (req, res) {
 
   server.submitTransaction(tx).then(function (result) {
     res.json({ status: 200, msg: "success", data: result });
-  }).catch ((error) => {
+  }).catch((error) => {
     res.json({ status: 400, msg: "Error !", data: error });
   });
 };
