@@ -3,6 +3,20 @@ var web3 = require("../config/common").web3;
 var TransactionModel = require("../model/transactions");
 var TokenModel = require("../model/tokens");
 
+/*
+contract methodid
+dd62ed3e allowance(address,address)
+095ea7b3 approve(address,uint256)
+70a08231 balanceOf(address)
+313ce567 decimals()
+06fdde03 name()
+95d89b41 symbol()
+18160ddd totalSupply()
+a9059cbb transfer(address,uint256)
+23b872dd transferFrom(address,address,uint256)
+54fd4d50 version()
+*/
+
 async function getTransactionDetailsFunc(hash) {
   try {
     var transaction = await web3.eth.getTransaction(hash);
@@ -24,23 +38,55 @@ async function getTransactionDetailsFunc(hash) {
   }
 }
 
-exports.getBalance = function (req, res) {
+exports.getBalance = async function (req, res) {
   var address = req.params.address;
 
-  // Show the address in the console.
-  //console.log('Address:', addr);
+  console.log("address: " + address)
 
-  // Use Wb3 to get the balance of the address, convert it and then show it in the console.
-  web3.eth.getBalance(address, function (error, result) {
-    if (!error) {
-      var ethervalue = web3.utils.fromWei(result, "ether");
-      //console.log('Ether:', ethervalue); // Show the ether balance after converting it from Wei
-      res.json({ status: 200, msg: "success", data: { address, balance: ethervalue } });
-    } else {
-      console.log("we have a promblem: ", error); // Should dump errors here
-      return res.json({ status: 400, msg: "Error !", data: error });
+  var balances = []
+  try {
+    // Use Wb3 to get the balance of the address, convert it and then show it in the console.
+    var ethBalance = await web3.eth.getBalance(address);
+    console.log("Ether: " + ethBalance)
+    var ethervalue = web3.utils.fromWei(ethBalance, "ether");
+    balances.push({symbol: "ETH", balance: ethervalue})
+
+    var tokens = await TokenModel.find({});
+
+    if (address.slice(0, 2) == "0x") {
+      address = address.substring(2)
     }
-  });
+
+    for (let i = 0; i < tokens.length; i ++) {
+      var token = tokens[i];
+      // console.log(token.symbol);
+
+      // '0x70a08231' is the contract 'balanceOf()' ERC20 token function in hex. A zero buffer is required and then we add the previously defined address with tokens
+      var contractData = ('0x70a08231000000000000000000000000' + address);
+
+      // Now we call the token contract with the variables from above, response will be a big number string 
+      var result = await web3.eth.call({to: token.address, data: contractData});
+
+      // Convert the result to a usable number string
+      var tokenBalance = web3.utils.toBN(result).toString(); 
+      // console.log("balance: " + tokenBalance);
+
+      if (tokenBalance) {
+        // Change the string to be in Ether not Wei
+        tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
+        console.log(token.symbol + ' Tokens Owned: ' + tokenBalance); 
+        
+        balances.push({symbol: token.symbol, balance: tokenBalance});
+      }
+    }
+
+    // console.log(balances)
+    res.json({ status: 200, msg: "success", data: { balances: balances } });
+
+  } catch (e) {
+    console.log("we have a promblem: ", e); // Should dump errors here
+    return res.json({ status: 400, msg: "Error !", data: e });
+  }
 };
 
 exports.createAccount = function (req, res) {
@@ -451,6 +497,7 @@ exports.getTokenList = function (req, res) {
 exports.addToken = function (req, res) {
   var symbol = req.body.symbol;
   var address = req.body.address;
+  console.log("symbol: " + symbol + " address: " + address)
 
   TokenModel.find({ symbol: symbol, address: address }).exec(function (
     error,
