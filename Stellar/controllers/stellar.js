@@ -110,7 +110,7 @@ exports.getLatestLedgers = async function (req, res) {
     };
 
     var resp = await rp(options);
-    var records = body._embedded.records;
+    var records = resp._embedded.records;
     total = records[0].sequence;
   } catch (error) { 
     return res.json({ status: 400, msg: 'Error in getting total count !', data: error });
