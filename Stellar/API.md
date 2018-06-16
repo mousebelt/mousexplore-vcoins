@@ -7,9 +7,9 @@ Stellar apis
 [Get ledger by sequence](#get-ledger-by-sequence)  
 [Get account information by accountID](#get-account-information-by-accountid)  
 [Post Transaction](#post-transaction)  
+[Get Latest operations](#get-latest-operations)  
 
 [Get transactions by ledger](#get-transactions-by-ledger)  
-[Get Latest operations](#get-latest-operations)  
 [Get operations by transaction](#get-operations-by-transaction)  
 [Get transaction by transaction hash](#get-transaction-by-transaction-hash)  
 [Get operations by accountID](#get-operations-by-accountid)  
@@ -218,13 +218,13 @@ ledger | String | YES | sequence or hash
 
 ## Get Latest operations
 
-/api/v1/operations
+GET /api/v1/operations
 
 ### QUERY PARAMS
 
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-count | Number | YES | count of operations
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+count | Number | No | 10 | count of operations
 
 
 ### RETURN
@@ -234,22 +234,27 @@ count | Number | YES | count of operations
 
 ```javascript
 {
-"msg": "success",
-"data": [
-        {   
-		   "transaction": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		   "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		   "type": "payment",
-		   "asset_type": 'credit_alphanum12',
-	       "asset_code": 'nCntGameCoin',
-	       "asset_issuer": 'GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB',
-	       "from": 'GAK3NSB43EVCZKDH4PYGJPCVPOYZ7X7KIR3ZTWSYRKRMJWGG5TABM6TH',
-	       "to": 'GCHKKQ5VWJBRQZHNMODO5BWYZKPNM2HDSJ26T4O644CNEQBYK7IXATKM',
-	       "amount": '2.0000000'
-		   "timeStamp": "2015-09-24T10:07:09Z",
-        },
-        ...
-    ]
+	status: 200,
+	"msg": "success",
+	"data": {
+		prev: "38693085491765286",
+		next: "38693085491773441",
+		result: [
+			{
+				"transaction": "93c2d119d15ee12cacaa12944dd0ba653da7cd8d5970a38968cbddd156d3308d",
+				"account": "GBILND6UWKZCYUE7YRZHS5DBEYM6U4R4SWO73PODLYZVXNKHS4NVSE5X",
+				"type": "payment",
+				"asset_type": "credit_alphanum12",
+				"asset_code": "nCntGameCoin",
+				"asset_issuer": "GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB",
+				"from": "GBILND6UWKZCYUE7YRZHS5DBEYM6U4R4SWO73PODLYZVXNKHS4NVSE5X",
+				"to": "GC25MF2YFV2KTBVVVL7HT3PHAMGV7N46DVL75MJU4IVXSXVTAOIIHKCM",
+				"amount": "1.0000000",
+				"timestamp": "2018-05-17T09:04:35Z"
+			},
+			...
+		]
+	}
 }
 ```
 
