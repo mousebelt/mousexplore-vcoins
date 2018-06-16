@@ -3,6 +3,22 @@ var web3 = require("../config/common").web3;
 var TransactionModel = require("../model/transactions");
 var TokenModel = require("../model/tokens");
 
+/*
+geth --testnet --syncmode "fast" --rpc --rpcapi db,eth,net,web3,personal --cache=1024  --rpcport 8545 --rpcaddr 0.0.0.0 --rpccorsdomain "*
+testaccount 0xEc1A6b8FdaEb9285536695263ec736EEde60b277
+contract methodid
+dd62ed3e allowance(address,address)
+095ea7b3 approve(address,uint256)
+70a08231 balanceOf(address)
+313ce567 decimals()
+06fdde03 name()
+95d89b41 symbol()
+18160ddd totalSupply()
+a9059cbb transfer(address,uint256)
+23b872dd transferFrom(address,address,uint256)
+54fd4d50 version()
+*/
+
 async function getTransactionDetailsFunc(hash) {
   try {
     var transaction = await web3.eth.getTransaction(hash);
@@ -27,42 +43,47 @@ async function getTransactionDetailsFunc(hash) {
 exports.getBalance = async function (req, res) {
   var address = req.params.address;
 
+  console.log("address: " + address)
+
   var balances = []
   try {
     // Use Wb3 to get the balance of the address, convert it and then show it in the console.
     var ethBalance = await web3.eth.getBalance(address);
+    console.log("Ether: " + ethBalance)
     var ethervalue = web3.utils.fromWei(ethBalance, "ether");
-    balances["ETH"] = ethervalue
+    balances.push({symbol: "ETH", balance: ethervalue})
 
-    var tokens = await TokenModel.find();
+    var tokens = await TokenModel.find({});
 
-    for (let i = 0; i < tokens.count; i ++) {
+    if (address.slice(0, 2) == "0x") {
+      address = address.substring(2)
+    }
+
+    for (let i = 0; i < tokens.length; i ++) {
       var token = tokens[i];
-      console.log(token.symbol);
-
-      if (address.slice(0, 2) == "0x") {
-        address = address.substring(2)
-      }
+      // console.log(token.symbol);
 
       // '0x70a08231' is the contract 'balanceOf()' ERC20 token function in hex. A zero buffer is required and then we add the previously defined address with tokens
       var contractData = ('0x70a08231000000000000000000000000' + address);
 
       // Now we call the token contract with the variables from above, response will be a big number string 
-      var result = await web3.eth.call(token.address, contractData);
+      var result = await web3.eth.call({to: token.address, data: contractData});
 
       // Convert the result to a usable number string
       var tokenBalance = web3.utils.toBN(result).toString(); 
+      console.log("balance: " + tokenBalance);
       // Change the string to be in Ether not Wei
       tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
-      console.log(token.symbol + 'Tokens Owned: ' + tokenBalance); 
+      console.log(token.symbol + ' Tokens Owned: ' + tokenBalance); 
       
-      balances[token.symbol] = tokenBalance;
+      balances.push({symbol: token.symbol, balance: tokenBalance});
     }
 
+    // console.log(balances)
     res.json({ status: 200, msg: "success", data: { balances: balances } });
 
   } catch (e) {
-    console.log("we have a promblem: ", error); // Should dump errors here
+    console.log("we have a promblem: ", e); // Should dump errors here
     return res.json({ status: 400, msg: "Error !", data: e });
   }
 };
@@ -475,6 +496,7 @@ exports.getTokenList = function (req, res) {
 exports.addToken = function (req, res) {
   var symbol = req.body.symbol;
   var address = req.body.address;
+  console.log("symbol: " + symbol + " address: " + address)
 
   TokenModel.find({ symbol: symbol, address: address }).exec(function (
     error,

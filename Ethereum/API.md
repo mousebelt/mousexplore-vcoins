@@ -402,7 +402,11 @@ address | STRING | YES | address to get balance
 {
   status: 200,
   msg: 'success',
-  data: 0.2   //ether value of balance 
+  data: [ 
+    { symbol: 'ETH', balance: '17.920794152679405' },
+    { symbol: 'XXX', balance: '9896272678' },
+    { symbol: 'RRR', balance: '31960000' } 
+    ]
 }
 ```
 
