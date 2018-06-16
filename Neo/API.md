@@ -192,13 +192,30 @@ return: { status: 200, msg: 'success', data: { total, result: [txdetails] } }
  GET /balance/:address
 ```
 ```
-return { "status": 200, "msg": "success", "data": { address, balance, n_tx: addrRow.txs.length } }
- balance: [
-     asset,
-     value,
-     ticker,
-     token
- ]
+return 
+{
+    "status": 200,
+    "msg": "success",
+    "data": {
+        "address": "AQVh2pG732YvtNaxEGkQUei3YA4cvo7d2i",
+        "balance": [
+            {
+                "asset": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+                "value": 300000000,
+                "token": {
+                    "_id": "5b2301673671a3283000f1aa",
+                    "name": "NEO",
+                    "ticker": "NEO",
+                    "asset": "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
+                    "type": "GoverningToken",
+                    "__v": 0
+                },
+                "ticker": "NEO"
+            }
+        ],
+        "n_tx": 4
+    }
+}
 ```
 
 <a name="search"/>
