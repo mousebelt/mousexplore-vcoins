@@ -259,11 +259,12 @@ count | Number | No | 10 | count of operations
 ```
 
 * for failed case
-`status code:` 400
 
 ```javascript
 {
-  "error": ""   //error message
+	status: 400,
+	msg: err_msg,
+	data: error
 }
 ```
 
