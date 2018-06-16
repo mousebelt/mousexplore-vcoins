@@ -328,26 +328,23 @@ exports.getTransactionsForLedger = function (req, res) {
 * @return operations of ledger 
 */
 exports.getOperations = function (req, res) {
-  var count = req.body.count;
-  var cursor = req.body.cursor;
+  var count = Number(req.query.count);
+  var cursor = req.query.cursor;
+
+  if (!count) count = 10;
 
   var url = urlAPI + "operations?limit=" + count + "&order=desc";
   url += cursor ? "&cursor=" + cursor : "";
-  console.log(url);
+
   request(url, function (error, response, body) {
     if (!error) {
       body = JSON.parse(body);
-      console.log("response: ", body);
 
       var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
       var prev = body._links.prev.href;
 
-      console.log("next= ", next);
-
       next = getCursor(next);
       prev = getCursor(prev);
-
-      console.log("next= ", next);
 
       var records = body._embedded.records;
 
@@ -367,12 +364,9 @@ exports.getOperations = function (req, res) {
           timestamp: info.created_at
         });
       }
-      res
-        .status(200)
-        .json({ msg: "success", next: next, prev: prev, data: operations });
+      res.json({ status: 200, msg: "success", next: next, prev: prev, data: operations });
     } else {
-      console.log("getLatestTransactions error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: error });
     }
   });
 
