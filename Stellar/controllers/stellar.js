@@ -376,7 +376,7 @@ exports.getOperations = function (req, res) {
           timestamp: info.created_at
         });
       }
-      res.json({ status: 200, msg: "success", data: { prev, next, operations } });
+      res.json({ status: 200, msg: "success", data: { prev, next, result: operations } });
     } else {
       res.json({ status: 400, msg: 'Error !', data: error });
     }
