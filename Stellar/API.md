@@ -143,8 +143,8 @@ cursor | String | No| 0 | 0 for first page, and next or prev value of response o
 	"msg": "success",
 	"data": {
 		"next": "38693072606871552",
-        "prev": "38693085491773440",
-        "result": [transaction]
+		"prev": "38693085491773440",
+		"result": [transaction]
 	}
 }
 
