@@ -380,6 +380,7 @@ address | String | YES | account address
   "msg": "fail",
   "error": "invalid parameters"   //error message
 }
+```
 
 ## Get Balance
 ```
