@@ -30,6 +30,34 @@ async function getTransactionDetailsFunc(hash) {
       transaction.block = blockdata;
       transaction.txreceipt = txreceipt;
       transaction.fee = fee;
+
+      var inputdata = transaction.input;
+      console.log(inputdata);
+      let methodid = inputdata.slice(0, 10);
+      if (methodid == "0xa9059cbb") {
+        let to = inputdata.slice(10, 74);
+        let amount = inputdata.slice(74, 138);
+        
+        to = to.replace(/^(0)*/, '')
+        amount = amount.replace(/^(0)*/, '')
+        amount = parseInt('0x' + amount, 16);
+        console.log("to: " + to + " amount: " + amount);
+
+        transaction.txtoken = {from:txreceipt.from, to: to, amount: amount}
+      }
+      else if (methodid == "0x23b872dd") {
+        let from = inputdata.slice(10, 74);
+        let to = inputdata.slice(74, 138);
+        let amount = inputdata.slice(138, 202);
+        
+        from = from.replace(/^(0)*/, '')
+        to = to.replace(/^(0)*/, '')
+        amount = amount.replace(/^(0)*/, '')
+        amount = parseInt('0x' + amount, 16);
+        console.log("to: " + to + " amount: " + amount);
+
+        transaction.txtoken = {from:from, to: to, amount: amount}
+      }
     } catch (e) { }
     return transaction;
   } catch (error) {
