@@ -11,11 +11,11 @@ var UtilsModule = require("../modules/utils");
 
 var fs = require("fs");
 var Log = require("log"),
-  // log = new Log(
-  //   "debug",
-  //   fs.createWriteStream(__dirname + "/debug.log", { flags: "a" })
-  // );
-log = new Log('debug');
+  log = new Log(
+    "debug",
+    fs.createWriteStream(__dirname + "/debug.log", { flags: "a" })
+  );
+// log = new Log('debug');
 
 function filelog(...params) {
   log.info(...params);
