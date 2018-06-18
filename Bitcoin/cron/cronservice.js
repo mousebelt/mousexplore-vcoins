@@ -6,7 +6,6 @@ var TransactionModel = require("../model/transactions");
 var TxServiceInofModel = require("../model/txServiceInfo");
 var AddressModel = require("../model/address");
 var TxMissingModel = require("../model/txMissing");
-var AddrServiceInofModel = require("../model/addrServiceInfo");
 
 var UtilsModule = require("../modules/utils");
 
