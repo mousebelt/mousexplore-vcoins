@@ -20,9 +20,7 @@ a9059cbb transfer(address,uint256)
 async function getTransactionDetailsFunc(hash) {
   try {
     var transaction = await web3.eth.getTransaction(hash);
-    console.log(transaction);
     var blockdata = await web3.eth.getBlock(transaction.blockNumber, false);
-    console.log(blockdata);
     let txreceipt = await web3.eth.getTransactionReceipt(hash);
 
     console.log(txreceipt);
@@ -49,8 +47,8 @@ async function getTransactionDetailsFunc(hash) {
         let to = inputdata.slice(10, 74);
         let amount = inputdata.slice(74, 138);
         
-        to = to.replace(/^(0)*/, '')
-        amount = amount.replace(/^(0)*/, '')
+        to = to.replace(/^(0)*/, '');
+        amount = amount.replace(/^(0)*/, '');
         amount = parseInt('0x' + amount, 16);
         amount = amount / Math.pow(10, token.decimal);
         console.log("to: " + to + " amount: " + amount);
