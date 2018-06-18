@@ -20,30 +20,42 @@ a9059cbb transfer(address,uint256)
 async function getTransactionDetailsFunc(hash) {
   try {
     var transaction = await web3.eth.getTransaction(hash);
-    try {
-      var blockdata = await web3.eth.getBlock(transaction.blockNumber, false);
-      let txreceipt = await web3.eth.getTransactionReceipt(hash);
+    console.log(transaction);
+    var blockdata = await web3.eth.getBlock(transaction.blockNumber, false);
+    console.log(blockdata);
+    let txreceipt = await web3.eth.getTransactionReceipt(hash);
 
-      let fee = txreceipt.gasUsed * transaction.gasPrice;
-      // fee = fee / 1e18;
+    console.log(txreceipt);
 
-      transaction.block = blockdata;
-      transaction.txreceipt = txreceipt;
-      transaction.fee = fee;
+    let fee = txreceipt.gasUsed * transaction.gasPrice;
+    // fee = fee / 1e18;
+
+    transaction.block = blockdata;
+    transaction.txreceipt = txreceipt;
+    transaction.fee = fee;
+
+    let tokenAddress = txreceipt.to;
+    console.log("Token address is " + tokenAddress);
+    let tokens = await TokenModel.find({address: tokenAddress});
+
+    if (tokens.length) {
+      token = tokens[0];
 
       var inputdata = transaction.input;
       console.log(inputdata);
       let methodid = inputdata.slice(0, 10);
       if (methodid == "0xa9059cbb") {
+
         let to = inputdata.slice(10, 74);
         let amount = inputdata.slice(74, 138);
         
         to = to.replace(/^(0)*/, '')
         amount = amount.replace(/^(0)*/, '')
         amount = parseInt('0x' + amount, 16);
+        amount = amount / Math.pow(10, token.decimal);
         console.log("to: " + to + " amount: " + amount);
 
-        transaction.txtoken = {from:txreceipt.from, to: to, amount: amount}
+        transaction.txtoken = {symbol: token.symbol, from:txreceipt.from, to: to, amount: amount}
       }
       else if (methodid == "0x23b872dd") {
         let from = inputdata.slice(10, 74);
@@ -54,11 +66,12 @@ async function getTransactionDetailsFunc(hash) {
         to = to.replace(/^(0)*/, '')
         amount = amount.replace(/^(0)*/, '')
         amount = parseInt('0x' + amount, 16);
+        amount = amount / Math.pow(10, token.decimal);
         console.log("to: " + to + " amount: " + amount);
 
-        transaction.txtoken = {from:from, to: to, amount: amount}
+        transaction.txtoken = {symbol: token.symbol, from:from, to: to, amount: amount}
       }
-    } catch (e) { }
+    }
     return transaction;
   } catch (error) {
     console.log("getTransaction: we have a promblem: ", error); // Should dump errors here
@@ -486,7 +499,7 @@ exports.getTransactionInfo = function (req, res) {
   var hash = req.params.hash;
   web3.eth.getTransaction(hash, async function (error, transaction) {
     if (error) {
-      console.log("getTransaction: we have a promblem: ", error); // Should dump errors here
+      console.log("getTransactionInfo: we have a promblem: ", error); // Should dump errors here
       return res.json({
         status: 400,
         msg: "Get transaction error !",
