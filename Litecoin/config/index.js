@@ -7,7 +7,7 @@ var localNode = rpc.Client.$create(
 );
 
 module.exports = {
-  port: 2001,
+  port: 80,
   localNode,
   db: "mongodb://localhost:27017/litecoin-db",
 
