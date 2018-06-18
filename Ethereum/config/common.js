@@ -2,7 +2,7 @@ var Web3 = require('web3');
 var web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8555"));
 
 //test
-//var web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/TINkP1xOPWqKFJqcU9si"));
+// var web3 = new Web3(new Web3.providers.HttpProvider("https://ropsten.infura.io/TINkP1xOPWqKFJqcU9si"));
 
 
 exports.web3 = web3;

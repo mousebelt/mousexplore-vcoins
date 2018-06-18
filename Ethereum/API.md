@@ -297,7 +297,12 @@ txdetails = {
             "transactionHash": "0xdeb182f3c5c47d6740b3783c22fb3f57c02bb7a74958e825f8deaf9ef185aca2",
             "transactionIndex": 0
         },
-        "fee": 351795900000000000
+        "fee": 351795900000000000,
+        txtoken: {
+          from: "0xf931f53b81e90a73add29ff621fad2fe665fdf9d",
+          to: "ec1a6b8fdaeb9285536695263ec736eede60b277",
+          amount: 100000
+        }
     }
 ```
 
