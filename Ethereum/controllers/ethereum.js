@@ -1,5 +1,5 @@
-var config = require("../config");
-var web3 = require("../config").web3;
+var config = require("../config/common").info;
+var web3 = require("../config/common").web3;
 var TransactionModel = require("../model/transactions");
 var TokenModel = require("../model/tokens");
 
