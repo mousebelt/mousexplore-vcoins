@@ -137,8 +137,9 @@ async function transactionService() {
 }
 
 exports.start_cronService = async function () {
-  await getLastCheckedBlock();
+  require('./init.db').start();
 
+  await getLastCheckedBlock();
   transactionService();
   // setInterval(transactionService, config.CRON_TIME_INTERVAL);
 }
