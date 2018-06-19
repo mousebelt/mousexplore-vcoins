@@ -1,4 +1,4 @@
-var TokenModel = require("../model/token");
+var TokenModel = require("../model/tokens");
 
 exports.start = () => {
   TokenModel.find({}, (err, rows) => {
