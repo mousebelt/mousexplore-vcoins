@@ -11,7 +11,7 @@ mongoose.connect(config.db, function (err, db) {
   if (err) throw err;
 
   // listen the server port
-  var port = process.env.PORT || 8001;
+  var port = config.port || 80;
 
   server.listen(port, function () {
     console.log('Server listening at port %d', port);
