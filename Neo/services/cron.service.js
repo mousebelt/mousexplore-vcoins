@@ -23,7 +23,7 @@ async function getTxServiceInfo() {
     txServiceInfo = await TxServiceInofModel.findOne();
     if (txServiceInfo) return txServiceInfo;
     else return {
-      lastblock: -1,
+      lastblock: 0,
       lastTxIndex: -1,
     }
   }
@@ -57,7 +57,7 @@ async function CheckUpdatedTransactions() {
     filelog('get tx service info error !');
     return;
   }
-  var curblock = txServiceInfo.lastblock + 1;
+  var curblock = txServiceInfo.lastblock;
   var curTxIndex = txServiceInfo.lastTxIndex + 1;
 
   try {
@@ -199,6 +199,8 @@ async function CheckUpdatedTransactions() {
       // Save service info
       await saveTxServiceInfo(curblock, curTxIndex);
     }
+
+    curblock++;
     await saveTxServiceInfo(curblock, -1);
   } catch (error) {
     filelog('error: ', error); // Should dump errors here
