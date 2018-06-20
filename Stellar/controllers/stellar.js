@@ -892,7 +892,7 @@ exports.postTransaction = function (req, res) {
 
   console.log("tx: ", tx);
 
-  var url = urlAPI + "/transactions";
+  // var url = urlAPI + "/transactions";
   // try {
   //   var response = await requestpromise( 
   //     {
@@ -924,7 +924,7 @@ exports.postTransaction = function (req, res) {
     if (response instanceof Error) {
       res.json({ status: 400, msg: "Error !", data: response });
     } else {
-        res.json({ status: 400, msg: "Transaction submission failed. Server responded:", response });
+        res.json({ status: 400, msg: "Transaction submission failed. Server responded: " + response.status });
     }
   });
 };
