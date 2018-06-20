@@ -898,8 +898,8 @@ exports.postTransaction = async function (req, res) {
       {
         uri: url,
         method: "POST",
-        body: {tx: tx},
-        json: true
+        body: "tx=" + tx//{tx: tx},
+        // json: true
       });
 
     console.log(response);  
