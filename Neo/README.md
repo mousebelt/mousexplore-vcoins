@@ -44,13 +44,13 @@ testnet config (json-rpc port: 20332)
 >screen dotnet neo-cli.dll /rpc  
 
 * using systemctl
->cp ./neoseed.service /etc/systemd/system/neoseed.service  
->systemctl enable neoseed  
->systemctl start neoseed  
+>cp ./neo.service /etc/systemd/system/neo.service  
+>systemctl enable neo  
+>systemctl start neo  
 
 * check the status
->service neoseed status  
->systemctl status neoseed  
+>service neo status  
+>systemctl status neo  
 
 
 # Reference
