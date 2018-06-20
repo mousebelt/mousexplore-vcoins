@@ -884,30 +884,26 @@ exports.getSearch = function (req, res) {
   }
 };
 
-exports.postTransaction = function (req, res) {
+exports.postTransaction = async function (req, res) {
   var tx = req.body.tx;
   if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
 
   console.log("tx: ", tx);
 
   var url = urlAPI + "/transactions";
-  requestpromise( 
-    {
-      uri: url,
-      method: "POST",
-      body: {tx: tx},
-      json: true
-    },
-    function (error, response) {
-      if (!error) {
-        // console.log("response", response.body);
-        // console.log("response", JSON.parse(response.body));
-        console.log("body", response);
-        res.json({ status: 200, msg: "success", data: response.body });
-      }
-      else {
-        res.json({ status: 400, msg: "Error !", data: error });
-      }
-    }
-  );
+  try {
+    var response = await requestpromise( 
+      {
+        uri: url,
+        method: "POST",
+        body: {tx: tx},
+        json: true
+      });
+
+    console.log(response);  
+
+    res.json({ status: 200, msg: "success", data: response });
+    } catch(e) {
+    res.json({ status: 400, msg: "Error !", data: error });
+  }
 };
