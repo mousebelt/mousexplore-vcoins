@@ -8,7 +8,6 @@ var ServiceInofModel = require("../model/serviceinfo");
 
 var lastCheckedBlock = 0;
 var lastCheckedIndex = -1;
-var cronServiceInfo = null;
 
 var fs = require('fs');
 var util = require('util');
@@ -22,7 +21,7 @@ function filelog(d) { //
 
 async function getLastCheckedBlock() {
   try {
-    cronServiceInfo = await ServiceInofModel.findOne();
+    var cronServiceInfo = await ServiceInofModel.findOne();
     if (cronServiceInfo) {
       lastCheckedBlock = cronServiceInfo.lastblock;
       lastCheckedIndex = cronServiceInfo.lastTxnIndex;
