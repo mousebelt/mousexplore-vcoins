@@ -902,7 +902,7 @@ exports.postTransaction = function (req, res) {
       if (!error) {
         // console.log("response", response.body);
         // console.log("response", JSON.parse(response.body));
-        console.log("body", response.body);
+        console.log("body", response);
         res.json({ status: 200, msg: "success", data: response.body });
       }
       else {
