@@ -10,7 +10,7 @@ Restart=always
 StandardInput=tty-force
 StandardOutput=syslog
 StandardError=syslog
-SyslogIdentifier=neoseed
+SyslogIdentifier=neo
 User=root
 Group=root
 
