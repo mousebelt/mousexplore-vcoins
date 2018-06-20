@@ -888,6 +888,8 @@ exports.postTransaction = function (req, res) {
   var tx = req.body.tx;
   if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
 
+  console.log("tx: ", tx);
+
   var url = urlAPI + "/transactions";
   requestpromise( 
     {
@@ -900,8 +902,8 @@ exports.postTransaction = function (req, res) {
       if (!error) {
         // console.log("response", response.body);
         // console.log("response", JSON.parse(response.body));
-        console.log("body", response);
-        res.json({ status: 200, msg: "success", data: response });
+        console.log("body", response.body);
+        res.json({ status: 200, msg: "success", data: response.body });
       }
       else {
         res.json({ status: 400, msg: "Error !", data: error });
