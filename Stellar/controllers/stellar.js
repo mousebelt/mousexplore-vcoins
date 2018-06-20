@@ -4,6 +4,7 @@ var request = require("request");
 var requestpromise = require("request-promise");
 let axios = require("axios");
 var URL = require("url");
+let URI = require("urijs");
 
 var config = require("../config/common.js").config;
 var port = process.env.PORT || 2000;
