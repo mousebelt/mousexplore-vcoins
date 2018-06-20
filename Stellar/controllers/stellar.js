@@ -890,8 +890,25 @@ exports.postTransaction = function (req, res) {
   if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
 
   server.submitTransaction(tx).then(function (result) {
-    res.json({ status: 200, msg: "success", data: result });
-  }).catch((error) => {
-    res.json({ status: 400, msg: "Error !", data: error });
-  });
+  //   res.json({ status: 200, msg: "success", data: result });
+  // }).catch((error) => {
+  //   res.json({ status: 400, msg: "Error !", data: error });
+  // });
+
+  var url = urlAPI + "/transactions";
+  var request = require("request");
+  request.post(
+    {
+      url: url,
+      body: {tx: tx},
+      json: true
+    },
+    function (error, response, body) {
+      if (!error) {
+        res.json({ status: 200, msg: "success", data: body });
+      }
+      else {
+        res.json({ status: 400, msg: "Error !", data: error });
+      }
+    });
 };
