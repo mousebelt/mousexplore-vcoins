@@ -912,7 +912,7 @@ exports.postTransaction = function (req, res) {
   axios.post(
     URI(urlAPI).segment('transactions').toString(),
     `tx=${tx}`,
-    {timeout: SUBMIT_TRANSACTION_TIMEOUT}
+    {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
   )
   .then(function(response) {
       console.log("response: ", response);
