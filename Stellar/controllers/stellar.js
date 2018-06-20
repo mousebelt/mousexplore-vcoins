@@ -57,7 +57,6 @@ exports.createAccount = function (req, res) {
   console.log("PublicKey is ", pair.publicKey());
 
   if (runtype == "test") {
-    var request = require("request");
     request.get(
       {
         url: "https://friendbot.stellar.org",
@@ -890,20 +889,19 @@ exports.postTransaction = function (req, res) {
   if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
 
   var url = urlAPI + "/transactions";
-  var request = require("request");
-  request.post(
+  requestpromise( 
     {
-      url: url,
+      uri: url,
+      method: "post",
       body: {tx: tx},
       json: true
     },
-    function (error, response, body) {
+    function (error, response) {
       if (!error) {
-        body = JSON.parse(body);
         // console.log("response", response.body);
         // console.log("response", JSON.parse(response.body));
-        console.log("body", body);
-        res.json({ status: 200, msg: "success", data: body });
+        console.log("body", response);
+        res.json({ status: 200, msg: "success", data: response });
       }
       else {
         res.json({ status: 400, msg: "Error !", data: error });
