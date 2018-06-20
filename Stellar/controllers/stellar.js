@@ -904,6 +904,6 @@ exports.postTransaction = async function (req, res) {
 
     res.json({ status: 200, msg: "success", data: response });
     } catch(e) {
-    res.json({ status: 400, msg: "Error !", data: error });
+    res.json({ status: 400, msg: "Error !", data: e });
   }
 };
