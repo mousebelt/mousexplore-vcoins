@@ -894,9 +894,9 @@ exports.postTransaction = function (req, res) {
   requestpromise( 
     {
       uri: url,
-      method: "post",
-      body: tx,
-      // json: true
+      method: "POST",
+      body: {tx: tx},
+      json: true
     },
     function (error, response) {
       if (!error) {
