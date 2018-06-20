@@ -13,29 +13,29 @@
 Download the Neo-CLI package on Github and unzip it
 https://github.com/neo-project/neo-cli/releases
 
->sudo apt-get install libleveldb-dev sqlite3 libsqlite3-dev
->dotnet neo-cli.dll
+>sudo apt-get install libleveldb-dev sqlite3 libsqlite3-dev  
+>dotnet neo-cli.dll  
 
 Neo-CLI provides a series of APIs for external access. If you want to start the node while opening the API, you can run the following code.
->dotnet neo-cli.dll /rpc
+>dotnet neo-cli.dll /rpc  
 
 If you want the external program to access the node API need to open the firewall port: 10331-10334, 20331-20334
 
 ## testnet/mainnet configure
 You will find the following config files.
->$HOME/neo-cli/config.json
->$HOME/neo-cli/config.mainnet.json
->$HOME/neo-cli/config.testnet.json
+>$HOME/neo-cli/config.json  
+>$HOME/neo-cli/config.mainnet.json  
+>$HOME/neo-cli/config.testnet.json  
 
 mainnet config (json-rpc port: 10332)
->cp config.mainnet.json config.json
+>cp config.mainnet.json config.json  
 
 testnet config (json-rpc port: 20332)
->cp config.testnet.json config.json
+>cp config.testnet.json config.json  
 
 
 ## run as service
->screen dotnet neo-cli.dll /rpc
+>screen dotnet neo-cli.dll /rpc  
 
 * using systemctl
 https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
@@ -46,7 +46,7 @@ https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 >systemctl start neo  
 
 * check the status
->service neo status
+>service neo status  
 
 
 # Reference
