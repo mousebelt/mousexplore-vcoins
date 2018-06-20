@@ -896,7 +896,7 @@ exports.postTransaction = function (req, res) {
       uri: url,
       method: "post",
       body: tx,
-      json: true
+      // json: true
     },
     function (error, response) {
       if (!error) {
