@@ -17,7 +17,12 @@ https://github.com/neo-project/neo-cli/releases
 >wget https://github.com/neo-project/neo-cli/releases/download/v2.7.3/neo-cli-ubuntu.16.04-x64.zip  
 >unzip neo-cli-ubuntu.16.04-x64.zip  
 
-Neo-CLI provides a series of APIs for external access. If you want to start the node while opening the API, you can run the following code.
+Boostrap Node
+>wget https://s3.eu-west-2.amazonaws.com/ashant-neo/chain.acc.zip  
+>unzip chain.acc.zip -d ./neo-cli/  
+
+Start the Node and Confirm it is Running
+>cd neo-cli  
 >dotnet neo-cli.dll /rpc  
 
 If you want the external program to access the node API need to open the firewall port: 10331-10334, 20331-20334
@@ -39,15 +44,13 @@ testnet config (json-rpc port: 20332)
 >screen dotnet neo-cli.dll /rpc  
 
 * using systemctl
-https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
-
->cp ./neo.service /etc/systemd/system/neo.service  
->systemctl daemon-reload  
->systemctl enable neo.service  
->systemctl start neo  
+>cp ./neoseed.service /etc/systemd/system/neoseed.service  
+>systemctl enable neoseed  
+>systemctl start neoseed  
 
 * check the status
->service neo status  
+>service neoseed status  
+>systemctl status neoseed  
 
 
 # Reference
