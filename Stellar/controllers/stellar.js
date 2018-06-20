@@ -909,20 +909,22 @@ exports.postTransaction = function (req, res) {
   //     console.log(e);
   //   res.json({ status: 400, msg: "Error !", data: e });
   // }
+  console.log("URI: ", URI(urlAPI).segment('transactions').toString());
   axios.post(
     URI(urlAPI).segment('transactions').toString(),
     `tx=${tx}`,
     {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
   )
   .then(function(response) {
-      console.log("response: ", response);
-      res.json({ status: 200, msg: "success", data: response });
+    console.log("response: ", response);
+    res.json({ status: 200, msg: "success", data: response });
   })
   .catch(function (response) {
-      if (response instanceof Error) {
-        res.json({ status: 400, msg: "Error !", data: response });
-      } else {
-          res.json({ status: 400, msg: "Transaction submission failed. Server responded:", response });
-      }
+    console.log(response);
+    if (response instanceof Error) {
+      res.json({ status: 400, msg: "Error !", data: response });
+    } else {
+        res.json({ status: 400, msg: "Transaction submission failed. Server responded:", response });
+    }
   });
 };
