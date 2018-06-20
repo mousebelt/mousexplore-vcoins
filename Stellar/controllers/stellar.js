@@ -2,6 +2,7 @@ var rp = require('request-promise');
 var StellarSdk = require("stellar-sdk");
 var request = require("request");
 var requestpromise = require("request-promise");
+let axios = require("axios");
 var URL = require("url");
 
 var config = require("../config/common.js").config;
@@ -884,26 +885,43 @@ exports.getSearch = function (req, res) {
   }
 };
 
-exports.postTransaction = async function (req, res) {
+exports.postTransaction = function (req, res) {
   var tx = req.body.tx;
   if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
 
   console.log("tx: ", tx);
 
   var url = urlAPI + "/transactions";
-  try {
-    var response = await requestpromise( 
-      {
-        uri: url,
-        method: "POST",
-        body: {tx: tx},
-        json: true
-      });
+  // try {
+  //   var response = await requestpromise( 
+  //     {
+  //       uri: url,
+  //       method: "POST",
+  //       body: {tx: tx},
+  //       json: true
+  //     });
 
-    console.log(response);  
+  //   console.log(response);  
 
-    res.json({ status: 200, msg: "success", data: response });
-    } catch(e) {
-    res.json({ status: 400, msg: "Error !", data: e });
-  }
+  //   res.json({ status: 200, msg: "success", data: response });
+  //   } catch(e) {
+  //     console.log(e);
+  //   res.json({ status: 400, msg: "Error !", data: e });
+  // }
+  axios.post(
+    URI(urlAPI).segment('transactions').toString(),
+    `tx=${tx}`,
+    {timeout: SUBMIT_TRANSACTION_TIMEOUT}
+  )
+  .then(function(response) {
+      console.log("response: ", response);
+      res.json({ status: 200, msg: "success", data: response });
+  })
+  .catch(function (response) {
+      if (response instanceof Error) {
+        res.json({ status: 400, msg: "Error !", data: response });
+      } else {
+          res.json({ status: 400, msg: "Transaction submission failed. Server responded:", response });
+      }
+  });
 };
