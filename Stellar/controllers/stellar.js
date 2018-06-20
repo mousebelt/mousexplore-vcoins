@@ -895,7 +895,7 @@ exports.postTransaction = function (req, res) {
     {
       uri: url,
       method: "post",
-      body: {tx: tx},
+      body: tx,
       json: true
     },
     function (error, response) {
