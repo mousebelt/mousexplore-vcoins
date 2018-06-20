@@ -13,8 +13,9 @@
 Download the Neo-CLI package on Github and unzip it
 https://github.com/neo-project/neo-cli/releases
 
->sudo apt-get install libleveldb-dev sqlite3 libsqlite3-dev  
->dotnet neo-cli.dll  
+>sudo apt-get install unzip libleveldb-dev sqlite3 libsqlite3-dev libunwind8-dev   
+>wget https://github.com/neo-project/neo-cli/releases/download/v2.7.3/neo-cli-ubuntu.16.04-x64.zip  
+>unzip neo-cli-ubuntu.16.04-x64.zip  
 
 Neo-CLI provides a series of APIs for external access. If you want to start the node while opening the API, you can run the following code.
 >dotnet neo-cli.dll /rpc  
