@@ -928,7 +928,9 @@ exports.postTransaction = async function (req, res) {
 
 exports.TestTransaction = function (req, res) {
   var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZAEZWrsAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA/E/doeW0oiCt2yrdaLLphBndHOUksU/FsFi1nI10EYwAAAAAAJiWgAAAAAAAAAAB398VzwAAAECl5LlwxkGKwRJrS5R/ASJThg3CjrsmieQaWnV9RDk4LY6E9D8AmLXi3Cg/EJF1Ul6yFhExHMnrdZTCtnzrLoEL";
-//https://horizon-testnet.stellar.org
+  
+  urlAPI = "https://horizon-testnet.stellar.org";
+
   axios.post(
     URI(urlAPI).segment('transactions').toString(),
     `tx=${tx}`,
