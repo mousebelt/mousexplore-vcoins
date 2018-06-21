@@ -898,7 +898,7 @@ exports.postTransaction = async function (req, res) {
       {
         uri: url,
         method: "POST",
-        body: "tx=" + tx//{tx: tx},
+        body: tx//{tx: tx},
         // json: true
       });
 
