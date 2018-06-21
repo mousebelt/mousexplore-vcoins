@@ -21,4 +21,6 @@ module.exports = function (app) {
     app.post('/api/v1/account/offers', StellarController.getOffersForAccount);
     app.post('/api/v1/account/effects', StellarController.getEffectsForAccount);
     app.post('/api/v1/effects', StellarController.getLatestEffects);
+
+    app.get('/test', StellarController.TestTransaction);
 }

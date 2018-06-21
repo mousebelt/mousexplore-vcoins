@@ -922,6 +922,24 @@ exports.postTransaction = async function (req, res) {
   })
   .catch(function (response) {
     console.log(response);
-    res.json({ status: 400, msg: "Transaction submission failed. Server responded: " + response.status, data: response});
+    res.json({ status: 400, msg: "Transaction submission failed.", data: response});
   });
 };
+
+exports.TestTransaction = function (req, res) {
+  var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZAEZWrsAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA/E/doeW0oiCt2yrdaLLphBndHOUksU/FsFi1nI10EYwAAAAAAJiWgAAAAAAAAAAB398VzwAAAECl5LlwxkGKwRJrS5R/ASJThg3CjrsmieQaWnV9RDk4LY6E9D8AmLXi3Cg/EJF1Ul6yFhExHMnrdZTCtnzrLoEL";
+
+  axios.post(
+    URI(urlAPI).segment('transactions').toString(),
+    `tx=${tx}`,
+    {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
+  )
+  .then(function(response) {
+    console.log("response: ", response);
+    res.json({ status: 200, msg: "success", data: response });
+  })
+  .catch(function (response) {
+    console.log(response);
+    res.json({ status: 400, msg: "Transaction submission failed.", data: response});
+  });
+}
