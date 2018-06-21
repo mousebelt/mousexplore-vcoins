@@ -892,24 +892,6 @@ exports.postTransaction = async function (req, res) {
 
   console.log("tx: ", tx);
 
-  // var url = urlAPI + "/transactions";
-  // try {
-  //   var response = await requestpromise( 
-  //     {
-  //       uri: url,
-  //       method: "POST",
-  //       body: tx//{tx: tx},
-  //       // json: true
-  //     });
-
-  //   console.log(response);  
-
-  //   res.json({ status: 200, msg: "success", data: response });
-  //   } catch(e) {
-  //     console.log(e);
-  //   res.json({ status: 400, msg: "Error !", data: e });
-  // }
-
   console.log("URI: ", URI(urlAPI).segment('transactions').toString());
   axios.post(
     URI(urlAPI).segment('transactions').toString(),
@@ -917,8 +899,8 @@ exports.postTransaction = async function (req, res) {
     {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
   )
   .then(function(response) {
-    console.log("response: ", response);
-    res.json({ status: 200, msg: "success", data: response });
+    console.log("response: ", response.data);
+    res.json({ status: 200, msg: "success", data: response.data });
   })
   .catch(function (response) {
     console.log(response.data);
@@ -926,9 +908,19 @@ exports.postTransaction = async function (req, res) {
   });
 };
 
+//http://localhost:2000/test
 exports.TestTransaction = function (req, res) {
-  var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZAEZWrsAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA/E/doeW0oiCt2yrdaLLphBndHOUksU/FsFi1nI10EYwAAAAAAJiWgAAAAAAAAAAB398VzwAAAECl5LlwxkGKwRJrS5R/ASJThg3CjrsmieQaWnV9RDk4LY6E9D8AmLXi3Cg/EJF1Ul6yFhExHMnrdZTCtnzrLoEL";
   
+  //test net seq num is 41275142520700928
+  var server = new StellarSdk.Server('https://horizon-testnet.stellar.org'); 
+  server.loadAccount("GCIA6RMJKSV2XFJYVXWTKWPGE4FYOPO4PCT2RVWCWWRS7GW734K472WH")
+  .then(function(account) { console.log(account.sequence) })
+
+  //main net
+  // var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZAEZWrsAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA/E/doeW0oiCt2yrdaLLphBndHOUksU/FsFi1nI10EYwAAAAAAJiWgAAAAAAAAAAB398VzwAAAECl5LlwxkGKwRJrS5R/ASJThg3CjrsmieQaWnV9RDk4LY6E9D8AmLXi3Cg/EJF1Ul6yFhExHMnrdZTCtnzrLoEL";
+
+  //test net
+  var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZACSo4YAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA%2FE%2FdoeW0oiCt2yrdaLLphBndHOUksU%2FFsFi1nI10EYwAAAAAAJiWgAAAAAAAAAAB398VzwAAAEDkaZhbzoqjE9K%2FCoaTA6bo6LzMZj3dgp%2Fu1v3c%2BePsd5u15b%2BYSayLVAv4VydGCLS4jlMwMwHMn9tQh%2Bt9UFMJ";
   urlAPI = "https://horizon-testnet.stellar.org";
 
   axios.post(
@@ -937,8 +929,8 @@ exports.TestTransaction = function (req, res) {
     {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
   )
   .then(function(response) {
-    console.log("response: ", response);
-    res.json({ status: 200, msg: "success", data: response });
+    console.log("response: ", response.data);
+    res.json({ status: 200, msg: "success", data: response.data });
   })
   .catch(function (response) {
     console.log(response.data);
