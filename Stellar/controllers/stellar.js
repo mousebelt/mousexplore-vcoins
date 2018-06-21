@@ -921,8 +921,8 @@ exports.postTransaction = async function (req, res) {
     res.json({ status: 200, msg: "success", data: response });
   })
   .catch(function (response) {
-    console.log(response);
-    res.json({ status: 400, msg: "Transaction submission failed."});
+    console.log(response.data);
+    res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
   });
 };
 
@@ -940,6 +940,6 @@ exports.TestTransaction = function (req, res) {
   })
   .catch(function (response) {
     console.log(response.data);
-    res.json({ status: 400, msg: "Transaction submission failed."});
+    res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
   });
 }
