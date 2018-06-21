@@ -892,35 +892,36 @@ exports.postTransaction = async function (req, res) {
 
   console.log("tx: ", tx);
 
-  var url = urlAPI + "/transactions";
-  try {
-    var response = await requestpromise( 
-      {
-        uri: url,
-        method: "POST",
-        body: tx//{tx: tx},
-        // json: true
-      });
+  // var url = urlAPI + "/transactions";
+  // try {
+  //   var response = await requestpromise( 
+  //     {
+  //       uri: url,
+  //       method: "POST",
+  //       body: tx//{tx: tx},
+  //       // json: true
+  //     });
 
-    console.log(response);  
+  //   console.log(response);  
 
-    res.json({ status: 200, msg: "success", data: response });
-    } catch(e) {
-      console.log(e);
-    res.json({ status: 400, msg: "Error !", data: e });
-  }
-  // console.log("URI: ", URI(urlAPI).segment('transactions').toString());
-  // axios.post(
-  //   URI(urlAPI).segment('transactions').toString(),
-  //   `tx=${tx}`,
-  //   {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
-  // )
-  // .then(function(response) {
-  //   console.log("response: ", response);
   //   res.json({ status: 200, msg: "success", data: response });
-  // })
-  // .catch(function (response) {
-  //   console.log(response);
-  //   res.json({ status: 400, msg: "Transaction submission failed. Server responded: " + response.status, data: response});
-  // });
+  //   } catch(e) {
+  //     console.log(e);
+  //   res.json({ status: 400, msg: "Error !", data: e });
+  // }
+
+  console.log("URI: ", URI(urlAPI).segment('transactions').toString());
+  axios.post(
+    URI(urlAPI).segment('transactions').toString(),
+    `tx=${tx}`,
+    {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
+  )
+  .then(function(response) {
+    console.log("response: ", response);
+    res.json({ status: 200, msg: "success", data: response });
+  })
+  .catch(function (response) {
+    console.log(response);
+    res.json({ status: 400, msg: "Transaction submission failed. Server responded: " + response.status, data: response});
+  });
 };
