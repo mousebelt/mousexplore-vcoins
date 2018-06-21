@@ -904,7 +904,12 @@ exports.postTransaction = async function (req, res) {
   })
   .catch(function (response) {
     console.log(response.data);
-    res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
+    if (response.type == Error.type) {
+      res.json({ status: 400, msg: "Transaction submission failed.", data: response});
+    }
+    else {
+      res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
+    }
   });
 };
 
@@ -934,6 +939,11 @@ exports.TestTransaction = function (req, res) {
   })
   .catch(function (response) {
     console.log(response.data);
-    res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
+    if (response.type == Error.type) {
+      res.json({ status: 400, msg: "Transaction submission failed.", data: response});
+    }
+    else {
+      res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
+    }
   });
 }
