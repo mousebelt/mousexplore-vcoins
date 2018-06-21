@@ -939,7 +939,7 @@ exports.TestTransaction = function (req, res) {
     res.json({ status: 200, msg: "success", data: response });
   })
   .catch(function (response) {
-    console.log(response);
-    res.json({ status: 400, msg: "Transaction submission failed.", data: response});
+    console.log(JSON.stringify(response));
+    res.json({ status: 400, msg: "Transaction submission failed."});
   });
 }
