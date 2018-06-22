@@ -151,6 +151,8 @@ set all urls as live and history storage
 
 Maybe only for getting transaction history, we don't need main net setting
 
+### check stellar-core --c 'quorum' and if there is any missing, should remove it from node names
+
 # test API
 >node -e 'process.env.RUN_TYPE = "test"'
 

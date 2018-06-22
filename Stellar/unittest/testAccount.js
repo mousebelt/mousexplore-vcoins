@@ -8,7 +8,9 @@ else {
 	StellarSdk.Network.usePublicNetwork();
 }
 
-var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
+var server = new StellarSdk.Server('http://127.0.0.1:8000', {allowHttp: true});
 
-    server.transactions()
+    server.ledgers()
+    .limit(10)
+    .order("desc")
     .call().then(function(r){ console.log(r); });
