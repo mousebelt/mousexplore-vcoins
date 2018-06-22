@@ -540,11 +540,11 @@ exports.getOperationsForAccount = function (req, res) {
         });
       }
 
-      res.status(200).json({ msg: "success", data: operations });
+      res.json({status: 200, msg: "success", data: operations });
     })
     .catch(function (err) {
       console.log(err);
-      res.status(400).json({ error: err });
+      res.json({ status: 400, msg: 'Error !', data: err });
     });
 };
 
@@ -577,11 +577,11 @@ exports.getTransactionsForAccount = function (req, res) {
           timestamp: info.created_at
         });
       }
-      res.status(200).json({ msg: "success", data: transactions });
+      res.json({ status: 200, msg: "success", data: transactions });
     })
     .catch(function (err) {
       console.log(err);
-      res.status(400).json({ error: err });
+      res.json({ status: 400, msg: 'Error !', data: err });
     });
 };
 
@@ -632,12 +632,10 @@ exports.getPaymentsForAccount = function (req, res) {
           timestamp: info.created_at
         });
       }
-      res
-        .status(200)
-        .json({ msg: "success", next: next, prev: prev, data: operations });
+      res.json({ status: 200, msg: "success", next: next, prev: prev, data: operations });
     } else {
       console.log("getLatestLedgers error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: err });
     }
   });
   /*
@@ -719,12 +717,10 @@ exports.getOffersForAccount = function (req, res) {
           price: info.price
         });
       }
-      res
-        .status(200)
-        .json({ msg: "success", next: next, prev: prev, data: operations });
+      res.json({ status: 200, msg: "success", next: next, prev: prev, data: operations });
     } else {
       console.log("getLatestLedgers error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: err });
     }
   });
 };
@@ -775,10 +771,10 @@ exports.getEffectsForAccount = function (req, res) {
       }
       res
         .status(200)
-        .json({ msg: "success", next: next, prev: prev, data: operations });
+        .json({ status: 200, msg: "success", next: next, prev: prev, data: operations });
     } else {
       console.log("getLatestLedgers error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: err });
     }
   });
 };
@@ -840,12 +836,10 @@ exports.getLatestEffects = function (req, res) {
 
         operations.push(info);
       }
-      res
-        .status(200)
-        .json({ msg: "success", next: next, prev: prev, data: operations });
+      res.json({ status: 200, msg: "success", next: next, prev: prev, data: operations });
     } else {
       console.log("getLatestLedgers error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: err });
     }
   });
 };
@@ -880,7 +874,7 @@ exports.getSearch = function (req, res) {
       // address
       return res.json({ status: 200, msg: "sccuess", data: { result: `address is not implemented yet, address: ${key} !`, type: 'address' } });
     } else {
-      res.json({ status: 400, msg: "Invalid key !" });
+      res.json({ status: 400, msg: "Invalid key !", data: "" });
     }
   } catch (error) {
     res.json({ status: 400, msg: "Invalid key !", data: error });
