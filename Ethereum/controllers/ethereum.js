@@ -23,8 +23,6 @@ async function getTransactionDetailsFunc(hash) {
     var blockdata = await web3.eth.getBlock(transaction.blockNumber, false);
     let txreceipt = await web3.eth.getTransactionReceipt(hash);
 
-    console.log(txreceipt);
-
     let fee = txreceipt.gasUsed * transaction.gasPrice;
     // fee = fee / 1e18;
 
@@ -33,14 +31,12 @@ async function getTransactionDetailsFunc(hash) {
     transaction.fee = fee;
 
     let tokenAddress = txreceipt.to;
-    console.log("Token address is " + tokenAddress);
     let tokens = await TokenModel.find({address: tokenAddress});
 
     if (tokens.length) {
       token = tokens[0];
 
       var inputdata = transaction.input;
-      console.log(inputdata);
       let methodid = inputdata.slice(0, 10);
       if (methodid == "0xa9059cbb") {
 
@@ -51,7 +47,6 @@ async function getTransactionDetailsFunc(hash) {
         amount = amount.replace(/^(0)*/, '');
         amount = parseInt('0x' + amount, 16);
         amount = amount / Math.pow(10, token.decimal);
-        console.log("to: " + to + " amount: " + amount);
 
         transaction.txtoken = {symbol: token.symbol, from:txreceipt.from, to: to, amount: amount}
       }
@@ -65,7 +60,6 @@ async function getTransactionDetailsFunc(hash) {
         amount = amount.replace(/^(0)*/, '')
         amount = parseInt('0x' + amount, 16);
         amount = amount / Math.pow(10, token.decimal);
-        console.log("to: " + to + " amount: " + amount);
 
         transaction.txtoken = {symbol: token.symbol, from:from, to: to, amount: amount}
       }
@@ -80,13 +74,10 @@ async function getTransactionDetailsFunc(hash) {
 exports.getBalance = async function (req, res) {
   var address = req.params.address;
 
-  console.log("address: " + address)
-
   var balances = []
   try {
     // Use Wb3 to get the balance of the address, convert it and then show it in the console.
     var ethBalance = await web3.eth.getBalance(address);
-    console.log("Ether: " + ethBalance)
     var ethervalue = web3.utils.fromWei(ethBalance, "ether");
     balances.push({symbol: "ETH", balance: ethervalue})
 
@@ -98,7 +89,6 @@ exports.getBalance = async function (req, res) {
 
     for (let i = 0; i < tokens.length; i ++) {
       var token = tokens[i];
-      // console.log(token.symbol);
 
       // '0x70a08231' is the contract 'balanceOf()' ERC20 token function in hex. A zero buffer is required and then we add the previously defined address with tokens
       var contractData = ('0x70a08231000000000000000000000000' + address);
@@ -108,19 +98,15 @@ exports.getBalance = async function (req, res) {
 
       // Convert the result to a usable number string
       var tokenBalance = web3.utils.toBN(result).toString(); 
-      // console.log("balance: " + tokenBalance);
 
       if (tokenBalance) {
         // Change the string to be in Ether not Wei
         //tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
         tokenBalance = tokenBalance / Math.pow(10, token.decimal);
-        console.log(token.symbol + ' Tokens Owned: ' + tokenBalance); 
-        
         balances.push({symbol: token.symbol, balance: tokenBalance});
       }
     }
 
-    // console.log(balances)
     res.json({ status: 200, msg: "success", data: { balances: balances } });
 
   } catch (e) {
@@ -130,12 +116,9 @@ exports.getBalance = async function (req, res) {
 };
 
 exports.createAccount = function (req, res) {
-  console.log("createAccount");
-
   // Use Wb3 to get the balance of the address, convert it and then show it in the console.
   web3.eth.personal.newAccount(config.mainpass, function (error, result) {
     if (!error) {
-      console.log("New Account:", result);
       return res.json({ status: 200, msg: "success", data: result });
     } else {
       console.log("createAccount error: ", error); // Should dump errors here
@@ -146,7 +129,6 @@ exports.createAccount = function (req, res) {
 
 //to enable calls of personal functions, need to set --rpcapi eth,web3,personal when call geth
 exports.sendTransaction = function (req, res) {
-  console.log("sendTransaction", req.body);
   var from = req.body.from;
   var to = req.body.to;
   var value = req.body.value;
@@ -156,7 +138,6 @@ exports.sendTransaction = function (req, res) {
     result
   ) {
     if (!error) {
-      console.log("Unlocked Account: ", result);
       web3.eth.sendTransaction(
         {
           from: from,
@@ -165,7 +146,6 @@ exports.sendTransaction = function (req, res) {
         },
         function (err, hash) {
           if (!err) {
-            console.log("Send transaction: ", hash);
             return res.json({ status: 200, msg: "success", data: hash });
           } else {
             console.log("error: ", err);
@@ -192,7 +172,6 @@ exports.getUpdatedTransactions = function (req, res) {
   var blocknum = req.body.blocknum;
 
   var lastblock = web3.eth.getBlockNumber(async function (error, number) {
-    //console.log("lastblock= ", number);
 
     if (!error) {
       try {
@@ -237,7 +216,6 @@ exports.blocklist = function (req, res) {
   web3.eth.getBlockNumber(async function (error, number) {
     if (!error) {
       try {
-        console.log("last number " + number);
         var blocks = [];
         for (let i = blocknum; i <= number && i < blocknum + count; i++) {
           var blockdata = await web3.eth.getBlock(i, true);
@@ -277,7 +255,6 @@ exports.blocklist = function (req, res) {
           });
         }
 
-        console.log("blocks: ", blocks);
         return res.json({ status: 200, msg: "success", data: blocks });
       } catch (e) {
         console.log("blocklist: we have a promblem: ", e); // Should dump errors here
@@ -525,7 +502,6 @@ exports.getTokenList = function (req, res) {
     .sort({ symbol: 1 })
     .exec(function (error, tokens) {
       if (!error) {
-        console.log(tokens);
         return res.json({ status: 200, msg: "success", data: tokens });
       } else {
         console.log("getTokenList: we have a promblem: ", error); // Should dump errors here
@@ -537,7 +513,6 @@ exports.getTokenList = function (req, res) {
 exports.addToken = function (req, res) {
   var symbol = req.body.symbol;
   var address = req.body.address;
-  console.log("symbol: " + symbol + " address: " + address)
 
   TokenModel.find({ symbol: symbol, address: address }).exec(function (
     error,
@@ -545,7 +520,6 @@ exports.addToken = function (req, res) {
   ) {
     if (!error) {
       if (tokens.length) {
-        console.log("addToken: token already exsit"); // Should dump errors here
         return res.json({ status: 400, msg: "token already exsits !" });
       }
 
@@ -633,7 +607,6 @@ exports.postSendSignedTransaction = async function (req, res) {
 
     await web3.eth.sendSignedTransaction(raw)
       .on('receipt', (receipt) => {
-        // console.log(JSON.stringify(receipt));
         if (receipt)
           return res.json({ status: 200, msg: "success", data: receipt });
         return res.json({ status: 400, msg: "Empty receipt !" });
