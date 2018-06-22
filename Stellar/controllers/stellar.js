@@ -15,6 +15,9 @@ var runtype = process.env.RUN_TYPE;
 if (runtype == "test") {
   StellarSdk.Network.useTestNetwork();
 }
+else {
+  StellarSdk.Network.usePublicNetwork();
+}
 
 // var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
 var server = new StellarSdk.Server("http://127.0.0.1:8000", {
@@ -102,7 +105,6 @@ exports.createAccount = function (req, res) {
           // .addMemo(StellarSdk.Memo.text('Hello world!'))
           .build();
 
-          StellarSdk.Network.usePublicNetwork;
         // Sign this transaction with the secret key
         // NOTE: signing is transaction is network specific. Test network transactions
         // won't work in the public network. To switch networks, use the Network object
@@ -124,12 +126,12 @@ exports.createAccount = function (req, res) {
           .catch(function(err) {
             console.log('An error has occured:');
             console.log(err);
-            res.json({ status: 400, msg: "success", data: err });
+            res.json({ status: 400, msg: "An error has occured", data: err });
           });
       })
       .catch(function(e) {
         console.error(e);
-        res.json({ status: 400, msg: "success", data: e });
+        res.json({ status: 400, msg: "error", data: e });
       });
       }
 
