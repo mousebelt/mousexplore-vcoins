@@ -54,6 +54,7 @@ exports.createAccount = function (req, res) {
   console.log("createAccount");
 
   var pair = StellarSdk.Keypair.random();
+  var receiverPublicKey = pair.publicKey();
 
   console.log("Secret is ", pair.secret());
   console.log("PublicKey is ", pair.publicKey());
@@ -73,7 +74,59 @@ exports.createAccount = function (req, res) {
         }
       }
     );
-  }
+  } else {
+    var sourceSecretKey = 'SAFGCNACP7QSEJTB24JPVGEVXU7ZGEBQUCRVPO4PTTOR45XDBSSPHYTT';
+
+    // Derive Keypair object and public key (that starts with a G) from the secret
+    var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
+    var sourcePublicKey = sourceKeypair.publicKey();
+
+    // Transactions require a valid sequence number that is specific to this account.
+    // We can fetch the current sequence number for the source account from Horizon.
+    server.loadAccount(sourcePublicKey)
+      .then(function(account) {
+        var transaction = new StellarSdk.TransactionBuilder(account)
+          // Add a payment operation to the transaction
+          .addOperation(StellarSdk.Operation.payment({
+            destination: receiverPublicKey,
+            // The term native asset refers to lumens
+            asset: StellarSdk.Asset.native(),
+            // Specify 350.1234567 lumens. Lumens are divisible to seven digits past
+            // the decimal. They are represented in JS Stellar SDK in string format
+            // to avoid errors from the use of the JavaScript Number data structure.
+            amount: '1',
+          }))
+          // Uncomment to add a memo (https://www.stellar.org/developers/learn/concepts/transactions.html)
+          // .addMemo(StellarSdk.Memo.text('Hello world!'))
+          .build();
+
+        // Sign this transaction with the secret key
+        // NOTE: signing is transaction is network specific. Test network transactions
+        // won't work in the public network. To switch networks, use the Network object
+        // as explained above (look for StellarSdk.Network).
+        transaction.sign(sourceKeypair);
+
+        // Let's see the XDR (encoded in base64) of the transaction we just built
+        console.log(transaction.toEnvelope().toXDR('base64'));
+
+        // Submit the transaction to the Horizon server. The Horizon server will then
+        // submit the transaction into the network for us.
+        server.submitTransaction(transaction)
+          .then(function(transactionResult) {
+            console.log(JSON.stringify(transactionResult, null, 2));
+            console.log('\nSuccess! View the transaction at: ');
+            console.log(transactionResult._links.transaction.href);
+          })
+          .catch(function(err) {
+            console.log('An error has occured:');
+            console.log(err);
+          });
+      })
+      .catch(function(e) {
+        console.error(e);
+      });
+      }
+
 };
 
 /*
@@ -899,7 +952,7 @@ exports.postTransaction = async function (req, res) {
   })
   .catch(function (response) {
     console.log(response);
-    if (response.type == Error.type) {
+    if (!response.data) {
       console.log("Error");
       res.json({ status: 400, msg: "Transaction submission failed.", data: response});
     }
