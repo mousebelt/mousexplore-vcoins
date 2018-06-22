@@ -69,8 +69,10 @@ exports.createAccount = function (req, res) {
       function (error, response, body) {
         if (error || response.statusCode !== 200) {
           console.error("ERROR!", error || body);
+          res.json({ status: 400, msg: "success", data: error });
         } else {
           console.log("SUCCESS! You have a new account :)\n", body);
+          res.json({ status: 200, msg: "success", data: body });
         }
       }
     );
@@ -80,6 +82,7 @@ exports.createAccount = function (req, res) {
     // Derive Keypair object and public key (that starts with a G) from the secret
     var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
     var sourcePublicKey = sourceKeypair.publicKey();
+    StellarSdk.Network.usePublicNetwork;
 
     // Transactions require a valid sequence number that is specific to this account.
     // We can fetch the current sequence number for the source account from Horizon.
@@ -116,14 +119,17 @@ exports.createAccount = function (req, res) {
             console.log(JSON.stringify(transactionResult, null, 2));
             console.log('\nSuccess! View the transaction at: ');
             console.log(transactionResult._links.transaction.href);
+            res.json({ status: 200, msg: "success", data: JSON.stringify(transactionResult) });
           })
           .catch(function(err) {
             console.log('An error has occured:');
             console.log(err);
+            res.json({ status: 400, msg: "success", data: err });
           });
       })
       .catch(function(e) {
         console.error(e);
+        res.json({ status: 400, msg: "success", data: e });
       });
       }
 
