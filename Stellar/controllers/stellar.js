@@ -898,11 +898,13 @@ exports.postTransaction = async function (req, res) {
     res.json({ status: 200, msg: "success", data: response.data });
   })
   .catch(function (response) {
-    console.log(response.data);
+    console.log(response);
     if (response.type == Error.type) {
+      console.log("Error");
       res.json({ status: 400, msg: "Transaction submission failed.", data: response});
     }
     else {
+      console.log("transaction error: ", response.data);
       res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
     }
   });
