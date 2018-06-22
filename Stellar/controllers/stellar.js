@@ -555,6 +555,7 @@ exports.getOperationsForAccount = function (req, res) {
 */
 exports.getTransactionsForAccount = function (req, res) {
   var account = req.body.account;
+  console.log("getTransactionsForAccount: ", account);
 
   server
     .transactions()
