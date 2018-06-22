@@ -99,7 +99,7 @@ exports.getBalance = async function (req, res) {
       // Convert the result to a usable number string
       var tokenBalance = web3.utils.toBN(result).toString(); 
 
-      if (tokenBalance) {
+      if (tokenBalance <= 0) {
         // Change the string to be in Ether not Wei
         //tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
         tokenBalance = tokenBalance / Math.pow(10, token.decimal);
