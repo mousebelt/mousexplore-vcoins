@@ -82,7 +82,6 @@ exports.createAccount = function (req, res) {
     // Derive Keypair object and public key (that starts with a G) from the secret
     var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
     var sourcePublicKey = sourceKeypair.publicKey();
-    StellarSdk.Network.usePublicNetwork;
 
     // Transactions require a valid sequence number that is specific to this account.
     // We can fetch the current sequence number for the source account from Horizon.
@@ -103,6 +102,7 @@ exports.createAccount = function (req, res) {
           // .addMemo(StellarSdk.Memo.text('Hello world!'))
           .build();
 
+          StellarSdk.Network.usePublicNetwork;
         // Sign this transaction with the secret key
         // NOTE: signing is transaction is network specific. Test network transactions
         // won't work in the public network. To switch networks, use the Network object
