@@ -894,7 +894,7 @@ exports.postTransaction = async function (req, res) {
     {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
   )
   .then(function(response) {
-    console.log("postTransaction response: ", response.data);
+    console.log("postTransaction response: ", response);
     res.json({ status: 200, msg: "success", data: response.data });
   })
   .catch(function (response) {
