@@ -55,8 +55,10 @@ exports.getBalance = function (req, res) {
 */
 exports.createAccount = function (req, res) {
   console.log("createAccount");
+  var testDestkey = "SCNQYQI5BOYG7JDB2PSKCEVWTZF75NNVJXYZZFEUXSUTHXHCE5JMBQTB";
 
-  var pair = StellarSdk.Keypair.random();
+  var pair = StellarSdk.Keypair.fromSecret(testDestkey);
+  // var pair = StellarSdk.Keypair.random();
   var receiverPublicKey = pair.publicKey();
 
   console.log("Secret is ", pair.secret());
@@ -85,6 +87,8 @@ exports.createAccount = function (req, res) {
     // Derive Keypair object and public key (that starts with a G) from the secret
     var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
     var sourcePublicKey = sourceKeypair.publicKey();
+
+    console.log("Source is ", sourcePublicKey);
 
     // Transactions require a valid sequence number that is specific to this account.
     // We can fetch the current sequence number for the source account from Horizon.
