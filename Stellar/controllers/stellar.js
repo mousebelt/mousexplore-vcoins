@@ -62,7 +62,7 @@ exports.createAccount = function (req, res) {
   var receiverPublicKey = pair.publicKey();
 
   console.log("Secret is ", pair.secret());
-  console.log("PublicKey is ", pair.publicKey());
+  console.log("PublicKey is ", receiverPublicKey);
 
   if (runtype == "test") {
     request.get(
