@@ -130,7 +130,7 @@ exports.createAccount = function (req, res) {
           .catch(function(err) {
             console.log('An error has occured:');
             console.log(err);
-            res.json({ status: 400, msg: "An error has occured", data: err });
+            res.json({ status: 400, msg: "An error has occured", data: err.data });
           });
       })
       .catch(function(e) {
@@ -985,7 +985,7 @@ exports.TestTransaction = function (req, res) {
 
   //main net
   var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZAEZWrsAAAAJAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAzzSj%2BzgJx2J0MWA8tWTluqeE%2Boq0m1GiFR1bjAf718kAAAAAAJiWgAAAAAAAAAAB398VzwAAAEBLQOK%2FNqbT5bTz6thlyEBkudCIREnjbf0ypP1cwkcMWiKppExsvWLkL8ilShy8Z%2FwbJMqimVeqcpZVZR%2Bm%2FmEH";
-
+//AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZAEZWrsAAAAKAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAzzSj%2BzgJx2J0MWA8tWTluqeE%2Boq0m1GiFR1bjAf718kAAAAAAJiWgAAAAAAAAAAB398VzwAAAEBXuZLYrXHw0l9y68OnKVdTrbfQXkBQddXYuTcsoHrZ1ReXnC%2F7KgUcbQeLCYuzHIYhJ5IheVChHPDEkOyrSJ8G
   //test net
   // var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZACSo4YAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA%2FE%2FdoeW0oiCt2yrdaLLphBndHOUksU%2FFsFi1nI10EYwAAAAAAJiWgAAAAAAAAAAB398VzwAAAEDkaZhbzoqjE9K%2FCoaTA6bo6LzMZj3dgp%2Fu1v3c%2BePsd5u15b%2BYSayLVAv4VydGCLS4jlMwMwHMn9tQh%2Bt9UFMJ";
   // urlAPI = "https://horizon-testnet.stellar.org";
