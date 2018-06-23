@@ -3,8 +3,13 @@ var mongoose = require("mongoose");
 var transactionSchema = new mongoose.Schema({
 	txid: String, 
 	time: Number,
+
 	blockhash: String,
 	blockheight: Number,
+
+	vin: [{}],
+	vout: [{}],
+	
 	updatedAt: Date
 });
 
