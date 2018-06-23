@@ -1,11 +1,13 @@
 var mongoose = require("mongoose");
 
 var txServiceInfoSchema = new mongoose.Schema({
-	lastblock: Number,
-	updatedAt: Date,
+  lastblock: Number,
+  lastTxIndex: Number,
+
+  updatedAt: Date,
 });
 
-txServiceInfoSchema.pre('save', function(next) {
+txServiceInfoSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });

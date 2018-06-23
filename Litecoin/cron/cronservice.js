@@ -25,24 +25,34 @@ var promisify = UtilsModule.promisify;
 
 ////////////////////////////////////////////////////////////////////////////
 
+var lastblock = 0;
+var lastTxIndex = 0;
+
 async function getTxServiceInfo() {
   try {
-    txServiceInfo = await TxServiceInofModel.findOne();
-    if (txServiceInfo) return txServiceInfo;
-    else return { lastblock: -1 };
+    var info = await TxServiceInofModel.findOne();
+    if (!info) {
+      lastblock = 0;
+      lastTxIndex = 0;
+    } else {
+      lastblock = info.lastblock;
+      lastTxIndex = info.lastTxIndex;
+    }
+
+    return true;
   } catch (e) {
     filelog("getTxServiceInfo error: ", e);
-    return undefined;
+    return false;
   }
 }
 
-async function saveTxServiceInfo(lastblock) {
-  await TxServiceInofModel.findOne(async function(e, info) {
+async function saveTxServiceInfo(lastblock, lastTxIndex) {
+  await TxServiceInofModel.findOne(async function (e, info) {
     if (!e) {
       if (info) {
-        info.set({ lastblock });
+        info.set({ lastblock, lastTxIndex });
       } else {
-        info = new TxServiceInofModel({ lastblock });
+        info = new TxServiceInofModel({ lastblock, lastTxIndex });
       }
       await info.save();
     } else {
@@ -53,166 +63,164 @@ async function saveTxServiceInfo(lastblock) {
 
 async function CheckUpdatedTransactions() {
   try {
-    var curblock;
-    var txServiceInfo = await getTxServiceInfo();
-    if (txServiceInfo) {
-      curblock = txServiceInfo.lastblock + 1;
-    } else {
-      throw "getTxServiceInfo error !";
-    }
-
     var blockCount = await promisify("getblockcount", []);
     if (!blockCount) throw "client getBlockCount: blockcount is empty";
-    if (curblock >= blockCount) return;
+    if (lastblock >= blockCount) return;
 
-    var blockhash = await promisify("getblockhash", [curblock]);
+    var blockhash = await promisify("getblockhash", [lastblock]);
     var blockdata = await promisify("getblock", [blockhash]);
     var txs = blockdata.tx;
 
-    for (let i = 0; i < txs.length; i++) {
+    for (let i = lastTxIndex; i < txs.length; i++) {
       let txid = txs[i];
+
+      var txInfo;
+      try {
+        txInfo = await promisify("getrawtransaction", [txid, 1]);
+        if (!txInfo) throw new Error('empty tx info !');
+      } catch (error) {
+        filelog(`error in getrawtransaction: i=${i}, txid=${txid}`, error);
+
+        var txMissingRow = await TxMissingModel.findOne({ txid });
+        if (!txMissingRow) {
+          txMissingRow = new TxMissingModel({
+            txid,
+            txidRefs: []
+          });
+          await txMissingRow.save();
+        }
+        continue;
+      }
+
       // Save Transaction Info
       var txRow = await TransactionModel.findOne({ txid });
       if (!txRow) {
         txRow = new TransactionModel({
           txid,
           time: blockdata.time,
-          blockheight: curblock,
-          blockhash
+          blockheight: lastblock,
+          blockhash,
         });
-        await txRow.save();
       }
+      txRow.vin = txInfo.vin ? txInfo.vin : [];
+      txRow.vout = txInfo.vout ? txInfo.vout : [];
+      await txRow.save();
 
       // Handle address
       try {
-        var txInfo;
-        try {
-          txInfo = await promisify("getrawtransaction", [txid, 1]);
-        } catch (error) {
-          filelog(`error in getrawtransaction: i=${i}, txid=${txid}`, error);
+        var vin = txInfo.vin;
+        var vout = txInfo.vout;
+        // Save Address Info
+        if (vin && vin.length > 0) {
+          for (let j = 0; j < vin.length; j++) {
+            var inTxid = vin[j].txid;
+            var inVout = Number(vin[j].vout);
+            if (!inTxid || inTxid == "" || inVout < 0) continue;
 
-          var txMissingRow = await TxMissingModel.findOne({ txid });
-          if (!txMissingRow) {
-            txMissingRow = new TxMissingModel({
-              txid,
-              txidRefs: []
-            });
-            await txMissingRow.save();
-          }
-          continue;
-        }
-
-        if (txInfo) {
-          var vin = txInfo.vin;
-          var vout = txInfo.vout;
-          // Save Address Info
-          if (vin && vin.length > 0) {
-            for (let j = 0; j < vin.length; j++) {
-              var inTxid = vin[j].txid;
-              var inVout = Number(vin[j].vout);
-              if (!inTxid || inTxid == "" || inVout < 0) continue;
-              var inTxInfo = await UtilsModule.getTxOutFunc(inTxid, inVout);
-              // var inTxInfo = await promisify("gettxout", [inTxid, inVout]);
-              if (!inTxInfo) {
-                filelog(
-                  `inTxInfo not found. inTxid=${inTxid}, vout: ${inVout}`
-                );
-                var txMissingRow = await TxMissingModel.findOne({
-                  txid: vin[j].txid
+            var inTxInfo;
+            try {
+              var inTxRow = await TransactionModel.findOne({txid: inTxid});
+              inTxInfo = inTxRow.vout[inVout];
+              if (!inTxInfo) throw new Error('tx vin get error !')
+            } catch (error) {
+              var txMissingRow = await TxMissingModel.findOne({
+                txid: inTxid
+              });
+              if (!txMissingRow) {
+                txMissingRow = new TxMissingModel({
+                  txid: inTxid,
+                  txidRefs: []
                 });
-                if (!txMissingRow) {
-                  txMissingRow = new TxMissingModel({
-                    txid: vin[j].txid,
-                    txidRefs: []
-                  });
-                }
-                if (txMissingRow.txidRefs.indexOf(txid) == -1)
-                  txMissingRow.txidRefs.push(txid);
-                await txMissingRow.save();
-                continue;
               }
+              if (txMissingRow.txidRefs.indexOf(txid) == -1)
+                txMissingRow.txidRefs.push(txid);
+              await txMissingRow.save();
+              continue;
+            }
 
-              var addresses = inTxInfo.scriptPubKey.addresses;
-              var value = Number(inTxInfo.value);
+            var addresses = inTxInfo.scriptPubKey.addresses;
+            var value = Number(inTxInfo.value);
 
-              if (addresses && addresses.length > 0 && value > 0) {
-                for (let k = 0; k < addresses.length; k++) {
-                  // Save Info
-                  var addressRow = await AddressModel.findOne({
-                    address: addresses[k]
+            if (addresses && addresses.length > 0 && value > 0) {
+              for (let k = 0; k < addresses.length; k++) {
+                // Save Info
+                var addressRow = await AddressModel.findOne({
+                  address: addresses[k]
+                });
+                if (!addressRow) {
+                  addressRow = new AddressModel({
+                    address: addresses[k],
+                    txs: [],
+                    txsIn: [],
+                    txsOut: [],
+                    balance: 0
                   });
-                  if (!addressRow) {
-                    addressRow = new AddressModel({
-                      address: addresses[k],
-                      txs: [],
-                      txsIn: [],
-                      txsOut: [],
-                      balance: 0
-                    });
-                  }
-                  if (addressRow.txs.indexOf(txid) == -1) {
-                    addressRow.txs.push(txid);
-                  }
-
-                  var index = _.findIndex(addressRow.txsIn, function(o) {
-                    return o.txid == txid && o.vin == j;
-                  });
-                  if (index == -1) {
-                    addressRow.txsIn.push({
-                      txid: txid,
-                      vin: j,
-                      value
-                    });
-                  }
-                  addressRow.balance -= value;
-                  await addressRow.save();
                 }
+                if (addressRow.txs.indexOf(txid) == -1) {
+                  addressRow.txs.push(txid);
+                }
+
+                var index = _.findIndex(addressRow.txsIn, function (o) {
+                  return o.txid == txid && o.vin == j;
+                });
+                if (index == -1) {
+                  addressRow.txsIn.push({
+                    txid: txid,
+                    vin: j,
+                    value
+                  });
+                }
+                addressRow.balance -= value;
+                await addressRow.save();
               }
             }
           }
-          if (vout && vout.length > 0) {
-            for (let j = 0; j < vout.length; j++) {
-              var addresses = vout[j].scriptPubKey.addresses;
-              var value = Number(vout[j].value);
-              if (addresses && addresses.length > 0 && value > 0) {
-                for (let k = 0; k < addresses.length; k++) {
-                  // Save Info
-                  var addressRow = await AddressModel.findOne({
-                    address: addresses[k]
+        }
+        if (vout && vout.length > 0) {
+          for (let j = 0; j < vout.length; j++) {
+            var addresses = vout[j].scriptPubKey.addresses;
+            var value = Number(vout[j].value);
+            if (addresses && addresses.length > 0 && value > 0) {
+              for (let k = 0; k < addresses.length; k++) {
+                // Save Info
+                var addressRow = await AddressModel.findOne({
+                  address: addresses[k]
+                });
+                if (!addressRow) {
+                  addressRow = new AddressModel({
+                    address: addresses[k],
+                    txs: [],
+                    txsIn: [],
+                    txsOut: [],
+                    balance: 0
                   });
-                  if (!addressRow) {
-                    addressRow = new AddressModel({
-                      address: addresses[k],
-                      txs: [],
-                      txsIn: [],
-                      txsOut: [],
-                      balance: 0
-                    });
-                  }
-                  if (addressRow.txs.indexOf(txid) == -1) {
-                    addressRow.txs.push(txid);
-                  }
-
-                  var index = _.findIndex(addressRow.txsOut, function(o) {
-                    return o.txid == txid && o.vout == j;
-                  });
-                  if (index == -1) {
-                    addressRow.txsOut.push({ txid, vout: j, value });
-                  }
-                  addressRow.balance += value;
-                  await addressRow.save();
                 }
+                if (addressRow.txs.indexOf(txid) == -1) {
+                  addressRow.txs.push(txid);
+                }
+
+                var index = _.findIndex(addressRow.txsOut, function (o) {
+                  return o.txid == txid && o.vout == j;
+                });
+                if (index == -1) {
+                  addressRow.txsOut.push({ txid, vout: j, value });
+                }
+                addressRow.balance += value;
+                await addressRow.save();
               }
             }
           }
         }
       } catch (error) {
         filelog(`Address update error ! i=${i}, error: `, error);
-        continue;
       }
+      lastTxIndex++;
+      await saveTxServiceInfo(lastblock, lastTxIndex);
     }
 
-    await saveTxServiceInfo(curblock);
+    lastblock++;
+    lastTxIndex = 0;
+    await saveTxServiceInfo(lastblock, lastTxIndex);
   } catch (error) {
     filelog("CheckUpdatedTransactions error: ", error); // Should dump errors here
   }
@@ -223,6 +231,12 @@ async function transactionService() {
   setTimeout(transactionService, config.TX_CRON_TIME);
 }
 
-exports.start_cronService = async function() {
+exports.start_cronService = async function () {
+  var infoRes = await getTxServiceInfo();
+  if (!infoRes) {
+    filelog('getting info error !');
+    return;
+  }
+
   transactionService();
 };

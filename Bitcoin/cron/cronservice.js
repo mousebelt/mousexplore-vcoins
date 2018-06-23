@@ -120,7 +120,7 @@ async function CheckUpdatedTransactions() {
             var inTxInfo;
             try {
               var inTxRow = await TransactionModel.findOne({txid: inTxid});
-              inTxInfo = inTxRow.vin[inVout];
+              inTxInfo = inTxRow.vout[inVout];
               if (!inTxInfo) throw new Error('tx vin get error !')
             } catch (error) {
               var txMissingRow = await TxMissingModel.findOne({
