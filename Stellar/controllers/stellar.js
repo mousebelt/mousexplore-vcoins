@@ -55,10 +55,10 @@ exports.getBalance = function (req, res) {
 */
 exports.createAccount = function (req, res) {
   console.log("createAccount");
-  var testDestkey = "SCNQYQI5BOYG7JDB2PSKCEVWTZF75NNVJXYZZFEUXSUTHXHCE5JMBQTB";
+  // var testDestkey = "SCNQYQI5BOYG7JDB2PSKCEVWTZF75NNVJXYZZFEUXSUTHXHCE5JMBQTB";
 
-  var pair = StellarSdk.Keypair.fromSecret(testDestkey);
-  // var pair = StellarSdk.Keypair.random();
+  // var pair = StellarSdk.Keypair.fromSecret(testDestkey);
+  var pair = StellarSdk.Keypair.random();
   var receiverPublicKey = pair.publicKey();
 
   console.log("Secret is ", pair.secret());
@@ -979,16 +979,16 @@ exports.postTransaction = async function (req, res) {
 exports.TestTransaction = function (req, res) {
   
   //test net seq num is 41275142520700928
-  var server = new StellarSdk.Server('https://horizon-testnet.stellar.org'); 
-  server.loadAccount("GCIA6RMJKSV2XFJYVXWTKWPGE4FYOPO4PCT2RVWCWWRS7GW734K472WH")
-  .then(function(account) { console.log(account.sequence) })
+  // var server = new StellarSdk.Server('https://horizon-testnet.stellar.org'); 
+  // server.loadAccount("GCIA6RMJKSV2XFJYVXWTKWPGE4FYOPO4PCT2RVWCWWRS7GW734K472WH")
+  // .then(function(account) { console.log(account.sequence) })
 
   //main net
-  // var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZAEZWrsAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA/E/doeW0oiCt2yrdaLLphBndHOUksU/FsFi1nI10EYwAAAAAAJiWgAAAAAAAAAAB398VzwAAAECl5LlwxkGKwRJrS5R/ASJThg3CjrsmieQaWnV9RDk4LY6E9D8AmLXi3Cg/EJF1Ul6yFhExHMnrdZTCtnzrLoEL";
+  var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZAEZWrsAAAAJAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAzzSj%2BzgJx2J0MWA8tWTluqeE%2Boq0m1GiFR1bjAf718kAAAAAAJiWgAAAAAAAAAAB398VzwAAAEBLQOK%2FNqbT5bTz6thlyEBkudCIREnjbf0ypP1cwkcMWiKppExsvWLkL8ilShy8Z%2FwbJMqimVeqcpZVZR%2Bm%2FmEH";
 
   //test net
-  var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZACSo4YAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA%2FE%2FdoeW0oiCt2yrdaLLphBndHOUksU%2FFsFi1nI10EYwAAAAAAJiWgAAAAAAAAAAB398VzwAAAEDkaZhbzoqjE9K%2FCoaTA6bo6LzMZj3dgp%2Fu1v3c%2BePsd5u15b%2BYSayLVAv4VydGCLS4jlMwMwHMn9tQh%2Bt9UFMJ";
-  urlAPI = "https://horizon-testnet.stellar.org";
+  // var tx = "AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZACSo4YAAAABAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA%2FE%2FdoeW0oiCt2yrdaLLphBndHOUksU%2FFsFi1nI10EYwAAAAAAJiWgAAAAAAAAAAB398VzwAAAEDkaZhbzoqjE9K%2FCoaTA6bo6LzMZj3dgp%2Fu1v3c%2BePsd5u15b%2BYSayLVAv4VydGCLS4jlMwMwHMn9tQh%2Bt9UFMJ";
+  // urlAPI = "https://horizon-testnet.stellar.org";
 
   axios.post(
     URI(urlAPI).segment('transactions').toString(),
