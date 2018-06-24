@@ -43,8 +43,8 @@ https://medium.com/@patdhlk/how-to-install-go-1-9-1-on-ubuntu-16-04-ee64c073cd79
 https://github.com/stellar/go/tree/master/services/horizon
 
 >sudo wget https://github.com/stellar/go/releases/download/horizon-v0.13.0/horizon-v0.13.0-linux-amd64.tar.gz
->sudo tar -xvf horizon-v0.12.3-linux-amd64.tar.gz
->sudo cp ./horizon-v0.12.3-linux-amd64/horizon /usr/bin/horizon
+>sudo tar -xvf horizon-v0.13.0-linux-amd64.tar.gz
+>sudo cp ./horizon-v0.13.0-linux-amd64/horizon /usr/bin/horizon
 
 * install pandoc
 https://github.com/jgm/pandoc/releases/tag/2.2
