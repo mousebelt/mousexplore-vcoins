@@ -55,7 +55,6 @@ exports.getBalance = function (req, res) {
 */
 exports.createAccount = function (req, res) {
   console.log("createAccount");
-  // var testDestkey = "SCNQYQI5BOYG7JDB2PSKCEVWTZF75NNVJXYZZFEUXSUTHXHCE5JMBQTB";
 
   // var pair = StellarSdk.Keypair.fromSecret(testDestkey);
   var pair = StellarSdk.Keypair.random();
@@ -82,7 +81,8 @@ exports.createAccount = function (req, res) {
       }
     );
   } else {
-    var sourceSecretKey = 'SAFGCNACP7QSEJTB24JPVGEVXU7ZGEBQUCRVPO4PTTOR45XDBSSPHYTT';
+    //this will be a lumen provider for new accounts
+    var sourceSecretKey = '';
 
     // Derive Keypair object and public key (that starts with a G) from the secret
     var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
