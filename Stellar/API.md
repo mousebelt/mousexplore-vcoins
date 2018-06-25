@@ -343,7 +343,7 @@ hash | String | YES | hash of transaction
 
 
 ## Get operations by transaction hash
-GET /api/v1/txs/operations/:hash
+GET /api/v1/tx/operations/:hash
 
 ### QUERY PARAMS
 
@@ -540,7 +540,7 @@ Post transaction to stellar net
 
 Name | Type | Mandatory | Description
 ------------ | ------------ | ------------ | ------------
-tx | String | YES | transaction data (envaloped signed transaction)
+tx | String | YES | transaction data
 
 
 ### RETURN
@@ -552,15 +552,9 @@ tx | String | YES | transaction data (envaloped signed transaction)
 {
 	"status": 200,
 	"msg": "success",
-	"data": 
-	 { _links: { transaction: [Object] },
-		hash: '6d280ecd9b348b4b00353e0581f3ee5e15d7ac4e0e25ae96db292d3ebcf08321',
-		ledger: 18580569,
-		envelope_xdr: 'AAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAZAEZWrsAAAATAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAA/E/doeW0oiCt2yrdaLLphBndHOUksU/FsFi1nI10EYwAAAAAAAAAAAQc20AAAAAAAAAAAd/fFc8AAABA3DQr6Ky3uCqdzinxLeUS8N5MfVXTIekFRk4ViAy/KGaR6xHummAjWy7pwNvQba3uqPZ3Luj2K37b4G6JlpeTCw==',
-		result_xdr: 'AAAAAAAAAGQAAAAAAAAAAQAAAAAAAAABAAAAAAAAAAA=',
-		result_meta_xdr: 'AAAAAAAAAAEAAAAEAAAAAwEbhFkAAAAAAAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAAAYoNDQBGVq7AAAAEwAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQEbhFkAAAAAAAAAAJAPRYlUq6uVOK3tNVnmJwuHPdx4p6jWwrWjL5rf3xXPAAAAAAILWPQBGVq7AAAAEwAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAwEbgLwAAAAAAAAAAPxP3aHltKIgrdsq3Wiy6YQZ3RzlJLFPxbBYtZyNdBGMAAAAAAIv/2ABGuH2AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAQEbhFkAAAAAAAAAAPxP3aHltKIgrdsq3Wiy6YQZ3RzlJLFPxbBYtZyNdBGMAAAAAAZM2qABGuH2AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA' } 
-	 }
-
+	"data": result,
+	],
+        ...
 }
 ```
 
