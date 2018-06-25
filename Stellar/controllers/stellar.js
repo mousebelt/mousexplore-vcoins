@@ -2,7 +2,9 @@ var rp = require('request-promise');
 var StellarSdk = require("stellar-sdk");
 var request = require("request");
 var requestpromise = require("request-promise");
+let axios = require("axios");
 var URL = require("url");
+let URI = require("urijs");
 
 var config = require("../config/common.js").config;
 var port = process.env.PORT || 2000;
@@ -12,6 +14,9 @@ var runtype = process.env.RUN_TYPE;
 
 if (runtype == "test") {
   StellarSdk.Network.useTestNetwork();
+}
+else {
+  StellarSdk.Network.usePublicNetwork();
 }
 
 // var server = new StellarSdk.Server('http://127.0.0.1:11626', {allowHttp: true});
@@ -51,13 +56,14 @@ exports.getBalance = function (req, res) {
 exports.createAccount = function (req, res) {
   console.log("createAccount");
 
+  // var pair = StellarSdk.Keypair.fromSecret(testDestkey);
   var pair = StellarSdk.Keypair.random();
+  var receiverPublicKey = pair.publicKey();
 
   console.log("Secret is ", pair.secret());
-  console.log("PublicKey is ", pair.publicKey());
+  console.log("PublicKey is ", receiverPublicKey);
 
   if (runtype == "test") {
-    var request = require("request");
     request.get(
       {
         url: "https://friendbot.stellar.org",
@@ -67,12 +73,72 @@ exports.createAccount = function (req, res) {
       function (error, response, body) {
         if (error || response.statusCode !== 200) {
           console.error("ERROR!", error || body);
+          res.json({ status: 400, msg: "success", data: error });
         } else {
           console.log("SUCCESS! You have a new account :)\n", body);
+          res.json({ status: 200, msg: "success", data: body });
         }
       }
     );
-  }
+  } else {
+    //this will be a lumen provider for new accounts
+    var sourceSecretKey = '';
+
+    // Derive Keypair object and public key (that starts with a G) from the secret
+    var sourceKeypair = StellarSdk.Keypair.fromSecret(sourceSecretKey);
+    var sourcePublicKey = sourceKeypair.publicKey();
+
+    console.log("Source is ", sourcePublicKey);
+
+    // Transactions require a valid sequence number that is specific to this account.
+    // We can fetch the current sequence number for the source account from Horizon.
+    server.loadAccount(sourcePublicKey)
+      .then(function(account) {
+        var transaction = new StellarSdk.TransactionBuilder(account)
+          // Add a payment operation to the transaction
+          .addOperation(StellarSdk.Operation.payment({
+            destination: receiverPublicKey,
+            // The term native asset refers to lumens
+            asset: StellarSdk.Asset.native(),
+            // Specify 350.1234567 lumens. Lumens are divisible to seven digits past
+            // the decimal. They are represented in JS Stellar SDK in string format
+            // to avoid errors from the use of the JavaScript Number data structure.
+            amount: '1',
+          }))
+          // Uncomment to add a memo (https://www.stellar.org/developers/learn/concepts/transactions.html)
+          // .addMemo(StellarSdk.Memo.text('Hello world!'))
+          .build();
+
+        // Sign this transaction with the secret key
+        // NOTE: signing is transaction is network specific. Test network transactions
+        // won't work in the public network. To switch networks, use the Network object
+        // as explained above (look for StellarSdk.Network).
+        transaction.sign(sourceKeypair);
+
+        // Let's see the XDR (encoded in base64) of the transaction we just built
+        console.log(transaction.toEnvelope().toXDR('base64'));
+
+        // Submit the transaction to the Horizon server. The Horizon server will then
+        // submit the transaction into the network for us.
+        server.submitTransaction(transaction)
+          .then(function(transactionResult) {
+            console.log(JSON.stringify(transactionResult, null, 2));
+            console.log('\nSuccess! View the transaction at: ');
+            console.log(transactionResult._links.transaction.href);
+            res.json({ status: 200, msg: "success", data: JSON.stringify(transactionResult) });
+          })
+          .catch(function(err) {
+            console.log('An error has occured:');
+            console.log(err);
+            res.json({ status: 400, msg: "An error has occured", data: err.data });
+          });
+      })
+      .catch(function(e) {
+        console.error(e);
+        res.json({ status: 400, msg: "error", data: e });
+      });
+      }
+
 };
 
 /*
@@ -539,11 +605,11 @@ exports.getOperationsForAccount = function (req, res) {
         });
       }
 
-      res.status(200).json({ msg: "success", data: operations });
+      res.json({status: 200, msg: "success", data: operations });
     })
     .catch(function (err) {
       console.log(err);
-      res.status(400).json({ error: err });
+      res.json({ status: 400, msg: 'Error !', data: err });
     });
 };
 
@@ -554,6 +620,7 @@ exports.getOperationsForAccount = function (req, res) {
 */
 exports.getTransactionsForAccount = function (req, res) {
   var account = req.body.account;
+  console.log("getTransactionsForAccount: ", account);
 
   server
     .transactions()
@@ -575,11 +642,11 @@ exports.getTransactionsForAccount = function (req, res) {
           timestamp: info.created_at
         });
       }
-      res.status(200).json({ msg: "success", data: transactions });
+      res.json({ status: 200, msg: "success", data: transactions });
     })
     .catch(function (err) {
       console.log(err);
-      res.status(400).json({ error: err });
+      res.json({ status: 400, msg: 'Error !', data: err });
     });
 };
 
@@ -630,12 +697,10 @@ exports.getPaymentsForAccount = function (req, res) {
           timestamp: info.created_at
         });
       }
-      res
-        .status(200)
-        .json({ msg: "success", next: next, prev: prev, data: operations });
+      res.json({ status: 200, msg: "success", next: next, prev: prev, data: operations });
     } else {
       console.log("getLatestLedgers error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: err });
     }
   });
   /*
@@ -717,12 +782,10 @@ exports.getOffersForAccount = function (req, res) {
           price: info.price
         });
       }
-      res
-        .status(200)
-        .json({ msg: "success", next: next, prev: prev, data: operations });
+      res.json({ status: 200, msg: "success", next: next, prev: prev, data: operations });
     } else {
       console.log("getLatestLedgers error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: err });
     }
   });
 };
@@ -773,10 +836,10 @@ exports.getEffectsForAccount = function (req, res) {
       }
       res
         .status(200)
-        .json({ msg: "success", next: next, prev: prev, data: operations });
+        .json({ status: 200, msg: "success", next: next, prev: prev, data: operations });
     } else {
       console.log("getLatestLedgers error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: err });
     }
   });
 };
@@ -838,12 +901,10 @@ exports.getLatestEffects = function (req, res) {
 
         operations.push(info);
       }
-      res
-        .status(200)
-        .json({ msg: "success", next: next, prev: prev, data: operations });
+      res.json({ status: 200, msg: "success", next: next, prev: prev, data: operations });
     } else {
       console.log("getLatestLedgers error: ", error);
-      res.status(400).json({ error: error });
+      res.json({ status: 400, msg: 'Error !', data: err });
     }
   });
 };
@@ -878,20 +939,63 @@ exports.getSearch = function (req, res) {
       // address
       return res.json({ status: 200, msg: "sccuess", data: { result: `address is not implemented yet, address: ${key} !`, type: 'address' } });
     } else {
-      res.json({ status: 400, msg: "Invalid key !" });
+      res.json({ status: 400, msg: "Invalid key !", data: "" });
     }
   } catch (error) {
     res.json({ status: 400, msg: "Invalid key !", data: error });
   }
 };
 
-exports.postTransaction = function (req, res) {
+exports.postTransaction = async function (req, res) {
   var tx = req.body.tx;
   if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
 
-  server.submitTransaction(tx).then(function (result) {
-    res.json({ status: 200, msg: "success", data: result });
-  }).catch((error) => {
-    res.json({ status: 400, msg: "Error !", data: error });
+  console.log("tx: ", tx);
+
+  console.log("URI: ", URI(urlAPI).segment('transactions').toString());
+  axios.post(
+    URI(urlAPI).segment('transactions').toString(),
+    `tx=${tx}`,
+    {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
+  )
+  .then(function(response) {
+    console.log("postTransaction response: ", response);
+    res.json({ status: 200, msg: "success", data: response.data });
+  })
+  .catch(function (response) {
+    console.log(response);
+    if (!response.data) {
+      console.log("Error");
+      res.json({ status: 400, msg: "Transaction submission failed.", data: response});
+    }
+    else {
+      console.log("transaction error: ", response.data);
+      res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
+    }
   });
 };
+
+//http://localhost:2000/test
+exports.TestTransaction = function (req, res) {
+  //main net
+  var tx = "";
+
+  axios.post(
+    URI(urlAPI).segment('transactions').toString(),
+    `tx=${tx}`,
+    {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
+  )
+  .then(function(response) {
+    console.log("response: ", response.data);
+    res.json({ status: 200, msg: "success", data: response.data });
+  })
+  .catch(function (response) {
+    console.log(response.data);
+    if (response.type == Error.type) {
+      res.json({ status: 400, msg: "Transaction submission failed.", data: response});
+    }
+    else {
+      res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
+    }
+  });
+}

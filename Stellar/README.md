@@ -42,9 +42,9 @@ https://medium.com/@patdhlk/how-to-install-go-1-9-1-on-ubuntu-16-04-ee64c073cd79
 * install horizon 
 https://github.com/stellar/go/tree/master/services/horizon
 
->sudo wget https://github.com/stellar/go/releases/download/horizon-v0.12.3/horizon-v0.12.3-linux-amd64.tar.gz
->sudo tar -xvf horizon-v0.12.3-linux-amd64.tar.gz
->sudo cp ./horizon-v0.12.3-linux-amd64/horizon /usr/bin/horizon
+>sudo wget https://github.com/stellar/go/releases/download/horizon-v0.13.0/horizon-v0.13.0-linux-amd64.tar.gz
+>sudo tar -xvf horizon-v0.13.0-linux-amd64.tar.gz
+>sudo cp ./horizon-v0.13.0-linux-amd64/horizon /usr/bin/horizon
 
 * install pandoc
 https://github.com/jgm/pandoc/releases/tag/2.2
@@ -150,6 +150,8 @@ need inserting validating node, crafting a quorum set
 set all urls as live and history storage
 
 Maybe only for getting transaction history, we don't need main net setting
+
+### check stellar-core --c 'quorum' and if there is any missing, should remove it from node names
 
 # test API
 >node -e 'process.env.RUN_TYPE = "test"'
