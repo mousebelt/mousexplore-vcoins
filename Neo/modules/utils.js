@@ -6,7 +6,13 @@ const client = config.client;
 var promisify = function promisify(fn, args) {
   return new Promise((resolve, reject) => {
     try {
-      client.call(fn, args, function (err, result) {
+      var rpc = require("json-rpc2");
+      var client2 = rpc.Client.$create(
+        "10332", // RPC_PORT
+        "127.0.0.1", // RPC_HOST
+      );
+
+      client2.call(fn, args, function (err, result) {
         if (err) {
           reject(err);
         }
