@@ -13,9 +13,9 @@ Stellar apis
 [Get address balance](#get-address-balance)  
 [Get account information by accountID](#get-account-information-by-accountid)  
 [Post Transaction](#post-transaction)  
+[Get transactions by account](#get-transactions-by-account)  
 
 [Get operations by accountID](#get-operations-by-accountid)  
-[Get transactions by account](#get-transactions-by-account)  
 [Get payments by account](#get-payments-by-account)  
 [Get Offers by account](#get-offers-by-account)  
 [Get effects by account](#get-effects-by-account)  
@@ -619,7 +619,7 @@ account | String | YES | account ID
 
 ## Get transactions by account
 
-/api/v1/account/txs
+GET /api/v1/address/txs/:account
 
 ### QUERY PARAMS
 
@@ -636,15 +636,7 @@ account | String | YES | account ID
 ```javascript
 {
 "msg": "success",
-"data": [
-        {   
-		  "hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		  "ledger": 17733198,
-		  "timeStamp": "2015-09-24T10:07:09Z",
-		  "operations": 11,
-        },
-        ...
-    ]
+"data": []
 }
 ```
 

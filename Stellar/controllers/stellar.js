@@ -619,30 +619,29 @@ exports.getOperationsForAccount = function (req, res) {
 * @return transactions of account 
 */
 exports.getTransactionsForAccount = function (req, res) {
-  var account = req.body.account;
-  console.log("getTransactionsForAccount: ", account);
+  var address = req.params.address;
 
   server
     .transactions()
-    .forAccount(account)
+    .forAccount(address)
     .call()
     .then(function (txResult) {
-      console.log(txResult);
-      console.log(txResult.records);
+      // console.log(txResult);
+      // console.log(txResult.records);
 
-      var records = txResult.records;
+      // var records = txResult.records;
 
-      var transactions = [];
-      for (let i = 0; i < records.length; i++) {
-        let info = records[i];
-        transactions.push({
-          hash: info.hash,
-          ledger: info.ledger_attr,
-          operations: info.operation_count,
-          timestamp: info.created_at
-        });
-      }
-      res.json({ status: 200, msg: "success", data: transactions });
+      // var transactions = [];
+      // for (let i = 0; i < records.length; i++) {
+      //   let info = records[i];
+      //   transactions.push({
+      //     hash: info.hash,
+      //     ledger: info.ledger_attr,
+      //     operations: info.operation_count,
+      //     timestamp: info.created_at
+      //   });
+      // }
+      res.json({ status: 200, msg: "success", data: txResult.records });
     })
     .catch(function (err) {
       console.log(err);
