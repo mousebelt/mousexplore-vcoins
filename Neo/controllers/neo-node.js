@@ -1,8 +1,15 @@
 // define local node object
 const _ = require('lodash');
 var config = require("../config");
-const localNode = config.localNode;
-const client = config.client;
+
+var neo = require('neo-api');
+const localNode = neo.node(config.rpc_server);
+
+var rpc = require("json-rpc2");
+var client = rpc.Client.$create(
+  config.rpc_port, // RPC_PORT
+  config.rpc_host, // RPC_HOST
+);
 
 var TransactionModel = require("../model/transactions");
 var AddressModel = require("../model/address");

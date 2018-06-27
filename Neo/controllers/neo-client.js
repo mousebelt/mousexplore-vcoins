@@ -1,7 +1,11 @@
 // define local node object
 var config = require('../config');
-const localNode = config.localNode;
-const client = config.client;
+
+var rpc = require("json-rpc2");
+var client = rpc.Client.$create(
+  config.rpc_port, // RPC_PORT
+  config.rpc_host, // RPC_HOST
+);
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Client RPC Call apis ////
