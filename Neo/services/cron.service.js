@@ -1,6 +1,7 @@
 var _ = require("lodash");
 
 var config = require("../config");
+var localNode = config.localNode;
 
 var TransactionModel = require("../model/transactions");
 var AddressModel = require("../model/address");
@@ -60,9 +61,11 @@ async function CheckUpdatedTransactions() {
   var curTxIndex = txServiceInfo.lastTxIndex + 1;
 
   try {
+    // var blockCount = await localNode.getBlockCount();
     var blockCount = await UtilsModule.promisify("getblockcount", []);
     if (!blockCount || curblock >= blockCount) throw `curblock is greater than blockcount. curblock: ${curblock}, blockCount: ${blockCount}`
 
+    // var blockdata = await localNode.getBlockByHeight(i, 1);
     var blockdata = await UtilsModule.promisify("getblock", [curblock, 1]);
     if (!blockdata) throw 'getblock error';
 
