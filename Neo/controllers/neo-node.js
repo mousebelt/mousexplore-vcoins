@@ -59,7 +59,7 @@ exports.getAddressUTXO = async function (req, res) {
     if (!addrRow) return res.json({ status: 400, msg: "No address in db !" });
 
     // get tokens
-    return res.json({ status: 200, msg: 'success', data: addressRow.UTXO });
+    return res.json({ status: 200, msg: 'success', data: addrRow.UTXO });
   } catch (error) {
     return res.json({ status: 400, msg: "error occured !", data: error });
   }
