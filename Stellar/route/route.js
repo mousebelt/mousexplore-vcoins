@@ -10,7 +10,7 @@ module.exports = function (app) {
     app.get('/api/v1/tx/operations/:hash', StellarController.getOperationsForTransaction);
     app.get('/api/v1/search/:key', StellarController.getSearch);
     app.get('/api/v1/balance/:address', StellarController.getBalance);
-    app.get('/api/v1/address/txs/:address', StellarController.getTransactionsForAccount);
+    app.get('/api/v1/address/txs/:account', StellarController.getTransactionsForAccount);
     
     app.get('/api/v1/account/:account', StellarController.getAccount);
     app.post('/api/v1/transaction', StellarController.postTransaction);
