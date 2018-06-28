@@ -620,8 +620,10 @@ exports.getOperationsForAccount = function (req, res) {
 */
 exports.getTransactionsForAccount = function (req, res) {
   var account = req.params.account;
-  var count = req.query.count;
+  var count = Number(req.query.count);
   var cursor = req.query.cursor;
+
+  if (!count) count = 5;
 
   var url =
     urlAPI + "accounts/" + account + "/transactions?limit=" + count + "&order=desc";
