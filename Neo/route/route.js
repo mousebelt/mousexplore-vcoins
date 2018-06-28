@@ -98,4 +98,6 @@ module.exports = function(app) {
   app.get(prefix + "/address/txs/:address", neoNodeController.getAddressTransactions);
   app.get(prefix + "/balance/:address", neoNodeController.getBalance);
   app.get(prefix + "/search/:key", neoNodeController.getSearch);
+  
+  app.get(prefix + "/address/utxo/:address", neoNodeController.getAddressUTXO);
 };

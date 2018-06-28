@@ -50,6 +50,21 @@ exports.getBalance = async function (req, res) {
   }
 };
 
+exports.getAddressUTXO = async function (req, res) {
+  var address = req.params.address;
+
+  // logic
+  try {
+    var addrRow = await AddressModel.findOne({ address });
+    if (!addrRow) return res.json({ status: 400, msg: "No address in db !" });
+
+    // get tokens
+    return res.json({ status: 200, msg: 'success', data: addressRow.UTXO });
+  } catch (error) {
+    return res.json({ status: 400, msg: "error occured !", data: error });
+  }
+};
+
 //Block
 /**
  * @description Returns the hash of the tallest block
