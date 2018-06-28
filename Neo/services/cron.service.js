@@ -135,6 +135,7 @@ async function CheckUpdatedTransactions() {
               txsOut: [],
               txs: [],
               balance: [],
+              UTXO: [],
             });
           }
           if (_.indexOf(addressRow.txs, txid) == -1) {
@@ -154,6 +155,12 @@ async function CheckUpdatedTransactions() {
             }
           }
 
+          {
+            var _index = _.findIndex(addressRow.UTXO, function (o) { return o.txid == item.txid && o.index == item.vout });
+            if (_index > -1) {
+              addressRow.UTXO.splice(_index, 1);
+            }
+          }
           // save
           await addressRow.save();
         }
@@ -171,6 +178,7 @@ async function CheckUpdatedTransactions() {
               txsOut: [],
               txs: [],
               balance: [],
+              UTXO: [],
             });
           }
           if (_.indexOf(addressRow.txs, txid) == -1) {
@@ -188,6 +196,15 @@ async function CheckUpdatedTransactions() {
             } else {
               addressRow.balance[_index].value += value;
             }
+          }
+          if (_.findIndex(addressRow.UTXO, function (o) { return o.txid == txid && o.index == j }) == -1) {
+            addressRow.UTXO.push({
+              txid,
+              index: j,
+              value,
+              asset,
+              createdAtBlock: curblock,
+            });
           }
 
           // save
