@@ -619,13 +619,37 @@ exports.getOperationsForAccount = function (req, res) {
 * @return transactions of account 
 */
 exports.getTransactionsForAccount = function (req, res) {
-  var address = req.params.address;
+  var account = req.params.account;
+  var count = req.query.count;
+  var cursor = req.query.cursor;
 
-  server
-    .transactions()
-    .forAccount(address)
-    .call()
-    .then(function (txResult) {
+  var url =
+    urlAPI + "accounts/" + account + "/transactions?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
+
+  request(url, function (error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+
+      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+      var prev = body._links.prev.href;
+
+      next = getCursor(next);
+      prev = getCursor(prev);
+
+      var records = body._embedded.records;
+
+      res.json({ status: 200, msg: "success", data: { next, prev, result: records } });
+    } else {
+      console.log("getLatestLedgers error: ", error);
+      res.json({ status: 400, msg: 'Error !', data: error });
+    }
+  });
+  // server
+  //   .transactions()
+  //   .forAccount(address)
+  //   .call()
+  //   .then(function (txResult) {
       // console.log(txResult);
       // console.log(txResult.records);
 
@@ -641,12 +665,12 @@ exports.getTransactionsForAccount = function (req, res) {
       //     timestamp: info.created_at
       //   });
       // }
-      res.json({ status: 200, msg: "success", data: txResult.records });
-    })
-    .catch(function (err) {
-      console.log(err);
-      res.json({ status: 400, msg: 'Error !', data: err });
-    });
+    //   res.json({ status: 200, msg: "success", data: txResult.records });
+    // })
+    // .catch(function (err) {
+    //   console.log(err);
+    //   res.json({ status: 400, msg: 'Error !', data: err });
+    // });
 };
 
 /*
