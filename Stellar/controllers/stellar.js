@@ -582,7 +582,7 @@ exports.getOperationsForAccount = function (req, res) {
   var count = Number(req.query.count);
   var cursor = req.query.cursor;
 
-  if (!count) count = 5;
+  if (!count) count = 10;
 
   var url =
     urlAPI + "accounts/" + account + "/operations?limit=" + count + "&order=desc";
@@ -650,7 +650,7 @@ exports.getTransactionsForAccount = function (req, res) {
   var count = Number(req.query.count);
   var cursor = req.query.cursor;
 
-  if (!count) count = 5;
+  if (!count) count = 10;
 
   var url =
     urlAPI + "accounts/" + account + "/transactions?limit=" + count + "&order=desc";

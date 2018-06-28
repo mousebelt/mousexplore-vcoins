@@ -583,7 +583,7 @@ GET /api/v1/address/operations/:account
 Name | Type | Mandatory | Default | Description
 ------------ | ------------ | ------------ | ------------ | ------------
 account | String | YES | undefined | account ID
-count | Number | NO | 5 | result count
+count | Number | NO | 10 | result count
 cursor | String | NO | undefined | cursor. undefined means first page
 
 
@@ -634,7 +634,7 @@ GET /api/v1/address/txs/:account
 Name | Type | Mandatory | Default | Description
 ------------ | ------------ | ------------ | ------------ | ------------
 account | String | YES | undefined | account ID
-count | Number | NO | 5 | result count
+count | Number | NO | 10 | result count
 cursor | String | NO | undefined | cursor. undefined means first page
 
 
