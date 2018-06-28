@@ -20,6 +20,13 @@ var addressSchema = new mongoose.Schema({
     value: Number,
     asset: String
   }],
+  UTXO: [{
+    txid: String,
+    index: Number,
+    value: Number,
+    asset: String,
+    createdAtBlock: Number,
+  }],
   txs: [String],
 
   updatedAt: Date
