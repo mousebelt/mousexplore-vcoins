@@ -14,6 +14,7 @@ neo-vcoin apis
 [search](#search)  
 [Get the balance of the address](#getBalance)  
 [Get UTXO of the address](#getAddressUTXO)  
+[Send raw transaction](#sendrawtransaction)  
 
 ***
 
@@ -259,5 +260,24 @@ utxo_item = {
     asset: String,
     createdAtBlock: Number,
   }
+```
+
+
+<a name="sendrawtransaction"/>
+
+- Send raw transaction
+
+```
+ POST /sendrawtransaction
+```
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+hex | String | YES | undefined | raw transaction hex value
+
+```
+return: { status: 200, msg: 'success', data: result }
 ```
 

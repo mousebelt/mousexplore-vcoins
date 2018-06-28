@@ -75,10 +75,6 @@ module.exports = function(app) {
   );
   app.post(prefixClient + "/invokescript", neoClientController.invokescript);
   app.post(prefixClient + "/listaddress", neoClientController.listaddress); // Need to open the wallet
-  app.post(
-    prefixClient + "/sendrawtransaction",
-    neoClientController.sendrawtransaction
-  );
   app.post(prefixClient + "/sendtoaddress", neoClientController.sendtoaddress); // Need to open the wallet
   app.post(prefixClient + "/sendmany", neoClientController.sendmany); // Need to open the wallet
   app.post(prefixClient + "/submitblock", neoClientController.submitblock); // Needs to be a consensus node
@@ -95,9 +91,16 @@ module.exports = function(app) {
   app.get(prefix + "/blockdetails/:hash", neoNodeController.getBlockDetails);
   app.get(prefix + "/tx/:txid", neoNodeController.getTx);
   app.get(prefix + "/txdetails/:txid", neoNodeController.getTxDetails);
-  app.get(prefix + "/address/txs/:address", neoNodeController.getAddressTransactions);
+  app.get(
+    prefix + "/address/txs/:address",
+    neoNodeController.getAddressTransactions
+  );
   app.get(prefix + "/balance/:address", neoNodeController.getBalance);
   app.get(prefix + "/search/:key", neoNodeController.getSearch);
-  
+
   app.get(prefix + "/address/utxo/:address", neoNodeController.getAddressUTXO);
+  app.post(
+    prefix + "/sendrawtransaction",
+    neoClientController.sendrawtransaction
+  );
 };
