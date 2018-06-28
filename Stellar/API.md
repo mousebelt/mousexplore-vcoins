@@ -599,11 +599,27 @@ cursor | String | NO | undefined | cursor. undefined means first page
 	status: 200,
 	"msg": "success",
 	"data": {
-		"next": "79751156070371328",
-		"prev": "79751211904962560",
-		"result": [{
-
-		}, ...
+        "next": "79702631529902081",
+        "prev": "79702837688348673",
+        "result": [{
+			"id": "79702837688348673",
+			"paging_token": "79702837688348673",
+			"source_account": "GAQVT5YB7YJKKH6VVFFM7VKRSPL322CCI2YFRWL5MO77C77W26XKM3JB",
+			"type": "create_passive_offer",
+			"type_i": 4,
+			"created_at": "2018-06-23T12:35:29Z",
+			"transaction_hash": "12ee4696b9f8d4416136adf964766b3dc061cd261d235ebd9e18b706a128b3ea",
+			"amount": "7598.1000000",
+			"price": "0.7751940",
+			"price_r": {
+				"n": 387597,
+				"d": 500000
+			},
+			"buying_asset_type": "native",
+			"selling_asset_type": "credit_alphanum4",
+			"selling_asset_code": "BCNY",
+			"selling_asset_issuer": "GBCNYBHAAPDSU3UIHXXQTHYZVSBJBI4YUNWXMKJBCPDHTVYR75G6NFHD"
+		}, ...]
 	}
 }
 ```
