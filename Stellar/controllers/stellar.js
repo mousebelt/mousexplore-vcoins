@@ -578,39 +578,66 @@ exports.getAccount = function (req, res) {
 * @return operation list
 */
 exports.getOperationsForAccount = function (req, res) {
-  var account = req.body.account;
+  var account = req.params.account;
+  var count = Number(req.query.count);
+  var cursor = req.query.cursor;
 
-  server
-    .operations()
-    .forAccount(account)
-    .call()
-    .then(function (operationsResult) {
-      console.log(operationsResult.records);
+  if (!count) count = 5;
 
-      var records = operationsResult.records;
+  var url =
+    urlAPI + "accounts/" + account + "/operations?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
 
-      var operations = [];
-      for (let i = 0; i < records.length; i++) {
-        let info = records[i];
-        operations.push({
-          type: info.type,
-          asset_type: info.asset_type,
-          asset_code: info.asset_code,
-          asset_issuer: info.asset_issuer,
-          from: info.from,
-          to: info.to,
-          amount: info.amount,
-          transaction: info.transaction_hash,
-          timestamp: info.created_at
-        });
-      }
+  request(url, function (error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
 
-      res.json({status: 200, msg: "success", data: operations });
-    })
-    .catch(function (err) {
-      console.log(err);
-      res.json({ status: 400, msg: 'Error !', data: err });
-    });
+      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+      var prev = body._links.prev.href;
+
+      next = getCursor(next);
+      prev = getCursor(prev);
+
+      var records = body._embedded.records;
+
+      res.json({ status: 200, msg: "success", data: { next, prev, result: records } });
+    } else {
+      console.log("getLatestLedgers error: ", error);
+      res.json({ status: 400, msg: 'Error !', data: error });
+    }
+  });
+
+  // server
+  //   .operations()
+  //   .forAccount(account)
+  //   .call()
+  //   .then(function (operationsResult) {
+  //     console.log(operationsResult.records);
+
+  //     var records = operationsResult.records;
+
+  //     var operations = [];
+  //     for (let i = 0; i < records.length; i++) {
+  //       let info = records[i];
+  //       operations.push({
+  //         type: info.type,
+  //         asset_type: info.asset_type,
+  //         asset_code: info.asset_code,
+  //         asset_issuer: info.asset_issuer,
+  //         from: info.from,
+  //         to: info.to,
+  //         amount: info.amount,
+  //         transaction: info.transaction_hash,
+  //         timestamp: info.created_at
+  //       });
+  //     }
+
+  //     res.json({status: 200, msg: "success", data: operations });
+  //   })
+  //   .catch(function (err) {
+  //     console.log(err);
+  //     res.json({ status: 400, msg: 'Error !', data: err });
+  //   });
 };
 
 /*

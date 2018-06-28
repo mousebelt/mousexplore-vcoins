@@ -14,8 +14,8 @@ Stellar apis
 [Get account information by accountID](#get-account-information-by-accountid)  
 [Post Transaction](#post-transaction)  
 [Get transactions by account](#get-transactions-by-account)  
+[Get operations by account](#get-operations-by-account)  
 
-[Get operations by accountID](#get-operations-by-accountid)  
 [Get payments by account](#get-payments-by-account)  
 [Get Offers by account](#get-offers-by-account)  
 [Get effects by account](#get-effects-by-account)  
@@ -574,18 +574,17 @@ tx | String | YES | transaction data (envaloped signed transaction)
 ```
 
 
-## Get operations by accountID
+## Get operations by account
 
-/api/v1/account/operations
-
-
-Get operations related to account
+GET /api/v1/address/operations/:account
 
 ### QUERY PARAMS
 
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-account | String | YES | account ID
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+account | String | YES | undefined | account ID
+count | Number | NO | 5 | result count
+cursor | String | NO | undefined | cursor. undefined means first page
 
 
 ### RETURN
@@ -596,26 +595,19 @@ account | String | YES | account ID
 ```javascript
 {
 "msg": "success",
-"data": [
-    {   
-		  "account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		  "timeStamp": "2015-09-24T10:07:09Z",
-		  "type": 11,
-		  "ledger": "payment",
-    },
-  ],
-        ...
+"data": {
+	status: 200,
+	"msg": "success",
+	"data": {
+		"next": "79751156070371328",
+		"prev": "79751211904962560",
+		"result": [{
+
+		}, ...
+	}
 }
 ```
 
-* for failed case
-`status code:` 400
-
-```javascript
-{
-  "error": ""   //error message
-}
-```
 
 ## Get transactions by account
 
@@ -624,7 +616,7 @@ GET /api/v1/address/txs/:account
 ### QUERY PARAMS
 
 Name | Type | Mandatory | Default | Description
------------- | ------------ | ------------ | ------------
+------------ | ------------ | ------------ | ------------ | ------------
 account | String | YES | undefined | account ID
 count | Number | NO | 5 | result count
 cursor | String | NO | undefined | cursor. undefined means first page
