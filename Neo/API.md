@@ -13,6 +13,7 @@ neo-vcoin apis
 [get address related transactions](#getAddressTransactions)  
 [search](#search)  
 [Get the balance of the address](#getBalance)  
+[Get UTXO of the address](#getAddressUTXO)  
 
 ***
 
@@ -232,3 +233,31 @@ type = 'block' => info = blockdetails
 type = 'transaction' => info = txdetails
 type = 'address' => info = addressInfo
 ```
+
+
+<a name="getAddressUTXO"/>
+
+- Get UTXO of the address
+
+```
+ GET /address/utxo/:address
+```
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+address | String | YES | undefined | address
+
+```
+return: { status: 200, msg: 'success', data: [utxo_item] }
+
+utxo_item = {
+    txid: String,
+    index: Number,
+    value: Number,
+    asset: String,
+    createdAtBlock: Number,
+  }
+```
+
