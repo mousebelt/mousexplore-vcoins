@@ -441,48 +441,25 @@ exports.getSearch = async (req, res) => {
   try {
     if (key.length < 10) {
       // block process
-      var block = await UtilsModule.getBlockDetailsFunc(key);
-      if (block)
-        return res.json({
-          status: 200,
-          msg: "sccuess",
-          data: { result: block, type: "block" }
-        });
-      return res.json({ status: 400, msg: "Error occured !" });
+      var hash = await promisify("getblockhash", [Number(key)]);
+      if (hash) return res.json({ status: 200, msg: "sccuess", data: { type: "block" } });
     } else if (key.length >= 25 && key.length <= 34) {
       // address process
-      return res.json({
-        status: 200,
-        msg: "sccuess",
-        data: {
-          result: `address is not implemented yet, address: ${key} !`,
-          type: "address"
-        }
-      });
+      return res.json({ status: 200, msg: "sccuess", data: { type: "address" } });
     } else if (key.length >= 64 && key.length <= 66) {
       // block or txid process
-      // txdetails
-      var txdetails = await UtilsModule.getTxDetailsFunc(key);
-      if (txdetails)
-        return res.json({
-          status: 200,
-          msg: "sccuess",
-          data: { result: txdetails, type: "transaction" }
-        });
+      try {
+        var tx = await promisify("getrawtransaction", [key, 1]);
+        if (tx) return res.json({ status: 200, msg: "sccuess", data: { type: "transaction" } });
+      } catch (error) { }
 
       // block details
-      var block = await UtilsModule.getBlockDetailsFunc(key);
-      if (block)
-        return res.json({
-          status: 200,
-          msg: "sccuess",
-          data: { result: block, type: "block" }
-        });
-
-      return res.json({ status: 400, msg: "No result !" });
-    } else {
-      return res.json({ status: 400, msg: "search key is not correct !" });
+      try {
+        var block = await promisify("getblock", [key]);
+        if (block) return res.json({ status: 200, msg: "sccuess", data: { type: "block" } });
+      } catch (error) { }
     }
+    return res.json({ status: 400, msg: "search key is not correct !" });
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }
