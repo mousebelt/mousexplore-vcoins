@@ -31,7 +31,7 @@ async function getTransactionDetailsFunc(hash) {
     transaction.fee = fee;
 
     let tokenAddress = txreceipt.to;
-    let tokens = await TokenModel.find({address: tokenAddress});
+    let tokens = await TokenModel.find({ address: tokenAddress });
 
     if (tokens.length) {
       token = tokens[0];
@@ -42,26 +42,26 @@ async function getTransactionDetailsFunc(hash) {
 
         let to = inputdata.slice(10, 74);
         let amount = inputdata.slice(74, 138);
-        
+
         to = to.replace(/^(0)*/, '');
         amount = amount.replace(/^(0)*/, '');
         amount = parseInt('0x' + amount, 16);
         amount = amount / Math.pow(10, token.decimal);
 
-        transaction.txtoken = {symbol: token.symbol, from:txreceipt.from, to: to, amount: amount}
+        transaction.txtoken = { symbol: token.symbol, from: txreceipt.from, to: to, amount: amount }
       }
       else if (methodid == "0x23b872dd") {
         let from = inputdata.slice(10, 74);
         let to = inputdata.slice(74, 138);
         let amount = inputdata.slice(138, 202);
-        
+
         from = from.replace(/^(0)*/, '')
         to = to.replace(/^(0)*/, '')
         amount = amount.replace(/^(0)*/, '')
         amount = parseInt('0x' + amount, 16);
         amount = amount / Math.pow(10, token.decimal);
 
-        transaction.txtoken = {symbol: token.symbol, from:from, to: to, amount: amount}
+        transaction.txtoken = { symbol: token.symbol, from: from, to: to, amount: amount }
       }
     }
     return transaction;
@@ -79,7 +79,7 @@ exports.getBalance = async function (req, res) {
     // Use Wb3 to get the balance of the address, convert it and then show it in the console.
     var ethBalance = await web3.eth.getBalance(address);
     var ethervalue = web3.utils.fromWei(ethBalance, "ether");
-    balances.push({symbol: "ETH", balance: ethervalue})
+    balances.push({ symbol: "ETH", balance: ethervalue })
 
     var tokens = await TokenModel.find({});
 
@@ -87,23 +87,23 @@ exports.getBalance = async function (req, res) {
       address = address.substring(2)
     }
 
-    for (let i = 0; i < tokens.length; i ++) {
+    for (let i = 0; i < tokens.length; i++) {
       var token = tokens[i];
 
       // '0x70a08231' is the contract 'balanceOf()' ERC20 token function in hex. A zero buffer is required and then we add the previously defined address with tokens
       var contractData = ('0x70a08231000000000000000000000000' + address);
 
       // Now we call the token contract with the variables from above, response will be a big number string 
-      var result = await web3.eth.call({to: token.address, data: contractData});
+      var result = await web3.eth.call({ to: token.address, data: contractData });
 
       // Convert the result to a usable number string
-      var tokenBalance = web3.utils.toBN(result).toString(); 
+      var tokenBalance = web3.utils.toBN(result).toString();
 
       if (tokenBalance > 0) {
         // Change the string to be in Ether not Wei
         //tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
         tokenBalance = tokenBalance / Math.pow(10, token.decimal);
-        balances.push({symbol: token.symbol, balance: tokenBalance});
+        balances.push({ symbol: token.symbol, balance: tokenBalance });
       }
     }
 
@@ -358,7 +358,7 @@ exports.getTransactions = async function (req, res) {
 
   var filter = {}
   if (contract) {
-    filter = {from: contract, to: contract}
+    filter = { from: contract, to: contract }
   }
 
   try {
@@ -457,7 +457,7 @@ exports.getTransactionsFromAccount = async function (req, res) {
 exports.getTransactionCount = async function (req, res) {
   var address = req.params.address;
 
-  web3.eth.getTransactionCount(address, async function(error, count) {
+  web3.eth.getTransactionCount(address, async function (error, count) {
     if (!error) {
       return res.json({
         status: 200,
@@ -557,37 +557,40 @@ exports.getSearch = async (req, res) => {
     if (key.length < 10) {
       // block process
       key = Number(key);
-      var blockdata = await web3.eth.getBlock(key, true);
-      return res.json({ status: 200, msg: "success", data: blockdata });
+      // var blockdata = await web3.eth.getBlock(key, true);
+      return res.json({ status: 200, msg: "success", data: { type: 'block' } });
     } else if (key.length >= 40 && key.length <= 42) {
       // address process
       return res.json({
         status: 200,
         msg: "sccuess",
         data: {
-          result: `address is not implemented yet, address: ${key} !`,
+          // result: `address is not implemented yet, address: ${key} !`,
           type: "address"
         }
       });
     } else if (key.length >= 64 && key.length <= 66) {
       // block or txid process
       // txdetails
-      var txdetails = await getTransactionDetailsFunc(key);
-      if (txdetails)
-        return res.json({
-          status: 200,
-          msg: "sccuess",
-          data: { result: txdetails, type: "transaction" }
-        });
+      // var txdetails = await getTransactionDetailsFunc(key);
+      try {
+        var transaction = await web3.eth.getTransaction(key);
+        if (transaction)
+          return res.json({
+            status: 200,
+            msg: "sccuess",
+            data: { type: "transaction" }
+          });
+      } catch (error) {}
 
       // block details
       try {
-        var block = await web3.eth.getBlock(key, true);
+        var block = await web3.eth.getBlock(key, false);
         if (block)
           return res.json({
             status: 200,
             msg: "sccuess",
-            data: { result: block, type: "block" }
+            data: { type: "block" }
           });
       } catch (error) { }
 
