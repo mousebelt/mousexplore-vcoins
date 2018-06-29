@@ -557,47 +557,26 @@ exports.getSearch = async (req, res) => {
     if (key.length < 10) {
       // block process
       key = Number(key);
-      // var blockdata = await web3.eth.getBlock(key, true);
-      return res.json({ status: 200, msg: "success", data: { type: 'block' } });
+      var blockdata = await web3.eth.getBlock(key, true);
+      if (blockdata) return res.json({ status: 200, msg: "success", data: { type: 'block' } });
     } else if (key.length >= 40 && key.length <= 42) {
       // address process
-      return res.json({
-        status: 200,
-        msg: "sccuess",
-        data: {
-          // result: `address is not implemented yet, address: ${key} !`,
-          type: "address"
-        }
-      });
+      return res.json({ status: 200, msg: "sccuess", data: { type: "address" } });
     } else if (key.length >= 64 && key.length <= 66) {
       // block or txid process
-      // txdetails
-      // var txdetails = await getTransactionDetailsFunc(key);
       try {
         var transaction = await web3.eth.getTransaction(key);
-        if (transaction)
-          return res.json({
-            status: 200,
-            msg: "sccuess",
-            data: { type: "transaction" }
-          });
-      } catch (error) {}
+        if (transaction) return res.json({ status: 200, msg: "sccuess", data: { type: "transaction" } });
+      } catch (error) { }
 
       // block details
       try {
         var block = await web3.eth.getBlock(key, false);
-        if (block)
-          return res.json({
-            status: 200,
-            msg: "sccuess",
-            data: { type: "block" }
-          });
+        if (block) return res.json({ status: 200, msg: "sccuess", data: { type: "block" } });
       } catch (error) { }
-
-      return res.json({ status: 400, msg: "No result !" });
-    } else {
-      return res.json({ status: 400, msg: "search key is not correct !" });
     }
+
+    return res.json({ status: 400, msg: "search key is not correct !" });
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error });
   }

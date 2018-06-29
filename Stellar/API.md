@@ -409,11 +409,11 @@ key | String | YES | transaction hash or leder sequence or address
 `status code:` 200
 
 ```javascript
-{ status: 200, msg: "success", data: { result, type } }
+{ status: 200, msg: "success", data: { type } }
 
-type = 'ledger' => result = ledger
-type = 'transaction' => result = transaction
-type = 'address' => result = address
+type = 'ledger'
+type = 'transaction'
+type = 'address'
 ```
 
 * for failed case

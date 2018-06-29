@@ -93,7 +93,7 @@ exports.createAccount = function (req, res) {
     // Transactions require a valid sequence number that is specific to this account.
     // We can fetch the current sequence number for the source account from Horizon.
     server.loadAccount(sourcePublicKey)
-      .then(function(account) {
+      .then(function (account) {
         var transaction = new StellarSdk.TransactionBuilder(account)
           // Add a payment operation to the transaction
           .addOperation(StellarSdk.Operation.payment({
@@ -121,23 +121,23 @@ exports.createAccount = function (req, res) {
         // Submit the transaction to the Horizon server. The Horizon server will then
         // submit the transaction into the network for us.
         server.submitTransaction(transaction)
-          .then(function(transactionResult) {
+          .then(function (transactionResult) {
             console.log(JSON.stringify(transactionResult, null, 2));
             console.log('\nSuccess! View the transaction at: ');
             console.log(transactionResult._links.transaction.href);
             res.json({ status: 200, msg: "success", data: JSON.stringify(transactionResult) });
           })
-          .catch(function(err) {
+          .catch(function (err) {
             console.log('An error has occured:');
             console.log(err);
             res.json({ status: 400, msg: "An error has occured", data: err.data });
           });
       })
-      .catch(function(e) {
+      .catch(function (e) {
         console.error(e);
         res.json({ status: 400, msg: "error", data: e });
       });
-      }
+  }
 
 };
 
@@ -372,7 +372,7 @@ exports.getLatestTransactions = function (req, res) {
 exports.getTransactionsForLedger = function (req, res) {
   var sequence = req.params.sequence;
 
-  if (sequence.length<10) sequence = Number(sequence);
+  if (sequence.length < 10) sequence = Number(sequence);
   server
     .transactions()
     .forLedger(sequence)
@@ -679,27 +679,27 @@ exports.getTransactionsForAccount = function (req, res) {
   //   .forAccount(address)
   //   .call()
   //   .then(function (txResult) {
-      // console.log(txResult);
-      // console.log(txResult.records);
+  // console.log(txResult);
+  // console.log(txResult.records);
 
-      // var records = txResult.records;
+  // var records = txResult.records;
 
-      // var transactions = [];
-      // for (let i = 0; i < records.length; i++) {
-      //   let info = records[i];
-      //   transactions.push({
-      //     hash: info.hash,
-      //     ledger: info.ledger_attr,
-      //     operations: info.operation_count,
-      //     timestamp: info.created_at
-      //   });
-      // }
-    //   res.json({ status: 200, msg: "success", data: txResult.records });
-    // })
-    // .catch(function (err) {
-    //   console.log(err);
-    //   res.json({ status: 400, msg: 'Error !', data: err });
-    // });
+  // var transactions = [];
+  // for (let i = 0; i < records.length; i++) {
+  //   let info = records[i];
+  //   transactions.push({
+  //     hash: info.hash,
+  //     ledger: info.ledger_attr,
+  //     operations: info.operation_count,
+  //     timestamp: info.created_at
+  //   });
+  // }
+  //   res.json({ status: 200, msg: "success", data: txResult.records });
+  // })
+  // .catch(function (err) {
+  //   console.log(err);
+  //   res.json({ status: 400, msg: 'Error !', data: err });
+  // });
 };
 
 /*
@@ -970,10 +970,10 @@ exports.getSearch = function (req, res) {
         .transaction(key)
         .call()
         .then(function (transactionResult) {
-          res.json({ status: 200, msg: "success", data: { result: transactionResult, type: 'transaction' } });
+          return res.json({ status: 200, msg: "success", data: { type: 'transaction' } });
         })
         .catch(function (err) {
-          res.json({ status: 400, msg: 'Get transaction error !', data: err });
+          return res.json({ status: 400, msg: 'Get transaction error !', data: err });
         });
     } else if (key.length < 10) {
       key = Number(key);
@@ -982,16 +982,16 @@ exports.getSearch = function (req, res) {
         .ledger(key)
         .call()
         .then(function (result) {
-          res.json({ status: 200, msg: "success", data: { result, type: 'ledger' } });
+          return res.json({ status: 200, msg: "success", data: { type: 'ledger' } });
         })
         .catch(function (err) {
-          res.json({ status: 400, msg: "Get ledger error !", data: err });
+          return res.json({ status: 400, msg: "Get ledger error !", data: err });
         });
     } else if (key.length <= 56) {
       // address
-      return res.json({ status: 200, msg: "sccuess", data: { result: `address is not implemented yet, address: ${key} !`, type: 'address' } });
+      return res.json({ status: 200, msg: "sccuess", data: { type: 'address' } });
     } else {
-      res.json({ status: 400, msg: "Invalid key !", data: "" });
+      res.json({ status: 400, msg: "Invalid key !" });
     }
   } catch (error) {
     res.json({ status: 400, msg: "Invalid key !", data: error });
@@ -1008,23 +1008,23 @@ exports.postTransaction = async function (req, res) {
   axios.post(
     URI(urlAPI).segment('transactions').toString(),
     `tx=${tx}`,
-    {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
+    { timeout: config.SUBMIT_TRANSACTION_TIMEOUT }
   )
-  .then(function(response) {
-    console.log("postTransaction response: ", response);
-    res.json({ status: 200, msg: "success", data: response.data });
-  })
-  .catch(function (response) {
-    console.log(response);
-    if (!response.data) {
-      console.log("Error");
-      res.json({ status: 400, msg: "Transaction submission failed.", data: response});
-    }
-    else {
-      console.log("transaction error: ", response.data);
-      res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
-    }
-  });
+    .then(function (response) {
+      console.log("postTransaction response: ", response);
+      res.json({ status: 200, msg: "success", data: response.data });
+    })
+    .catch(function (response) {
+      console.log(response);
+      if (!response.data) {
+        console.log("Error");
+        res.json({ status: 400, msg: "Transaction submission failed.", data: response });
+      }
+      else {
+        console.log("transaction error: ", response.data);
+        res.json({ status: 400, msg: "Transaction submission failed.", data: response.data });
+      }
+    });
 };
 
 //http://localhost:2000/test
@@ -1035,19 +1035,19 @@ exports.TestTransaction = function (req, res) {
   axios.post(
     URI(urlAPI).segment('transactions').toString(),
     `tx=${tx}`,
-    {timeout: config.SUBMIT_TRANSACTION_TIMEOUT}
+    { timeout: config.SUBMIT_TRANSACTION_TIMEOUT }
   )
-  .then(function(response) {
-    console.log("response: ", response.data);
-    res.json({ status: 200, msg: "success", data: response.data });
-  })
-  .catch(function (response) {
-    console.log(response.data);
-    if (response.type == Error.type) {
-      res.json({ status: 400, msg: "Transaction submission failed.", data: response});
-    }
-    else {
-      res.json({ status: 400, msg: "Transaction submission failed.", data: response.data});
-    }
-  });
+    .then(function (response) {
+      console.log("response: ", response.data);
+      res.json({ status: 200, msg: "success", data: response.data });
+    })
+    .catch(function (response) {
+      console.log(response.data);
+      if (response.type == Error.type) {
+        res.json({ status: 400, msg: "Transaction submission failed.", data: response });
+      }
+      else {
+        res.json({ status: 400, msg: "Transaction submission failed.", data: response.data });
+      }
+    });
 }

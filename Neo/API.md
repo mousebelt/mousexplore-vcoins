@@ -228,11 +228,11 @@ return
 
 key param can be txid or blockNo, blockHash, address.
 
-{ status: 200, msg: 'sccuess', data: { type, result: info } }
+{ status: 200, msg: 'sccuess', data: { type } }
 
-type = 'block' => info = blockdetails
-type = 'transaction' => info = txdetails
-type = 'address' => info = addressInfo
+type = 'block'
+type = 'transaction'
+type = 'address'
 ```
 
 
