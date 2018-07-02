@@ -120,6 +120,7 @@ async function CheckUpdatedTransactions() {
             var inTxid = vin[j].txid;
             var inVout = Number(vin[j].vout);
             if (!inTxid || inTxid == "" || inVout < 0) continue;
+            if (_.indexOf(config.genesisTxids, inTxid) > -1) continue;
 
             var inTxInfo;
             try {
