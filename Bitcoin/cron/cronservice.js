@@ -75,7 +75,7 @@ async function CheckUpdatedTransactions() {
       let txid = txs[i];
 
       // skip genesis txid
-      if (_.indexOf(config.genesisTxids, txid) == -1) continue;
+      if (_.indexOf(config.genesisTxids, txid) > -1) continue;
 
       var txInfo;
       try {
