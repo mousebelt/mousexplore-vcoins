@@ -25,7 +25,17 @@ exports.getBalance = async function (req, res) {
   // logic
   try {
     var addrRow = await AddressModel.findOne({ address });
-    if (!addrRow) return res.json({ status: 400, msg: "No address in db !" });
+    if (!addrRow) {
+      var neo_token = await TokenModel.findOne({ticker: "NEO"});
+      balance = [];
+      balance.push({
+        asset: neo_token.asset,
+        value: 0,
+        token: neo_token,
+        ticker: neo_token.ticker
+      })
+      return res.json({ status: 200, msg: "success", data: { address, balance, n_tx: 0 } });
+    }
 
     // get tokens
     var tokenRows = await TokenModel.find({});
