@@ -26,15 +26,17 @@ exports.getBalance = async function (req, res) {
   try {
     var addrRow = await AddressModel.findOne({ address });
     if (!addrRow) {
-      var neo_token = await TokenModel.findOne({ticker: "NEO"});
-      balance = [];
-      balance.push({
-        asset: neo_token.asset,
-        value: 0,
-        token: neo_token,
-        ticker: neo_token.ticker
-      })
-      return res.json({ status: 200, msg: "success", data: { address, balance, n_tx: 0 } });
+      if (address.length >= 25 && address.length <= 34) {
+        var neo_token = await TokenModel.findOne({ ticker: "NEO" });
+        balance = [];
+        balance.push({
+          asset: neo_token.asset,
+          value: 0,
+          token: neo_token,
+          ticker: neo_token.ticker
+        })
+        return res.json({ status: 200, msg: "success", data: { address, balance, n_tx: 0 } });
+      } else return res.json({ status: 400, msg: "Invalid address !" });
     }
 
     // get tokens
