@@ -1,3 +1,10 @@
+# MouseXplore Vcoins Litecoin
+![Alt text](/logo.png?raw=true "Logo")
+
+
+This is the MouseXplore Vcoins Litecoin.
+
+
 # Install Litecoin node
 https://github.com/mmgen/mmgen/wiki/Install-Bitcoind-from-Source-on-Debian-or-Ubuntu-Linux  
 

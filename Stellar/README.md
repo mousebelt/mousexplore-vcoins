@@ -1,3 +1,10 @@
+# MouseXplore Vcoins Stellar
+![Alt text](/logo.png?raw=true "Logo")
+
+
+This is the MouseXplore Vcoins Stellar.
+
+
 # Stellar node
 ## Compute requirements
 CPU, RAM, Disk and network depends on network activity.

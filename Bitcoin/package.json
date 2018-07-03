@@ -1,9 +1,8 @@
 {
-  "name": "bitcoin-vcoin-node",
+  "name": "mousexplore-vcoins-bitcoin",
   "version": "1.0.0",
-  "description": "bitcoin node client",
+  "description": "This is the MouseXplore Vcoins Bitcoin.",
   "main": "index.js",
-  "author": "Oleg Baturov",
   "scripts": {
     "start": "node index.js"
   },

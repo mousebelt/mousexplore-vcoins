@@ -1,3 +1,10 @@
+# MouseXplore Vcoins Bitcoin
+![Alt text](/logo.png?raw=true "Logo")
+
+
+This is the MouseXplore Vcoins Bitcoin.
+
+
 # Install Bitcoin node
 https://degreesofzero.com/article/building-bitcoind-from-source-on-ubuntu.html  
 https://github.com/mmgen/mmgen/wiki/Install-Bitcoind-from-Source-on-Debian-or-Ubuntu-Linux  
