@@ -26,17 +26,26 @@ var server = new StellarSdk.Server("http://127.0.0.1:8000", {
 // var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
 exports.getBalance = function (req, res) {
-  var addr = req.params.address;
+  var address = req.params.address;
 
-  // the JS SDK uses promises for most actions, such as retrieving an account
-  server.loadAccount(addr).then(function (account) {
-    // account.balances.forEach(function (balance) {
-    //   console.log("Type:", balance.asset_type, ", Balance:", balance.balance);
-    // });
-    res.json({ status: 200, msg: 'success', data: account.balances });
-  }).catch(function (err) {
-    res.json({ status: 400, msg: 'Error !', data: err });
+  var url = urlAPI + `accounts/${address}`;
+
+  request(url, function (error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+
+      if (body.balances) res.json({ status: 200, msg: "success", data: body.balances });
+      else  res.json({ status: 400, msg: body.title, data: body.detail });
+    } else {
+      res.json({ status: 400, msg: 'Error !', data: error });
+    }
   });
+  // the JS SDK uses promises for most actions, such as retrieving an account
+  // server.loadAccount(addr).then(function (account) {
+  //   res.json({ status: 200, msg: 'success', data: account.balances });
+  // }).catch(function (err) {
+  //   res.json({ status: 400, msg: 'Error !', data: err });
+  // });
 };
 
 /*
