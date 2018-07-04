@@ -35,7 +35,7 @@ exports.getBalance = function(req, res) {
 
       if (body.balances)
         return res.json({ status: 200, msg: "success", data: body.balances });
-      return res.json({ status: 400, msg: body.title, data: body.detail });
+      return res.json({ status: body.status, msg: body.title, data: body.detail });
     } else {
       return res.json({ status: 400, msg: "Error !", data: error });
     }
