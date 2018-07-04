@@ -597,7 +597,7 @@ exports.getAccount = function(req, res) {
     if (!error) {
       body = JSON.parse(body);
 
-      if (body.status != 200)
+      if (body.status == 404)
         return res.json({
           status: body.status,
           msg: body.title,
@@ -735,7 +735,7 @@ exports.getTransactionsForAccount = function(req, res) {
       try {
         body = JSON.parse(body);
 
-        if (body.status != 200)
+        if (body.status == 404)
           return res.json({
             status: body.status,
             msg: body.title,
