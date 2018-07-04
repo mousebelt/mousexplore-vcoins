@@ -1,9 +1,8 @@
 {
-  "name": "neo-vcoin-node",
+  "name": "mousexplore-vcoins-neo",
   "version": "1.0.0",
-  "description": "neo node client",
+  "description": "This is the MouseXplore Vcoins Neo.",
   "main": "index.js",
-  "author": "Oleg Baturov",
   "scripts": {
     "start": "node index.js"
   },

@@ -560,25 +560,38 @@ exports.getTransaction = function (req, res) {
 exports.getAccount = function (req, res) {
   var account = req.params.account;
 
-  server
-    .accounts()
-    .accountId(account)
-    .call()
-    .then(function (accountResult) {
-      var info = {
-        subentry_count: accountResult.subentry_count,
-        flags: accountResult.flags,
-        balances: accountResult.balances,
-        thresholds: accountResult.thresholds,
-        signers: accountResult.signers,
-        sequence: accountResult.sequence,
-      };
+  var url = urlAPI + `accounts/${account}`;
 
-      res.json({ status: 200, msg: "success", data: info });
-    })
-    .catch(function (err) {
-      res.json({ status: 400, msg: 'Error !', data: err });
-    });
+  request(url, function (error, response, body) {
+    if (!error) {
+      body = JSON.parse(body);
+
+      if (body) res.json({ status: 200, msg: "success", data: body });
+      else  res.json({ status: 400, msg: body.title, data: body.detail });
+    } else {
+      res.json({ status: 400, msg: 'Error !', data: error });
+    }
+  });
+
+  // server
+  //   .accounts()
+  //   .accountId(account)
+  //   .call()
+  //   .then(function (accountResult) {
+  //     var info = {
+  //       subentry_count: accountResult.subentry_count,
+  //       flags: accountResult.flags,
+  //       balances: accountResult.balances,
+  //       thresholds: accountResult.thresholds,
+  //       signers: accountResult.signers,
+  //       sequence: accountResult.sequence,
+  //     };
+
+  //     res.json({ status: 200, msg: "success", data: info });
+  //   })
+  //   .catch(function (err) {
+  //     res.json({ status: 400, msg: 'Error !', data: err });
+  //   });
 };
 
 /*

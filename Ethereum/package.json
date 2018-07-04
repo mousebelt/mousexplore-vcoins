@@ -1,12 +1,11 @@
 {
-  "name": "ethereum",
+  "name": "mousexplore-vcoins-ethereum",
   "version": "1.0.0",
-  "description": "ethereum node client",
+  "description": "This is the MouseXplore Vcoins Ethereum.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "Genji Sakamoto",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.4",
