@@ -720,8 +720,6 @@ exports.getTransactionsForAccount = function(req, res) {
   var account = req.params.account;
   var count = Number(req.query.count);
   var cursor = req.query.cursor;
-  try {
-  } catch (error) {}
   if (!count) count = 10;
 
   var url =
@@ -805,9 +803,10 @@ exports.getTransactionsForAccount = function(req, res) {
 * @return payment list
 */
 exports.getPaymentsForAccount = function(req, res) {
-  var account = req.body.account;
-  var count = req.body.count;
-  var cursor = req.body.cursor;
+  var account = req.params.account;
+  var count = Number(req.query.count);
+  var cursor = req.query.cursor;
+  if (!count) count = 10;
 
   var url =
     urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
