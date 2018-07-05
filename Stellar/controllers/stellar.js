@@ -6,11 +6,10 @@ let axios = require("axios");
 var URL = require("url");
 let URI = require("urijs");
 
-var config = require("../config/common.js").config;
-var port = process.env.PORT || 2000;
+var config = require("../config");
 var urlAPI = config.url;
 
-var runtype = process.env.RUN_TYPE;
+var runtype = config.RUN_TYPE;
 
 if (runtype == "test") {
   StellarSdk.Network.useTestNetwork();
