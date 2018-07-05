@@ -2,7 +2,7 @@
 var express = require('express');
 // Retrieve
 // var mongoose = require("mongoose");
-var config = require("../config");
+var config = require("config");
 
 var app = express();
 var server = require('http').createServer(app);
