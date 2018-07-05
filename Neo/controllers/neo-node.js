@@ -675,7 +675,12 @@ exports.getAddressTransactions = async function (req, res) {
       });
     }
   } catch (error) {
-    return res.json({ status: 400, msg: "error occured !" });
+    // return res.json({ status: 400, msg: "error occured !" });
+    return res.json({
+      status: 200,
+      msg: "success",
+      data: { total: 0, result: [] }
+    });
   }
 };
 
