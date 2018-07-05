@@ -32,10 +32,14 @@ exports.getBalance = function(req, res) {
   request(url, function(error, response, body) {
     if (!error) {
       body = JSON.parse(body);
+      if (body.status && body.status > 200)
+        return res.json({
+          status: body.status,
+          msg: body.title,
+          data: body.detail
+        });
 
-      if (body.balances)
-        return res.json({ status: 200, msg: "success", data: body.balances });
-      return res.json({ status: body.status, msg: body.title, data: body.detail });
+      return res.json({ status: 200, msg: "success", data: body.balances });
     } else {
       return res.json({ status: 400, msg: "Error !", data: error });
     }
@@ -597,7 +601,7 @@ exports.getAccount = function(req, res) {
     if (!error) {
       body = JSON.parse(body);
 
-      if (body.status == 404)
+      if (body.status && body.status > 200)
         return res.json({
           status: body.status,
           msg: body.title,
@@ -735,7 +739,7 @@ exports.getTransactionsForAccount = function(req, res) {
       try {
         body = JSON.parse(body);
 
-        if (body.status == 404)
+        if (body.status && body.status > 200)
           return res.json({
             status: body.status,
             msg: body.title,
@@ -814,22 +818,22 @@ exports.getPaymentsForAccount = function(req, res) {
     try {
       if (!error) {
         body = JSON.parse(body);
-  
-        if (body.status == 404)
-        return res.json({
-          status: body.status,
-          msg: body.title,
-          data: body.detail
-        });
-  
+
+        if (body.status && body.status > 200)
+          return res.json({
+            status: body.status,
+            msg: body.title,
+            data: body.detail
+          });
+
         var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
         var prev = body._links.prev.href;
-  
+
         next = getCursor(next);
         prev = getCursor(prev);
-  
+
         var records = body._embedded.records;
-  
+
         // var operations = [];
         // for (let i = 0; i < records.length; i++) {
         //   let info = records[i];
@@ -851,7 +855,7 @@ exports.getPaymentsForAccount = function(req, res) {
         });
       } else {
         return res.json({ status: 400, msg: "Error !", data: error });
-      }      
+      }
     } catch (error) {
       return res.json({ status: 400, msg: "Error !", data: error });
     }
