@@ -811,46 +811,49 @@ exports.getPaymentsForAccount = function(req, res) {
   url += cursor ? "&cursor=" + cursor : "";
   console.log(url);
   request(url, function(error, response, body) {
-    if (!error) {
-      body = JSON.parse(body);
-      console.log("response: ", body);
-
-      var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
-      var prev = body._links.prev.href;
-
-      console.log("next= ", next);
-
-      next = getCursor(next);
-      prev = getCursor(prev);
-
-      console.log("next= ", next);
-
-      var records = body._embedded.records;
-
-      var operations = [];
-      for (let i = 0; i < records.length; i++) {
-        let info = records[i];
-        operations.push({
-          asset_type: info.asset_type,
-          asset_code: info.asset_code,
-          asset_issuer: info.asset_issuer,
-          from: info.from,
-          to: info.to,
-          amount: info.amount,
-          transaction: info.transaction_hash,
-          timestamp: info.created_at
+    try {
+      if (!error) {
+        body = JSON.parse(body);
+  
+        if (body.status == 404)
+        return res.json({
+          status: body.status,
+          msg: body.title,
+          data: body.detail
         });
-      }
-      res.json({
-        status: 200,
-        msg: "success",
-        next: next,
-        prev: prev,
-        data: operations
-      });
-    } else {
-      console.log("getLatestLedgers error: ", error);
-      res.json({ status: 400, msg: "Error !", data: err });
+  
+        var next = body._links.next.href; //ledgers?order=asc&limit=2&cursor=8589934592
+        var prev = body._links.prev.href;
+  
+        next = getCursor(next);
+        prev = getCursor(prev);
+  
+        var records = body._embedded.records;
+  
+        // var operations = [];
+        // for (let i = 0; i < records.length; i++) {
+        //   let info = records[i];
+        //   operations.push({
+        //     asset_type: info.asset_type,
+        //     asset_code: info.asset_code,
+        //     asset_issuer: info.asset_issuer,
+        //     from: info.from,
+        //     to: info.to,
+        //     amount: info.amount,
+        //     transaction: info.transaction_hash,
+        //     timestamp: info.created_at
+        //   });
+        // }
+        return res.json({
+          status: 200,
+          msg: "success",
+          data: { next, prev, records }
+        });
+      } else {
+        return res.json({ status: 400, msg: "Error !", data: error });
+      }      
+    } catch (error) {
+      return res.json({ status: 400, msg: "Error !", data: error });
     }
   });
   /*

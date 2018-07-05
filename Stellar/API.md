@@ -15,8 +15,8 @@ Stellar apis
 [Post Transaction](#post-transaction)  
 [Get transactions by account](#get-transactions-by-account)  
 [Get operations by account](#get-operations-by-account)  
-
 [Get payments by account](#get-payments-by-account)  
+
 [Get Offers by account](#get-offers-by-account)  
 [Get effects by account](#get-effects-by-account)  
 [Get Latest effects](#get-latest-effects)  
@@ -688,7 +688,7 @@ cursor | String | NO | undefined | cursor. undefined means first page
 
 ## Get payments by account
 
-/api/v1/account/payments
+GET /api/v1/address/payments/:account
 
 ### QUERY PARAMS
 
@@ -706,9 +706,10 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 ```javascript
 {
 "msg": "success",
-"next": "23442324233",
-"next": "23442324128",
-"data": [
+"data": {
+	"next": "23442324233",
+	"prev": "23442324128",
+	[
         {   
         	"hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
 		   	"account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
