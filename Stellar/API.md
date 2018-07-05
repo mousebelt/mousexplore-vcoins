@@ -705,24 +705,29 @@ cursor | String | YES | 0 for first page, and next or prev value of response of 
 
 ```javascript
 {
-"msg": "success",
-"data": {
-	"next": "23442324233",
-	"prev": "23442324128",
-	[
-        {   
-        	"hash": "8febfdb00d2920f65af42d4f28d118742a95b0f3ea134ebd980cf302e7818317",
-		   	"account": "GARMAQQ45FYTFSCLBREX5M3JTTBZ5MWDMU5DOGZRHXU6SG2GX4CB7IAF",
-		   	"asset_type": 'credit_alphanum12',
-	       	"asset_code": 'nCntGameCoin',
-	       	"asset_issuer": 'GDLMDXI6EVVUIXWRU4S2YVZRMELHUEX3WKOX6XFW77QQC6KZJ4CZ7NRB',
-	       	"from": 'GAK3NSB43EVCZKDH4PYGJPCVPOYZ7X7KIR3ZTWSYRKRMJWGG5TABM6TH',
-	       	"to": 'GCHKKQ5VWJBRQZHNMODO5BWYZKPNM2HDSJ26T4O644CNEQBYK7IXATKM',
-	       	"amount": '2.0000000'
-		   	"timeStamp": "2015-09-24T10:07:09Z"
-        },
-        ...
-    ]
+    "status": 200,
+    "msg": "success",
+    "data": {
+        "next": "80328361020248065",
+        "prev": "80576451216199681",
+        "result": [
+            {
+                "id": "80576451216199681",
+                "paging_token": "80576451216199681",
+                "source_account": "GA7DUPPEQYTXWQ4SMAFB5ZPIQJVPFBLJKVHE22TXUNNNLQTKPVCEVQCK",
+                "type": "payment",
+                "type_i": 1,
+                "created_at": "2018-07-05T07:33:11Z",
+                "transaction_hash": "2457786264470dcf03ce1d88c1c7c594632c34aa2184286ea94051b8ea84b489",
+                "asset_type": "credit_alphanum4",
+                "asset_code": "DRA",
+                "asset_issuer": "GCJKSAQECBGSLPQWAU7ME4LVQVZ6IDCNUA5NVTPPCUWZWBN5UBFMXZ53",
+                "from": "GA7DUPPEQYTXWQ4SMAFB5ZPIQJVPFBLJKVHE22TXUNNNLQTKPVCEVQCK",
+                "to": "GBQ5DQO45LF3MF5ZNBJR6HLFRJX6DCSU4AARHNBRDIAKJ7HY7IJSABPD",
+                "amount": "0.1000000"
+			}, ...
+		]
+	}
 }
 ```
 

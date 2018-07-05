@@ -849,7 +849,7 @@ exports.getPaymentsForAccount = function(req, res) {
         return res.json({
           status: 200,
           msg: "success",
-          data: { next, prev, records }
+          data: { next, prev, result: records }
         });
       } else {
         return res.json({ status: 400, msg: "Error !", data: error });
