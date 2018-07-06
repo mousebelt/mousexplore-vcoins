@@ -407,7 +407,7 @@ exports.getTransactionsForLedger = function(req, res) {
 
   if (!count) count = 10;
 
-  var url = urlAPI + "ledgers/${sequence}/transactions?limit=" + count + "&order=desc";
+  var url = urlAPI + `ledgers/${sequence}/transactions?limit=` + count + "&order=desc";
   url += cursor ? "&cursor=" + cursor : "";
 
   request(url, function(error, response, body) {
