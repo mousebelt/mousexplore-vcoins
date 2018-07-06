@@ -402,34 +402,45 @@ exports.getLatestTransactions = function(req, res) {
 */
 exports.getTransactionsForLedger = function(req, res) {
   var sequence = req.params.sequence;
+  var count = Number(req.query.count);
+  var cursor = req.query.cursor;
 
-  if (sequence.length < 10) sequence = Number(sequence);
-  server
-    .transactions()
-    .forLedger(sequence)
-    .call()
-    .then(function(txResult) {
-      var records = txResult.records;
+  if (!count) count = 10;
 
-      // var transactions = [];
-      // for (let i = 0; i < records.length; i++) {
-      //   let info = records[i];
-      //   transactions.push({
-      //     hash: info.hash,
-      //     account: info.source_account,
-      //     operations: info.operation_count,
-      //     timestamp: info.created_at
-      //   });
-      // }
-      res.json({
-        status: 200,
-        msg: "success",
-        data: { total: records.length, result: records }
-      });
-    })
-    .catch(function(err) {
-      res.json({ status: 400, msg: "Error !", data: err });
-    });
+  var url = urlAPI + "ledgers/${sequence}/transactions?limit=" + count + "&order=desc";
+  url += cursor ? "&cursor=" + cursor : "";
+
+  request(url, function(error, response, body) {
+    try {
+      if (!error) {
+        body = JSON.parse(body);
+
+        if (body.status && body.status > 200)
+          return res.json({
+            status: body.status,
+            msg: body.title,
+            data: body.detail
+          });
+
+        var next = body._links.next.href;
+        var prev = body._links.prev.href;
+
+        next = getCursor(next);
+        prev = getCursor(prev);
+
+        var records = body._embedded.records;
+        return res.json({
+          status: 200,
+          msg: "success",
+          data: { next, prev, result: records }
+        });
+      } else {
+        return res.json({ status: 400, msg: "Error !", data: error });
+      }
+    } catch (error) {
+      return res.json({ status: 400, msg: "Error !", data: error });
+    }
+  });
 };
 
 /*
@@ -459,22 +470,6 @@ exports.getOperations = function(req, res) {
 
       var records = body._embedded.records;
 
-      // var operations = [];
-      // for (let i = 0; i < records.length; i++) {
-      //   let info = records[i];
-      //   operations.push({
-      //     transaction: info.transaction_hash,
-      //     account: info.source_account,
-      //     type: info.type,
-      //     asset_type: info.asset_type,
-      //     asset_code: info.asset_code,
-      //     asset_issuer: info.asset_issuer,
-      //     from: info.from,
-      //     to: info.to,
-      //     amount: info.amount,
-      //     timestamp: info.created_at
-      //   });
-      // }
       res.json({
         status: 200,
         msg: "success",
@@ -811,7 +806,7 @@ exports.getPaymentsForAccount = function(req, res) {
   var url =
     urlAPI + "accounts/" + account + "/payments?limit=" + count + "&order=desc";
   url += cursor ? "&cursor=" + cursor : "";
-  console.log(url);
+
   request(url, function(error, response, body) {
     try {
       if (!error) {
@@ -909,7 +904,6 @@ exports.getOffersForAccount = function(req, res) {
   var url =
     urlAPI + "accounts/" + account + "/offers?limit=" + count + "&order=desc";
   url += cursor ? "&cursor=" + cursor : "";
-  console.log(url);
   request(url, function(error, response, body) {
     if (!error) {
       body = JSON.parse(body);
