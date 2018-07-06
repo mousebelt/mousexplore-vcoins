@@ -240,9 +240,10 @@ GET /api/v1/ledger/txs/:sequence
 
 ### QUERY PARAMS
 
-Name | Type | Mandatory | Description
------------- | ------------ | ------------ | ------------
-sequence | String | YES | ledger sequence
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+count | Number | No | 10 | tx count
+cursor | String | NO | undefined | cursor. undefined means first page
 
 
 ### RETURN
@@ -255,8 +256,9 @@ sequence | String | YES | ledger sequence
 	"status": 200,
     "msg": "success",
     "data": {
-        "total": 4,
-        "result": [{
+        "prev": "80677056530149376",
+        "next": "80677056530112512",
+        "result": [
 			"id": "1e0878471ae283b4d571279f2dde3472682b75cc3ee13ed42e577f30df3ae305",
 			"paging_token": "38693085491761152",
 			"hash": "1e0878471ae283b4d571279f2dde3472682b75cc3ee13ed42e577f30df3ae305",
