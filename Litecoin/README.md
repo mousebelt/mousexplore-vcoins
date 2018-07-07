@@ -20,3 +20,13 @@ rpcport=28332
 
 ## test
 >litecoin-cli getnetworkinfo
+
+
+# Run Vcoins
+
+## Run geth daemon
+## Run mongod
+## Run project
+- configure project (config/index.js)  
+- npm install  
+- pm2 start index.js  

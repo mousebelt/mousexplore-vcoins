@@ -62,3 +62,13 @@ testnet config (json-rpc port: 20332)
 
 # Reference
 http://docs.neo.org/en-us/node/cli.html
+
+
+# Run Vcoins
+
+## Run neo daemon
+## Run mongod
+## Run project
+- configure project (config/index.js)  
+- npm install  
+- pm2 start index.js  

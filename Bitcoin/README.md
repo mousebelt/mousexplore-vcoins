@@ -12,12 +12,18 @@ https://degreesofzero.com/article/installing-bitcoind-on-ubuntu.html
 
 ## bitcoin.conf
 ```
-server=1
-daemon=1
-testnet=1
 rpcuser=rpcuser
 rpcpassword=pwd
 rpcport=18332
+server=1
+daemon=1
+#regtest=1
+#testnet=1
+txindex=1
+#dbcache=1024
+#prune=1000
+#walletnotify=/var/www/cron/receive.sh %s
+#keypool=1000000
 ```
 
 ## run
@@ -25,3 +31,12 @@ rpcport=18332
 
 ## checking rpc
 >bitcoin-cli getnetworkinfo
+
+# Run Vcoins
+
+## Run bitcoin daemon
+## Run mongod
+## Run project
+- configure project (config/index.js)  
+- npm install  
+- pm2 start index.js  
