@@ -32,6 +32,10 @@ module.exports = function (app) {
     //// Utility apis ////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    app.get('/monitor', ltcController.getMonitor);
+    app.get('/monitor/db', ltcController.getMonitorDb);
+    app.get('/monitor/rpc', ltcController.getMonitorRpc);
+
     app.get(prefix + '/search/:key', ltcController.getSearch);
     app.get(prefix + '/blocks', ltcController.getBlocks);
     app.get(prefix + '/transactions', ltcController.getTransactions);
