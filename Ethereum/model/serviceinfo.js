@@ -2,7 +2,6 @@ var mongoose = require("mongoose");
 
 var serviceInfoSchema = new mongoose.Schema({
 	lastblock: Number,
-	lastTxnIndex: Number,
 	updatedAt: Number
 });
 

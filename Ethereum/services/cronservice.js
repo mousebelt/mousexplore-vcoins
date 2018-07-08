@@ -6,11 +6,6 @@ var TokenModel = require("../model/tokens");
 var ServiceInofModel = require("../model/serviceinfo");
 var ParellelInofModel = require("../model/parellelinfo");
 
-
-var lastCheckedBlock = 0;
-
-var block_checkout = 1;
-
 /*
  * length: CHECK_PARELLEL_BLOCKS
  * [{blocknum, total_txs, synced_index, inprogressing}] 
@@ -26,19 +21,6 @@ function filelog(d) { //
   log_file.write(util.format(d) + '\n');
   log_stdout.write(util.format(d) + '\n');
 };
-
-async function getLastCheckedBlock() {
-  try {
-    var cronServiceInfo = await ServiceInofModel.findOne();
-    if (cronServiceInfo) {
-      lastCheckedBlock = cronServiceInfo.lastblock;
-      filelog("Last checked block number is " + lastCheckedBlock);
-    }
-  }
-  catch (e) {
-    filelog("getLastCheckedBlock error: ", e);
-  }
-}
 
 async function loadParellInfo() {
   try {
@@ -58,109 +40,108 @@ async function loadParellInfo() {
   }
 }
 
-function getNextBlockNum() {
-  var blocknum = lastCheckedBlock;
+async function saveParellelInfo(threadIndex) {
+  try {
+    var parellInfo = await ParellelInofModel.find({index: threadIndex});
+
+    if (parellInfo) {
+      info.set({ 
+        blocknumber: parellel_blocks[threadIndex].blocknumber,
+        total_txs: parellel_blocks[threadIndex].total_txs,
+        synced_index: parellel_blocks[threadIndex].synced_index
+       });
+    }
+    else {
+      info = new ServiceInofModel({ 
+        index: threadIndex,
+        blocknumber: parellel_blocks[threadIndex].blocknumber,
+        total_txs: parellel_blocks[threadIndex].total_txs,
+        synced_index: parellel_blocks[threadIndex].synced_index
+       });
+    }
+    await info.save();
+  } catch (error) {
+    filelog('saveParellelInfo:error: ', error); // Should dump errors here
+  }
+}
+
+async function getNextBlockNum() {
+  var lastnumber = await web3.eth.getBlockNumber();
+  if (!lastnumber) return -1;
+
+  var blocknum = 0;
   for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
     if (blocknum < parellel_blocks[i].blocknumber) {
       blocknum = parellel_blocks[i].blocknumber;
     }
   }
 
-  return blocknum + 1;
+  blocknum ++;
+
+  if (blocknum > lastnumber) {
+    console.log("Lastnode is syncing!");
+    return -1;
+  }
+
+  return blocknum;
 }
 /*
  * Distribute blocks to process threads(promise).
  * If a thread finished process, build new process for new block.
  */
-function distributeBlocks() {
-  for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
-    //if a thread is finished
-    if (!parellel_blocks[i] || parellel_blocks[i].total_txs == parellel_blocks[i].synced_index) {
-      let nextnumber = getNextBlockNum();
-      web3.eth.getBlock(nextnumber, true, async function(error, blockdata) {
-        if (error) {
-          filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
-          return;
-        }
+async function distributeBlocks() {
+  try {
+    for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
+      //if a thread is finished
+      if (!parellel_blocks[i] || parellel_blocks[i].total_txs == parellel_blocks[i].synced_index) {
+        let nextnumber = await getNextBlockNum();
 
-        parellel_blocks[i] = {
-          blocknumber: nextnumber,
-          total_txs: txnCount,
-          synced_index: 0,
-          inprogressing: true
-        }
-
-        var parellelinfo = await ParellelInofModel.find({index: i});
-        if (!parellelinfo) {
-          parellelinfo = new ParellelInofModel({
-            index: i,
-            blocknumber: nextnumber,
-            total_txs: blockdata.transactions.length,
-            synced_index: 0
-          })
-        }
-        else {
-          parellelinfo.set({
-            blocknumber: nextnumber,
-            total_txs: blockdata.transactions.length,
-            synced_index: 0
-          })
-        }
-
-        parellelinfo.save();
-
-        await CheckUpdatedTransactions(i, blockdata);
-      })
-    }
-    else {
-      if (!parellel_blocks[i].inprogressing) {
-        web3.eth.getBlock(parellel_blocks[i].blocknumber, true, async function(error, blockdata) {
+        if (nextnumber == -1)
+          continue;
+        web3.eth.getBlock(nextnumber, true, async function(error, blockdata) {
           if (error) {
-            filelog("distributeBlocks fails for getBlock of block: " + parellel_blocks[i].blocknumber);
+            filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
             return;
           }
 
-          parellel_blocks[i].inprogressing = true;
+          parellel_blocks[i] = {
+            blocknumber: nextnumber,
+            total_txs: txnCount,
+            synced_index: 0,
+            inprogressing: true
+          }
+
+          saveParellelInfo(i);
 
           await CheckUpdatedTransactions(i, blockdata);
+        })
+      }
+      else {
+        if (!parellel_blocks[i].inprogressing) {
+          web3.eth.getBlock(parellel_blocks[i].blocknumber, true, async function(error, blockdata) {
+            if (error) {
+              filelog("distributeBlocks fails for getBlock of block: " + parellel_blocks[i].blocknumber);
+              return;
+            }
+
+            parellel_blocks[i].inprogressing = true;
+
+            await CheckUpdatedTransactions(i, blockdata);
+          });
         }
+      }
     }
-  }
-}
-
-async function saveCronServiceInfo() {
-  try {
-    var info = await ServiceInofModel.findOne({});
-    if (info) {
-      info.set({ lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex });
-    }
-    else {
-      info = new ServiceInofModel({ lastblock: lastCheckedBlock, lastTxnIndex: lastCheckedIndex });
-    }
-    await info.save();
-  } catch (error) {
-    filelog('saveCronServiceInfo:error: ', e); // Should dump errors here
-  }
-}
-
-async function updateLastBlockNumber() {
-  block_checkout --;
-  if (block_checkout == 0) {
-    block_checkout = config.CHECK_LATEST_BLOCK;
-
-    var number = await web3.eth.getBlockNumber();
-    if (!number) return;
-
-    blocknumber = number;
+  } catch(e) {
+    filelog("distributeBlocks fails: ", e)
   }
 }
 
 
-async function CheckUpdatedTransactions(blockdata) {
+async function CheckUpdatedTransactions(threadIndex, blockdata) {
   try {
     var txnCount = blockdata.transactions.length;
 
-    for (let j = lastCheckedIndex + 1; j < txnCount; j++) {
+    for (let j = parellel_blocks[threadIndex].synced_index; j < txnCount; j++) {
       let transaction = blockdata.transactions[j];
       let hash = transaction.hash;
       let from = transaction.from;
@@ -175,7 +156,7 @@ async function CheckUpdatedTransactions(blockdata) {
       var newTxn = await TransactionModel.findOne({ hash });
       if (!newTxn) {
         var newTxn = new TransactionModel({
-          blocknumber: lastCheckedBlock,
+          blocknumber: parellel_blocks[threadIndex].blocknumber,
           hash,
           from,
           to,
@@ -186,26 +167,26 @@ async function CheckUpdatedTransactions(blockdata) {
         await newTxn.save();
       }
 
+      parellel_blocks[threadIndex].synced_index = j + 1;
+
       // save
-      lastCheckedIndex = j;
-      await saveCronServiceInfo();
+      await saveParellelInfo(threadIndex);
     }
   }
   catch (e) {
-    filelog('getBlock: error: ', e); // Should dump errors here
+    filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
     return;
   }
 }
 
 async function transactionService() {
-  await CheckUpdatedTransactions();
+  await distributeBlocks();
   setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
 
 exports.start_cronService = async function () {
   require('./init.db').start();
 
-  await getLastCheckedBlock();
   await loadParellInfo();
   transactionService();
 }
