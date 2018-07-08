@@ -452,7 +452,7 @@ exports.getMonitorDb = async (req, res) => {
 
 exports.getMonitorRpc = async (req, res) => {
   try {
-    client.call("getinfo", [], function (err, result) {
+    client.call("getblockchaininfo", [], function (err, result) {
       if (err) {
         return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
       }
