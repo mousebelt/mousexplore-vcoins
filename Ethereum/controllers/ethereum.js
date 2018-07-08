@@ -618,7 +618,7 @@ exports.getMonitorRpc = async (req, res) => {
   try {
     web3.eth.getProtocolVersion()
       .then(result => {
-        return res.json({ status: 200, msg: "sccuess", data: { protocolVersion: result } });
+        return res.json({ status: 200, msg: "success", data: { protocolVersion: result } });
       })
       .catch(err => {
         return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
