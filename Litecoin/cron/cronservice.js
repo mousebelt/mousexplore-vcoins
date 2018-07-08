@@ -85,15 +85,15 @@ async function CheckUpdatedTransactions() {
         filelog(`error in getrawtransaction: i=${i}, txid=${txid}`, error);
         return;
 
-        var txMissingRow = await TxMissingModel.findOne({ txid });
-        if (!txMissingRow) {
-          txMissingRow = new TxMissingModel({
-            txid,
-            txidRefs: []
-          });
-          await txMissingRow.save();
-        }
-        continue;
+        // var txMissingRow = await TxMissingModel.findOne({ txid });
+        // if (!txMissingRow) {
+        //   txMissingRow = new TxMissingModel({
+        //     txid,
+        //     txidRefs: []
+        //   });
+        //   await txMissingRow.save();
+        // }
+        // continue;
       }
 
       // Save Transaction Info
@@ -130,19 +130,19 @@ async function CheckUpdatedTransactions() {
             } catch (error) {
               return;
 
-              var txMissingRow = await TxMissingModel.findOne({
-                txid: inTxid
-              });
-              if (!txMissingRow) {
-                txMissingRow = new TxMissingModel({
-                  txid: inTxid,
-                  txidRefs: []
-                });
-              }
-              if (txMissingRow.txidRefs.indexOf(txid) == -1)
-                txMissingRow.txidRefs.push(txid);
-              await txMissingRow.save();
-              continue;
+              // var txMissingRow = await TxMissingModel.findOne({
+              //   txid: inTxid
+              // });
+              // if (!txMissingRow) {
+              //   txMissingRow = new TxMissingModel({
+              //     txid: inTxid,
+              //     txidRefs: []
+              //   });
+              // }
+              // if (txMissingRow.txidRefs.indexOf(txid) == -1)
+              //   txMissingRow.txidRefs.push(txid);
+              // await txMissingRow.save();
+              // continue;
             }
 
             var addresses = inTxInfo.scriptPubKey.addresses;
