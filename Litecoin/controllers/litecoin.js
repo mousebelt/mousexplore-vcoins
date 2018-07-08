@@ -636,7 +636,12 @@ exports.getAddressTransactions = async function (req, res) {
       });
     }
   } catch (error) {
-    return res.json({ status: 400, msg: "error occured !" });
+    // return res.json({ status: 400, msg: "error occured !" });
+    return res.json({
+      status: 200,
+      msg: "success",
+      data: { total: 0, result: [] }
+    });
   }
 };
 
@@ -646,7 +651,7 @@ exports.getBalance = async function (req, res) {
   // logic
   try {
     var addrRow = await AddressModel.findOne({ address });
-    if (!addrRow) return res.json({ status: 400, msg: "No address in db !" });
+    if (!addrRow) return res.json({ status: 200, msg: 'success', data: { address, balance: 0, n_tx: 0 } });
 
     // var total_received = 0;
     // for (let i = 0; i < addrRow.txsOut.length; i++) {

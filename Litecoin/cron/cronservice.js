@@ -47,7 +47,7 @@ async function getTxServiceInfo() {
 }
 
 async function saveTxServiceInfo(lastblock, lastTxIndex) {
-  await TxServiceInofModel.findOne(async function (e, info) {
+  await TxServiceInofModel.findOne(async function(e, info) {
     if (!e) {
       if (info) {
         info.set({ lastblock, lastTxIndex });
@@ -74,12 +74,16 @@ async function CheckUpdatedTransactions() {
     for (let i = lastTxIndex; i < txs.length; i++) {
       let txid = txs[i];
 
+      // skip genesis txid
+      if (_.indexOf(config.genesisTxids, txid) > -1) continue;
+
       var txInfo;
       try {
         txInfo = await promisify("getrawtransaction", [txid, 1]);
-        if (!txInfo) throw new Error('empty tx info !');
+        if (!txInfo) throw new Error("empty tx info !");
       } catch (error) {
         filelog(`error in getrawtransaction: i=${i}, txid=${txid}`, error);
+        return;
 
         var txMissingRow = await TxMissingModel.findOne({ txid });
         if (!txMissingRow) {
@@ -99,7 +103,7 @@ async function CheckUpdatedTransactions() {
           txid,
           time: blockdata.time,
           blockheight: lastblock,
-          blockhash,
+          blockhash
         });
       }
       txRow.vin = txInfo.vin ? txInfo.vin : [];
@@ -116,13 +120,16 @@ async function CheckUpdatedTransactions() {
             var inTxid = vin[j].txid;
             var inVout = Number(vin[j].vout);
             if (!inTxid || inTxid == "" || inVout < 0) continue;
+            if (_.indexOf(config.genesisTxids, inTxid) > -1) continue;
 
             var inTxInfo;
             try {
-              var inTxRow = await TransactionModel.findOne({txid: inTxid});
+              var inTxRow = await TransactionModel.findOne({ txid: inTxid });
               inTxInfo = inTxRow.vout[inVout];
-              if (!inTxInfo) throw new Error('tx vin get error !')
+              if (!inTxInfo) throw new Error("tx vin get error !");
             } catch (error) {
+              return;
+
               var txMissingRow = await TxMissingModel.findOne({
                 txid: inTxid
               });
@@ -160,7 +167,7 @@ async function CheckUpdatedTransactions() {
                   addressRow.txs.push(txid);
                 }
 
-                var index = _.findIndex(addressRow.txsIn, function (o) {
+                var index = _.findIndex(addressRow.txsIn, function(o) {
                   return o.txid == txid && o.vin == j;
                 });
                 if (index == -1) {
@@ -199,7 +206,7 @@ async function CheckUpdatedTransactions() {
                   addressRow.txs.push(txid);
                 }
 
-                var index = _.findIndex(addressRow.txsOut, function (o) {
+                var index = _.findIndex(addressRow.txsOut, function(o) {
                   return o.txid == txid && o.vout == j;
                 });
                 if (index == -1) {
@@ -213,6 +220,7 @@ async function CheckUpdatedTransactions() {
         }
       } catch (error) {
         filelog(`Address update error ! i=${i}, error: `, error);
+        return;
       }
       lastTxIndex++;
       await saveTxServiceInfo(lastblock, lastTxIndex);
@@ -228,13 +236,14 @@ async function CheckUpdatedTransactions() {
 
 async function transactionService() {
   await CheckUpdatedTransactions();
-  setTimeout(transactionService, config.TX_CRON_TIME);
+  // setTimeout(transactionService, config.TX_CRON_TIME);
+  transactionService();
 }
 
-exports.start_cronService = async function () {
+exports.start_cronService = async function() {
   var infoRes = await getTxServiceInfo();
   if (!infoRes) {
-    filelog('getting info error !');
+    filelog("getting info error !");
     return;
   }
 
