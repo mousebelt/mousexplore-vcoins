@@ -4,6 +4,10 @@ vcoin apis
 >prefix: /api/v1  
 
 # Summary
+[Get server working status](#get-server-working-status)  
+[Get db working status](#get-db-working-status)  
+[Get rpc working status](#get-rpc-working-status)  
+
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
 [Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
 [Get block by hash or height](#get-block-by-hash-or-height)  
@@ -19,6 +23,63 @@ vcoin apis
 ***
 
 # API Details
+
+
+## Get server working status
+```
+ GET /monitor
+```
+
+* for successed case
+
+```javascript
+{ status: 200, msg: "success", data: "Server is working now !" }
+```
+
+* for failed case
+
+status: 400
+```javascript
+{ status: 400, msg: 'errors', data: err }
+```
+
+
+## Get db working status
+```
+ GET /monitor/db
+```
+
+* for successed case
+
+```javascript
+{ status: 200, msg: "success", data: "Db is working now !" }
+```
+
+* for failed case
+
+status: 400
+```javascript
+{ status: 400, msg: 'errors', data: err }
+```
+
+
+## Get rpc working status
+```
+ GET /monitor/rpc
+```
+
+* for successed case
+
+```javascript
+{ status: 200, msg: "sccuess", data: protocolVersion }
+```
+
+* for failed case
+
+status: 400
+```javascript
+{ status: 400, msg: 'errors', data: err }
+```
 
 
 ## Get Block list from offset and count
