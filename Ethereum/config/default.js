@@ -3,7 +3,7 @@ var web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:8555"));
 
 const config = {
   web3,
-  port: 80,
+  port: 8080,
 
   db: "mongodb://localhost:27017/ethereum-db",
   mainpass: "vCoinEthpass2018",
