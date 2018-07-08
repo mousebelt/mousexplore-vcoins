@@ -27,4 +27,8 @@ module.exports = function (app) {
     app.get('/api/v1/search/:key', EthereumController.getSearch);
 
     app.post('/api/v1/sendsignedtransaction', EthereumController.postSendSignedTransaction);
+
+    app.get('/monitor', EthereumController.getMonitor);
+    app.get('/monitor/db', EthereumController.getMonitorDb);
+    app.get('/monitor/rpc', EthereumController.getMonitorRpc);
 }
