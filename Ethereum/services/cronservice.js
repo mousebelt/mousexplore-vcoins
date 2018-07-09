@@ -96,10 +96,10 @@ function getNextBlockNum(lastnumber) {
  * Distribute blocks to process threads(promise).
  * If a thread finished process, build new process for new block.
  */
-function distributeBlocks(lastnumber) {
+function distributeBlocks() {
   try {
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
-      let nextnumber = getNextBlockNum(lastnumber);
+      let nextnumber = getNextBlockNum(g_lastCheckedNumber);
       //if a thread is finished
       if (!parellel_blocks[i] || parellel_blocks[i].total_txs == parellel_blocks[i].synced_index) {
 
@@ -196,7 +196,7 @@ async function transactionService() {
     g_ticker = 10;
   }
 
-  distributeBlocks(lastnumber);
+  distributeBlocks();
   setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
 
