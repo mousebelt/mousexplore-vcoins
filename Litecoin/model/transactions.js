@@ -18,5 +18,26 @@ transactionSchema.pre('save', function(next) {
 	next();
 });
 
+transactionSchema.index({
+	txid: 1
+});
+
+transactionSchema.index({
+	blockhash: 1
+});
+
+transactionSchema.index({
+	blockheight: -1
+});
+
+transactionSchema.index({
+	updatedAt: -1
+});
+
+transactionSchema.index({
+	updatedAt: 1
+});
+
+transactionSchema
 var Transaction = mongoose.model("Transaction", transactionSchema);
 module.exports = Transaction;

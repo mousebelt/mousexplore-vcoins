@@ -29,5 +29,9 @@ addressSchema.pre('save', function (next) {
   next();
 });
 
+addressSchema.index({
+  address: 1
+});
+
 var Address = mongoose.model("Address", addressSchema);
 module.exports = Address;
