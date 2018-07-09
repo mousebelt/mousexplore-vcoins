@@ -74,7 +74,7 @@ function getNextBlockNum(lastnumber) {
 
     var blocknum = 0;
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
-      if (parellel_blocks && parellel_blocks[i] && parellel_blocks[i].blocknumber && blocknum < parellel_blocks[i].blocknumber) {
+      if (parellel_blocks[i] && parellel_blocks[i].blocknumber && blocknum < parellel_blocks[i].blocknumber) {
         blocknum = parellel_blocks[i].blocknumber;
       }
     }
@@ -99,12 +99,15 @@ function getNextBlockNum(lastnumber) {
 function distributeBlocks() {
   try {
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
-      let nextnumber = getNextBlockNum(g_lastCheckedNumber);
       //if a thread is finished
-      if (!parellel_blocks[i] || parellel_blocks[i].total_txs == parellel_blocks[i].synced_index) {
+      if (!parellel_blocks[i].inprogressing && (!parellel_blocks[i] || parellel_blocks[i].total_txs == parellel_blocks[i].synced_index)) {
 
+        let nextnumber = getNextBlockNum(g_lastCheckedNumber);
         if (nextnumber == -1)
           continue;
+
+        parellel_blocks[i].blocknumber = nextnumber;
+        parellel_blocks[i].inprogressing = true;
         web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
           if (error) {
             filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
@@ -179,6 +182,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
       // save
       await saveParellelInfo(threadIndex);
     }
+    parellel_blocks[threadIndex].inprogressing = false;
   }
   catch (e) {
     filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
