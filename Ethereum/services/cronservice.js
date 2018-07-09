@@ -100,10 +100,10 @@ async function getNextBlockNum() {
  */
 async function distributeBlocks() {
   try {
+    let nextnumber = await getNextBlockNum();
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
       //if a thread is finished
       if (!parellel_blocks[i] || parellel_blocks[i].total_txs == parellel_blocks[i].synced_index) {
-        let nextnumber = await getNextBlockNum();
 
         if (nextnumber == -1)
           continue;
