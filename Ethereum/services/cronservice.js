@@ -46,7 +46,7 @@ async function loadParellInfo() {
 
 async function saveParellelInfo(threadIndex) {
   try {
-    var info = await ParellelInofModel.find({index: threadIndex});
+    var info = await ParellelInofModel.findOne({index: threadIndex});
 
     if (info) {
       info.set({ 
