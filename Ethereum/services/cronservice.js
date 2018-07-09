@@ -21,7 +21,6 @@ var Log = require("log"),
 // log = new Log('debug');
 
 function filelog(...params) {
-  console.log(...params);
   log.info(...params);
 }
 
@@ -29,9 +28,9 @@ async function loadParellInfo() {
   try {
     var piRows = await ParellelInofModel.find().limit(config.CHECK_PARELLEL_BLOCKS);
     if (piRows && piRows.length > 0) {
-      for (let i = 0; i < piRows.length; i ++) {
+      for (let i = 0; i < piRows.length; i++) {
         var row = piRows[i];
-        parellel_blocks[row.index] = {	
+        parellel_blocks[row.index] = {
           blocknumber: row.blocknumber,
           total_txs: row.total_txs,
           synced_index: row.synced_index
@@ -46,22 +45,22 @@ async function loadParellInfo() {
 
 async function saveParellelInfo(threadIndex) {
   try {
-    var info = await ParellelInofModel.findOne({index: threadIndex});
+    var info = await ParellelInofModel.findOne({ index: threadIndex });
 
     if (info) {
-      info.set({ 
+      info.set({
         blocknumber: parellel_blocks[threadIndex].blocknumber,
         total_txs: parellel_blocks[threadIndex].total_txs,
         synced_index: parellel_blocks[threadIndex].synced_index
-       });
+      });
     }
     else {
-      info = new ParellelInofModel({ 
+      info = new ParellelInofModel({
         index: threadIndex,
         blocknumber: parellel_blocks[threadIndex].blocknumber,
         total_txs: parellel_blocks[threadIndex].total_txs,
         synced_index: parellel_blocks[threadIndex].synced_index
-       });
+      });
     }
     await info.save();
   } catch (error) {
@@ -72,21 +71,21 @@ async function saveParellelInfo(threadIndex) {
 function getNextBlockNum(lastnumber) {
   try {
     if (!lastnumber) return -1;
-  
+
     var blocknum = 0;
-    for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
+    for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
       if (parellel_blocks && parellel_blocks[i] && parellel_blocks[i].blocknumber && blocknum < parellel_blocks[i].blocknumber) {
         blocknum = parellel_blocks[i].blocknumber;
       }
     }
-  
-    blocknum ++;
-  
+
+    blocknum++;
+
     if (blocknum > lastnumber) {
       console.log("Lastnode is syncing!");
       return -1;
     }
-  
+
     return blocknum;
   } catch (error) {
     filelog('getNextBlockNum error: ', error);
@@ -99,14 +98,14 @@ function getNextBlockNum(lastnumber) {
  */
 function distributeBlocks(lastnumber) {
   try {
-    let nextnumber = getNextBlockNum(lastnumber);
-    for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
+    for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
+      let nextnumber = getNextBlockNum(lastnumber);
       //if a thread is finished
       if (!parellel_blocks[i] || parellel_blocks[i].total_txs == parellel_blocks[i].synced_index) {
 
         if (nextnumber == -1)
           continue;
-        web3.eth.getBlock(nextnumber, true, async function(error, blockdata) {
+        web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
           if (error) {
             filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
             return;
@@ -126,7 +125,7 @@ function distributeBlocks(lastnumber) {
       }
       else {
         if (!parellel_blocks[i].inprogressing) {
-          web3.eth.getBlock(parellel_blocks[i].blocknumber, true, async function(error, blockdata) {
+          web3.eth.getBlock(parellel_blocks[i].blocknumber, true, async function (error, blockdata) {
             if (error) {
               filelog("distributeBlocks fails for getBlock of block: " + parellel_blocks[i].blocknumber);
               return;
@@ -139,7 +138,7 @@ function distributeBlocks(lastnumber) {
         }
       }
     }
-  } catch(e) {
+  } catch (e) {
     filelog("distributeBlocks fails: ", e)
   }
 }
@@ -187,8 +186,15 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
   }
 }
 
+var g_lastCheckedNumber = 0;
+var g_ticker = 1;
+
 async function transactionService() {
-  var lastnumber = await web3.eth.getBlockNumber();
+  g_ticker--;
+  if (g_ticker == 0) {
+    g_lastCheckedNumber = await web3.eth.getBlockNumber();
+    g_ticker = 10;
+  }
 
   distributeBlocks(lastnumber);
   setTimeout(transactionService, config.CRON_TIME_INTERVAL);
