@@ -103,4 +103,8 @@ module.exports = function(app) {
     prefix + "/sendrawtransaction",
     neoClientController.sendrawtransaction
   );
+
+  app.get('/monitor', neoNodeController.getMonitor);
+  app.get('/monitor/db', neoNodeController.getMonitorDb);
+  app.get('/monitor/rpc', neoNodeController.getMonitorRpc);
 };

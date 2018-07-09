@@ -712,3 +712,31 @@ exports.getSearch = async (req, res) => {
     return res.json({ status: 400, msg: "errors", data: error });
   }
 };
+
+exports.getMonitor = async (req, res) => {
+  return res.json({ status: 200, msg: "success", data: "Server is working now !" });
+};
+
+exports.getMonitorDb = async (req, res) => {
+  try {
+    if (require("mongoose").connection.readyState)
+      return res.json({ status: 200, msg: "success", data: "Db is working now !" });
+
+    throw new Error('db error');
+  } catch (err) {
+    return res.status(400).json({ status: 400, msg: "errors", data: "Db is not working now !" });
+  }
+};
+
+exports.getMonitorRpc = async (req, res) => {
+  try {
+    client.call("getblockcount", [], function (err, result) {
+      if (err) {
+        return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+      }
+      return res.json({ status: 200, msg: "sccuess", data: result });
+    });
+  } catch (err) {
+    return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+  }
+};
