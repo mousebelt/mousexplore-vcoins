@@ -23,4 +23,8 @@ module.exports = function (app) {
 
     // app.get('/api/create_account', StellarController.createAccount);
     // app.get('/test', StellarController.TestTransaction);
+
+    app.get('/monitor', StellarController.getMonitor);
+    app.get('/monitor/horizon', StellarController.getMonitorHorizon);
+    app.get('/monitor/stellar-core', StellarController.getMonitorStellarCore);
 }
