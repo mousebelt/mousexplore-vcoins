@@ -2,8 +2,8 @@ var config = require("../config");
 var web3 = config.web3;
 
 var TransactionModel = require("../model/transactions");
-var TokenModel = require("../model/tokens");
-var ServiceInofModel = require("../model/serviceinfo");
+// var TokenModel = require("../model/tokens");
+// var ServiceInofModel = require("../model/serviceinfo");
 var ParellelInofModel = require("../model/parellelinfo");
 
 /*
@@ -13,14 +13,17 @@ var ParellelInofModel = require("../model/parellelinfo");
 var parellel_blocks = [];
 
 var fs = require('fs');
-var util = require('util');
-var log_file = fs.createWriteStream(__dirname + '/debug.log', { flags: 'w' });
-var log_stdout = process.stdout;
+var Log = require("log"),
+  log = new Log(
+    "debug",
+    fs.createWriteStream(__dirname + "/debug.log", { flags: "a" })
+  );
+// log = new Log('debug');
 
-function filelog(d) { //
-  log_file.write(util.format(d) + '\n');
-  log_stdout.write(util.format(d) + '\n');
-};
+function filelog(...params) {
+  console.log(...params);
+  log.info(...params);
+}
 
 async function loadParellInfo() {
   try {
@@ -73,7 +76,7 @@ async function getNextBlockNum() {
   
     var blocknum = 0;
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
-      if (blocknum < parellel_blocks[i].blocknumber) {
+      if (parellel_blocks && parellel_blocks[i] && parellel_blocks[i].blocknumber && blocknum < parellel_blocks[i].blocknumber) {
         blocknum = parellel_blocks[i].blocknumber;
       }
     }
