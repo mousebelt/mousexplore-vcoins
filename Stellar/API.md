@@ -2,6 +2,10 @@
 Stellar apis
 
 # Summary
+[Get server working status](#get-server-working-status)  
+[Get horizon service status](#get-horizon-service-status)  
+[Get stellar-core service status](#get-stellar-core-service-status)  
+
 [Get ledgers](#get-ledgers)  
 [Get transactions](#get-transactions)  
 [Get latest operations](#get-latest-operations)  
@@ -25,6 +29,64 @@ Stellar apis
 ***
 
 # API Details
+
+
+## Get server working status
+```
+ GET /monitor
+```
+
+* for successed case
+
+```javascript
+{ status: 200, msg: "success", data: "Server is working now !" }
+```
+
+* for failed case
+
+status: 400
+```javascript
+{ status: 400, msg: 'errors', data: err }
+```
+
+
+## Get horizon service status
+```
+ GET /monitor/horizon
+```
+
+* for successed case
+
+```javascript
+{ status: 200, msg: "success", data: "Horizon service is working !" }
+```
+
+* for failed case
+
+status: 400
+```javascript
+{ status: 400, msg: 'errors', data: err }
+```
+
+
+## Get stellar-core service status
+```
+ GET /monitor/stellar-core
+```
+
+* for successed case
+
+```javascript
+{ status: 200, msg: "success", data: "Stellar-Core service is working !" }
+```
+
+* for failed case
+
+status: 400
+```javascript
+{ status: 400, msg: 'errors', data: err }
+```
+
 
 ## Get ledgers
 
