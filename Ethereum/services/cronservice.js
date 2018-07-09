@@ -69,9 +69,8 @@ async function saveParellelInfo(threadIndex) {
   }
 }
 
-async function getNextBlockNum() {
+function getNextBlockNum(lastnumber) {
   try {
-    var lastnumber = await web3.eth.getBlockNumber();
     if (!lastnumber) return -1;
   
     var blocknum = 0;
@@ -98,9 +97,9 @@ async function getNextBlockNum() {
  * Distribute blocks to process threads(promise).
  * If a thread finished process, build new process for new block.
  */
-async function distributeBlocks() {
+function distributeBlocks(lastnumber) {
   try {
-    let nextnumber = await getNextBlockNum();
+    let nextnumber = getNextBlockNum(lastnumber);
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
       //if a thread is finished
       if (!parellel_blocks[i] || parellel_blocks[i].total_txs == parellel_blocks[i].synced_index) {
@@ -189,7 +188,9 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
 }
 
 async function transactionService() {
-  await distributeBlocks();
+  var lastnumber = await web3.eth.getBlockNumber();
+
+  distributeBlocks(lastnumber);
   setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
 
