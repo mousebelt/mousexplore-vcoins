@@ -43,6 +43,26 @@ async function loadParellInfo() {
   }
 }
 
+async function initParellInfo() {
+  try {
+    var rowCount = await ParellelInofModel.find().count();
+    if (rowCount < 50) {
+      for (let i = 0; i < 50; i++) {
+        var row = new ParellelInofModel({
+          index: i,
+          blocknumber: -1,
+          total_txs: 0,
+          synced_index: 0,	//synced transactions
+        });
+        await row.save();
+      }
+    }
+  }
+  catch (e) {
+    filelog("initParellInfo error: ", e);
+  }
+}
+
 async function saveParellelInfo(threadIndex) {
   try {
     var info = await ParellelInofModel.findOne({ index: threadIndex });
@@ -207,6 +227,7 @@ async function transactionService() {
 exports.start_cronService = async function () {
   require('./init.db').start();
 
+  await initParellInfo();
   await loadParellInfo();
   transactionService();
 }
