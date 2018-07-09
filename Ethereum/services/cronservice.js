@@ -24,13 +24,14 @@ function filelog(d) { //
 
 async function loadParellInfo() {
   try {
-    var parellInfo = await ParellelInofModel.find().limit(config.CHECK_PARELLEL_BLOCKS);
-    if (parellInfo) {
-      for (let i = 0; i < cronServiceInfo.length; i ++) {
-        parellel_blocks[parellInfo.index] = {	
-          blocknumber: parellInfo.blocknumber,
-          total_txs: parellInfo.total_txs,
-          synced_index: parellInfo.synced_index
+    var piRows = await ParellelInofModel.find().limit(config.CHECK_PARELLEL_BLOCKS);
+    if (piRows && piRows.length > 0) {
+      for (let i = 0; i < piRows.length; i ++) {
+        var row = piRows[i];
+        parellel_blocks[row.index] = {	
+          blocknumber: row.blocknumber,
+          total_txs: row.total_txs,
+          synced_index: row.synced_index
         };
       }
     }
@@ -42,9 +43,9 @@ async function loadParellInfo() {
 
 async function saveParellelInfo(threadIndex) {
   try {
-    var parellInfo = await ParellelInofModel.find({index: threadIndex});
+    var info = await ParellelInofModel.find({index: threadIndex});
 
-    if (parellInfo) {
+    if (info) {
       info.set({ 
         blocknumber: parellel_blocks[threadIndex].blocknumber,
         total_txs: parellel_blocks[threadIndex].total_txs,
@@ -52,7 +53,7 @@ async function saveParellelInfo(threadIndex) {
        });
     }
     else {
-      info = new ServiceInofModel({ 
+      info = new ParellelInofModel({ 
         index: threadIndex,
         blocknumber: parellel_blocks[threadIndex].blocknumber,
         total_txs: parellel_blocks[threadIndex].total_txs,
@@ -66,24 +67,29 @@ async function saveParellelInfo(threadIndex) {
 }
 
 async function getNextBlockNum() {
-  var lastnumber = await web3.eth.getBlockNumber();
-  if (!lastnumber) return -1;
-
-  var blocknum = 0;
-  for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
-    if (blocknum < parellel_blocks[i].blocknumber) {
-      blocknum = parellel_blocks[i].blocknumber;
+  try {
+    var lastnumber = await web3.eth.getBlockNumber();
+    if (!lastnumber) return -1;
+  
+    var blocknum = 0;
+    for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i ++) {
+      if (blocknum < parellel_blocks[i].blocknumber) {
+        blocknum = parellel_blocks[i].blocknumber;
+      }
     }
-  }
-
-  blocknum ++;
-
-  if (blocknum > lastnumber) {
-    console.log("Lastnode is syncing!");
+  
+    blocknum ++;
+  
+    if (blocknum > lastnumber) {
+      console.log("Lastnode is syncing!");
+      return -1;
+    }
+  
+    return blocknum;
+  } catch (error) {
+    filelog('getNextBlockNum error: ', error);
     return -1;
   }
-
-  return blocknum;
 }
 /*
  * Distribute blocks to process threads(promise).
@@ -106,7 +112,7 @@ async function distributeBlocks() {
 
           parellel_blocks[i] = {
             blocknumber: nextnumber,
-            total_txs: txnCount,
+            total_txs: blockdata.transactions.length,
             synced_index: 0,
             inprogressing: true
           }

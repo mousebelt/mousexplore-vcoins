@@ -1,7 +1,7 @@
 var Config = require('../config');
 var TokenModel = require("../model/tokens");
 
-exports.start = () => {
+exports.start = function() {
   TokenModel.find({}, (err, rows) => {
     if (err) {
       console.log("Token DB error !");
