@@ -435,6 +435,34 @@ exports.listSinceBlock = (req, res) => {
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 //// Utility apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
+exports.getMonitor = async (req, res) => {
+  return res.json({ status: 200, msg: "success", data: "Server is working now !" });
+};
+
+exports.getMonitorDb = async (req, res) => {
+  try {
+    if (require("mongoose").connection.readyState)
+      return res.json({ status: 200, msg: "success", data: "Db is working now !" });
+
+    throw new Error('db error');
+  } catch (error) {
+    return res.status(400).json({ status: 400, msg: "errors", data: "Db is not working now !" });
+  }
+};
+
+exports.getMonitorRpc = async (req, res) => {
+  try {
+    client.call("getblockchaininfo", [], function (err, result) {
+      if (err) {
+        return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+      }
+      return res.json({ status: 200, msg: "sccuess", data: result });
+    });
+  } catch (err) {
+    return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+  }
+};
+
 exports.getSearch = async (req, res) => {
   var key = req.params.key;
 
@@ -442,21 +470,40 @@ exports.getSearch = async (req, res) => {
     if (key.length < 10) {
       // block process
       var hash = await promisify("getblockhash", [Number(key)]);
-      if (hash) return res.json({ status: 200, msg: "sccuess", data: { type: "block" } });
+      if (hash)
+        return res.json({
+          status: 200,
+          msg: "sccuess",
+          data: { type: "block" }
+        });
     } else if (key.length >= 25 && key.length <= 34) {
       // address process
-      return res.json({ status: 200, msg: "sccuess", data: { type: "address" } });
+      return res.json({
+        status: 200,
+        msg: "sccuess",
+        data: { type: "address" }
+      });
     } else if (key.length >= 64 && key.length <= 66) {
       // block or txid process
       try {
         var tx = await promisify("getrawtransaction", [key, 1]);
-        if (tx) return res.json({ status: 200, msg: "sccuess", data: { type: "transaction" } });
+        if (tx)
+          return res.json({
+            status: 200,
+            msg: "sccuess",
+            data: { type: "transaction" }
+          });
       } catch (error) { }
 
       // block details
       try {
         var block = await promisify("getblock", [key]);
-        if (block) return res.json({ status: 200, msg: "sccuess", data: { type: "block" } });
+        if (block)
+          return res.json({
+            status: 200,
+            msg: "sccuess",
+            data: { type: "block" }
+          });
       } catch (error) { }
     }
     return res.json({ status: 400, msg: "search key is not correct !" });
@@ -651,8 +698,12 @@ exports.getBalance = async function (req, res) {
   // logic
   try {
     var addrRow = await AddressModel.findOne({ address });
-    if (!addrRow) return res.json({ status: 200, msg: 'success', data: { address, balance: 0, n_tx: 0 } });
-
+    if (!addrRow)
+      return res.json({
+        status: 200,
+        msg: "success",
+        data: { address, balance: 0, n_tx: 0 }
+      });
     // var total_received = 0;
     // for (let i = 0; i < addrRow.txsOut.length; i++) {
     //   var { txid, vout, value } = addrRow.txsOut[i];
@@ -668,7 +719,11 @@ exports.getBalance = async function (req, res) {
     // var balance = total_received - total_spent;
     var balance = addrRow.balance;
     balance = Number(balance.toFixed(8));
-    return res.json({ status: 200, msg: 'success', data: { address, balance, n_tx: addrRow.txs.length } });
+    return res.json({
+      status: 200,
+      msg: "success",
+      data: { address, balance, n_tx: addrRow.txs.length }
+    });
   } catch (error) {
     return res.json({ status: 400, msg: "error occured !", data: error });
   }

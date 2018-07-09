@@ -11,7 +11,7 @@ module.exports = {
     localNode,
     client,
 
-    port: 8000,
+    port: 8080,
 
     db: "mongodb://localhost:27017/neo-db",
 

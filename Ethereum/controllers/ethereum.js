@@ -598,3 +598,32 @@ exports.postSendSignedTransaction = async function (req, res) {
     return res.json({ status: 400, msg: "Error !", data: error });
   }
 };
+
+exports.getMonitor = async (req, res) => {
+  return res.json({ status: 200, msg: "success", data: "Server is working now !" });
+};
+
+exports.getMonitorDb = async (req, res) => {
+  try {
+    if (require("mongoose").connection.readyState)
+      return res.json({ status: 200, msg: "success", data: "Db is working now !" });
+
+    throw new Error('db error');
+  } catch (error) {
+    return res.status(400).json({ status: 400, msg: "errors", data: "Db is not working now !" });
+  }
+};
+
+exports.getMonitorRpc = async (req, res) => {
+  try {
+    web3.eth.getProtocolVersion()
+      .then(result => {
+        return res.json({ status: 200, msg: "success", data: { protocolVersion: result } });
+      })
+      .catch(err => {
+        return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+      })
+  } catch (err) {
+    return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+  }
+};
