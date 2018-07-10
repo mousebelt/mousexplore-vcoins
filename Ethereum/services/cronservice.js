@@ -126,11 +126,16 @@ function distributeBlocks() {
         if (nextnumber == -1)
           continue;
 
-        parellel_blocks[i].blocknumber = nextnumber;
-        parellel_blocks[i].inprogressing = true;
+        parellel_blocks[i] = {
+          blocknumber: nextnumber,
+          total_txs: -1,
+          synced_index: 0,
+          inprogressing: true
+        }
         web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
           if (error) {
             filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
+            parellel_blocks[i].inprogressing = false;
             return;
           }
 
@@ -155,6 +160,7 @@ function distributeBlocks() {
             }
 
             parellel_blocks[i].inprogressing = true;
+            parellel_blocks[i].total_txs = blockdata.transaction.length;
 
             await CheckUpdatedTransactions(i, blockdata);
           });
@@ -206,8 +212,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
   }
   catch (e) {
     filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
-    // CheckUpdatedTransactions(threadIndex, blockdata);
-    setTimeout(CheckUpdatedTransactions, 100, threadIndex, blockdata);
+    parellel_blocks[threadIndex].inprogressing = false;
     return;
   }
 }
