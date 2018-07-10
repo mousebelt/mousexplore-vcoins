@@ -92,9 +92,9 @@ function getNextBlockNum(lastnumber) {
   try {
     if (!lastnumber) return -1;
 
-    var blocknum = 0;
+    var blocknum = -1;
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
-      if (parellel_blocks[i] && parellel_blocks[i].blocknumber && blocknum < parellel_blocks[i].blocknumber) {
+      if (parellel_blocks[i] && blocknum < parellel_blocks[i].blocknumber) {
         blocknum = parellel_blocks[i].blocknumber;
       }
     }
@@ -132,6 +132,7 @@ function distributeBlocks() {
           synced_index: 0,
           inprogressing: true
         }
+        saveParellelInfo(i);
         web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
           if (error) {
             filelog("distributeBlocks fails for getBlock of block: " + nextnumber);

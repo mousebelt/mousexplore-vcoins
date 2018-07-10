@@ -95,9 +95,9 @@ function getNextBlockNum(lastnumber) {
   try {
     if (!lastnumber) return -1;
 
-    var blocknum = 0;
+    var blocknum = -1;
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
-      if (parellel_blocks[i] && parellel_blocks[i].blocknumber && blocknum < parellel_blocks[i].blocknumber) {
+      if (parellel_blocks[i] && blocknum < parellel_blocks[i].blocknumber) {
         blocknum = parellel_blocks[i].blocknumber;
       }
     }
@@ -136,21 +136,11 @@ function distributeBlocks() {
           synced_index: 0,
           inprogressing: true
         }
+        saveParellelInfo(i);
 
-        client.call("getblockhash", [nextnumber], function (err, hash) {
-          if (err) {
-            filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
-            parellel_blocks[i].inprogressing = false;
-            return;
-          }
-
-          client.call("getblock", [hash], async function (err, blockdata) {
-            if (err) {
-              filelog(`distributeBlocks fails for getBlock of block: ${nextnumber}, hash: ${hash}`);
-              parellel_blocks[i].inprogressing = false;
-              return;
-            }
-
+        promisify('getblockhash', [nextnumber])
+          .then(async (hash) => {
+            var blockdata = await promisify("getblock", [hash]);
             parellel_blocks[i] = {
               blocknumber: nextnumber,
               total_txs: blockdata.tx.length,
@@ -162,30 +152,30 @@ function distributeBlocks() {
 
             await CheckUpdatedTransactions(i, blockdata);
           })
-        });
+          .catch(err => {
+            filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
+            parellel_blocks[i].inprogressing = false;
+            return;
+          })
       }
       else {
         if (!parellel_blocks[i].inprogressing) {
-          client.call("getblockhash", [parellel_blocks[i].blocknumber], function (err, hash) {
-            if (err) {
-              filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
-              parellel_blocks[i].inprogressing = false;
-              return;
-            }
-
-            client.call("getblock", [hash], async function (err, blockdata) {
-              if (err) {
-                filelog(`distributeBlocks fails for getBlock of block: ${nextnumber}, hash: ${hash}`);
-                parellel_blocks[i].inprogressing = false;
-                return;
-              }
-
+          promisify('getblockhash', [parellel_blocks[i].blocknumber])
+            .then(async (hash) => {
+              var blockdata = await promisify("getblock", [hash]);
               parellel_blocks[i].inprogressing = true;
-              parellel_blocks[i].total_txs = blockdata.tx.length;
+              if (parellel_blocks[i].total_txs != blockdata.tx.length) {
+                parellel_blocks[i].total_txs = blockdata.tx.length;
+                saveParellelInfo(i);
+              }
 
               await CheckUpdatedTransactions(i, blockdata);
             })
-          });
+            .catch(err => {
+              filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
+              parellel_blocks[i].inprogressing = false;
+              return;
+            });
         }
       }
     }
@@ -202,7 +192,13 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
       let txid = blockdata.tx[i];
 
       // skip genesis txid
-      if (_.indexOf(config.genesisTxids, txid) > -1) continue;
+      if (_.indexOf(config.genesisTxids, txid) > -1) {
+        parellel_blocks[threadIndex].synced_index = i + 1;
+
+        // save
+        await saveParellelInfo(threadIndex);
+        continue;
+      }
 
       var txInfo = await promisify("getrawtransaction", [txid, 1]);
       if (!txInfo) throw new Error(`empty tx info(getrawtransaction). txid: ${txid}`);
@@ -321,22 +317,6 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
     parellel_blocks[threadIndex].inprogressing = false;
     return;
   }
-}
-
-var g_lastCheckedNumber = 0;
-var g_ticker = 1;
-
-async function transactionService() {
-  g_ticker--;
-  if (g_ticker <= 0) {
-    try {
-      g_lastCheckedNumber = await web3.eth.getBlockNumber();
-      g_ticker = config.TICKER_BLOCK;
-    } catch (error) { }
-  }
-
-  distributeBlocks();
-  setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
 
 var g_lastCheckedNumber = 0;
