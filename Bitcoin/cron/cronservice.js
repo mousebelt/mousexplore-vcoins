@@ -330,22 +330,6 @@ async function transactionService() {
   g_ticker--;
   if (g_ticker <= 0) {
     try {
-      g_lastCheckedNumber = await web3.eth.getBlockNumber();
-      g_ticker = config.TICKER_BLOCK;
-    } catch (error) { }
-  }
-
-  distributeBlocks();
-  setTimeout(transactionService, config.CRON_TIME_INTERVAL);
-}
-
-var g_lastCheckedNumber = 0;
-var g_ticker = 1;
-
-async function transactionService() {
-  g_ticker--;
-  if (g_ticker <= 0) {
-    try {
       g_lastCheckedNumber = await promisify("getblockcount", []);
       g_ticker = config.TICKER_BLOCK;
     } catch (error) { }
