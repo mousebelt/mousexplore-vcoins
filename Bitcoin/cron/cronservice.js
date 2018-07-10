@@ -97,7 +97,7 @@ function getNextBlockNum(lastnumber) {
 
     var blocknum = -1;
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
-      if (parellel_blocks[i] && parellel_blocks[i].blocknumber && blocknum < parellel_blocks[i].blocknumber) {
+      if (parellel_blocks[i] && blocknum < parellel_blocks[i].blocknumber) {
         blocknum = parellel_blocks[i].blocknumber;
       }
     }
