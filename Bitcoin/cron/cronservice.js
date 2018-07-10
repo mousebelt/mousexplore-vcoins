@@ -192,7 +192,13 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
       let txid = blockdata.tx[i];
 
       // skip genesis txid
-      if (_.indexOf(config.genesisTxids, txid) > -1) continue;
+      if (_.indexOf(config.genesisTxids, txid) > -1) {
+        parellel_blocks[threadIndex].synced_index = i + 1;
+
+        // save
+        await saveParellelInfo(threadIndex);
+        continue;
+      }
 
       var txInfo = await promisify("getrawtransaction", [txid, 1]);
       if (!txInfo) throw new Error(`empty tx info(getrawtransaction). txid: ${txid}`);
