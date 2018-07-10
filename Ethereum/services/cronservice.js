@@ -160,7 +160,7 @@ function distributeBlocks() {
             }
 
             parellel_blocks[i].inprogressing = true;
-            parellel_blocks[i].total_txs = blockdata.transaction.length;
+            parellel_blocks[i].total_txs = blockdata.transactions.length;
 
             await CheckUpdatedTransactions(i, blockdata);
           });
