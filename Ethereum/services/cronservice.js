@@ -215,7 +215,7 @@ var g_ticker = 1;
 
 async function transactionService() {
   g_ticker--;
-  if (g_ticker == 0) {
+  if (g_ticker <= 0) {
     try {
       g_lastCheckedNumber = await web3.eth.getBlockNumber();
       g_ticker = config.TICKER_BLOCK;
