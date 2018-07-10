@@ -120,7 +120,7 @@ function distributeBlocks() {
   try {
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
       //if a thread is finished
-      if (!parellel_blocks[i].inprogressing && (!parellel_blocks[i] || parellel_blocks[i].total_txs == parellel_blocks[i].synced_index)) {
+      if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs == parellel_blocks[i].synced_index)) {
 
         let nextnumber = getNextBlockNum(g_lastCheckedNumber);
         if (nextnumber == -1)
