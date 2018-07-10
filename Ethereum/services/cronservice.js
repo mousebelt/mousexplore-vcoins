@@ -132,6 +132,7 @@ function distributeBlocks() {
           synced_index: 0,
           inprogressing: true
         }
+        saveParellelInfo(i);
         web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
           if (error) {
             filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
