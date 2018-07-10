@@ -136,6 +136,7 @@ function distributeBlocks() {
           synced_index: 0,
           inprogressing: true
         }
+        saveParellelInfo(i);
 
         client.call("getblockhash", [nextnumber], function (err, hash) {
           if (err) {
@@ -181,7 +182,10 @@ function distributeBlocks() {
               }
 
               parellel_blocks[i].inprogressing = true;
-              parellel_blocks[i].total_txs = blockdata.tx.length;
+              if (parellel_blocks[i].total_txs != blockdata.tx.length) {
+                parellel_blocks[i].total_txs = blockdata.tx.length;
+                saveParellelInfo(i);
+              }
 
               await CheckUpdatedTransactions(i, blockdata);
             })
