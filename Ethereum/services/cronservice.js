@@ -206,6 +206,8 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
   }
   catch (e) {
     filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
+    // redo
+    CheckUpdatedTransactions(threadIndex, blockdata);
     return;
   }
 }
