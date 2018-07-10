@@ -138,20 +138,9 @@ function distributeBlocks() {
         }
         saveParellelInfo(i);
 
-        client.call("getblockhash", [nextnumber], function (err, hash) {
-          if (err) {
-            filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
-            parellel_blocks[i].inprogressing = false;
-            return;
-          }
-
-          client.call("getblock", [hash], async function (err, blockdata) {
-            if (err) {
-              filelog(`distributeBlocks fails for getBlock of block: ${nextnumber}, hash: ${hash}`);
-              parellel_blocks[i].inprogressing = false;
-              return;
-            }
-
+        promisify('getblockhash', [nextnumber])
+          .then(async (hash) => {
+            var blockdata = await promisify("getblock", [hash]);
             parellel_blocks[i] = {
               blocknumber: nextnumber,
               total_txs: blockdata.tx.length,
@@ -163,24 +152,17 @@ function distributeBlocks() {
 
             await CheckUpdatedTransactions(i, blockdata);
           })
-        });
+          .catch(err => {
+            filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
+            parellel_blocks[i].inprogressing = false;
+            return;
+          })
       }
       else {
         if (!parellel_blocks[i].inprogressing) {
-          client.call("getblockhash", [parellel_blocks[i].blocknumber], function (err, hash) {
-            if (err) {
-              filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
-              parellel_blocks[i].inprogressing = false;
-              return;
-            }
-
-            client.call("getblock", [hash], async function (err, blockdata) {
-              if (err) {
-                filelog(`distributeBlocks fails for getBlock of block: ${nextnumber}, hash: ${hash}`);
-                parellel_blocks[i].inprogressing = false;
-                return;
-              }
-
+          promisify('getblockhash', [parellel_blocks[i].blocknumber])
+            .then(async (hash) => {
+              var blockdata = await promisify("getblock", [hash]);
               parellel_blocks[i].inprogressing = true;
               if (parellel_blocks[i].total_txs != blockdata.tx.length) {
                 parellel_blocks[i].total_txs = blockdata.tx.length;
@@ -189,7 +171,11 @@ function distributeBlocks() {
 
               await CheckUpdatedTransactions(i, blockdata);
             })
-          });
+            .catch(err => {
+              filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
+              parellel_blocks[i].inprogressing = false;
+              return;
+            });
         }
       }
     }
