@@ -1113,46 +1113,68 @@ exports.getSearch = function (req, res) {
 
 exports.postTransaction = async function (req, res) {
   var tx = req.body.tx;
+  // tx = 'AAAAAOo1QK/3upA74NLkdq4Io3DQAQZPi4TVhuDnvCYQTKIVAAAACgAAH8AAAAABAAAAAAAAAAAAAAABAAAAAQAAAADqNUCv97qQO+DS5HauCKNw0AEGT4uE1Ybg57wmEEyiFQAAAAEAAAAAZc2EuuEa2W1PAKmaqVquHuzUMHaEiRs//+ODOfgWiz8AAAAAAAAAAAAAA+gAAAAAAAAAARBMohUAAABAPnnZL8uPlS+c/AM02r4EbxnZuXmP6pQHvSGmxdOb0SzyfDB2jUKjDtL+NC7zcMIyw4NjTa9Ebp4lvONEf4yDBA==';
   if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
 
-  console.log("tx: ", tx);
+  try {
+    // get data
+    var url = urlAPI + "transactions";
+    
 
-  console.log(
-    "URI: ",
-    URI(urlAPI)
-      .segment("transactions")
-      .toString()
-  );
-  axios
-    .post(
-      URI(urlAPI)
-        .segment("transactions")
-        .toString(),
-      `tx=${tx}`,
-      { timeout: config.SUBMIT_TRANSACTION_TIMEOUT }
-    )
-    .then(function (response) {
-      console.log("postTransaction response: ", response);
-      res.json({ status: 200, msg: "success", data: response.data });
-    })
-    .catch(function (response) {
-      console.log(response);
-      if (!response.data) {
-        console.log("Error");
-        res.json({
-          status: 400,
-          msg: "Transaction submission failed.",
-          data: response
+    request.post({ url, formData: {tx} }, function (err, response, body) {
+      if (!error) {
+        body = JSON.parse(body);
+
+        if (body.status && body.status > 200)
+          return res.status(body.status).json({
+            status: body.status,
+            msg: body.title,
+            data: body.detail
+          });
+
+        return res.json({
+          status: 200,
+          msg: "success",
+          data: body
         });
       } else {
-        console.log("transaction error: ", response.data);
-        res.json({
-          status: 400,
-          msg: "Transaction submission failed.",
-          data: response.data
-        });
+        res.status(400).json({ status: 400, msg: "Error !", data: error.toString() });
       }
     });
+  } catch (error) {
+    return res.status(400).json({ status: 400, msg: "Error !", data: error.toString() });
+  }
+
+  // axios
+  //   .post(
+  //     URI(urlAPI)
+  //       .segment("transactions")
+  //       .toString(),
+  //     `tx=${tx}`,
+  //     { timeout: config.SUBMIT_TRANSACTION_TIMEOUT }
+  //   )
+  //   .then(function (response) {
+  //     console.log("postTransaction response: ", response);
+  //     res.json({ status: 200, msg: "success", data: response.data });
+  //   })
+  //   .catch(function (response) {
+  //     console.log(response);
+  //     if (!response.data) {
+  //       console.log("Error");
+  //       res.json({
+  //         status: 400,
+  //         msg: "Transaction submission failed.",
+  //         data: response
+  //       });
+  //     } else {
+  //       console.log("transaction error: ", response.data);
+  //       res.json({
+  //         status: 400,
+  //         msg: "Transaction submission failed.",
+  //         data: response.data
+  //       });
+  //     }
+  //   });
 };
 
 //http://localhost:2000/test
