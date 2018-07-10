@@ -144,7 +144,7 @@ function distributeBlocks() {
             return;
           }
 
-          client.call("getblock", [hash], function (err, blockdata) {
+          client.call("getblock", [hash], async function (err, blockdata) {
             if (err) {
               filelog(`distributeBlocks fails for getBlock of block: ${nextnumber}, hash: ${hash}`);
               parellel_blocks[i].inprogressing = false;
@@ -173,7 +173,7 @@ function distributeBlocks() {
               return;
             }
 
-            client.call("getblock", [hash], function (err, blockdata) {
+            client.call("getblock", [hash], async function (err, blockdata) {
               if (err) {
                 filelog(`distributeBlocks fails for getBlock of block: ${nextnumber}, hash: ${hash}`);
                 parellel_blocks[i].inprogressing = false;
