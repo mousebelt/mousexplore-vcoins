@@ -1113,24 +1113,26 @@ exports.getSearch = function (req, res) {
 
 exports.postTransaction = async function (req, res) {
   var tx = req.body.tx;
-  // tx = 'AAAAAOo1QK/3upA74NLkdq4Io3DQAQZPi4TVhuDnvCYQTKIVAAAACgAAH8AAAAABAAAAAAAAAAAAAAABAAAAAQAAAADqNUCv97qQO+DS5HauCKNw0AEGT4uE1Ybg57wmEEyiFQAAAAEAAAAAZc2EuuEa2W1PAKmaqVquHuzUMHaEiRs//+ODOfgWiz8AAAAAAAAAAAAAA+gAAAAAAAAAARBMohUAAABAPnnZL8uPlS+c/AM02r4EbxnZuXmP6pQHvSGmxdOb0SzyfDB2jUKjDtL+NC7zcMIyw4NjTa9Ebp4lvONEf4yDBA==';
   if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
+  // tx = 'AAAAAE27YwysJKMCV6QL0PQu8cmdEvIeoXgqGNfBFPh%2BpW6QAAAAZAEfqHUAAAACAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAA1Unbq3zq2lzmNpq23iTd%2FEs1iqr3zgk9hSbVvG4P5cIAAAAAAAAAAAAPQkAAAAAAAAAAAX6lbpAAAABAfsr1ynFgQkvWLkGY2DKIaxbHXciJS%2Bebvekh%2BIk%2FSCmYuigCVD%2FcVZdhKix7p3izU2HE2oLs0jcDLcnT0frLBQ%3D%3D';
+  // tx = 'AAAAAE27YwysJKMCV6QL0PQu8cmdEvIeoXgqGNfBFPh+pW6QAAAAZAEfqHUAAAACAAAAAAAAAAAAAAABAAAAAAAAAAEAAAAA1Unbq3zq2lzmNpq23iTd/Es1iqr3zgk9hSbVvG4P5cIAAAAAAAAAAAAPQkAAAAAAAAAAAX6lbpAAAABAfsr1ynFgQkvWLkGY2DKIaxbHXciJS+ebvekh+Ik/SCmYuigCVD/cVZdhKix7p3izU2HE2oLs0jcDLcnT0frLBQ=='
 
   try {
+    console.log('old_tx: ', tx);
     tx = decodeURIComponent(tx);
+    console.log('dec_tx: ', tx);
     // get data
     var url = urlAPI + "transactions";
-    
-
-    request.post({ url, formData: {tx} }, function (err, response, body) {
+    request.post({ url, formData: {tx} }, function (error, response, body) {
+      console.log({error, body});
       if (!error) {
         body = JSON.parse(body);
 
         if (body.status && body.status > 200)
           return res.status(body.status).json({
             status: body.status,
-            msg: body.title,
-            data: body.detail
+            msg: 'errors',
+            data: body
           });
 
         return res.json({
