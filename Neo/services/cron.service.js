@@ -3,6 +3,7 @@ var _ = require("lodash");
 var config = require("../config");
 var localNode = config.localNode;
 
+var ParellelInofModel = require("../model/parellelinfo");
 var TransactionModel = require("../model/transactions");
 var AddressModel = require("../model/address");
 var TxServiceInofModel = require("../model/txServiceInfo");
@@ -14,73 +15,182 @@ var Log = require('log'),
   log = new Log('debug', fs.createWriteStream('./cron.debug.log', { flags: 'a' }));
 // log = new Log('debug');
 
-function filelog(...params) { //
+function filelog(...params) {
   log.info(...params);
 };
 
-async function getTxServiceInfo() {
+var promisify = UtilsModule.promisify;
+
+/////////////////////////////////////////////////////////////////////////////////////
+var parellel_blocks = [];
+
+async function loadParellInfo() {
   try {
-    txServiceInfo = await TxServiceInofModel.findOne();
-    if (txServiceInfo) return txServiceInfo;
-    else return {
-      lastblock: 0,
-      lastTxIndex: -1,
+    var piRows = await ParellelInofModel.find().limit(config.CHECK_PARELLEL_BLOCKS);
+    if (piRows && piRows.length > 0) {
+      for (let i = 0; i < piRows.length; i++) {
+        var row = piRows[i];
+        parellel_blocks[row.index] = {
+          blocknumber: row.blocknumber,
+          total_txs: row.total_txs,
+          synced_index: row.synced_index
+        };
+      }
     }
   }
   catch (e) {
-    filelog("getTxServiceInfo error: ", e);
-    return undefined;
+    filelog("loadParellInfo error: ", e);
   }
 }
 
-async function saveTxServiceInfo(lastblock, lastTxIndex) {
-  await TxServiceInofModel.findOne(async function (e, info) {
-    if (!e) {
-      if (info) {
-        info.set({ lastblock, lastTxIndex });
+async function initParellInfo() {
+  try {
+    var rowCount = await ParellelInofModel.find().count();
+    if (rowCount < 50) {
+      for (let i = 0; i < 50; i++) {
+        var row = new ParellelInofModel({
+          index: i,
+          blocknumber: -1,
+          total_txs: 0,
+          synced_index: 0,	//synced transactions
+        });
+        await row.save();
       }
-      else {
-        info = new TxServiceInofModel({ lastblock, lastTxIndex });
-      }
-      await info.save();
+    }
+  }
+  catch (e) {
+    filelog("initParellInfo error: ", e);
+  }
+}
+
+async function saveParellelInfo(threadIndex) {
+  try {
+    var info = await ParellelInofModel.findOne({ index: threadIndex });
+
+    if (info) {
+      info.set({
+        blocknumber: parellel_blocks[threadIndex].blocknumber,
+        total_txs: parellel_blocks[threadIndex].total_txs,
+        synced_index: parellel_blocks[threadIndex].synced_index
+      });
     }
     else {
-      filelog('saveTxServiceInfo error: ', e); // Should dump errors here
+      info = new ParellelInofModel({
+        index: threadIndex,
+        blocknumber: parellel_blocks[threadIndex].blocknumber,
+        total_txs: parellel_blocks[threadIndex].total_txs,
+        synced_index: parellel_blocks[threadIndex].synced_index
+      });
     }
-  });
+    await info.save();
+  } catch (error) {
+    filelog('saveParellelInfo:error: ', error); // Should dump errors here
+  }
 }
 
-async function CheckUpdatedTransactions() {
-  // read last block and txIndex
-  var txServiceInfo = await getTxServiceInfo();
-  if (!txServiceInfo) {
-    filelog('get tx service info error !');
-    return;
-  }
-  var curblock = txServiceInfo.lastblock;
-  var curTxIndex = txServiceInfo.lastTxIndex + 1;
-
+function getNextBlockNum(lastnumber) {
   try {
-    // var blockCount = await localNode.getBlockCount();
-    var blockCount = await UtilsModule.promisify("getblockcount", []);
-    if (!blockCount || curblock >= blockCount) throw `curblock is greater than blockcount. curblock: ${curblock}, blockCount: ${blockCount}`
+    if (!lastnumber) return -1;
 
-    // var blockdata = await localNode.getBlockByHeight(i, 1);
-    var blockdata = await UtilsModule.promisify("getblock", [curblock, 1]);
-    if (!blockdata) throw 'getblock error';
+    var blocknum = -1;
+    for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
+      if (parellel_blocks[i] && blocknum < parellel_blocks[i].blocknumber) {
+        blocknum = parellel_blocks[i].blocknumber;
+      }
+    }
 
-    var txs = blockdata.tx;
+    blocknum++;
 
-    for (let i = curTxIndex; i < txs.length; i++) {
-      let tx = txs[i]
+    if (blocknum > lastnumber) {
+      console.log("Lastnode is syncing!");
+      return -1;
+    }
+
+    return blocknum;
+  } catch (error) {
+    filelog('getNextBlockNum error: ', error);
+    return -1;
+  }
+}
+
+/*
+ * Distribute blocks to process threads(promise).
+ * If a thread finished process, build new process for new block.
+ */
+function distributeBlocks() {
+  try {
+    for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
+      //if a thread is finished
+      if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs == parellel_blocks[i].synced_index)) {
+
+        let nextnumber = getNextBlockNum(g_lastCheckedNumber);
+        if (nextnumber == -1)
+          continue;
+
+        parellel_blocks[i] = {
+          blocknumber: nextnumber,
+          total_txs: -1,
+          synced_index: 0,
+          inprogressing: true
+        }
+        saveParellelInfo(i);
+        promisify('getblock', [nextnumber, 1])
+          .then(async (blockdata) => {
+            parellel_blocks[i] = {
+              blocknumber: nextnumber,
+              total_txs: blockdata.tx.length,
+              synced_index: 0,
+              inprogressing: true
+            }
+
+            saveParellelInfo(i);
+
+            await CheckUpdatedTransactions(i, blockdata);
+          })
+          .catch(err => {
+            filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
+            parellel_blocks[i].inprogressing = false;
+            return;
+          })
+      }
+      else {
+        if (!parellel_blocks[i].inprogressing) {
+          promisify('getblock', [parellel_blocks[i].blocknumber, 1])
+          .then(async (blockdata) => {
+              parellel_blocks[i].inprogressing = true;
+              if (parellel_blocks[i].total_txs != blockdata.tx.length) {
+                parellel_blocks[i].total_txs = blockdata.tx.length;
+                saveParellelInfo(i);
+              }
+
+              await CheckUpdatedTransactions(i, blockdata);
+            })
+            .catch(err => {
+              filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
+              parellel_blocks[i].inprogressing = false;
+              return;
+            });
+        }
+      }
+    }
+  } catch (e) {
+    filelog("distributeBlocks fails: ", e)
+  }
+}
+
+async function CheckUpdatedTransactions(threadIndex, blockdata) {
+  try {
+    var txnCount = blockdata.tx.length;
+
+    for (let i = parellel_blocks[threadIndex].synced_index; i < txnCount; i++) {
+      let tx = blockdata.tx[i];
       let { txid, size, type, version, vin, vout, sys_fee, net_fee, nonce } = tx;
 
       // Get vin details
-      vinDetails = [];
+      var vinDetails = [];
       for (let j = 0; j < vin.length; j++) {
-        // var inTx = await TransactionModel.findOne({ txid: inTxid });
         var item = vin[j];
-        if (vin[j].txid && vin[j].vout) {
+        if (vin[j].txid && vin[j].vout >= 0) {
           var inTxInfo = await UtilsModule.getTxOutFunc(vin[j].txid, vin[j].vout)
           if (inTxInfo) item = _.merge({}, item, inTxInfo);
           else throw `txout function error. txid: ${vin[j].txid}, vout: ${vin[j].vout}`;
@@ -125,7 +235,7 @@ async function CheckUpdatedTransactions() {
         for (let j = 0; j < vinDetails.length; j++) {
           var item = vinDetails[j];
           var value = Number(item.value);
-          if (!item || !item.asset || !value || !item.address || !item.txid || !item.vout) continue;
+          if (!item || !item.asset || !value || !item.address || !item.txid || item.vout < 0) continue;
           // Save Info
           var addressRow = await AddressModel.findOne({ address: item.address });
           if (!addressRow) {
@@ -211,26 +321,40 @@ async function CheckUpdatedTransactions() {
           await addressRow.save();
         }
       }
+      parellel_blocks[threadIndex].synced_index = i + 1;
 
-      ////////////////////////////////////////////
-      // Save service info
-      await saveTxServiceInfo(curblock, curTxIndex);
+      // save
+      await saveParellelInfo(threadIndex);
     }
-
-    curblock++;
-    await saveTxServiceInfo(curblock, -1);
-  } catch (error) {
-    filelog('error: ', error); // Should dump errors here
+    parellel_blocks[threadIndex].inprogressing = false;
+  }
+  catch (e) {
+    filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
+    parellel_blocks[threadIndex].inprogressing = false;
+    return;
   }
 }
 
+var g_lastCheckedNumber = 0;
+var g_ticker = 1;
+
 async function transactionService() {
-  await CheckUpdatedTransactions();
-  setTimeout(transactionService, config.TX_CRON_TIME);
+  g_ticker--;
+  if (g_ticker <= 0) {
+    try {
+      g_lastCheckedNumber = await promisify("getblockcount", []);
+      g_ticker = config.TICKER_BLOCK;
+    } catch (error) { }
+  }
+
+  distributeBlocks();
+  setTimeout(transactionService, config.CRON_TIME_INTERVAL);
 }
 
-exports.start = async function () {
+exports.start_cronService = async function () {
   require('./init.db').start();
 
+  await initParellInfo();
+  await loadParellInfo();
   transactionService();
-}
+};
