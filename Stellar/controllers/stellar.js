@@ -1117,6 +1117,7 @@ exports.postTransaction = async function (req, res) {
   if (!tx) res.json({ status: 400, msg: "Empty transaction !" });
 
   try {
+    tx = decodeURIComponent(tx);
     // get data
     var url = urlAPI + "transactions";
     
