@@ -228,7 +228,15 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
           if (!inTxid || inTxid == "" || inVout < 0) continue;
           if (_.indexOf(config.genesisTxids, inTxid) > -1) continue;
 
-          var inTxResult = await promisify("getrawtransaction", [inTxid, 1]);
+          ///////// read vin info from db first, and then get from chain next
+          // var inTxResult = await promisify("getrawtransaction", [inTxid, 1]);
+          var inTxResult, inTxInfo;
+          // get from db
+          inTxResult = await TransactionModel.findOne({ txid: inTxid });
+          if (!inTxResult) {
+            // get from chain
+            inTxResult = await promisify("getrawtransaction", [inTxid, 1]);
+          }
           var inTxInfo = inTxResult.vout[inVout];
 
           var addresses = inTxInfo.scriptPubKey.addresses;
