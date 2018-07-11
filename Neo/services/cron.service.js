@@ -313,7 +313,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
               index: j,
               value,
               asset,
-              createdAtBlock: parellel_blocks[i].blocknumber,
+              createdAtBlock: parellel_blocks[threadIndex].blocknumber,
             });
           }
 
