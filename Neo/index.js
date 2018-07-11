@@ -27,4 +27,4 @@ app.use(bodyParser.urlencoded({
 require('./route/route')(app);
 
 //start crone service
-require("./services/cron.service").start();
+require("./services/cron.service").start_cronService();
