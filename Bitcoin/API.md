@@ -471,7 +471,7 @@ Get balance of the address
 { 
     status: 200, 
     msg: 'sccuess', 
-    data: { address, balance, n_tx }
+    data: { address, balance }
 }
 ```
 

@@ -1,4 +1,5 @@
 // define local node object
+const _ = require('lodash');
 var config = require("../config");
 const client = config.localNode;
 
@@ -627,62 +628,34 @@ exports.getAddressTransactions = async function (req, res) {
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
+  if (order) _order = {time: 1};
+  else _order = {time: -1};
 
   // logic
   try {
-    if (order > 0) {
-      // Oldest first
-      var addrTxResult = await AddressModel.aggregate([
-        {
-          $match: { address }
-        },
-        {
-          $project: {
-            txs: { $slice: ["$txs", offset, count] },
-            total: { $size: "$txs" }
-          }
-        }
-      ]);
-      let { txs, total } = addrTxResult[0];
+    var rows = await UtxoModel.find({address})
+    .sort({time: 1});
 
-      var toReturn = [];
-      for (let i = 0; i < txs.length; i++) {
-        var txid = txs[i];
-        var txInfo = await promisify("getrawtransaction", [txid, 1]);
-        toReturn.push(txInfo);
-      }
-      return res.json({
-        status: 200,
-        msg: "success",
-        data: { total, result: toReturn }
-      });
-    } else {
-      offset = -1 * offset - count;
-      var addrTxResult = await AddressModel.aggregate([
-        {
-          $match: { address }
-        },
-        {
-          $project: {
-            txs: { $slice: ["$txs", offset, count] },
-            total: { $size: "$txs" }
-          }
-        }
-      ]);
-      let { txs, total } = addrTxResult[0];
+    var arr_txid = _.map(rows, 'txid');
+    arr_txid = _.uniqBy(arr_txid, function (e) {
+      return e;
+    });
 
-      var toReturn = [];
-      for (let i = txs.length - 1; i >= 0; i--) {
-        var txid = txs[i];
-        var txInfo = await UtilsModule.getTxDetailsFunc(txid);
-        toReturn.push(txInfo);
-      }
-      return res.json({
-        status: 200,
-        msg: "success",
-        data: { total, result: toReturn }
-      });
+    // response
+    var total = arr_txid.length;
+    var txids = _.slice(arr_txid, offset, offset + count);
+
+    var result = [];
+    for (let i = 0; i < txids.length; i++) {
+      var txid = txids[i];
+      var txInfo = await promisify("getrawtransaction", [txid, 1]);
+      result.push(txInfo);
     }
+    return res.json({
+      status: 200,
+      msg: "success",
+      data: { total, result }
+    });
   } catch (error) {
     // return res.json({ status: 400, msg: "error occured !" });
     return res.json({
