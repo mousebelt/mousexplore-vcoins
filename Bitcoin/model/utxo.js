@@ -18,5 +18,18 @@ utxoSchema.index({
   address: 1
 });
 
+utxoSchema.index({
+  txid: 1,
+  n: 1
+});
+
+utxoSchema.index({
+  time: 1
+});
+
+utxoSchema.index({
+  time: -1
+});
+
 var utxo = mongoose.model("utxo", utxoSchema);
 module.exports = utxo;
