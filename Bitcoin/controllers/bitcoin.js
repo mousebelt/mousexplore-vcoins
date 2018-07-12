@@ -4,6 +4,7 @@ const client = config.localNode;
 
 const TransactionModel = require("../model/transactions");
 const AddressModel = require("../model/address");
+const UtxoModel = require("../model/utxo");
 
 const UtilsModule = require("../modules/utils");
 
@@ -697,32 +698,18 @@ exports.getBalance = async function (req, res) {
 
   // logic
   try {
-    var addrRow = await AddressModel.findOne({ address });
-    if (!addrRow)
-      return res.json({
-        status: 200,
-        msg: "success",
-        data: { address, balance: 0, n_tx: 0 }
-      });
-    // var total_received = 0;
-    // for (let i = 0; i < addrRow.txsOut.length; i++) {
-    //   var { txid, vout, value } = addrRow.txsOut[i];
-    //   total_received += value;
-    // }
+    var utxoRows = await UtxoModel.find({ address });
 
-    // var total_spent = 0;
-    // for (let i = 0; i < addrRow.txsIn.length; i++) {
-    //   var { txid, vout, value } = addrRow.txsIn[i];
-    //   total_spent += value;
-    // }
+    var balance = 0;
+    for (let i = 0; i < utxoRows.length; i++) {
+      balance += utxoRows[i].amount;
+    }
 
-    // var balance = total_received - total_spent;
-    var balance = addrRow.balance;
     balance = Number(balance.toFixed(8));
     return res.json({
       status: 200,
       msg: "success",
-      data: { address, balance, n_tx: addrRow.txs.length }
+      data: { address, balance }
     });
   } catch (error) {
     return res.json({ status: 400, msg: "error occured !", data: error });
