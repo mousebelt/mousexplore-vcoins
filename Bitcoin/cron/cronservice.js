@@ -173,7 +173,7 @@ function distributeBlocks() {
               await CheckUpdatedTransactions(i, blockdata);
             })
             .catch(err => {
-              filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
+              filelog("distributeBlocks fails for getblockhash of block: " + parellel_blocks[i].blocknumber);
               parellel_blocks[i].inprogressing = false;
               return;
             });
@@ -233,7 +233,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
               // Save Info
               var utxoRow = await UtxoModel.findOne({ txid, n: j });
               if (!utxoRow) {
-                utxoRow.set({
+                utxoRow = new UtxoModel({
                   txid,
                   n: j,
                   address: addresses[k],
@@ -275,7 +275,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
               // Save Info
               var utxoRow = await UtxoModel.findOne({ txid, n });
               if (!utxoRow) {
-                utxoRow.set({
+                utxoRow = new UtxoModel({
                   txid,
                   n,
                   address: addresses[k],
