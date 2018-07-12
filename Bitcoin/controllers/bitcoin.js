@@ -597,12 +597,12 @@ exports.getTransactions = async function (req, res) {
         if (!error) {
           var txs = [];
           for (let i = 0; i < rows.length; i++) {
-            var tx = await UtilsModule.getTxDetailsFunc(rows[i].txid);
-            if (tx) txs.push(tx);
+            // var tx = await UtilsModule.getTxDetailsFunc(rows[i].txid);
+            // if (tx) txs.push(tx);
 
             // try {
-            //   var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-            //   if (tx) txs.push(tx);
+              var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
+              if (tx) txs.push(tx);
             // } catch (error) {}
           }
           return res.json({
@@ -649,7 +649,7 @@ exports.getAddressTransactions = async function (req, res) {
     for (let i = 0; i < txids.length; i++) {
       var txid = txids[i];
       var txInfo = await promisify("getrawtransaction", [txid, 1]);
-      result.push(txInfo);
+      if (txInfo) result.push(txInfo);
     }
     return res.json({
       status: 200,
