@@ -31,11 +31,11 @@ transactionSchema.index({
 });
 
 transactionSchema.index({
-	updatedAt: -1
+	time: -1
 });
 
 transactionSchema.index({
-	updatedAt: 1
+	time: 1
 });
 
 var Transaction = mongoose.model("Transaction", transactionSchema);
