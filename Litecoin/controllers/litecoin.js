@@ -1,9 +1,11 @@
 // define local node object
+const _ = require('lodash');
 var config = require("../config");
 const client = config.localNode;
 
 const TransactionModel = require("../model/transactions");
 const AddressModel = require("../model/address");
+const UtxoModel = require("../model/utxo");
 
 const UtilsModule = require("../modules/utils");
 
@@ -595,12 +597,12 @@ exports.getTransactions = async function (req, res) {
         if (!error) {
           var txs = [];
           for (let i = 0; i < rows.length; i++) {
-            var tx = await UtilsModule.getTxDetailsFunc(rows[i].txid);
-            if (tx) txs.push(tx);
+            // var tx = await UtilsModule.getTxDetailsFunc(rows[i].txid);
+            // if (tx) txs.push(tx);
 
             // try {
-            //   var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-            //   if (tx) txs.push(tx);
+              var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
+              if (tx) txs.push(tx);
             // } catch (error) {}
           }
           return res.json({
@@ -626,62 +628,34 @@ exports.getAddressTransactions = async function (req, res) {
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
+  if (order) _order = {time: 1};
+  else _order = {time: -1};
 
   // logic
   try {
-    if (order > 0) {
-      // Oldest first
-      var addrTxResult = await AddressModel.aggregate([
-        {
-          $match: { address }
-        },
-        {
-          $project: {
-            txs: { $slice: ["$txs", offset, count] },
-            total: { $size: "$txs" }
-          }
-        }
-      ]);
-      let { txs, total } = addrTxResult[0];
+    var rows = await UtxoModel.find({address})
+    .sort({time: 1});
 
-      var toReturn = [];
-      for (let i = 0; i < txs.length; i++) {
-        var txid = txs[i];
-        var txInfo = await promisify("getrawtransaction", [txid, 1]);
-        toReturn.push(txInfo);
-      }
-      return res.json({
-        status: 200,
-        msg: "success",
-        data: { total, result: toReturn }
-      });
-    } else {
-      offset = -1 * offset - count;
-      var addrTxResult = await AddressModel.aggregate([
-        {
-          $match: { address }
-        },
-        {
-          $project: {
-            txs: { $slice: ["$txs", offset, count] },
-            total: { $size: "$txs" }
-          }
-        }
-      ]);
-      let { txs, total } = addrTxResult[0];
+    var arr_txid = _.map(rows, 'txid');
+    arr_txid = _.uniqBy(arr_txid, function (e) {
+      return e;
+    });
 
-      var toReturn = [];
-      for (let i = txs.length - 1; i >= 0; i--) {
-        var txid = txs[i];
-        var txInfo = await UtilsModule.getTxDetailsFunc(txid);
-        toReturn.push(txInfo);
-      }
-      return res.json({
-        status: 200,
-        msg: "success",
-        data: { total, result: toReturn }
-      });
+    // response
+    var total = arr_txid.length;
+    var txids = _.slice(arr_txid, offset, offset + count);
+
+    var result = [];
+    for (let i = 0; i < txids.length; i++) {
+      var txid = txids[i];
+      var txInfo = await promisify("getrawtransaction", [txid, 1]);
+      if (txInfo) result.push(txInfo);
     }
+    return res.json({
+      status: 200,
+      msg: "success",
+      data: { total, result }
+    });
   } catch (error) {
     // return res.json({ status: 400, msg: "error occured !" });
     return res.json({
@@ -697,32 +671,18 @@ exports.getBalance = async function (req, res) {
 
   // logic
   try {
-    var addrRow = await AddressModel.findOne({ address });
-    if (!addrRow)
-      return res.json({
-        status: 200,
-        msg: "success",
-        data: { address, balance: 0, n_tx: 0 }
-      });
-    // var total_received = 0;
-    // for (let i = 0; i < addrRow.txsOut.length; i++) {
-    //   var { txid, vout, value } = addrRow.txsOut[i];
-    //   total_received += value;
-    // }
+    var utxoRows = await UtxoModel.find({ address });
 
-    // var total_spent = 0;
-    // for (let i = 0; i < addrRow.txsIn.length; i++) {
-    //   var { txid, vout, value } = addrRow.txsIn[i];
-    //   total_spent += value;
-    // }
+    var balance = 0;
+    for (let i = 0; i < utxoRows.length; i++) {
+      balance += utxoRows[i].amount;
+    }
 
-    // var balance = total_received - total_spent;
-    var balance = addrRow.balance;
     balance = Number(balance.toFixed(8));
     return res.json({
       status: 200,
       msg: "success",
-      data: { address, balance, n_tx: addrRow.txs.length }
+      data: { address, balance }
     });
   } catch (error) {
     return res.json({ status: 400, msg: "error occured !", data: error });

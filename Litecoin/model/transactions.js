@@ -19,11 +19,11 @@ transactionSchema.pre('save', function(next) {
 });
 
 transactionSchema.index({
-	txid: 1
+	txid: 1,
 });
 
 transactionSchema.index({
-	blockhash: 1
+	blockhash: 1,
 });
 
 transactionSchema.index({
@@ -31,13 +31,12 @@ transactionSchema.index({
 });
 
 transactionSchema.index({
-	updatedAt: -1
+	time: -1
 });
 
 transactionSchema.index({
-	updatedAt: 1
+	time: 1
 });
 
-transactionSchema
 var Transaction = mongoose.model("Transaction", transactionSchema);
 module.exports = Transaction;
