@@ -223,25 +223,24 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
       var vin = txInfo.vin;
       var vout = txInfo.vout;
 
+      var in_n = vout.length;
       // handle vout
       if (vout && vout.length > 0) {
         for (let j = 0; j < vout.length; j++) {
           var addresses = vout[j].scriptPubKey.addresses;
           var value = Number(vout[j].value);
           if (addresses && addresses.length > 0 && value > 0) {
-            for (let k = 0; k < addresses.length; k++) {
-              // Save Info
-              var utxoRow = await UtxoModel.findOne({ txid, n: j });
-              if (!utxoRow) {
-                utxoRow = new UtxoModel({
-                  txid,
-                  n: j,
-                  address: addresses[k],
-                  value,
-                  time: blockdata.time
-                })
-                await utxoRow.save();
-              }
+            // Save Info
+            var utxoRow = await UtxoModel.findOne({ txid, n: j });
+            if (!utxoRow) {
+              utxoRow = new UtxoModel({
+                txid,
+                n: j,
+                address: addresses[0],
+                amount: value,
+                time: blockdata.time
+              })
+              await utxoRow.save();
             }
           }
         }
@@ -268,23 +267,21 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
 
           var addresses = inTxInfo.scriptPubKey.addresses;
           var value = Number(inTxInfo.value);
-          var n = vout.length + j;
+          var n = in_n + j;
 
           if (addresses && addresses.length > 0 && value > 0) {
-            for (let k = 0; k < addresses.length; k++) {
               // Save Info
               var utxoRow = await UtxoModel.findOne({ txid, n });
               if (!utxoRow) {
                 utxoRow = new UtxoModel({
                   txid,
                   n,
-                  address: addresses[k],
-                  value: 0 - value,
+                  address: addresses[0],
+                  amount: 0 - value,
                   time: blockdata.time
                 })
                 await utxoRow.save();
               }
-            }
           }
         }
       }

@@ -4,7 +4,7 @@ var utxoSchema = new mongoose.Schema({
   txid: String,
   n: Number,
   address: String, // 1BW18n7MfpU35q4MTBSk8pse3XzQF8XvzT
-  vaule: Number,
+  amount: Number,
   time: Number,
   updatedAt: Date
 });
