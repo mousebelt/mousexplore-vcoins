@@ -20,6 +20,14 @@ transactionSchema.index({
 });
 
 transactionSchema.index({
+	from: 1
+});
+
+transactionSchema.index({
+	to: 1
+});
+
+transactionSchema.index({
 	hash: 1
 });
 
