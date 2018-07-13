@@ -4,6 +4,7 @@ var utxoSchema = new mongoose.Schema({
   txid: String,
   index: Number,
   address: String, // 1BW18n7MfpU35q4MTBSk8pse3XzQF8XvzT
+  asset: String,
   amount: Number,
   time: Number,
   createdAtBlock: Number,

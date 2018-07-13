@@ -231,14 +231,15 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
           var value = Number(vout[j].value);
           if (addresses && addresses.length > 0 && value > 0) {
             // Save Info
-            var utxoRow = await UtxoModel.findOne({ txid, n: j });
+            var utxoRow = await UtxoModel.findOne({ txid, index: j });
             if (!utxoRow) {
               utxoRow = new UtxoModel({
                 txid,
-                n: j,
+                index: j,
                 address: addresses[0],
                 amount: value,
-                time: blockdata.time
+                time: blockdata.time,
+                createdAtBlock: blockdata.height
               })
               await utxoRow.save();
             }
@@ -267,18 +268,19 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
 
           var addresses = inTxInfo.scriptPubKey.addresses;
           var value = Number(inTxInfo.value);
-          var n = in_n + j;
+          var index = in_n + j;
 
           if (addresses && addresses.length > 0 && value > 0) {
               // Save Info
-              var utxoRow = await UtxoModel.findOne({ txid, n });
+              var utxoRow = await UtxoModel.findOne({ txid, index });
               if (!utxoRow) {
                 utxoRow = new UtxoModel({
                   txid,
-                  n,
+                  index,
                   address: addresses[0],
                   amount: 0 - value,
-                  time: blockdata.time
+                  time: blockdata.time,
+                  createdAtBlock: blockdata.height
                 })
                 await utxoRow.save();
               }

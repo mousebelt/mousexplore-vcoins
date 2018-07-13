@@ -5,8 +5,7 @@ var localNode = config.localNode;
 
 var ParellelInofModel = require("../model/parellelinfo");
 var TransactionModel = require("../model/transactions");
-var AddressModel = require("../model/address");
-var TxServiceInofModel = require("../model/txServiceInfo");
+var UtxoModel = require("../model/utxo");
 
 var UtilsModule = require("../modules/utils");
 
@@ -156,7 +155,7 @@ function distributeBlocks() {
       else {
         if (!parellel_blocks[i].inprogressing) {
           promisify('getblock', [parellel_blocks[i].blocknumber, 1])
-          .then(async (blockdata) => {
+            .then(async (blockdata) => {
               parellel_blocks[i].inprogressing = true;
               if (parellel_blocks[i].total_txs != blockdata.tx.length) {
                 parellel_blocks[i].total_txs = blockdata.tx.length;
@@ -191,7 +190,10 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
       for (let j = 0; j < vin.length; j++) {
         var item = vin[j];
         if (vin[j].txid && vin[j].vout >= 0) {
-          var inTxInfo = await UtilsModule.getTxOutFunc(vin[j].txid, vin[j].vout)
+          var inTxInfo = TransactionModel.findOne({ txid: vin[j].txid });
+          if (!inTxInfo) {
+            inTxInfo = await UtilsModule.getTxOutFunc(vin[j].txid, vin[j].vout);
+          }
           if (inTxInfo) item = _.merge({}, item, inTxInfo);
           else throw `txout function error. txid: ${vin[j].txid}, vout: ${vin[j].vout}`;
         }
@@ -231,94 +233,51 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
       ////////////////////////////////////////////
       // Save Address Info
       ////////////////////////////////////////////
-      {
-        for (let j = 0; j < vinDetails.length; j++) {
-          var item = vinDetails[j];
-          var value = Number(item.value);
-          if (!item || !item.asset || !value || !item.address || !item.txid || item.vout < 0) continue;
-          // Save Info
-          var addressRow = await AddressModel.findOne({ address: item.address });
-          if (!addressRow) {
-            addressRow = new AddressModel({
-              address: item.address,
-              txsIn: [],
-              txsOut: [],
-              txs: [],
-              balance: [],
-              UTXO: [],
-            });
-          }
-          if (_.indexOf(addressRow.txs, txid) == -1) {
-            addressRow.txs.push(txid);
-          }
-          if (_.findIndex(addressRow.txsIn, function (o) { return o.txid == txid && o.n == j }) == -1) {
-            addressRow.txsIn.push({ txid, n: j, value, asset: item.asset });
-            // update balance
-            var _index = _.findIndex(addressRow.balance, function (o) { return o.asset == item.asset });
-            if (_index == -1) {
-              var temp = {};
-              temp.asset = item.asset;
-              temp.value = 0 - value;
-              addressRow.balance.push(temp);
-            } else {
-              addressRow.balance[_index].value -= value;
-            }
-          }
-
-          {
-            var _index = _.findIndex(addressRow.UTXO, function (o) { return o.txid == item.txid && o.index == item.vout });
-            if (_index > -1) {
-              addressRow.UTXO.splice(_index, 1);
-            }
-          }
-          // save
-          await addressRow.save();
-        }
-
+      if (vout && vout.length > 0) {
         for (let j = 0; j < vout.length; j++) {
-          let { asset, address, value } = vout[j];
-          value = Number(vout[j].value);
+          let { asset, address } = vout[j];
+          var value = Number(vout[j].value);
           if (!asset || !address || !value) continue;
           // Save vout Info
-          var addressRow = await AddressModel.findOne({ address });
-          if (!addressRow) {
-            addressRow = new AddressModel({
-              address,
-              txsIn: [],
-              txsOut: [],
-              txs: [],
-              balance: [],
-              UTXO: [],
-            });
-          }
-          if (_.indexOf(addressRow.txs, txid) == -1) {
-            addressRow.txs.push(txid);
-          }
-          if (_.findIndex(addressRow.txsOut, function (o) { return o.txid == txid && o.n == j }) == -1) {
-            addressRow.txsOut.push({ txid, n: j, value, asset });
-            // update balance
-            var _index = _.findIndex(addressRow.balance, function (o) { return o.asset == asset });
-            if (_index == -1) {
-              var temp = {};
-              temp.asset = asset;
-              temp.value = value;
-              addressRow.balance.push(temp);
-            } else {
-              addressRow.balance[_index].value += value;
-            }
-          }
-          if (_.findIndex(addressRow.UTXO, function (o) { return o.txid == txid && o.index == j }) == -1) {
-            addressRow.UTXO.push({
+          var utxoRow = await UtxoModel.findOne({ txid, index: j });
+          if (!utxoRow) {
+            utxoRow = new UtxoModel({
               txid,
               index: j,
-              value,
+              address: address,
               asset,
-              createdAtBlock: parellel_blocks[threadIndex].blocknumber,
-            });
+              amount: value,
+              time: blockdata.time,
+              createdAtBlock: blockdata.index
+            })
+            await utxoRow.save();
           }
+        }
+      }
 
-          // save
-          await addressRow.save();
+      var in_n = vout.length;
+
+      if (vinDetails && vinDetails.length > 0) {
+        for (let j = 0; j < vinDetails.length; j++) {
+          var item = vinDetails[j];
+          let { asset, address } = item;
+          var value = Number(item.value);
+          if (!asset || !address || !value) continue;
+          var index = in_n + j;
+          // Save vout Info
+          var utxoRow = await UtxoModel.findOne({ txid, index });
+          if (!utxoRow) {
+            utxoRow = new UtxoModel({
+              txid,
+              index,
+              address: address,
+              asset,
+              amount: 0 - value,
+              time: blockdata.time,
+              createdAtBlock: blockdata.index
+            })
+            await utxoRow.save();
+          }
         }
       }
       parellel_blocks[threadIndex].synced_index = i + 1;

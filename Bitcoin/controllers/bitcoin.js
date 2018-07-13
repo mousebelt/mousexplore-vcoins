@@ -628,13 +628,14 @@ exports.getAddressTransactions = async function (req, res) {
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
-  if (order) _order = {time: 1};
-  else _order = {time: -1};
+
+  if (order) order = {time: 1};
+  else order = {time: -1};
 
   // logic
   try {
     var rows = await UtxoModel.find({address})
-    .sort({time: 1});
+    .sort(order);
 
     var arr_txid = _.map(rows, 'txid');
     arr_txid = _.uniqBy(arr_txid, function (e) {
