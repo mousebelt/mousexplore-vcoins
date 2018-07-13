@@ -587,15 +587,22 @@ exports.postSendSignedTransaction = async function (req, res) {
   try {
     if (String(raw).substring(0, 2) != '0x') raw = `0x${raw}`;
 
-    await web3.eth.sendSignedTransaction(raw)
-      .on('receipt', (receipt) => {
-        if (receipt)
-          return res.json({ status: 200, msg: "success", data: receipt });
-        return res.json({ status: 400, msg: "Empty receipt !" });
-      });
-    return res.json({ status: 400, msg: "send error !" });
+    web3.eth.sendSignedTransaction(raw, function (err, hash) {
+      if (!err) {
+        return res.json({ status: 200, msg: "success", data: hash });
+      } else {
+        return res.json({ status: 400, msg: "errors", data: err.toString() });
+      }
+    });
+
+    // await web3.eth.sendSignedTransaction(raw)
+    //   .on('receipt', (receipt) => {
+    //     if (receipt)
+    //       return res.json({ status: 200, msg: "success", data: receipt });
+    //     return res.json({ status: 400, msg: "Empty receipt !" });
+    //   });
   } catch (error) {
-    return res.json({ status: 400, msg: "Error !", data: error });
+    return res.json({ status: 400, msg: "errors", data: error.toString() });
   }
 };
 
