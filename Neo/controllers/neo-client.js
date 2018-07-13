@@ -346,15 +346,16 @@ exports.listaddress = (req, res) => {
 
 exports.sendrawtransaction = (req, res) => {
   var hex = req.body.hex;
+
   try {
     client.call("sendrawtransaction", [hex], function (err, result) {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err.toString() });
+        return res.json({ status: 400, msg: "errors", data: err });
       }
       return res.json({ status: 200, msg: "sccuess", data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error.toString() });
+    return res.json({ status: 400, msg: "errors", data: error });
   }
 };
 
