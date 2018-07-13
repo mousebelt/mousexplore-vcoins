@@ -190,10 +190,10 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
       for (let j = 0; j < vin.length; j++) {
         var item = vin[j];
         if (vin[j].txid && vin[j].vout >= 0) {
-          var inTxInfo = TransactionModel.findOne({ txid: vin[j].txid });
-          if (!inTxInfo) {
-            inTxInfo = await UtilsModule.getTxOutFunc(vin[j].txid, vin[j].vout);
-          }
+          var inTxInfo = await TransactionModel.findOne({ txid: vin[j].txid });
+          if (inTxInfo) inTxInfo = inTxInfo.vout[vin[j].vout];
+          else inTxInfo = await UtilsModule.getTxOutFunc(vin[j].txid, vin[j].vout);
+          
           if (inTxInfo) item = _.merge({}, item, inTxInfo);
           else throw `txout function error. txid: ${vin[j].txid}, vout: ${vin[j].vout}`;
         }
