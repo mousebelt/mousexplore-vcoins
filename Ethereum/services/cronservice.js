@@ -194,8 +194,8 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
         var newTxn = new TransactionModel({
           blocknumber: parellel_blocks[threadIndex].blocknumber,
           hash,
-          from,
-          to,
+          from: from.toLowerCase(),
+          to: to.toLowerCase(),
           value,
           fee,
           timestamp
