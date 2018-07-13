@@ -3,8 +3,14 @@ var mongoose = require("mongoose");
 var transactionSchema = new mongoose.Schema({
 	blocknumber: Number,
 	hash: String,
-	from: String,
-	to: String,
+	from: {
+		type: String,
+		lowercase: true,
+	},
+	to: {
+		type: String,
+		lowercase: true,
+	},
 	value: Number,
 	fee: Number,
 	timestamp: Number
