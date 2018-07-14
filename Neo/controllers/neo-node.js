@@ -46,19 +46,19 @@ exports.getBalance = async function (req, res) {
     for (let i = 0; i < utxoRows.length; i++) {
       let { asset, amount, createdAtBlock } = utxoRows[i];
 
-      var _index = _.findIndex(balance, function(o) { return o.asset == asset; });
+      var _index = _.findIndex(balance, function (o) { return o.asset == asset; });
       if (_index == -1) {
         var item = {};
         item.asset = asset;
         item.value = amount;
-  
+
         var tokenRow = _.find(tokenRows, { asset });
         if (tokenRow) {
           item.token = tokenRow;
           item.ticker = tokenRow.ticker;
         }
         balance.push(item);
-        } else {
+      } else {
         balance[_index].value += amount;
       }
     }
@@ -75,8 +75,24 @@ exports.getAddressUTXO = async function (req, res) {
   try {
     var utxoRows = await UtxoModel.find({ address });
     if (utxoRows.length == 0) return res.json({ status: 400, msg: "No address in db !" });
- 
-    var data = _.filter(utxoRows, function(o) { return o.amount > 0; });
+
+    var data = _.filter(utxoRows, function (o) { return o.amount > 0; });
+    var _minus_data = _.filter(utxoRows, function (o) { return o.amount < 0; });
+
+    for (let i = 0; i < _minus_data.length; i++) {
+      var _item = _minus_data[i];
+      let txRow = await TransactionModel.findOne({ txid: _item.txid });
+      let _vin = txRow.vin;
+      var _n = _item.index - txRow.vout.length;
+      let _in_item = _vin[_n];
+
+      var _txid = _in_item.txid;
+      var _vout = _in_item.vout;
+
+      data = _.remove(data, function (o) {
+        return (o.txid == _txid) && (o.index == _vout);
+      });
+    }
     return res.json({ status: 200, msg: 'success', data });
   } catch (error) {
     return res.json({ status: 400, msg: "error occured !", data: error });
@@ -597,13 +613,13 @@ exports.getAddressTransactions = async function (req, res) {
   if (!asset || asset == "") cond = { address };
   else cond = { asset, address };
 
-  if (order) order = {time: 1};
-  else order = {time: -1};
+  if (order) order = { time: 1 };
+  else order = { time: -1 };
 
   // logic
   try {
     var rows = await UtxoModel.find(cond)
-    .sort(order);
+      .sort(order);
 
     var arr_txid = _.map(rows, 'txid');
     arr_txid = _.uniqBy(arr_txid, function (e) {
