@@ -6,7 +6,7 @@ Type=simple
 User=root
 Restart=always
 #ExecStart=/usr/bin/geth --testnet --networkid=3 --rpcport 8555 --syncmode=fast --cache=1024 --rpcapi eth,web3,personal --rpc --datadir /home/ubuntu/.ethereum/testnet
-ExecStart=/usr/bin/geth --networkid=1 --rpcport 8555 --syncmode=fast --cache=1024 --rpcapi eth,web3,personal --rpc --datadir /home/ubuntu/.ethereum/mainnet
+ExecStart=/usr/bin/geth --networkid=1 --rpcport 8555 --syncmode=fast --cache=1024 --rpcapi eth,web3,personal,net,db,txpool --rpc --datadir /home/ubuntu/.ethereum/mainnet
  
 [Install]
 WantedBy=default.target
