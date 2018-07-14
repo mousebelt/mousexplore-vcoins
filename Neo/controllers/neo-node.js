@@ -89,7 +89,7 @@ exports.getAddressUTXO = async function (req, res) {
       var _txid = _in_item.txid;
       var _vout = _in_item.vout;
 
-      data = _.remove(data, function (o) {
+      _.remove(data, function (o) {
         return (o.txid == _txid) && (o.index == _vout);
       });
     }
