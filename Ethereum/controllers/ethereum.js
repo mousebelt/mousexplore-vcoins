@@ -30,7 +30,7 @@ async function getTransactionDetailsFunc(hash) {
     transaction.txreceipt = txreceipt;
     transaction.fee = fee;
 
-    let tokenAddress = txreceipt.to;
+    let tokenAddress = txreceipt.to.toLowerCase();
     let tokens = await TokenModel.find({ address: tokenAddress });
 
     if (tokens.length) {
@@ -362,7 +362,7 @@ exports.getTransactions = async function (req, res) {
   }
 
   try {
-    var total = await TransactionModel.find().count();
+    var total = await TransactionModel.find(filter).count();
     TransactionModel.find()
       .or(filter)
       .sort(condition)
@@ -396,6 +396,11 @@ exports.getTransactions = async function (req, res) {
 
 exports.getTransactionsFromAccount = async function (req, res) {
   var address = req.params.address;
+
+  if (address) {
+    address = address.toLowerCase();
+  }
+
   var offset = Number(req.query.offset);
   var count = Number(req.query.count);
   var order = Number(req.query.order);
@@ -514,6 +519,10 @@ exports.addToken = function (req, res) {
   var symbol = req.body.symbol;
   var address = req.body.address;
 
+  if (address) {
+    address = address.toLowerCase();
+  }
+
   TokenModel.find({ symbol: symbol, address: address }).exec(function (
     error,
     tokens
@@ -537,6 +546,10 @@ exports.addToken = function (req, res) {
 exports.removeToken = function (req, res) {
   var symbol = req.body.symbol;
   var address = req.body.address;
+
+  if (address) {
+    address = address.toLowerCase();
+  }
 
   TokenModel.findOneAndRemove({ symbol: symbol, address: address }).exec(
     function (error, tokens) {
