@@ -462,7 +462,7 @@ exports.getTransactionsFromAccount = async function (req, res) {
 exports.getTransactionCount = async function (req, res) {
   var address = req.params.address;
 
-  web3.eth.getTransactionCount(address, async function (error, count) {
+  web3.eth.getTransactionCount(address, "pending", async function (error, count) {
     if (!error) {
       return res.json({
         status: 200,
