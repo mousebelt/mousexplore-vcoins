@@ -180,8 +180,8 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
     for (let j = parellel_blocks[threadIndex].synced_index; j < txnCount; j++) {
       let transaction = blockdata.transactions[j];
       let hash = transaction.hash;
-      let from = transaction.from;
-      let to = transaction.to;
+      let from = String(transaction.from);
+      let to = String(transaction.to);
       let value = transaction.value;
       var timestamp = blockdata.timestamp;
 
