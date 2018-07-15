@@ -103,7 +103,7 @@ exports.getBalance = async function (req, res) {
         // Change the string to be in Ether not Wei
         //tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
         tokenBalance = tokenBalance / Math.pow(10, token.decimal);
-        balances.push({ symbol: token.symbol, balance: tokenBalance });
+        balances.push({ symbol: token.symbol, balance: tokenBalance.toString() });
       }
     }
 
