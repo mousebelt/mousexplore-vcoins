@@ -27,6 +27,7 @@ mongoose.connect(config.db, async function (err, db) {
       lastId = docs[docs.length - 1]._id;
 
       console.log('------------------Read documents-----------------: ', count);
+      console.log('------------------Last Id------------------------: ', lastId);
 
       for (let i = 0; i < docs.length; i++) {
         const doc = docs[i];
@@ -48,4 +49,6 @@ mongoose.connect(config.db, async function (err, db) {
       console.log('---------------------Error-----------------------: ', err);
     }
   } while(docs.length >= limit)
+
+  console.log('-----------------------Finished converting-----------------------');
 });
