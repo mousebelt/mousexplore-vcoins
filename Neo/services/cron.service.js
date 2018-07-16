@@ -164,7 +164,7 @@ function distributeBlocks() {
               await CheckUpdatedTransactions(i, blockdata);
             })
             .catch(err => {
-              filelog("distributeBlocks fails for getblockhash of block: " + parellel_blocks[i].blocknumber);
+              filelog("distributeBlocks fails for getblockhash of block (else): " + parellel_blocks[i].blocknumber);
               parellel_blocks[i].inprogressing = false;
               return;
             });
