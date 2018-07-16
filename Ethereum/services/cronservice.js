@@ -134,7 +134,7 @@ function distributeBlocks() {
         saveParellelInfo(i);
         web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
           if (error) {
-            filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
+            // filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
             parellel_blocks[i].inprogressing = false;
             return;
           }
@@ -155,7 +155,7 @@ function distributeBlocks() {
         if (!parellel_blocks[i].inprogressing) {
           web3.eth.getBlock(parellel_blocks[i].blocknumber, true, async function (error, blockdata) {
             if (error) {
-              filelog("distributeBlocks fails for getBlock of block: " + parellel_blocks[i].blocknumber);
+              // filelog("distributeBlocks fails for getBlock of block: " + parellel_blocks[i].blocknumber);
               return;
             }
 
@@ -211,7 +211,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
     parellel_blocks[threadIndex].inprogressing = false;
   }
   catch (e) {
-    filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
+    // filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
     parellel_blocks[threadIndex].inprogressing = false;
     return;
   }
