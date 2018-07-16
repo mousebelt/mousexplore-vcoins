@@ -106,7 +106,6 @@ function getNextBlockNum(lastnumber) {
     blocknum++;
 
     if (blocknum > lastnumber) {
-      console.log("Lastnode is syncing!");
       return -1;
     }
 
