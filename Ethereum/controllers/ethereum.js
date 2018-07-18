@@ -608,11 +608,14 @@ exports.postSendSignedTransaction = async function (req, res) {
       }
     });
 
-    // await web3.eth.sendSignedTransaction(raw)
-    //   .on('receipt', (receipt) => {
-    //     if (receipt)
-    //       return res.json({ status: 200, msg: "success", data: receipt });
-    //     return res.json({ status: 400, msg: "Empty receipt !" });
+    // web3.eth.sendSignedTransaction(raw)
+    //   .on('transactionHash', function (hash) {
+    //     return res.json({ status: 200, msg: 'success', data: hash })
+    //   })
+    //   // .on('confirmation', function (confirmationNumber, receipt) {
+    //   // })
+    //   .on('error', function (err) {
+    //     return res.json({ status: 400, msg: "errors", data: err.toString() });
     //   });
   } catch (error) {
     return res.json({ status: 400, msg: "errors", data: error.toString() });
