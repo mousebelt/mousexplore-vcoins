@@ -120,7 +120,7 @@ function getNextBlockNum(lastnumber) {
  * Distribute blocks to process threads(promise).
  * If a thread finished process, build new process for new block.
  */
-function distributeBlocks() {
+async function distributeBlocks() {
   try {
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
       //if a thread is finished
@@ -136,7 +136,7 @@ function distributeBlocks() {
           synced_index: 0,
           inprogressing: true
         }
-        saveParellelInfo(i);
+        await saveParellelInfo(i);
 
         promisify('getblockhash', [nextnumber])
           .then(async (hash) => {
@@ -148,7 +148,7 @@ function distributeBlocks() {
               inprogressing: true
             }
 
-            saveParellelInfo(i);
+            await saveParellelInfo(i);
 
             await CheckUpdatedTransactions(i, blockdata);
           })
@@ -166,7 +166,7 @@ function distributeBlocks() {
               parellel_blocks[i].inprogressing = true;
               if (parellel_blocks[i].total_txs != blockdata.tx.length) {
                 parellel_blocks[i].total_txs = blockdata.tx.length;
-                saveParellelInfo(i);
+                await saveParellelInfo(i);
               }
 
               await CheckUpdatedTransactions(i, blockdata);

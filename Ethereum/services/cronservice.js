@@ -115,7 +115,7 @@ function getNextBlockNum(lastnumber) {
  * Distribute blocks to process threads(promise).
  * If a thread finished process, build new process for new block.
  */
-function distributeBlocks() {
+async function distributeBlocks() {
   try {
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
       //if a thread is finished
