@@ -176,37 +176,41 @@ async function distributeBlocks() {
 async function CheckUpdatedTransactions(threadIndex, blockdata) {
   try {
     var txnCount = blockdata.transactions.length;
+    parellel_blocks[threadIndex].total_txs = txnCount;
 
-    for (let j = parellel_blocks[threadIndex].synced_index; j < txnCount; j++) {
-      let transaction = blockdata.transactions[j];
-      let hash = transaction.hash;
-      let from = String(transaction.from);
-      let to = String(transaction.to);
-      let value = transaction.value;
-      var timestamp = blockdata.timestamp;
+    if (txnCount == parellel_blocks[threadIndex].synced_index) await saveParellelInfo(threadIndex);
+    else {
+      for (let j = parellel_blocks[threadIndex].synced_index; j < txnCount; j++) {
+        let transaction = blockdata.transactions[j];
+        let hash = transaction.hash;
+        let from = String(transaction.from);
+        let to = String(transaction.to);
+        let value = transaction.value;
+        var timestamp = blockdata.timestamp;
 
-      let gasprice = transaction.gasPrice;
-      var txnReceipt = await web3.eth.getTransactionReceipt(hash);
-      let fee = gasprice * txnReceipt.gasUsed;
+        let gasprice = transaction.gasPrice;
+        var txnReceipt = await web3.eth.getTransactionReceipt(hash);
+        let fee = gasprice * txnReceipt.gasUsed;
 
-      var newTxn = await TransactionModel.findOne({ hash });
-      if (!newTxn) {
-        var newTxn = new TransactionModel({
-          blocknumber: parellel_blocks[threadIndex].blocknumber,
-          hash,
-          from: from.toLowerCase(),
-          to: to.toLowerCase(),
-          value,
-          fee,
-          timestamp
-        });
-        await newTxn.save();
+        var newTxn = await TransactionModel.findOne({ hash });
+        if (!newTxn) {
+          var newTxn = new TransactionModel({
+            blocknumber: parellel_blocks[threadIndex].blocknumber,
+            hash,
+            from: from.toLowerCase(),
+            to: to.toLowerCase(),
+            value,
+            fee,
+            timestamp
+          });
+          await newTxn.save();
+        }
+
+        parellel_blocks[threadIndex].synced_index = j + 1;
+
+        // save
+        await saveParellelInfo(threadIndex);
       }
-
-      parellel_blocks[threadIndex].synced_index = j + 1;
-
-      // save
-      await saveParellelInfo(threadIndex);
     }
     parellel_blocks[threadIndex].inprogressing = false;
   }
