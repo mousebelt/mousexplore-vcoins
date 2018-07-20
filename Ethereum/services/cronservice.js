@@ -178,7 +178,10 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
     var txnCount = blockdata.transactions.length;
     parellel_blocks[threadIndex].total_txs = txnCount;
 
-    if (txnCount == parellel_blocks[threadIndex].synced_index) await saveParellelInfo(threadIndex);
+    if (txnCount <= parellel_blocks[threadIndex].synced_index) {
+      parellel_blocks[threadIndex].synced_index = txnCount;
+      await saveParellelInfo(threadIndex);
+    }
     else {
       for (let j = parellel_blocks[threadIndex].synced_index; j < txnCount; j++) {
         let transaction = blockdata.transactions[j];
