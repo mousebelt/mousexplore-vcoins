@@ -133,22 +133,24 @@ async function distributeBlocks() {
         }
         await saveParellelInfo(i);
         web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
-          if (error) {
-            // filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
-            parellel_blocks[i].inprogressing = false;
-            return;
+          try {
+            if (error) throw error;
+  
+            parellel_blocks[i] = {
+              blocknumber: nextnumber,
+              total_txs: blockdata.transactions.length,
+              synced_index: 0,
+              inprogressing: true
+            }
+  
+            await saveParellelInfo(i);
+  
+            await CheckUpdatedTransactions(i, blockdata);
+          } catch (error) {
+              // filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
+              parellel_blocks[i].inprogressing = false;
+              return;
           }
-
-          parellel_blocks[i] = {
-            blocknumber: nextnumber,
-            total_txs: blockdata.transactions.length,
-            synced_index: 0,
-            inprogressing: true
-          }
-
-          await saveParellelInfo(i);
-
-          await CheckUpdatedTransactions(i, blockdata);
         })
       }
       else {
