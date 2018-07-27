@@ -28,3 +28,4 @@ require('./route/route')(app);
 
 //start crone service
 require("./services/cron.service").start_cronService();
+require("./services/cron.service.addr").start();

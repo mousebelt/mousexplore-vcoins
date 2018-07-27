@@ -6,7 +6,7 @@ const client = config.client;
 
 var TransactionModel = require("../model/transactions");
 var UtxoModel = require('../model/utxo');
-var AddressModel = require("../model/address");
+var AddressModel = require('../model/address');
 var TokenModel = require("../model/token");
 
 var UtilsModule = require("../modules/utils");
@@ -67,6 +67,50 @@ exports.getBalance = async function (req, res) {
     return res.json({ status: 400, msg: "error occured !" });
   }
 };
+
+// exports.getBalance = async function (req, res) {
+//   var address = req.params.address;
+
+//   // logic
+//   try {
+//     var addressRows = await AddressModel.find({ address });
+
+//     var balance = [];
+//     if (addressRows.length == 0) {
+//       if (address.length >= 25 && address.length <= 34) {
+//         var neo_token = await TokenModel.findOne({ ticker: "NEO" });
+//         balance.push({
+//           asset: neo_token.asset,
+//           value: 0,
+//           token: neo_token,
+//           ticker: neo_token.ticker
+//         })
+//         return res.json({ status: 200, msg: "success", data: { address, balance } });
+//       } else return res.json({ status: 400, msg: "Invalid address !" });
+//     }
+
+//     var tokenRows = await TokenModel.find({});
+
+//     for (let i = 0; i < addressRows.length; i++) {
+//       let asset = addressRows[i].asset;
+//       let amount = addressRows[i].balance;
+
+//       var item = {};
+//       item.asset = asset;
+//       item.value = amount;
+
+//       var tokenRow = _.find(tokenRows, { asset });
+//       if (tokenRow) {
+//         item.token = tokenRow;
+//         item.ticker = tokenRow.ticker;
+//       }
+//       balance.push(item);
+//     }
+//     return res.json({ status: 200, msg: 'success', data: { address, balance } });
+//   } catch (error) {
+//     return res.json({ status: 400, msg: "error occured !" });
+//   }
+// };
 
 exports.getAddressUTXO = async function (req, res) {
   var address = req.params.address;
