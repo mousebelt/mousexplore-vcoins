@@ -7,7 +7,7 @@ var AddrServiceInfoModel = require("../model/addServiceInfo");
 
 var fs = require('fs');
 var Log = require('log'),
-  log = new Log('debug', fs.createWriteStream('./cron.debug.log', { flags: 'a' }));
+  log = new Log('debug', fs.createWriteStream('./addr.cron.debug.log', { flags: 'a' }));
 // log = new Log('debug');
 
 function filelog(...params) {

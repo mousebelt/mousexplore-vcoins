@@ -20,63 +20,15 @@ var getBlockDetailsFunc = UtilsModule.getBlockDetailsFunc;
 //// RPC Call apis ////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-exports.getBalance = async function (req, res) {
-  var address = req.params.address;
-
-  // logic
-  try {
-    var utxoRows = await UtxoModel.find({ address });
-
-    var balance = [];
-    if (utxoRows.length == 0) {
-      if (address.length >= 25 && address.length <= 34) {
-        var neo_token = await TokenModel.findOne({ ticker: "NEO" });
-        balance.push({
-          asset: neo_token.asset,
-          value: 0,
-          token: neo_token,
-          ticker: neo_token.ticker
-        })
-        return res.json({ status: 200, msg: "success", data: { address, balance } });
-      } else return res.json({ status: 400, msg: "Invalid address !" });
-    }
-
-    var tokenRows = await TokenModel.find({});
-
-    for (let i = 0; i < utxoRows.length; i++) {
-      let { asset, amount, createdAtBlock } = utxoRows[i];
-
-      var _index = _.findIndex(balance, function (o) { return o.asset == asset; });
-      if (_index == -1) {
-        var item = {};
-        item.asset = asset;
-        item.value = amount;
-
-        var tokenRow = _.find(tokenRows, { asset });
-        if (tokenRow) {
-          item.token = tokenRow;
-          item.ticker = tokenRow.ticker;
-        }
-        balance.push(item);
-      } else {
-        balance[_index].value += amount;
-      }
-    }
-    return res.json({ status: 200, msg: 'success', data: { address, balance } });
-  } catch (error) {
-    return res.json({ status: 400, msg: "error occured !" });
-  }
-};
-
 // exports.getBalance = async function (req, res) {
 //   var address = req.params.address;
 
 //   // logic
 //   try {
-//     var addressRows = await AddressModel.find({ address });
+//     var utxoRows = await UtxoModel.find({ address });
 
 //     var balance = [];
-//     if (addressRows.length == 0) {
+//     if (utxoRows.length == 0) {
 //       if (address.length >= 25 && address.length <= 34) {
 //         var neo_token = await TokenModel.findOne({ ticker: "NEO" });
 //         balance.push({
@@ -91,26 +43,74 @@ exports.getBalance = async function (req, res) {
 
 //     var tokenRows = await TokenModel.find({});
 
-//     for (let i = 0; i < addressRows.length; i++) {
-//       let asset = addressRows[i].asset;
-//       let amount = addressRows[i].balance;
+//     for (let i = 0; i < utxoRows.length; i++) {
+//       let { asset, amount, createdAtBlock } = utxoRows[i];
 
-//       var item = {};
-//       item.asset = asset;
-//       item.value = amount;
+//       var _index = _.findIndex(balance, function (o) { return o.asset == asset; });
+//       if (_index == -1) {
+//         var item = {};
+//         item.asset = asset;
+//         item.value = amount;
 
-//       var tokenRow = _.find(tokenRows, { asset });
-//       if (tokenRow) {
-//         item.token = tokenRow;
-//         item.ticker = tokenRow.ticker;
+//         var tokenRow = _.find(tokenRows, { asset });
+//         if (tokenRow) {
+//           item.token = tokenRow;
+//           item.ticker = tokenRow.ticker;
+//         }
+//         balance.push(item);
+//       } else {
+//         balance[_index].value += amount;
 //       }
-//       balance.push(item);
 //     }
 //     return res.json({ status: 200, msg: 'success', data: { address, balance } });
 //   } catch (error) {
 //     return res.json({ status: 400, msg: "error occured !" });
 //   }
 // };
+
+exports.getBalance = async function (req, res) {
+  var address = req.params.address;
+
+  // logic
+  try {
+    var addressRows = await AddressModel.find({ address });
+
+    var balance = [];
+    if (addressRows.length == 0) {
+      if (address.length >= 25 && address.length <= 34) {
+        var neo_token = await TokenModel.findOne({ ticker: "NEO" });
+        balance.push({
+          asset: neo_token.asset,
+          value: 0,
+          token: neo_token,
+          ticker: neo_token.ticker
+        })
+        return res.json({ status: 200, msg: "success", data: { address, balance } });
+      } else return res.json({ status: 400, msg: "Invalid address !" });
+    }
+
+    var tokenRows = await TokenModel.find({});
+
+    for (let i = 0; i < addressRows.length; i++) {
+      let asset = addressRows[i].asset;
+      let amount = addressRows[i].balance;
+
+      var item = {};
+      item.asset = asset;
+      item.value = amount;
+
+      var tokenRow = _.find(tokenRows, { asset });
+      if (tokenRow) {
+        item.token = tokenRow;
+        item.ticker = tokenRow.ticker;
+      }
+      balance.push(item);
+    }
+    return res.json({ status: 200, msg: 'success', data: { address, balance } });
+  } catch (error) {
+    return res.json({ status: 400, msg: "error occured !" });
+  }
+};
 
 exports.getAddressUTXO = async function (req, res) {
   var address = req.params.address;
