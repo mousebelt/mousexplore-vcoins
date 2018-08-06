@@ -69,8 +69,8 @@ async function handleUtxo() {
 
 async function addressService() {
   await handleUtxo();
-  addressService();
-  // setTimeout(addressService, config.CRON_TIME_INTERVAL);
+  // addressService();
+  setTimeout(addressService, config.ADDR_CRON_TIME_INTERVAL);
 }
 
 exports.start = async function () {
