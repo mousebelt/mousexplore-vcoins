@@ -1216,7 +1216,7 @@ exports.TestTransaction = function (req, res) {
 };
 
 exports.getMonitor = async (req, res) => {
-  return res.json({ status: 200, msg: "success", data: "Server is working now !" });
+  return res.json({ status: 200, msg: "Server is working now !" });
 };
 
 exports.getMonitorHorizon = async (req, res) => {
@@ -1237,15 +1237,15 @@ exports.getMonitorHorizon = async (req, res) => {
 
         return res.json({
           status: 200,
-          msg: "success",
-          data: "Horizon service is working !"
+          msg: "Horizon service is working !",
+          data: body
         });
       } else {
-        res.status(400).json({ status: 400, msg: "Error !", data: error.toString() });
+        res.status(400).json({ status: 400, msg: error.toString() });
       }
     });
   } catch (error) {
-    return res.status(400).json({ status: 400, msg: "Error !", data: error.toString() });
+    return res.status(400).json({ status: 400, msg: error.toString() });
   }
 };
 
@@ -1255,12 +1255,12 @@ exports.getMonitorStellarCore = async (req, res) => {
       .limit(1)
       .call()
       .then(async function (ledgerResult) {
-        return res.json({ status: 200, msg: "success", data: "Stellar-Core service is working !" });
+        return res.json({ status: 200, msg: "Stellar-Core service is working !", data: ledgerResult });
       })
       .catch(function (err) {
-        return res.status(400).json({ status: 400, msg: "errors", data: "Stellar-Core service is not working !" });
+        return res.status(400).json({ status: 400, msg: "Stellar-Core service is not working !" });
       })
   } catch (err) {
-    return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+    return res.status(400).json({ status: 400, msg: err.toString() });
   }
 };
