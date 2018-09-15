@@ -68,13 +68,15 @@ https://github.com/stellar/stellar-core/blob/master/INSTALL.md
 
 >git clone --single-branch --branch prod https://github.com/stellar/stellar-core.git
 
->git submodule init  
->git submodule update  
->./autogen.sh.  
->./configure (If configure complains about compiler versions, try CXX=clang-3.5 ./configure or CXX=g++-4.9 ./configure or >similar, depending on your compiler.)  
->Type make or make -j (for aggressive parallel build)  
->Type make check to run tests.  
->Type make install to install.  
+```
+git submodule init  
+git submodule update  
+./autogen.sh.  
+./configure (If configure complains about compiler versions, try CXX=clang-3.5 ./configure or CXX=g++-4.9 ./configure or similar, depending on your compiler.)  
+Type make or make -j (for aggressive parallel build)  
+Type make check to run tests.  
+Type make install to install.  
+```
 
 ## install environment
 https://www.stellar.org/developers/horizon/reference/admin.html  
