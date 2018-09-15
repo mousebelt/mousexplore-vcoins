@@ -37,75 +37,75 @@ set environment variable RUN_TYPE as "test" if want to run StellarSdk.Network.us
 # Install node
 ## installation of horizon and stella-core
 
-* install Go
-https://golang.org/doc/install
-https://medium.com/@patdhlk/how-to-install-go-1-9-1-on-ubuntu-16-04-ee64c073cd79
+* install Go  
+https://golang.org/doc/install  
+https://medium.com/@patdhlk/how-to-install-go-1-9-1-on-ubuntu-16-04-ee64c073cd79  
 
->sudo curl -O https://storage.googleapis.com/golang/go1.10.2.linux-amd64.tar.gz
->sudo tar -xvf go1.9.1.linux-amd64.tar.gz
->sudo mv go /usr/local
+>sudo curl -O https://storage.googleapis.com/golang/go1.10.2.linux-amd64.tar.gz  
+>sudo tar -xvf go1.9.1.linux-amd64.tar.gz  
+>sudo mv go /usr/local  
 
 
-* install horizon 
+* install horizon  
 https://github.com/stellar/go/tree/master/services/horizon
 
->sudo wget https://github.com/stellar/go/releases/download/horizon-v0.13.0/horizon-v0.13.0-linux-amd64.tar.gz
->sudo tar -xvf horizon-v0.13.0-linux-amd64.tar.gz
->sudo cp ./horizon-v0.13.0-linux-amd64/horizon /usr/bin/horizon
+>sudo wget https://github.com/stellar/go/releases/download/horizon-v0.13.0/horizon-v0.13.0-linux-amd64.tar.gz  
+>sudo tar -xvf horizon-v0.13.0-linux-amd64.tar.gz  
+>sudo cp ./horizon-v0.13.0-linux-amd64/horizon /usr/bin/horizon  
 
-* install pandoc
+* install pandoc  
 https://github.com/jgm/pandoc/releases/tag/2.2
 
->sudo wget https://github.com/jgm/pandoc/releases/download/2.2/pandoc-2.2-1-amd64.deb
->sudo dpkg -i pandoc-2.2-1-amd64.deb
+>sudo wget https://github.com/jgm/pandoc/releases/download/2.2/pandoc-2.2-1-amd64.deb  
+>sudo dpkg -i pandoc-2.2-1-amd64.deb  
 
-* install stella-core
+* install stella-core  
 https://github.com/stellar/stellar-core/blob/master/INSTALL.md
 
->sudo add-apt-repository ppa:ubuntu-toolchain-r/test
->sudo apt-get update
->sudo apt-get install git build-essential pkg-config autoconf automake libtool bison flex libpq-dev clang++-4.9 gcc-4.9 g++-4.9 cpp-4.9
+>sudo add-apt-repository ppa:ubuntu-toolchain-r/test  
+>sudo apt-get update  
+>sudo apt-get install git build-essential pkg-config autoconf automake libtool bison flex libpq-dev clang++-4.9 gcc-4.9 g++-4.9 cpp-4.9  
 
 >git clone --single-branch --branch prod https://github.com/stellar/stellar-core.git
 
->git submodule init
->git submodule update
->./autogen.sh.
->./configure (If configure complains about compiler versions, try CXX=clang-3.5 ./configure or CXX=g++-4.9 ./configure or >similar, depending on your compiler.)
->Type make or make -j (for aggressive parallel build)
->Type make check to run tests.
->Type make install to install.
+>git submodule init  
+>git submodule update  
+>./autogen.sh.  
+>./configure (If configure complains about compiler versions, try CXX=clang-3.5 ./configure or CXX=g++-4.9 ./configure or >similar, depending on your compiler.)  
+>Type make or make -j (for aggressive parallel build)  
+>Type make check to run tests.  
+>Type make install to install.  
 
 ## install environment
-https://www.stellar.org/developers/horizon/reference/admin.html
+https://www.stellar.org/developers/horizon/reference/admin.html  
 https://github.com/stellar/stellar-core/blob/master/docs/software/admin.md
 
 ### install postgresql
 
 https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04
 
->sudo apt-get update
+>sudo apt-get update  
 >sudo apt-get install postgresql postgresql-contrib
 
 ### create role of current system user
 
->sudo -u postgres createuser --interactive
->Enter name of role to add: ubuntu
->Shall the new role be a superuser? (y/n) y
+>sudo -u postgres createuser --interactive  
+>Enter name of role to add: ubuntu  
+>Shall the new role be a superuser? (y/n) y  
 
-enter postgres console and set password to user
->sudo -u postgres psql
+enter postgres console and set password to user  
+>sudo -u postgres psql  
 >postgres=# ALTER USER ubuntu PASSWORD 'a';
 
 ### stellar-core config
 https://github.com/stellar/stellar-core/blob/master/docs/software/testnet.md
 
-* Need to add db
+* Need to add db  
 >createdb stellar
 
 >sudo cp config/stellar_core_public.cfg /usr/local/bin/stellar-core.cfg
 
-here do this if get error of some tables not exists.
+here do this if get error of some tables not exists.  
 >stellar-core --newdb
 
 >sudo stellar-core --forcescp                ---------?
@@ -116,15 +116,15 @@ This will run stellar-core server
 
 ### horizon config
 
-* create db
+* create db  
 >createdb horizon
 
 * set environment at /root/.bashrc
 
->export DATABASE_URL="postgres://ubuntu:a@localhost/horizon"
->export STELLAR_CORE_DATABASE_URL="postgres://ubuntu:a@localhost/stellar"
->export STELLAR_CORE_URL="http://localhost:11626"
->export INGEST=true
+>export DATABASE_URL="postgres://ubuntu:a@localhost/horizon"  
+>export STELLAR_CORE_DATABASE_URL="postgres://ubuntu:a@localhost/stellar"  
+>export STELLAR_CORE_URL="http://localhost:11626"  
+>export INGEST=true  
 
 source /root/.bashrc
 
@@ -132,28 +132,28 @@ source /root/.bashrc
 
 >horizon db init
 
-* run horizon
->horizon 
-or
+* run horizon  
+>horizon  
+or  
 >horizon serve
 
 ## make stellar-core and horizon as service
 
->cp ./stellar-core.service /etc/systemd/system/stellar-core.service
->cp ./horizon.service /etc/systemd/system/horizon.service
->systemctl daemon-reload
->systemctl enable stellar-core.service
->systemctl enable horizon.service
->systemctl start stellar-core
->systemctl start horizon
+>cp ./stellar-core.service /etc/systemd/system/stellar-core.service  
+>cp ./horizon.service /etc/systemd/system/horizon.service  
+>systemctl daemon-reload  
+>systemctl enable stellar-core.service  
+>systemctl enable horizon.service  
+>systemctl start stellar-core  
+>systemctl start horizon  
 
-* check service status
->service stellar-core status
+* check service status  
+>service stellar-core status  
 >service horizon status
 
 ## Mainnet setting
-need to edit stellar-core.cfg.
-need inserting validating node, crafting a quorum set
+need to edit stellar-core.cfg.  
+need inserting validating node, crafting a quorum set  
 set all urls as live and history storage
 
 Maybe only for getting transaction history, we don't need main net setting
