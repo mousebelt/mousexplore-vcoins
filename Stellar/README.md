@@ -105,7 +105,7 @@ https://github.com/stellar/stellar-core/blob/master/docs/software/testnet.md
 * Need to add db  
 >createdb stellar
 
->sudo cp config/stellar_core_public.cfg /usr/local/bin/stellar-core.cfg
+>sudo cp config/stellar-core_public.cfg /usr/local/bin/stellar-core.cfg
 
 here do this if get error of some tables not exists.  
 >stellar-core --newdb
