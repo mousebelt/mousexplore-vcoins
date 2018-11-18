@@ -69,24 +69,32 @@ async function initParellInfo() {
 
 async function saveParellelInfo(threadIndex) {
   try {
-    var info = await ParellelInofModel.findOne({ index: threadIndex });
+    await ParellelInofModel.findOneAndUpdate({ index: threadIndex }, {
+      index: threadIndex,
+      blocknumber: parellel_blocks[threadIndex].blocknumber,
+      total_txs: parellel_blocks[threadIndex].total_txs,
+      synced_index: parellel_blocks[threadIndex].synced_index
+    }, { upsert: true });
 
-    if (info) {
-      info.set({
-        blocknumber: parellel_blocks[threadIndex].blocknumber,
-        total_txs: parellel_blocks[threadIndex].total_txs,
-        synced_index: parellel_blocks[threadIndex].synced_index
-      });
-    }
-    else {
-      info = new ParellelInofModel({
-        index: threadIndex,
-        blocknumber: parellel_blocks[threadIndex].blocknumber,
-        total_txs: parellel_blocks[threadIndex].total_txs,
-        synced_index: parellel_blocks[threadIndex].synced_index
-      });
-    }
-    await info.save();
+    // var info = await ParellelInofModel.findOne({ index: threadIndex });
+
+    // if (info) {
+    //   info.set({
+    //     index: threadIndex,
+    //     blocknumber: parellel_blocks[threadIndex].blocknumber,
+    //     total_txs: parellel_blocks[threadIndex].total_txs,
+    //     synced_index: parellel_blocks[threadIndex].synced_index
+    //   });
+    // }
+    // else {
+    //   info = new ParellelInofModel({
+    //     index: threadIndex,
+    //     blocknumber: parellel_blocks[threadIndex].blocknumber,
+    //     total_txs: parellel_blocks[threadIndex].total_txs,
+    //     synced_index: parellel_blocks[threadIndex].synced_index
+    //   });
+    // }
+    // await info.save();
   } catch (error) {
     filelog('saveParellelInfo:error: ', error); // Should dump errors here
   }
@@ -270,19 +278,19 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
           var index = in_n + j;
 
           if (addresses && addresses.length > 0 && value > 0) {
-              // Save Info
-              var utxoRow = await UtxoModel.findOne({ txid, index });
-              if (!utxoRow) {
-                utxoRow = new UtxoModel({
-                  txid,
-                  index,
-                  address: addresses[0],
-                  amount: 0 - value,
-                  time: blockdata.time,
-                  createdAtBlock: blockdata.height
-                })
-                await utxoRow.save();
-              }
+            // Save Info
+            var utxoRow = await UtxoModel.findOne({ txid, index });
+            if (!utxoRow) {
+              utxoRow = new UtxoModel({
+                txid,
+                index,
+                address: addresses[0],
+                amount: 0 - value,
+                time: blockdata.time,
+                createdAtBlock: blockdata.height
+              })
+              await utxoRow.save();
+            }
           }
         }
       }
@@ -319,5 +327,6 @@ async function transactionService() {
 exports.start_cronService = async function () {
   await initParellInfo();
   await loadParellInfo();
-  transactionService();
+  console.log('--------parellel_blocks---------', parellel_blocks);
+  // transactionService();
 };
