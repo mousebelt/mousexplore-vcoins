@@ -37,7 +37,8 @@ async function loadParellInfo() {
         parellel_blocks[row.index] = {
           blocknumber: row.blocknumber,
           total_txs: row.total_txs,
-          synced_index: row.synced_index
+          synced_index: row.synced_index,
+          inprogressing: false
         };
       }
     }
@@ -132,7 +133,7 @@ async function distributeBlocks() {
   try {
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
       //if a thread is finished
-      if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs == parellel_blocks[i].synced_index)) {
+      if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs <= parellel_blocks[i].synced_index) && parellel_blocks[i].total_txs > -1) {
 
         let nextnumber = getNextBlockNum(g_lastCheckedNumber);
         if (nextnumber == -1)
@@ -148,41 +149,47 @@ async function distributeBlocks() {
 
         promisify('getblockhash', [nextnumber])
           .then(async (hash) => {
-            var blockdata = await promisify("getblock", [hash]);
-            parellel_blocks[i] = {
-              blocknumber: nextnumber,
-              total_txs: blockdata.tx.length,
-              synced_index: 0,
-              inprogressing: true
+            try {
+              var blockdata = await promisify("getblock", [hash]);
+              parellel_blocks[i] = {
+                blocknumber: nextnumber,
+                total_txs: blockdata.tx.length,
+                synced_index: 0,
+                inprogressing: true
+              }
+              await saveParellelInfo(i);
+              await CheckUpdatedTransactions(i, blockdata);
+            } catch (error) {
+              parellel_blocks[i].inprogressing = false;  
             }
-
-            await saveParellelInfo(i);
-
-            await CheckUpdatedTransactions(i, blockdata);
           })
           .catch(err => {
             filelog("distributeBlocks fails for getblockhash of block: " + nextnumber);
             parellel_blocks[i].inprogressing = false;
-            return;
+            // return;
           })
       }
       else {
         if (!parellel_blocks[i].inprogressing) {
           promisify('getblockhash', [parellel_blocks[i].blocknumber])
             .then(async (hash) => {
-              var blockdata = await promisify("getblock", [hash]);
-              parellel_blocks[i].inprogressing = true;
-              if (parellel_blocks[i].total_txs != blockdata.tx.length) {
-                parellel_blocks[i].total_txs = blockdata.tx.length;
-                await saveParellelInfo(i);
+              try {
+                parellel_blocks[i].inprogressing = true;
+                var blockdata = await promisify("getblock", [hash]);
+                if (parellel_blocks[i].total_txs != blockdata.tx.length) {
+                  parellel_blocks[i].total_txs = blockdata.tx.length;
+                  await saveParellelInfo(i);
+                }
+                await CheckUpdatedTransactions(i, blockdata);
+              } catch (error) {
+                filelog("distributeBlocks fails for getblock, hash, i: " + parellel_blocks[i].blocknumber, hash, i, error);  
+                parellel_blocks[i].inprogressing = false;
               }
-
-              await CheckUpdatedTransactions(i, blockdata);
             })
             .catch(err => {
               filelog("distributeBlocks fails for getblockhash of block: " + parellel_blocks[i].blocknumber);
               parellel_blocks[i].inprogressing = false;
-              return;
+              // return;
             });
         }
       }
@@ -327,6 +334,5 @@ async function transactionService() {
 exports.start_cronService = async function () {
   await initParellInfo();
   await loadParellInfo();
-  console.log('--------parellel_blocks---------', parellel_blocks);
-  // transactionService();
+  transactionService();
 };
