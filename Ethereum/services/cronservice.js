@@ -33,7 +33,8 @@ async function loadParellInfo() {
         parellel_blocks[row.index] = {
           blocknumber: row.blocknumber,
           total_txs: row.total_txs,
-          synced_index: row.synced_index
+          synced_index: row.synced_index,
+          inprogressing: false
         };
       }
     }
@@ -65,24 +66,31 @@ async function initParellInfo() {
 
 async function saveParellelInfo(threadIndex) {
   try {
-    var info = await ParellelInofModel.findOne({ index: threadIndex });
+    await ParellelInofModel.findOneAndUpdate({ index: threadIndex }, {
+      index: threadIndex,
+      blocknumber: parellel_blocks[threadIndex].blocknumber,
+      total_txs: parellel_blocks[threadIndex].total_txs,
+      synced_index: parellel_blocks[threadIndex].synced_index
+    }, { upsert: true });
 
-    if (info) {
-      info.set({
-        blocknumber: parellel_blocks[threadIndex].blocknumber,
-        total_txs: parellel_blocks[threadIndex].total_txs,
-        synced_index: parellel_blocks[threadIndex].synced_index
-      });
-    }
-    else {
-      info = new ParellelInofModel({
-        index: threadIndex,
-        blocknumber: parellel_blocks[threadIndex].blocknumber,
-        total_txs: parellel_blocks[threadIndex].total_txs,
-        synced_index: parellel_blocks[threadIndex].synced_index
-      });
-    }
-    await info.save();
+    // var info = await ParellelInofModel.findOne({ index: threadIndex });
+
+    // if (info) {
+    //   info.set({
+    //     blocknumber: parellel_blocks[threadIndex].blocknumber,
+    //     total_txs: parellel_blocks[threadIndex].total_txs,
+    //     synced_index: parellel_blocks[threadIndex].synced_index
+    //   });
+    // }
+    // else {
+    //   info = new ParellelInofModel({
+    //     index: threadIndex,
+    //     blocknumber: parellel_blocks[threadIndex].blocknumber,
+    //     total_txs: parellel_blocks[threadIndex].total_txs,
+    //     synced_index: parellel_blocks[threadIndex].synced_index
+    //   });
+    // }
+    // await info.save();
   } catch (error) {
     filelog('saveParellelInfo:error: ', error); // Should dump errors here
   }
@@ -119,7 +127,8 @@ async function distributeBlocks() {
   try {
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
       //if a thread is finished
-      if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs == parellel_blocks[i].synced_index)) {
+      // if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs == parellel_blocks[i].synced_index)) {
+      if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs <= parellel_blocks[i].synced_index) && parellel_blocks[i].total_txs > -1) {
 
         let nextnumber = getNextBlockNum(g_lastCheckedNumber);
         if (nextnumber == -1)
@@ -149,22 +158,23 @@ async function distributeBlocks() {
           } catch (error) {
               // filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
               parellel_blocks[i].inprogressing = false;
-              return;
           }
         })
       }
       else {
         if (!parellel_blocks[i].inprogressing) {
           web3.eth.getBlock(parellel_blocks[i].blocknumber, true, async function (error, blockdata) {
-            if (error) {
-              // filelog("distributeBlocks fails for getBlock of block: " + parellel_blocks[i].blocknumber);
-              return;
+            try {
+              if (error) throw error;
+  
+              parellel_blocks[i].inprogressing = true;
+              parellel_blocks[i].total_txs = blockdata.transactions.length;
+              await saveParellelInfo(i);
+  
+              await CheckUpdatedTransactions(i, blockdata);
+            } catch (error) {
+              parellel_blocks[i].inprogressing = false;
             }
-
-            parellel_blocks[i].inprogressing = true;
-            parellel_blocks[i].total_txs = blockdata.transactions.length;
-
-            await CheckUpdatedTransactions(i, blockdata);
           });
         }
       }
