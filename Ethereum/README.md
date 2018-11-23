@@ -41,7 +41,21 @@ https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 
 ## Run geth daemon
 ## Run mongod
+
 ## Run project
-- configure project (config/index.js)  
-- npm install  
-- pm2 start index.js  
+
+Start the server in mainnet mode:
+
+`sudo pm2 start --env mainnet pm2.json`
+
+Start the server in ropsten-testnet mode:
+
+`sudo pm2 start --env testnet pm2.json`
+
+Start the server in rinkeby-testnet mode:
+
+`sudo pm2 start --env rinkeby pm2.json`
+
+To restart the server, run:
+
+`sudo pm2 restart ethereum-vcoins`

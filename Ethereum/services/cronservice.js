@@ -1,9 +1,10 @@
+const _ = require('lodash');
 var config = require("../config");
-var web3 = config.web3;
+var Web3 = require('web3');
+var web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 
 var TransactionModel = require("../model/transactions");
-// var TokenModel = require("../model/tokens");
-// var ServiceInofModel = require("../model/serviceinfo");
+var tokenModel = require("../model/tokens");
 var ParellelInofModel = require("../model/parellelinfo");
 
 /*
@@ -11,6 +12,7 @@ var ParellelInofModel = require("../model/parellelinfo");
  * [{blocknum, total_txs, synced_index, inprogressing}] 
  */
 var parellel_blocks = [];
+var gTokens = [];
 
 var fs = require('fs');
 var Log = require("log"),
@@ -22,6 +24,31 @@ var Log = require("log"),
 
 function filelog(...params) {
   log.info(...params);
+}
+
+async function initTokenDb() {
+  try {
+    var count = await tokenModel.find().count();
+    if (count == 0) {
+      await tokenModel.insertMany(config.tokens);
+      console.log("created token collection !");
+    }
+  }
+  catch (e) {
+    filelog("init token collection error: ", e);
+  }
+}
+
+async function loadTokens() {
+  try {
+    var rows = await tokenModel.find();
+    gTokens = _.map(rows, (row) => {
+      return { symbol: row.symbol, address: row.address, decimal: row.decimal };
+    });
+  }
+  catch (e) {
+    filelog("load tokens error: ", e);
+  }
 }
 
 async function loadParellInfo() {
@@ -72,25 +99,6 @@ async function saveParellelInfo(threadIndex) {
       total_txs: parellel_blocks[threadIndex].total_txs,
       synced_index: parellel_blocks[threadIndex].synced_index
     }, { upsert: true });
-
-    // var info = await ParellelInofModel.findOne({ index: threadIndex });
-
-    // if (info) {
-    //   info.set({
-    //     blocknumber: parellel_blocks[threadIndex].blocknumber,
-    //     total_txs: parellel_blocks[threadIndex].total_txs,
-    //     synced_index: parellel_blocks[threadIndex].synced_index
-    //   });
-    // }
-    // else {
-    //   info = new ParellelInofModel({
-    //     index: threadIndex,
-    //     blocknumber: parellel_blocks[threadIndex].blocknumber,
-    //     total_txs: parellel_blocks[threadIndex].total_txs,
-    //     synced_index: parellel_blocks[threadIndex].synced_index
-    //   });
-    // }
-    // await info.save();
   } catch (error) {
     filelog('saveParellelInfo:error: ', error); // Should dump errors here
   }
@@ -127,7 +135,6 @@ async function distributeBlocks() {
   try {
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
       //if a thread is finished
-      // if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs == parellel_blocks[i].synced_index)) {
       if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs <= parellel_blocks[i].synced_index) && parellel_blocks[i].total_txs > -1) {
 
         let nextnumber = getNextBlockNum(g_lastCheckedNumber);
@@ -144,20 +151,20 @@ async function distributeBlocks() {
         web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
           try {
             if (error) throw error;
-  
+
             parellel_blocks[i] = {
               blocknumber: nextnumber,
               total_txs: blockdata.transactions.length,
               synced_index: 0,
               inprogressing: true
             }
-  
+
             await saveParellelInfo(i);
-  
+
             await CheckUpdatedTransactions(i, blockdata);
           } catch (error) {
-              // filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
-              parellel_blocks[i].inprogressing = false;
+            // filelog("distributeBlocks fails for getBlock of block: " + nextnumber);
+            parellel_blocks[i].inprogressing = false;
           }
         })
       }
@@ -166,11 +173,11 @@ async function distributeBlocks() {
           web3.eth.getBlock(parellel_blocks[i].blocknumber, true, async function (error, blockdata) {
             try {
               if (error) throw error;
-  
+
               parellel_blocks[i].inprogressing = true;
               parellel_blocks[i].total_txs = blockdata.transactions.length;
               await saveParellelInfo(i);
-  
+
               await CheckUpdatedTransactions(i, blockdata);
             } catch (error) {
               parellel_blocks[i].inprogressing = false;
@@ -196,30 +203,80 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
     }
     else {
       for (let j = parellel_blocks[threadIndex].synced_index; j < txnCount; j++) {
+        // transaction model data init
+        let blocknumber = parellel_blocks[threadIndex].blocknumber;
+        let hash = null;
+        let from = null;
+        let to = null;
+        let value = null;
+        let fee = null;
+        let timestamp = null;
+        let tokenSymbol = null;
+        let tokenFrom = null;
+        let tokenTo = null;
+        let tokenAmount = null;
+
+        // handle transaction
         let transaction = blockdata.transactions[j];
-        let hash = transaction.hash;
-        let from = String(transaction.from);
-        let to = String(transaction.to);
-        let value = transaction.value;
-        var timestamp = blockdata.timestamp;
+        hash = transaction.hash;
+        from = String(transaction.from).toLowerCase();
+        to = String(transaction.to).toLowerCase();
+        value = transaction.value;
+        timestamp = blockdata.timestamp;
 
         let gasprice = transaction.gasPrice;
         var txnReceipt = await web3.eth.getTransactionReceipt(hash);
-        let fee = gasprice * txnReceipt.gasUsed;
+        fee = gasprice * txnReceipt.gasUsed;
 
-        var newTxn = await TransactionModel.findOne({ hash });
-        if (!newTxn) {
-          var newTxn = new TransactionModel({
-            blocknumber: parellel_blocks[threadIndex].blocknumber,
-            hash,
-            from: from.toLowerCase(),
-            to: to.toLowerCase(),
-            value,
-            fee,
-            timestamp
-          });
-          await newTxn.save();
+        // 
+        let token = _.find(gTokens, function(o) { return o.address === to; });
+        if (token !== undefined) {
+          tokenSymbol = token.symbol;
+          var inputdata = transaction.input;
+          let methodid = inputdata.slice(0, 10);
+          if (methodid == "0xa9059cbb") {
+            tokenTo = inputdata.slice(10, 74);
+            tokenTo = tokenTo.replace(/^(0)*/, '');
+
+            tokenAmount = inputdata.slice(74, 138);
+            tokenAmount = tokenAmount.replace(/^(0)*/, '');
+            tokenAmount = parseInt('0x' + tokenAmount, 16);
+            tokenAmount = tokenAmount / Math.pow(10, token.decimal);
+
+            tokenFrom = txnReceipt.from;
+          }
+          else if (methodid == "0x23b872dd") {
+            tokenFrom = inputdata.slice(10, 74);
+            tokenFrom = tokenFrom.replace(/^(0)*/, '')
+
+            tokenTo = inputdata.slice(74, 138);
+            tokenTo = tokenTo.replace(/^(0)*/, '')
+
+            tokenAmount = inputdata.slice(138, 202);
+            tokenAmount = tokenAmount.replace(/^(0)*/, '')
+            tokenAmount = parseInt('0x' + tokenAmount, 16);
+            tokenAmount = tokenAmount / Math.pow(10, token.decimal);
+          }
         }
+
+        await TransactionModel.findOneAndUpdate({ hash }, {
+          blocknumber, hash, from, to, value, fee, timestamp,
+          tokenSymbol, tokenFrom, tokenTo, tokenAmount
+        }, { upsert: true });
+    
+        // var newTxn = await TransactionModel.findOne({ hash });
+        // if (!newTxn) {
+        //   var newTxn = new TransactionModel({
+        //     blocknumber: parellel_blocks[threadIndex].blocknumber,
+        //     hash,
+        //     from: from.toLowerCase(),
+        //     to: to.toLowerCase(),
+        //     value,
+        //     fee,
+        //     timestamp
+        //   });
+        //   await newTxn.save();
+        // }
 
         parellel_blocks[threadIndex].synced_index = j + 1;
 
@@ -253,9 +310,12 @@ async function transactionService() {
 }
 
 exports.start_cronService = async function () {
-  require('./init.db').start();
+  // require('./init.db').start();
+  await initTokenDb();
+  await loadTokens();
 
   await initParellInfo();
   await loadParellInfo();
+
   transactionService();
 }

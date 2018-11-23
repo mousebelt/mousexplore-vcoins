@@ -9,6 +9,7 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.4",
+    "lodash": "^4.17.11",
     "log": "^1.4.0",
     "mongoose": "^5.0.17",
     "web3": "1.0.0-beta.34"

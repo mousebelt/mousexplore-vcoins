@@ -13,7 +13,23 @@ var transactionSchema = new mongoose.Schema({
 	},
 	value: Number,
 	fee: Number,
-	timestamp: Number
+	timestamp: Number,
+
+	// erc20 token values
+	tokenSymbol: {
+		type: String,
+		uppercase: true,
+		// default: 'ETH',
+	},
+	tokenFrom: {
+		type: String,
+		lowercase: true,
+	},
+	tokenTo: {
+		type: String,
+		lowercase: true,
+	},
+	tokenAmount: Number,
 });
 
 transactionSchema.index({
@@ -31,6 +47,14 @@ transactionSchema.index({
 
 transactionSchema.index({
 	to: 1
+});
+
+transactionSchema.index({
+	tokenFrom: 1
+});
+
+transactionSchema.index({
+	tokenTo: 1
 });
 
 transactionSchema.index({
