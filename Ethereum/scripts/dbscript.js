@@ -1,9 +1,9 @@
-const config = require("../config");
+const config = require('../config');
 const mongoose = require('mongoose');
 
 mongoose.Promise = global.Promise;
-mongoose.connect(config.db, async function (err, db) {
-  var TransactionModel = require("../model/transactions");
+mongoose.connect(config.db, async function (err, db) { // eslint-disable-line
+  const TransactionModel = require('../model/transactions'); // eslint-disable-line
   if (err) {
     console.log('------db error----------: ', err);
     return;
@@ -20,7 +20,7 @@ mongoose.connect(config.db, async function (err, db) {
     try {
 
       docs = await TransactionModel
-        .find(lastId ? {'_id': { $gt: lastId }} : {}, { from: 1, to: 1 })
+        .find(lastId ? { _id: { $gt: lastId } } : {}, { from: 1, to: 1 })
         .limit(limit);
 
       count += docs.length;
@@ -45,10 +45,10 @@ mongoose.connect(config.db, async function (err, db) {
 
       console.log('------------------Saved documents-----------------: ', count);
 
-    } catch (err) {
-      console.log('---------------------Error-----------------------: ', err);
+    } catch (e) {
+      console.log('---------------------Error-----------------------: ', e);
     }
-  } while(docs.length >= limit)
+  } while (docs.length >= limit);
 
   console.log('-----------------------Finished converting-----------------------');
 });

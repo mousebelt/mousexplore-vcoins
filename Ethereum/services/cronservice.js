@@ -305,7 +305,6 @@ async function transactionService() {
 }
 
 exports.start_cronService = async function () {
-  // require('./init.db').start();
   await initTokenDb();
   await loadTokens();
 
