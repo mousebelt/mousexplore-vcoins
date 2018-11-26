@@ -628,7 +628,52 @@ exports.getMonitorRpc = async (req, res) => {
   }
 };
 
-exports.getTxHistory = async (req, res) => {
+exports.getSentReceivedTxHistory = async (req, res) => {
+  const address = String(req.params.address).toLowerCase();
+
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
+  const order = Number(req.query.order);
+  const mode = String(req.query.mode).toLowerCase(); // sent, received, all
+
+  if (!offset) offset = 0;
+  if (!count || count <= 0) count = 10;
+
+  let querySort;
+  if (order > 0) querySort = { timestamp: 1 };
+  else querySort = { timestamp: -1 };
+
+  try {
+    let query = [{ to: address }, { tokenTo: address }, { from: address }, { tokenFrom: address }];
+    if (mode === 'sent') {
+      query = [{ from: address }, { tokenFrom: address }];
+    } else if (mode === 'received') {
+      query = [{ to: address }, { tokenTo: address }];
+    } else {
+      query = [{ to: address }, { tokenTo: address }, { from: address }, { tokenFrom: address }];
+    }
+    const total = await TransactionModel.find()
+      .or(query)
+      .countDocuments();
+
+    return TransactionModel.find()
+      .or(query)
+      .sort(querySort)
+      .skip(offset)
+      .limit(count)
+      .exec(async function (error, rows) {
+        if (error) {
+          console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
+          return res.json({ status: 400, msg: 'Error occurred !' });
+        }
+        return res.json({ status: 200, msg: 'success', data: { total, result: rows } });
+      });
+  } catch (error) {
+    return res.json({ status: 400, msg: 'Error occurred !', data: error });
+  }
+};
+
+exports.getTxHistoryByTicker = async (req, res) => {
   const address = String(req.params.address).toLowerCase();
 
   const ticker = req.query.ticker ? String(req.query.ticker).toUpperCase() : 'ETH';
@@ -677,7 +722,7 @@ exports.getTxHistory = async (req, res) => {
     return TransactionModel.find()
       .and([
         { $or: [{ tokenFrom: address }, { tokenTo: address }] },
-        { $or: { to: token.address } }
+        { to: token.address }
       ])
       .sort(querySort)
       .skip(offset)

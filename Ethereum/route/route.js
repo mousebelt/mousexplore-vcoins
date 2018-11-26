@@ -28,7 +28,8 @@ module.exports = function (app) {
   app.post('/api/v1/sendsignedtransaction', EthereumController.postSendSignedTransaction);
 
   // api for sapien service
-  app.get('/api/v1/txs_history/:address', EthereumController.getTxHistory);
+  app.get('/api/v1/sent_received_tx_history/:address', EthereumController.getSentReceivedTxHistory);
+  app.get('/api/v1/tx_history_by_ticker/:address', EthereumController.getTxHistoryByTicker);
 
   // apis for monitor
   app.get('/monitor', EthereumController.getMonitor);
