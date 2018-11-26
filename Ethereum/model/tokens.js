@@ -1,10 +1,10 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var tokenSchema = new mongoose.Schema({
+const tokenSchema = new mongoose.Schema({
   symbol: String,
   address: String,
-  decimal: Number 
+  decimal: Number,
 });
 
-var Token = mongoose.model("Token", tokenSchema);
+const Token = mongoose.model('Token', tokenSchema);
 module.exports = Token;

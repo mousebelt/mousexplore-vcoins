@@ -1,0 +1,16 @@
+{
+  "apps" : [{
+    "name"        : "ethereum-vcoins",
+    "script"      : "index.js",
+    "watch"       : true,
+    "env": {
+      "NODE_ENV": "testnet"
+    },
+    "env_mainnet" : {
+       "NODE_ENV": "mainnet"
+    },
+    "env_rinkeby" : {
+      "NODE_ENV": "rinkeby"
+   }
+  }]
+}

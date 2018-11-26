@@ -1,14 +1,14 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var serviceInfoSchema = new mongoose.Schema({
-	lastblock: Number,
-	updatedAt: Number
+const serviceInfoSchema = new mongoose.Schema({
+  lastblock: Number,
+  updatedAt: Number
 });
 
-serviceInfoSchema.pre('save', function(next) {
+serviceInfoSchema.pre('save', function (next) {
   this.updatedAt = Date.now();
   next();
 });
 
-var ServiceInfo = mongoose.model("ServiceInfo", serviceInfoSchema);
+const ServiceInfo = mongoose.model('ServiceInfo', serviceInfoSchema);
 module.exports = ServiceInfo;
