@@ -627,3 +627,69 @@ exports.getMonitorRpc = async (req, res) => {
     return res.status(400).json({ status: 400, msg: 'errors', data: err.toString() });
   }
 };
+
+exports.getTxHistory = async (req, res) => {
+  const address = String(req.params.address).toLowerCase();
+
+  const ticker = req.query.ticker ? String(req.query.ticker).toUpperCase() : 'ETH';
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
+  const order = Number(req.query.order);
+
+  if (!offset) offset = 0;
+  if (!count || count <= 0) count = 10;
+
+  let querySort;
+  if (order > 0) querySort = { timestamp: 1 };
+  else querySort = { timestamp: -1 };
+
+  try {
+    if (ticker === 'ETH') {
+      const total = await TransactionModel.find()
+        .or([{ from: address }, { to: address }])
+        .count();
+
+      return TransactionModel.find()
+        .or([{ from: address }, { to: address }])
+        .sort(querySort)
+        .skip(offset)
+        .limit(count)
+        .exec(async function (error, rows) {
+          if (error) {
+            console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
+            return res.json({ status: 400, msg: 'Error occurred !' });
+          }
+          return res.json({ status: 200, msg: 'success', data: { total, result: rows } });
+        });
+    }
+
+    const token = await TokenModel.findOne({ symbol: ticker });
+    if (!token) return res.json({ status: 400, msg: 'Ticker is not found !' });
+
+    // find erc20 token txs
+    const total = await TransactionModel.find()
+      .and([
+        { $or: [{ tokenFrom: address }, { tokenTo: address }] },
+        { $or: { to: token.address } }
+      ])
+      .count();
+
+    return TransactionModel.find()
+      .and([
+        { $or: [{ tokenFrom: address }, { tokenTo: address }] },
+        { $or: { to: token.address } }
+      ])
+      .sort(querySort)
+      .skip(offset)
+      .limit(count)
+      .exec(async function (error, rows) {
+        if (error) {
+          console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
+          return res.json({ status: 400, msg: 'Error occurred !' });
+        }
+        return res.json({ status: 200, msg: 'success', data: { total, result: rows } });
+      });
+  } catch (error) {
+    return res.json({ status: 400, msg: 'Error occurred !', data: error });
+  }
+};
