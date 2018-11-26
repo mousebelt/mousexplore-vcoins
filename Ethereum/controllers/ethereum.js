@@ -647,7 +647,7 @@ exports.getTxHistory = async (req, res) => {
     if (ticker === 'ETH') {
       const total = await TransactionModel.find()
         .or([{ from: address }, { to: address }])
-        .count();
+        .countDocuments();
 
       return TransactionModel.find()
         .or([{ from: address }, { to: address }])
@@ -672,7 +672,7 @@ exports.getTxHistory = async (req, res) => {
         { $or: [{ tokenFrom: address }, { tokenTo: address }] },
         { $or: { to: token.address } }
       ])
-      .count();
+      .countDocuments();
 
     return TransactionModel.find()
       .and([
