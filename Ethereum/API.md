@@ -20,6 +20,9 @@ vcoin apis
 [Search](#search)  
 [Send signed transaction](#send-signed-transaction)  
 
+[Get transaction history by ticker, address](#get-transaction-history-by-ticker-address)  
+[Get sent or received tx history](#get-sent-or-received-tx-history)  
+
 ***
 
 # API Details
@@ -557,4 +560,134 @@ raw | STRING | YES | raw data
 
 ```javascript
 { status: 400, msg: 'errors', data: err }
+```
+
+
+## Get transaction history by ticker, address
+```
+ GET /tx_history_by_ticker/:address
+```
+
+Get transaction history by ticker and address
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+offset | Number | NO | 0 | offset
+count | Number | NO | 10 | transaction count
+order | Number | NO | 0 | 0 => newest first, 1 => oldest first
+ticker | String | NO | ETH | ETH => ETH tx, SPN => SPN token txs
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+    "status": 200,
+    "msg": "success",
+    "data": {
+        "total": 15,
+        "result": [
+            {
+                "_id": "5bfa2335c0278aea30b1a85e",
+                "hash": "0xfa815305cc1abb45a3e625a56cc515f0db1679a8142fe8c46dfe2df5eb86cdcb",
+                "__v": 0,
+                "blocknumber": 3396769,
+                "fee": 5322873229017088,
+                "from": "0x5a8018a918719c39230d542c4bb23dd9974fa7f6",
+                "timestamp": 1543080157,
+                "to": "0x9aab5ac0173c01c0cf9d8484e177c47e19b5dd22",
+                "tokenAmount": 20,
+                "tokenFrom": "0x5a8018a918719c39230d542c4bb23dd9974fa7f6",
+                "tokenSymbol": "SPN",
+                "tokenTo": "cfef41ae8c02145dec2fae43179d35d4c732816",
+                "value": 0
+            }, ...
+        ]
+    }
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
+```
+
+## Get sent or received tx history
+```
+ GET /tx_history_by_ticker/:address
+```
+
+Get sent or received transaction history by address
+
+### QUERY PARAMS
+
+Name | Type | Mandatory | Default | Description
+------------ | ------------ | ------------ | ------------ | ------------
+offset | Number | NO | 0 | offset
+count | Number | NO | 10 | transaction count
+order | Number | NO | 0 | 0 => newest first, 1 => oldest first
+mode | String | NO | all | "sent", "received", else "all"
+
+### RETURN
+
+* for successed case
+`status code:` 200
+
+```javascript
+{
+    "status": 200,
+    "msg": "success",
+    "data": {
+        "total": 18,
+        "result": [
+            {
+                "_id": "5bfa2336c0278aea30b1aa1e",
+                "hash": "0x1e8808188dec609d98aa072459dba848aa7c09dc11fe48b0f019047d8da55922",
+                "__v": 0,
+                "blocknumber": 3396776,
+                "fee": 449100000000000,
+                "from": "0x5a8018a918719c39230d542c4bb23dd9974fa7f6",
+                "timestamp": 1543080262,
+                "to": "0x0cfef41ae8c02145dec2fae43179d35d4c732816",
+                "tokenAmount": null,
+                "tokenFrom": null,
+                "tokenSymbol": null,
+                "tokenTo": null,
+                "value": 0
+            },
+            {
+                "_id": "5bfa2335c0278aea30b1a85e",
+                "hash": "0xfa815305cc1abb45a3e625a56cc515f0db1679a8142fe8c46dfe2df5eb86cdcb",
+                "__v": 0,
+                "blocknumber": 3396769,
+                "fee": 5322873229017088,
+                "from": "0x5a8018a918719c39230d542c4bb23dd9974fa7f6",
+                "timestamp": 1543080157,
+                "to": "0x9aab5ac0173c01c0cf9d8484e177c47e19b5dd22",
+                "tokenAmount": 20,
+                "tokenFrom": "0x5a8018a918719c39230d542c4bb23dd9974fa7f6",
+                "tokenSymbol": "SPN",
+                "tokenTo": "cfef41ae8c02145dec2fae43179d35d4c732816",
+                "value": 0
+            }, ...
+        ]
+    }
+}
+```
+
+* for failed case
+`status code:` 400
+
+```javascript
+{
+  "error": ""   //error message
+}
 ```

@@ -1,3 +1,4 @@
+// const _ = require('lodash');
 const config = require('../config');
 const Web3 = require('web3');
 const web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
@@ -703,7 +704,7 @@ exports.getTxHistoryByTicker = async (req, res) => {
           { $or: [{ from: address }, { to: address }] },
           { tokenSymbol: null }
         ])
-          .sort(querySort)
+        .sort(querySort)
         .skip(offset)
         .limit(count)
         .exec(async function (error, rows) {
@@ -711,7 +712,17 @@ exports.getTxHistoryByTicker = async (req, res) => {
             console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
             return res.json({ status: 400, msg: 'Error occurred !' });
           }
-          return res.json({ status: 200, msg: 'success', data: { total, result: rows } });
+          return res.json({
+            status: 200,
+            msg: 'success',
+            data: {
+              total,
+              result: rows
+              // result: _.map(rows, (row) => _.pick(
+              //   row, ['hash', 'blocknumber', 'fee', 'from', 'timestamp', 'to', 'value', '']
+              // ))
+            }
+          });
         });
     }
 
