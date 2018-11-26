@@ -691,12 +691,19 @@ exports.getTxHistoryByTicker = async (req, res) => {
   try {
     if (ticker === 'ETH') {
       const total = await TransactionModel.find()
-        .or([{ from: address }, { to: address }])
+        // .or([{ from: address }, { to: address }])
+        .and([
+          { $or: [{ from: address }, { to: address }] },
+          { tokenSymbol: null }
+        ])
         .countDocuments();
 
       return TransactionModel.find()
-        .or([{ from: address }, { to: address }])
-        .sort(querySort)
+        .and([
+          { $or: [{ from: address }, { to: address }] },
+          { tokenSymbol: null }
+        ])
+          .sort(querySort)
         .skip(offset)
         .limit(count)
         .exec(async function (error, rows) {
@@ -715,7 +722,7 @@ exports.getTxHistoryByTicker = async (req, res) => {
     const total = await TransactionModel.find()
       .and([
         { $or: [{ tokenFrom: address }, { tokenTo: address }] },
-        { $or: { to: token.address } }
+        { to: token.address }
       ])
       .countDocuments();
 
