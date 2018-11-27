@@ -162,12 +162,13 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
         //
         const token = _.find(gTokens, (o) => (o.address === to));
         if (token !== undefined) {
-          tokenSymbol = token.symbol;
           const inputdata = transaction.input;
           const methodid = inputdata.slice(0, 10);
           if (methodid === '0xa9059cbb') {
+            tokenSymbol = token.symbol;
             tokenTo = inputdata.slice(10, 74);
             tokenTo = tokenTo.replace(/^(0)*/, '');
+            if (tokenTo) tokenTo = `0x${tokenTo}`;
 
             tokenAmount = inputdata.slice(74, 138);
             tokenAmount = tokenAmount.replace(/^(0)*/, '');
@@ -176,11 +177,13 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
 
             tokenFrom = txnReceipt.from;
           } else if (methodid === '0x23b872dd') {
+            tokenSymbol = token.symbol;
             tokenFrom = inputdata.slice(10, 74);
             tokenFrom = tokenFrom.replace(/^(0)*/, '');
 
             tokenTo = inputdata.slice(74, 138);
             tokenTo = tokenTo.replace(/^(0)*/, '');
+            if (tokenTo) tokenTo = `0x${tokenTo}`;
 
             tokenAmount = inputdata.slice(138, 202);
             tokenAmount = tokenAmount.replace(/^(0)*/, '');
@@ -193,20 +196,6 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
           blocknumber, hash, from, to, value, fee, timestamp,
           tokenSymbol, tokenFrom, tokenTo, tokenAmount
         }, { upsert: true });
-
-        // var newTxn = await TransactionModel.findOne({ hash });
-        // if (!newTxn) {
-        //   var newTxn = new TransactionModel({
-        //     blocknumber: gParellelBlocks[threadIndex].blocknumber,
-        //     hash,
-        //     from: from.toLowerCase(),
-        //     to: to.toLowerCase(),
-        //     value,
-        //     fee,
-        //     timestamp
-        //   });
-        //   await newTxn.save();
-        // }
 
         gParellelBlocks[threadIndex].synced_index = j + 1;
 
