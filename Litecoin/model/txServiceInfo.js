@@ -1,6 +1,6 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var txServiceInfoSchema = new mongoose.Schema({
+const txServiceInfoSchema = new mongoose.Schema({
   lastblock: Number,
   lastTxIndex: Number,
 
@@ -12,5 +12,5 @@ txServiceInfoSchema.pre('save', function (next) {
   next();
 });
 
-var TxServiceInfo = mongoose.model("TxServiceInfo", txServiceInfoSchema);
+const TxServiceInfo = mongoose.model('TxServiceInfo', txServiceInfoSchema);
 module.exports = TxServiceInfo;
