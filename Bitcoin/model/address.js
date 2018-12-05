@@ -1,6 +1,6 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var addressSchema = new mongoose.Schema({
+const addressSchema = new mongoose.Schema({
   address: String, // 1BW18n7MfpU35q4MTBSk8pse3XzQF8XvzT
 
   balance: {
@@ -33,5 +33,5 @@ addressSchema.index({
   address: 1
 });
 
-var Address = mongoose.model("Address", addressSchema);
+const Address = mongoose.model('Address', addressSchema);
 module.exports = Address;

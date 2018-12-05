@@ -1,15 +1,15 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var txMissingSchema = new mongoose.Schema({
-    txid: String, 
-    txidRefs: [String],
-	updatedAt: Date
+const txMissingSchema = new mongoose.Schema({
+  txid: String,
+  txidRefs: [String],
+  updatedAt: Date
 });
 
-txMissingSchema.pre('save', function(next) {
-	this.updatedAt = Date.now();
-	next();
+txMissingSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
-var TxMissing = mongoose.model("TxMissing", txMissingSchema);
+const TxMissing = mongoose.model('TxMissing', txMissingSchema);
 module.exports = TxMissing;
