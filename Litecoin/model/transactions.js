@@ -1,42 +1,42 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var transactionSchema = new mongoose.Schema({
-	txid: String, 
-	time: Number,
+const transactionSchema = new mongoose.Schema({
+  txid: String,
+  time: Number,
 
-	blockhash: String,
-	blockheight: Number,
+  blockhash: String,
+  blockheight: Number,
 
-	vin: [{}],
-	vout: [{}],
-	
-	updatedAt: Date
+  vin: [{}],
+  vout: [{}],
+
+  updatedAt: Date
 });
 
-transactionSchema.pre('save', function(next) {
-	this.updatedAt = Date.now();
-	next();
-});
-
-transactionSchema.index({
-	txid: 1,
+transactionSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 transactionSchema.index({
-	blockhash: 1,
+  txid: 1,
 });
 
 transactionSchema.index({
-	blockheight: -1
+  blockhash: 1,
 });
 
 transactionSchema.index({
-	time: -1
+  blockheight: -1
 });
 
 transactionSchema.index({
-	time: 1
+  time: -1
 });
 
-var Transaction = mongoose.model("Transaction", transactionSchema);
+transactionSchema.index({
+  time: 1
+});
+
+const Transaction = mongoose.model('Transaction', transactionSchema);
 module.exports = Transaction;

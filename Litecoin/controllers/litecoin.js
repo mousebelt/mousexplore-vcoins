@@ -1,34 +1,32 @@
 // define local node object
 const _ = require('lodash');
-var config = require("../config");
+const config = require('../config');
 const client = config.localNode;
 
-const TransactionModel = require("../model/transactions");
-const AddressModel = require("../model/address");
-const UtxoModel = require("../model/utxo");
+const TransactionModel = require('../model/transactions');
+// const AddressModel = require('../model/address');
+const UtxoModel = require('../model/utxo');
 
-const UtilsModule = require("../modules/utils");
+const UtilsModule = require('../modules/utils');
 
 // var TransactionModel = require('../model/transactions');
 
-var promisify = UtilsModule.promisify;
+const promisify = UtilsModule.promisify;
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-//// RPC Call apis ////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+// // RPC Call apis ////
 
 exports.getnewaddress = (req, res) => {
   const account = req.body.account;
 
   try {
-    client.call("getnewaddress", [account], function (err, result) {
+    return client.call('getnewaddress', [account], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -37,14 +35,14 @@ exports.setaccount = (req, res) => {
   const address = req.body.address;
 
   try {
-    client.call("setaccount", [address, account], function (err, result) {
+    return client.call('setaccount', [address, account], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -52,101 +50,101 @@ exports.setTxFee = (req, res) => {
   const fee = req.body.fee;
 
   try {
-    client.call("settxfee", [Number(fee)], function (err, result) {
+    return client.call('settxfee', [Number(fee)], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getReceivedByAccount = (req, res) => {
   const account = req.body.account;
-  var minconf = req.body.minconf;
+  let minconf = req.body.minconf;
 
   if (!minconf) minconf = 1;
 
   try {
-    client.call("getreceivedbyaccount", [account, Number(minconf)], function (
+    return client.call('getreceivedbyaccount', [account, Number(minconf)], (
       err,
       result
-    ) {
+    ) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getReceivedByAddress = (req, res) => {
   const address = req.body.address;
-  var minconf = req.body.minconf;
+  let minconf = req.body.minconf;
 
   if (!minconf) minconf = 1;
 
   try {
-    client.call("getreceivedbyaddress", [address, Number(minconf)], function (
+    return client.call('getreceivedbyaddress', [address, Number(minconf)], (
       err,
       result
-    ) {
+    ) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getAccountBalance = (req, res) => {
   const account = req.query.account;
-  var minconf = req.query.minconf;
+  let minconf = req.query.minconf;
 
   if (!minconf) minconf = 1;
 
   try {
-    client.call("getbalance", [account, Number(minconf)], function (
+    return client.call('getbalance', [account, Number(minconf)], (
       err,
       result
-    ) {
+    ) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getAllTransactionsByAccount = (req, res) => {
   const account = req.query.account;
-  const count = req.query.count;
-  const from = req.query.from;
+  let count = req.query.count;
+  let from = req.query.from;
 
   if (!count) count = 10;
   if (!from) from = 0;
 
   try {
-    client.call(
-      "listtransactions",
+    return client.call(
+      'listtransactions',
       [account, Number(count), Number(from)],
-      function (err, result) {
+      (err, result) => {
         if (err) {
-          return res.json({ status: 400, msg: "errors", data: err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-        return res.json({ status: 200, msg: "sccuess", data: result });
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       }
     );
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -154,14 +152,14 @@ exports.getAccount = (req, res) => {
   const address = req.params.address;
 
   try {
-    client.call("getaccount", [address], function (err, result) {
+    return client.call('getaccount', [address], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -169,14 +167,14 @@ exports.getAccountAddress = (req, res) => {
   const account = req.params.account;
 
   try {
-    client.call("getaccountaddress", [account], function (err, result) {
+    return client.call('getaccountaddress', [account], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -184,83 +182,83 @@ exports.getAccountByAddress = (req, res) => {
   const account = req.params.account;
 
   try {
-    client.call("getaddressesbyaccount", [account], function (err, result) {
+    return client.call('getaddressesbyaccount', [account], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getBlockCount = (req, res) => {
   try {
-    client.call("getblockcount", [], function (err, result) {
+    return client.call('getblockcount', [], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getBestBlockHash = (req, res) => {
   try {
-    client.call("getbestblockhash", [], function (err, result) {
+    return client.call('getbestblockhash', [], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getBlock = async (req, res) => {
-  var hash = req.params.hash;
+  let hash = req.params.hash;
 
   try {
     if (hash.length < 10) {
-      hash = await promisify("getblockhash", [Number(hash)]);
+      hash = await promisify('getblockhash', [Number(hash)]);
     }
 
-    client.call("getblock", [hash], function (err, result) {
+    return client.call('getblock', [hash], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
 
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getBlockDetails = async (req, res) => {
-  var hash = req.params.hash;
+  const hash = req.params.hash;
 
-  var block = await UtilsModule.getBlockDetailsFunc(hash);
-  if (block) return res.json({ status: 200, msg: "sccuess", data: block });
-  return res.json({ status: 400, msg: "Error occured !" });
+  const block = await UtilsModule.getBlockDetailsFunc(hash);
+  if (block) return res.json({ status: 200, msg: 'sccuess', data: block });
+  return res.json({ status: 400, msg: 'Error occured !' });
 };
 
 exports.getBlockHash = (req, res) => {
   const index = req.params.index;
 
   try {
-    client.call("getblockhash", [Number(index)], function (err, result) {
+    return client.call('getblockhash', [Number(index)], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -268,49 +266,49 @@ exports.getTransaction = (req, res) => {
   const txid = req.params.txid;
 
   try {
-    client.call("gettransaction", [txid], function (err, result) {
+    return client.call('gettransaction', [txid], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getRawTransaction = (req, res) => {
   const txid = req.params.txid;
-  var verbose = req.query.verbose;
+  const verbose = req.query.verbose;
 
   try {
-    client.call("getrawtransaction", [txid, Number(verbose)], function (
+    return client.call('getrawtransaction', [txid, Number(verbose)], (
       err,
       result
-    ) {
+    ) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.listAccounts = (req, res) => {
-  var minconf = req.query.minconf;
+  let minconf = req.query.minconf;
   if (!minconf) minconf = 1;
 
   try {
-    client.call("listaccounts", [Number(minconf)], function (err, result) {
+    return client.call('listaccounts', [Number(minconf)], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -318,15 +316,15 @@ exports.sendFrom = (req, res) => {
   const fromaccount = req.body.fromaccount;
   const toaddress = req.body.toaddress;
   const amount = req.body.amount;
-  var minconf = req.body.minconf;
-  var comment = req.body.comment;
-  var commentto = req.body.commentto;
+  let minconf = req.body.minconf;
+  const comment = req.body.comment;
+  const commentto = req.body.commentto;
 
   if (!minconf) minconf = 1;
 
   try {
-    client.call(
-      "sendfrom",
+    return client.call(
+      'sendfrom',
       [
         fromaccount,
         toaddress,
@@ -335,38 +333,39 @@ exports.sendFrom = (req, res) => {
         comment,
         commentto
       ],
-      function (err, result) {
+      (err, result) => {
         if (err) {
-          return res.json({ status: 400, msg: "errors", data: err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-        return res.json({ status: 200, msg: "sccuess", data: result });
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       }
     );
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.sendMany = (req, res) => {
   const fromaccount = req.body.fromaccount;
   const toaddresses = req.body.toaddresses;
-  var minconf = req.body.minconf;
+  let minconf = req.body.minconf;
+  const comment = req.body.comment;
 
   if (!minconf) minconf = 1;
 
   try {
-    client.call(
-      "sendmany",
+    return client.call(
+      'sendmany',
       [fromaccount, toaddresses, Number(minconf), comment],
-      function (err, result) {
+      (err, result) => {
         if (err) {
-          return res.json({ status: 400, msg: "errors", data: err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-        return res.json({ status: 200, msg: "sccuess", data: result });
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       }
     );
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -376,42 +375,42 @@ exports.sendToAddress = (req, res) => {
   const comment = req.body.comment;
   const commentto = req.body.commentto;
   try {
-    client.call(
-      "sendtoaddress",
+    return client.call(
+      'sendtoaddress',
       [toaddress, Number(amount), comment, commentto],
-      function (err, result) {
+      (err, result) => {
         if (err) {
-          return res.json({ status: 400, msg: "errors", data: err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-        return res.json({ status: 200, msg: "sccuess", data: result });
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       }
     );
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.listTransactions = (req, res) => {
   const account = req.body.account;
-  var count = req.body.count;
-  var from = req.body.from;
+  let count = req.body.count;
+  let from = req.body.from;
 
   if (!count) count = 10;
   if (!from) from = 0;
 
   try {
-    client.call(
-      "listtransactions",
+    return client.call(
+      'listtransactions',
       [account, Number(count), Number(from)],
-      function (err, result) {
+      (err, result) => {
         if (err) {
-          return res.json({ status: 400, msg: "errors", data: err });
+          return res.json({ status: 400, msg: 'errors', data: err });
         }
-        return res.json({ status: 200, msg: "sccuess", data: result });
+        return res.json({ status: 200, msg: 'sccuess', data: result });
       }
     );
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -420,261 +419,245 @@ exports.listSinceBlock = (req, res) => {
   const confirm = req.query.confirm;
 
   try {
-    client.call("listsinceblock", [blockhash, Number(confirm)], function (
+    return client.call('listsinceblock', [blockhash, Number(confirm)], (
       err,
       result
-    ) {
+    ) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-//// Utility apis ////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-exports.getMonitor = async (req, res) => {
-  return res.json({ status: 200, msg: "success", data: "Server is working now !" });
-};
+// /////////////////////////////////////////////////////////////////////////////////////////////////////
+// // Utility apis ////
+// /////////////////////////////////////////////////////////////////////////////////////////////////////
+exports.getMonitor = async (req, res) => res.json({ status: 200, msg: 'success', data: 'Server is working now !' });
 
 exports.getMonitorDb = async (req, res) => {
   try {
-    if (require("mongoose").connection.readyState)
-      return res.json({ status: 200, msg: "success", data: "Db is working now !" });
+    if (require('mongoose').connection.readyState) { // eslint-disable-line
+      return res.json({ status: 200, msg: 'success', data: 'Db is working now !' });
+    }
 
     throw new Error('db error');
   } catch (error) {
-    return res.status(400).json({ status: 400, msg: "errors", data: "Db is not working now !" });
+    return res.status(400).json({ status: 400, msg: 'errors', data: 'Db is not working now !' });
   }
 };
 
 exports.getMonitorRpc = async (req, res) => {
   try {
-    client.call("getblockchaininfo", [], function (err, result) {
+    return client.call('getblockchaininfo', [], (err, result) => {
       if (err) {
-        return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+        return res.status(400).json({ status: 400, msg: 'errors', data: err.toString() });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (err) {
-    return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+    return res.status(400).json({ status: 400, msg: 'errors', data: err.toString() });
   }
 };
 
 exports.getSearch = async (req, res) => {
-  var key = req.params.key;
+  const key = req.params.key;
 
   try {
     if (key.length < 10) {
       // block process
-      var hash = await promisify("getblockhash", [Number(key)]);
-      if (hash)
-        return res.json({
-          status: 200,
-          msg: "sccuess",
-          data: { type: "block" }
-        });
+      const hash = await promisify('getblockhash', [Number(key)]);
+      if (hash) return res.json({ status: 200, msg: 'sccuess', data: { type: 'block' } });
     } else if (key.length >= 25 && key.length <= 34) {
       // address process
       return res.json({
         status: 200,
-        msg: "sccuess",
-        data: { type: "address" }
+        msg: 'sccuess',
+        data: { type: 'address' }
       });
     } else if (key.length >= 64 && key.length <= 66) {
       // block or txid process
       try {
-        var tx = await promisify("getrawtransaction", [key, 1]);
-        if (tx)
-          return res.json({
-            status: 200,
-            msg: "sccuess",
-            data: { type: "transaction" }
-          });
-      } catch (error) { }
+        const tx = await promisify('getrawtransaction', [key, 1]);
+        if (tx) return res.json({ status: 200, msg: 'sccuess', data: { type: 'transaction' } });
+      } catch (error) {
+        // console.log(error);
+      }
 
       // block details
       try {
-        var block = await promisify("getblock", [key]);
-        if (block)
-          return res.json({
-            status: 200,
-            msg: "sccuess",
-            data: { type: "block" }
-          });
-      } catch (error) { }
+        const block = await promisify('getblock', [key]);
+        if (block) return res.json({ status: 200, msg: 'sccuess', data: { type: 'block' } });
+      } catch (error) {
+        // console.log(error);
+      }
     }
-    return res.json({ status: 400, msg: "search key is not correct !" });
+    return res.json({ status: 400, msg: 'search key is not correct !' });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getBlocks = async (req, res) => {
-  var offset = Number(req.query.offset);
-  var count = Number(req.query.count);
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
 
   try {
-    var blockCount = await promisify("getblockcount", []);
+    const blockCount = await promisify('getblockcount', []);
     if (!blockCount) {
-      return res.json({ status: 400, msg: "empty blockcount !" });
+      return res.json({ status: 400, msg: 'empty blockcount !' });
     }
 
-    var height = blockCount - offset;
+    const height = blockCount - offset;
     // get block count
-    var arrBlocks = [];
-    for (var i = 1; i <= count; i++) {
-      var index = height - i;
+    const arrBlocks = [];
+    for (let i = 1; i <= count; i++) {
+      const index = height - i;
       if (index < 0) break;
 
-      var hash = await promisify("getblockhash", [index]);
+      const hash = await promisify('getblockhash', [index]);
       if (hash) {
-        var block = await promisify("getblock", [hash]);
+        const block = await promisify('getblock', [hash]);
         if (block) arrBlocks.push(block);
       }
     }
 
     return res.json({
       status: 200,
-      msg: "sccuess",
+      msg: 'sccuess',
       data: { total: blockCount, result: arrBlocks }
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getTransactionInfo = (req, res) => {
   const txid = req.params.txid;
   try {
-    client.call("getrawtransaction", [txid, 1], function (err, result) {
+    return client.call('getrawtransaction', [txid, 1], (err, result) => {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getTransactionDetails = async (req, res) => {
   const txid = req.params.txid;
-  var txdetails = await UtilsModule.getTxDetailsFunc(txid);
-  if (txdetails)
-    return res.json({ status: 200, msg: "sccuess", data: txdetails });
+  const txdetails = await UtilsModule.getTxDetailsFunc(txid);
+  if (txdetails) return res.json({ status: 200, msg: 'sccuess', data: txdetails });
 
-  return res.json({ status: 400, msg: "errors" });
+  return res.json({ status: 400, msg: 'errors' });
 };
 
 exports.getTransactions = async function (req, res) {
-  var offset = Number(req.query.offset);
-  var count = Number(req.query.count);
-  var order = Number(req.query.order);
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
+  const order = Number(req.query.order);
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
   // condition
-  var condition;
+  let condition;
   if (order) condition = { time: 1 };
   else condition = { time: -1 };
 
   // logic
   try {
-    var total = await TransactionModel.find().count();
-    TransactionModel.find()
+    const total = await TransactionModel.find().count();
+    return TransactionModel.find()
       .sort(condition)
       .skip(offset)
       .limit(count)
       .exec(async function (error, rows) {
         if (!error) {
-          var txs = [];
+          const txs = [];
           for (let i = 0; i < rows.length; i++) {
             // var tx = await UtilsModule.getTxDetailsFunc(rows[i].txid);
             // if (tx) txs.push(tx);
 
             // try {
-              var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
-              if (tx) txs.push(tx);
+            const tx = await promisify('getrawtransaction', [rows[i].txid, 1]);
+            if (tx) txs.push(tx);
             // } catch (error) {}
           }
           return res.json({
             status: 200,
-            msg: "success",
+            msg: 'success',
             data: { total, result: txs }
           });
-        } else {
-          console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
-          return res.json({ status: 400, msg: "errors", data: error });
         }
+        console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
+        return res.json({ status: 400, msg: 'errors', data: error });
       });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getAddressTransactions = async function (req, res) {
-  var address = req.params.address;
-  var offset = Number(req.query.offset);
-  var count = Number(req.query.count);
-  var order = Number(req.query.order);
+  const address = req.params.address;
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
+  let order = Number(req.query.order);
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
 
-  if (order) order = {time: 1};
-  else order = {time: -1};
+  if (order) order = { time: 1 };
+  else order = { time: -1 };
 
   // logic
   try {
-    var rows = await UtxoModel.find({address})
-    .sort(order);
+    const rows = await UtxoModel.find({ address })
+      .sort(order);
 
-    var arr_txid = _.map(rows, 'txid');
-    arr_txid = _.uniqBy(arr_txid, function (e) {
-      return e;
-    });
+    let arrTxid = _.map(rows, 'txid');
+    arrTxid = _.uniqBy(arrTxid, (e) => e);
 
     // response
-    var total = arr_txid.length;
-    var txids = _.slice(arr_txid, offset, offset + count);
+    const total = arrTxid.length;
+    const txids = _.slice(arrTxid, offset, offset + count);
 
-    var result = [];
+    const result = [];
     for (let i = 0; i < txids.length; i++) {
-      var txid = txids[i];
-      var txInfo = await UtilsModule.getTxDetailsFunc(txid);
+      const txid = txids[i];
+      const txInfo = await UtilsModule.getTxDetailsFunc(txid);
       if (txInfo) result.push(txInfo);
     }
     return res.json({
       status: 200,
-      msg: "success",
+      msg: 'success',
       data: { total, result }
     });
   } catch (error) {
     // return res.json({ status: 400, msg: "error occured !" });
     return res.json({
       status: 200,
-      msg: "success",
+      msg: 'success',
       data: { total: 0, result: [] }
     });
   }
 };
 
 exports.getBalance = async function (req, res) {
-  var address = req.params.address;
+  const address = req.params.address;
 
   // logic
   try {
-    var utxoRows = await UtxoModel.find({ address });
+    const utxoRows = await UtxoModel.find({ address });
 
-    var balance = 0;
+    let balance = 0;
     for (let i = 0; i < utxoRows.length; i++) {
       balance += utxoRows[i].amount;
     }
@@ -682,10 +665,10 @@ exports.getBalance = async function (req, res) {
     balance = Number(balance.toFixed(8));
     return res.json({
       status: 200,
-      msg: "success",
+      msg: 'success',
       data: { address, balance }
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "error occured !", data: error });
+    return res.json({ status: 400, msg: 'error occured !', data: error });
   }
 };

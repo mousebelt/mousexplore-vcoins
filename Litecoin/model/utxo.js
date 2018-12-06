@@ -1,6 +1,6 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var utxoSchema = new mongoose.Schema({
+const utxoSchema = new mongoose.Schema({
   txid: String,
   index: Number,
   address: String, // 1BW18n7MfpU35q4MTBSk8pse3XzQF8XvzT
@@ -32,5 +32,5 @@ utxoSchema.index({
   time: -1
 });
 
-var utxo = mongoose.model("utxo", utxoSchema);
+const utxo = mongoose.model('utxo', utxoSchema);
 module.exports = utxo;

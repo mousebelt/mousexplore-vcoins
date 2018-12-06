@@ -1,2 +1,2 @@
 // Setup basic express server
-var neoController = require('../controllers/neo');
+// var neoController = require('../controllers/neo');
