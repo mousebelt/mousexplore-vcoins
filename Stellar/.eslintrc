@@ -10,8 +10,7 @@
     "max-len": ["error", 140],
     "comma-dangle": 0,
     "padded-blocks": 0,
-    "no-nested-ternary": "off",
-    "import/no-unresolved": 0
+    "no-nested-ternary": "off"
   },
   "settings": {
     "import/resolver": {

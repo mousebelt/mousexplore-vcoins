@@ -156,25 +156,25 @@ exports.getAddressUTXO = async function (req, res) {
 exports.getLastBlockHash = function (req, res) {
   localNode
     .getLastBlockHash()
-    .then(function (result) {
+    .then((result) => {
       res.json({ status: 200, msg: 'success', data: result });
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.json({ status: 400, msg: 'errors', data: err });
     });
 };
 
 exports.getBlockByHash = (req, res) => {
-  var hash = req.params.hash;
+  let hash = req.params.hash;
   try {
     if (hash.length < 10) hash = Number(hash);
-    client.call('getblock', [hash, 1], function (err, block) {
+    return client.call('getblock', [hash, 1], (err, block) => {
       if (err) {
         return res.json({ status: 400, msg: 'errors', data: err });
       }
-      var txs = block.tx;
+      const txs = block.tx;
       if (txs && txs.length > 0) {
-        var newTxs = [];
+        const newTxs = [];
         for (let j = 0; j < txs.length; j++) {
           newTxs.push(txs[j].txid);
         }
@@ -190,9 +190,9 @@ exports.getBlockByHash = (req, res) => {
 };
 
 exports.getBlockDetails = async (req, res) => {
-  var hash = req.params.hash;
+  const hash = req.params.hash;
 
-  var block = await getBlockDetailsFunc(hash);
+  const block = await getBlockDetailsFunc(hash);
   if (block) return res.json({ status: 200, msg: 'sccuess', data: block });
   return res.json({ status: 400, msg: 'errors' });
 };
@@ -210,10 +210,10 @@ exports.getBlockDetails = async (req, res) => {
 exports.getBlockCount = function (req, res) {
   localNode
     .getBlockCount()
-    .then(function (result) {
+    .then((result) => {
       res.json({ status: 200, msg: 'success', data: result });
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.json({ status: 400, msg: 'errors', data: err });
     });
 };
@@ -231,14 +231,14 @@ exports.getBlockCount = function (req, res) {
  * hash: "4c1e879872344349067c3b1a30781eeb4f9040d3795db7922f513f6f9660b9b2"
  */
 exports.getBlockHashByHeight = function (req, res) {
-  var height = req.params.height;
+  const height = req.params.height;
 
   localNode
     .getBlockHashByHeight(height)
-    .then(function (result) {
+    .then((result) => {
       res.json({ status: 200, msg: 'success', data: result });
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.json({ status: 400, msg: 'errors', data: err });
     });
 };
@@ -257,10 +257,10 @@ exports.getBlockHashByHeight = function (req, res) {
 exports.getConnectionCount = function (req, res) {
   localNode
     .getConnectionCount()
-    .then(function (result) {
+    .then((result) => {
       res.json({ status: 200, msg: 'success', data: result });
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.json({ status: 400, msg: 'errors', data: err });
     });
 };
@@ -282,10 +282,10 @@ exports.getConnectionCount = function (req, res) {
 exports.getVersion = function (req, res) {
   localNode
     .getVersion()
-    .then(function (result) {
+    .then((result) => {
       res.json({ status: 200, msg: 'success', data: result });
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.json({ status: 400, msg: 'errors', data: err });
     });
 };
@@ -304,10 +304,10 @@ exports.getVersion = function (req, res) {
 exports.getRawMemPool = function (req, res) {
   localNode
     .getRawMemPool()
-    .then(function (result) {
+    .then((result) => {
       res.json({ status: 200, msg: 'success', data: result });
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.json({ status: 400, msg: 'errors', data: err });
     });
 };
@@ -352,7 +352,8 @@ exports.getRawMemPool = function (req, res) {
     "Net_fee": "0",
     "Scripts": [
       {
-        "Invocation": "40915467ecd359684b2dc358024ca750609591aa731a0b309c7fb3cab5cd0836ad3992aa0a24da431f43b68883ea5651d548feb6bd3c8e16376e6e426f91f84c58",
+        "Invocation": "40915467ecd359684b2dc358024ca750609591aa731a0b309c7fb3cab5cd0836ad3992aa0a24d
+        a431f43b68883ea5651d548feb6bd3c8e16376e6e426f91f84c58",
         "Verification": "2103322f35c7819267e721335948d385fae5be66e7ba8c748ac15467dcca0693692dac"
       }
     ],
@@ -362,14 +363,14 @@ exports.getRawMemPool = function (req, res) {
   }
  */
 exports.getRawTransaction = function (req, res) {
-  var txId = req.params.txId;
+  const txId = req.params.txId;
 
   localNode
     .getRawTransaction(txId, 1)
-    .then(function (result) {
+    .then((result) => {
       res.json({ status: 200, msg: 'success', data: result });
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.json({ status: 400, msg: 'errors', data: err });
     });
 };
@@ -394,15 +395,15 @@ exports.getRawTransaction = function (req, res) {
    }
  */
 exports.getTxOut = function (req, res) {
-  var txId = req.params.txId;
-  var index = req.params.index;
+  const txId = req.params.txId;
+  const index = req.params.index;
 
   localNode
     .getTxOut(txId, index)
-    .then(function (result) {
+    .then((result) => {
       res.json({ status: 200, msg: 'success', data: result });
     })
-    .catch(function (err) {
+    .catch((err) => {
       res.json({ status: 400, msg: 'errors', data: err });
     });
 };
@@ -431,8 +432,8 @@ exports.getTxOut = function (req, res) {
       "nonce": "19385d2ada9b3096",
       "nextconsensus": "APyEx5f4Zm4oCHwFWiSTaph1fPBxZacYVR",
       "script": {
-          "invocation": "403fc6abeb11da17f6b5dd24b5204e5f13e78fee01c658edfefa52bf5095fd1270b0124b2efac72512c4754d7fd54e3feca913ee88fcd530b769e63563fb3a081a40e3b56e3161c4136caaa8e6057ca89bef55615df4ba71d4f72568e9df7aeec6518161362d2f5634a10bca6bb0a48cffc76355a920d0c3228465ef070025fd065640694dc65aa45efbfd0f83ce64314b9e515273c8f69db3bf58eecbc7d796bbb0249f040f8df5a085d72d0fb3df1755ba1cc1f2043343e4c1f0e3fe7f65a989ee784041e59254b31b4a0833878a31ea73491a415273085386a7a065e73cc3123b083e2afb4c62b60108c87e92f967c2f528af2f0e0012f3ba0d8d41dd3381aa79f859406fc02bc4712fe4c5431594036e32a534151f3ef1dc0e55e7ea886fe10f89dacf788a340ee6718add1158ab64b086df6e3448112951d80d5740cb97a7d2599e8c",
-          "verification": "552102486fd15702c4490a26703112a5cc1d0923fd697a33406bd5a1c00e0013b09a7021024c7b7fb6c310fccf1ba33b082519d82964ea93868d676662d4a59ad548df0e7d2102aaec38470f6aad0042c6e877cfd8087d2676b0f516fddd362801b9bd3936399e2103b209fd4f53a7170ea4444e0cb0a6bb6a53c2bd016926989cf85f9b0fba17a70c2103b8d9d5771d8f513aa0869b9cc8d50986403b78c6da36890638c3d46a5adce04a2102ca0e27697b9c248f6f16e085fd0061e26f44da85b58ee835c110caa5ec3ba5542102df48f60e8f3e01c48ff40b9b7f1310d7a8b2a193188befe1c2e3df740e89509357ae"
+          "invocation": "dummy data",
+          "verification": "dummy data"
       },
       "tx": [
           {
@@ -454,31 +455,31 @@ exports.getTxOut = function (req, res) {
   }
 */
 exports.getBlocks = async function (req, res) {
-  var offset = Number(req.query.offset);
-  var count = Number(req.query.count);
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
 
   try {
     // logic
-    var blockCount = await localNode.getBlockCount();
+    const blockCount = await localNode.getBlockCount();
     if (!blockCount) {
       return res.json({ status: 400, msg: 'Error in getting block count' });
     }
 
     // logic
-    var blocks = [];
+    const blocks = [];
     for (let i = 1; i <= count; i++) {
-      var height = blockCount - offset - i;
+      const height = blockCount - offset - i;
       if (height < 0) break;
 
       try {
-        var block = await localNode.getBlockByHeight(height, 1);
+        const block = await localNode.getBlockByHeight(height, 1);
 
-        var txs = block.tx;
+        const txs = block.tx;
         if (txs && txs.length > 0) {
-          var newTxs = [];
+          const newTxs = [];
           for (let j = 0; j < txs.length; j++) {
             newTxs.push(txs[j].txid);
           }
@@ -503,9 +504,9 @@ exports.getBlocks = async function (req, res) {
 };
 
 exports.getTx = async function (req, res) {
-  var txid = req.params.txid;
+  const txid = req.params.txid;
   try {
-    client.call('getrawtransaction', [txid, 1], function (err, result) {
+    return client.call('getrawtransaction', [txid, 1], (err, result) => {
       if (err) {
         return res.json({ status: 400, msg: 'errors', data: err });
       }
@@ -517,10 +518,9 @@ exports.getTx = async function (req, res) {
 };
 
 exports.getTxDetails = async function (req, res) {
-  var txid = req.params.txid;
-  var txdetails = await getTxDetailsFunc(txid);
-  if (txdetails)
-    return res.json({ status: 200, msg: 'sccuess', data: txdetails });
+  const txid = req.params.txid;
+  const txdetails = await getTxDetailsFunc(txid);
+  if (txdetails) return res.json({ status: 200, msg: 'sccuess', data: txdetails });
 
   return res.json({ status: 400, msg: 'errors' });
 };
@@ -557,24 +557,24 @@ exports.getTxDetails = async function (req, res) {
     }
  */
 exports.getTransactions = async function (req, res) {
-  var contract = req.query.contract;
-  var offset = Number(req.query.offset);
-  var count = Number(req.query.count);
-  var order = Number(req.query.order);
+  const contract = req.query.contract;
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
+  const order = Number(req.query.order);
 
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
   // condition
-  var condition;
+  let condition;
   if (order) condition = { blockTime: 1 };
   else condition = { blockTime: -1 };
 
-  var findCond = {};
-  if (contract && contract != '') findCond = { assets: { $elemMatch: { $eq: contract } } };
+  let findCond = {};
+  if (contract && contract !== '') findCond = { assets: { $elemMatch: { $eq: contract } } };
   // logic
   try {
-    var total = await TransactionModel.find(findCond).count();
-    TransactionModel.find(findCond)
+    const total = await TransactionModel.find(findCond).count();
+    return TransactionModel.find(findCond)
       .sort(condition)
       .skip(offset)
       .limit(count)
@@ -584,16 +584,16 @@ exports.getTransactions = async function (req, res) {
           return res.json({ status: 400, msg: 'errors', data: error });
         }
 
-        var txs = [];
+        const txs = [];
         for (let i = 0; i < rows.length; i++) {
-          const row = rows[i];
+          // const row = rows[i];
           // var tx = await getTxDetailsFunc(row.txid);
           // if (tx) txs.push(tx);
           try {
-            var tx = await promisify('getrawtransaction', [rows[i].txid, 1]);
+            const tx = await promisify('getrawtransaction', [rows[i].txid, 1]);
             txs.push(tx);
-          } catch (error) {
-            console.log('get transaction error: ', error);
+          } catch (e) {
+            console.log('get transaction error: ', e);
           }
         }
         return res.json({
@@ -640,20 +640,19 @@ exports.getTransactions = async function (req, res) {
     }
  */
 exports.getAddressTransactions = async function (req, res) {
-  var address = req.params.address;
-  var asset = req.query.asset;
-  var offset = Number(req.query.offset);
-  var count = Number(req.query.count);
-  var order = Number(req.query.order);
+  const address = req.params.address;
+  const asset = req.query.asset;
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
+  let order = Number(req.query.order);
 
   // validation
-  if (!address || address == '')
-    return res.json({ status: 400, msg: 'address is empty !' });
+  if (!address || address === '') return res.json({ status: 400, msg: 'address is empty !' });
   if (!offset) offset = 0;
-  if (!count || count == 0) count = 10;
+  if (!count || count === 0) count = 10;
 
-  var cond;
-  if (!asset || asset == '') cond = { address };
+  let cond;
+  if (!asset || asset === '') cond = { address };
   else cond = { asset, address };
 
   if (order) order = { time: 1 };
@@ -661,23 +660,21 @@ exports.getAddressTransactions = async function (req, res) {
 
   // logic
   try {
-    var rows = await UtxoModel.find(cond)
+    const rows = await UtxoModel.find(cond)
       .sort(order);
 
-    var arr_txid = _.map(rows, 'txid');
-    arr_txid = _.uniqBy(arr_txid, function (e) {
-      return e;
-    });
+    let arrTxid = _.map(rows, 'txid');
+    arrTxid = _.uniqBy(arrTxid, (e) => e);
 
     // response
-    var total = arr_txid.length;
-    var txids = _.slice(arr_txid, offset, offset + count);
+    const total = arrTxid.length;
+    const txids = _.slice(arrTxid, offset, offset + count);
 
-    var result = [];
+    const result = [];
     for (let i = 0; i < txids.length; i++) {
-      var txid = txids[i];
+      const txid = txids[i];
       // var txInfo = await promisify("getrawtransaction", [txid, 1]);
-      var txInfo = await UtilsModule.getTxDetailsFunc(txid);
+      const txInfo = await UtilsModule.getTxDetailsFunc(txid);
       if (txInfo) result.push(txInfo);
     }
     return res.json({
@@ -696,27 +693,31 @@ exports.getAddressTransactions = async function (req, res) {
 };
 
 exports.getSearch = async (req, res) => {
-  var key = req.params.key;
+  const key = req.params.key;
 
   try {
     if (key.length < 10) {
       // block process
-      var block = await promisify('getblock', [Number(key), 1]);
+      const block = await promisify('getblock', [Number(key), 1]);
       if (block) return res.json({ status: 200, msg: 'sccuess', data: { type: 'block' } });
     } else if (key.length >= 25 && key.length <= 34) {
       // address process
       return res.json({ status: 200, msg: 'sccuess', data: { type: 'address' } });
     } else if (key.length >= 64 && key.length <= 66) { // block or txid process
       try {
-        var tx = await promisify('getrawtransaction', [key, 1]);
+        const tx = await promisify('getrawtransaction', [key, 1]);
         if (tx) return res.json({ status: 200, msg: 'sccuess', data: { type: 'transaction' } });
-      } catch (error) { }
+      } catch (error) {
+        // console.log(error);
+      }
 
       // block details
       try {
-        var block = await promisify('getblock', [key, 1]);
+        const block = await promisify('getblock', [key, 1]);
         if (block) return res.json({ status: 200, msg: 'sccuess', data: { type: 'block' } });
-      } catch (error) { }
+      } catch (error) {
+        // console.log(error);
+      }
     }
     return res.json({ status: 400, msg: 'search key is not correct !' });
   } catch (error) {
@@ -724,14 +725,13 @@ exports.getSearch = async (req, res) => {
   }
 };
 
-exports.getMonitor = async (req, res) => {
-  return res.json({ status: 200, msg: 'success', data: 'Server is working now !' });
-};
+exports.getMonitor = async (req, res) => res.json({ status: 200, msg: 'success', data: 'Server is working now !' });
 
 exports.getMonitorDb = async (req, res) => {
   try {
-    if (require('mongoose').connection.readyState)
+    if (require('mongoose').connection.readyState) { // eslint-disable-line
       return res.json({ status: 200, msg: 'success', data: 'Db is working now !' });
+    }
 
     throw new Error('db error');
   } catch (err) {
@@ -741,7 +741,7 @@ exports.getMonitorDb = async (req, res) => {
 
 exports.getMonitorRpc = async (req, res) => {
   try {
-    client.call('getblockcount', [], function (err, result) {
+    return client.call('getblockcount', [], (err, result) => {
       if (err) {
         return res.status(400).json({ status: 400, msg: 'errors', data: err.toString() });
       }

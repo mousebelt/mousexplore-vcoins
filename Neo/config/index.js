@@ -1,10 +1,10 @@
-const rpc = require('json-rpc2'); // eslint-disable-line
+const rpc = require('json-rpc2');
 const client = rpc.Client.$create(
   '10332', // RPC_PORT
   '127.0.0.1', // RPC_HOST
 );
 
-const neo = require('neo-api'); // eslint-disable-line
+const neo = require('neo-api');
 const localNode = neo.node('http://localhost:10332');
 
 module.exports = {
