@@ -1,24 +1,24 @@
 // define local node object
 const _ = require('lodash');
-var config = require("../config");
+const config = require('../config');
 const localNode = config.localNode;
 const client = config.client;
 
-var TransactionModel = require("../model/transactions");
-var UtxoModel = require('../model/utxo');
-var AddressModel = require('../model/address');
-var TokenModel = require("../model/token");
+const TransactionModel = require('../model/transactions');
+const UtxoModel = require('../model/utxo');
+const AddressModel = require('../model/address');
+const TokenModel = require('../model/token');
 
-var UtilsModule = require("../modules/utils");
+const UtilsModule = require('../modules/utils');
 
-var promisify = UtilsModule.promisify;
-var getTxOutFunc = UtilsModule.getTxOutFunc;
-var getTxDetailsFunc = UtilsModule.getTxDetailsFunc;
-var getBlockDetailsFunc = UtilsModule.getBlockDetailsFunc;
+const promisify = UtilsModule.promisify;
+// const getTxOutFunc = UtilsModule.getTxOutFunc;
+const getTxDetailsFunc = UtilsModule.getTxDetailsFunc;
+const getBlockDetailsFunc = UtilsModule.getBlockDetailsFunc;
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-//// RPC Call apis ////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////////////////////
+// // RPC Call apis ////
+// /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // exports.getBalance = async function (req, res) {
 //   var address = req.params.address;
@@ -69,37 +69,38 @@ var getBlockDetailsFunc = UtilsModule.getBlockDetailsFunc;
 // };
 
 exports.getBalance = async function (req, res) {
-  var address = req.params.address;
+  const address = req.params.address;
 
   // logic
   try {
-    var addressRows = await AddressModel.find({ address });
+    const addressRows = await AddressModel.find({ address });
 
-    var balance = [];
-    if (addressRows.length == 0) {
+    const balance = [];
+    if (addressRows.length === 0) {
       if (address.length >= 25 && address.length <= 34) {
-        var neo_token = await TokenModel.findOne({ ticker: "NEO" });
+        const neoToken = await TokenModel.findOne({ ticker: 'NEO' });
         balance.push({
-          asset: neo_token.asset,
+          asset: neoToken.asset,
           value: 0,
-          token: neo_token,
-          ticker: neo_token.ticker
-        })
-        return res.json({ status: 200, msg: "success", data: { address, balance } });
-      } else return res.json({ status: 400, msg: "Invalid address !" });
+          token: neoToken,
+          ticker: neoToken.ticker
+        });
+        return res.json({ status: 200, msg: 'success', data: { address, balance } });
+      }
+      return res.json({ status: 400, msg: 'Invalid address !' });
     }
 
-    var tokenRows = await TokenModel.find({});
+    const tokenRows = await TokenModel.find({});
 
     for (let i = 0; i < addressRows.length; i++) {
-      let asset = addressRows[i].asset;
-      let amount = addressRows[i].balance;
+      const asset = addressRows[i].asset;
+      const amount = addressRows[i].balance;
 
-      var item = {};
+      const item = {};
       item.asset = asset;
       item.value = amount;
 
-      var tokenRow = _.find(tokenRows, { asset });
+      const tokenRow = _.find(tokenRows, { asset });
       if (tokenRow) {
         item.token = tokenRow;
         item.ticker = tokenRow.ticker;
@@ -108,42 +109,40 @@ exports.getBalance = async function (req, res) {
     }
     return res.json({ status: 200, msg: 'success', data: { address, balance } });
   } catch (error) {
-    return res.json({ status: 400, msg: "error occured !" });
+    return res.json({ status: 400, msg: 'error occured !' });
   }
 };
 
 exports.getAddressUTXO = async function (req, res) {
-  var address = req.params.address;
+  const address = req.params.address;
 
   // logic
   try {
-    var utxoRows = await UtxoModel.find({ address });
-    if (utxoRows.length == 0) return res.json({ status: 400, msg: "No address in db !" });
+    const utxoRows = await UtxoModel.find({ address });
+    if (utxoRows.length === 0) return res.json({ status: 400, msg: 'No address in db !' });
 
-    var data = _.filter(utxoRows, function (o) { return o.amount > 0; });
-    var _minus_data = _.filter(utxoRows, function (o) { return o.amount < 0; });
+    const data = _.filter(utxoRows, (o) => (o.amount > 0));
+    const _minusData = _.filter(utxoRows, (o) => (o.amount < 0));
 
-    for (let i = 0; i < _minus_data.length; i++) {
-      var _item = _minus_data[i];
-      let txRow = await TransactionModel.findOne({ txid: _item.txid });
-      let _vin = txRow.vin;
-      var _n = _item.index - txRow.vout.length;
-      let _in_item = _vin[_n];
+    for (let i = 0; i < _minusData.length; i++) {
+      const _item = _minusData[i];
+      const txRow = await TransactionModel.findOne({ txid: _item.txid });
+      const _vin = txRow.vin;
+      const _n = _item.index - txRow.vout.length;
+      const _inItem = _vin[_n];
 
-      var _txid = _in_item.txid;
-      var _vout = _in_item.vout;
+      const _txid = _inItem.txid;
+      const _vout = _inItem.vout;
 
-      _.remove(data, function (o) {
-        return (o.txid == _txid) && (o.index == _vout);
-      });
+      _.remove(data, (o) => ((o.txid === _txid) && (o.index === _vout)));
     }
     return res.json({ status: 200, msg: 'success', data });
   } catch (error) {
-    return res.json({ status: 400, msg: "error occured !", data: error });
+    return res.json({ status: 400, msg: 'error occured !', data: error });
   }
 };
 
-//Block
+// Block
 /**
  * @description Returns the hash of the tallest block
  *
@@ -158,10 +157,10 @@ exports.getLastBlockHash = function (req, res) {
   localNode
     .getLastBlockHash()
     .then(function (result) {
-      res.json({ status: 200, msg: "success", data: result });
+      res.json({ status: 200, msg: 'success', data: result });
     })
     .catch(function (err) {
-      res.json({ status: 400, msg: "errors", data: err });
+      res.json({ status: 400, msg: 'errors', data: err });
     });
 };
 
@@ -169,9 +168,9 @@ exports.getBlockByHash = (req, res) => {
   var hash = req.params.hash;
   try {
     if (hash.length < 10) hash = Number(hash);
-    client.call("getblock", [hash, 1], function (err, block) {
+    client.call('getblock', [hash, 1], function (err, block) {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
       var txs = block.tx;
       if (txs && txs.length > 0) {
@@ -183,10 +182,10 @@ exports.getBlockByHash = (req, res) => {
         block.tx = newTxs;
       }
 
-      return res.json({ status: 200, msg: "sccuess", data: block });
+      return res.json({ status: 200, msg: 'sccuess', data: block });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -194,8 +193,8 @@ exports.getBlockDetails = async (req, res) => {
   var hash = req.params.hash;
 
   var block = await getBlockDetailsFunc(hash);
-  if (block) return res.json({ status: 200, msg: "sccuess", data: block });
-  return res.json({ status: 400, msg: "errors" });
+  if (block) return res.json({ status: 200, msg: 'sccuess', data: block });
+  return res.json({ status: 400, msg: 'errors' });
 };
 
 /**
@@ -212,10 +211,10 @@ exports.getBlockCount = function (req, res) {
   localNode
     .getBlockCount()
     .then(function (result) {
-      res.json({ status: 200, msg: "success", data: result });
+      res.json({ status: 200, msg: 'success', data: result });
     })
     .catch(function (err) {
-      res.json({ status: 400, msg: "errors", data: err });
+      res.json({ status: 400, msg: 'errors', data: err });
     });
 };
 
@@ -237,14 +236,14 @@ exports.getBlockHashByHeight = function (req, res) {
   localNode
     .getBlockHashByHeight(height)
     .then(function (result) {
-      res.json({ status: 200, msg: "success", data: result });
+      res.json({ status: 200, msg: 'success', data: result });
     })
     .catch(function (err) {
-      res.json({ status: 400, msg: "errors", data: err });
+      res.json({ status: 400, msg: 'errors', data: err });
     });
 };
 
-//Net
+// Net
 /**
  * @description Gets the current number of connections for the node.
  *
@@ -259,21 +258,21 @@ exports.getConnectionCount = function (req, res) {
   localNode
     .getConnectionCount()
     .then(function (result) {
-      res.json({ status: 200, msg: "success", data: result });
+      res.json({ status: 200, msg: 'success', data: result });
     })
     .catch(function (err) {
-      res.json({ status: 400, msg: "errors", data: err });
+      res.json({ status: 400, msg: 'errors', data: err });
     });
 };
 
 /**
  * @description Returns the version information about the queried node.
- * 
+ *
  * @method GET /version
- * 
+ *
  * @return
  * { "status": 200, "msg": "success", "data": version }
- * 
+ *
  * version: {
       "port": 0,
       "nonce": 156443862,
@@ -284,14 +283,14 @@ exports.getVersion = function (req, res) {
   localNode
     .getVersion()
     .then(function (result) {
-      res.json({ status: 200, msg: "success", data: result });
+      res.json({ status: 200, msg: 'success', data: result });
     })
     .catch(function (err) {
-      res.json({ status: 400, msg: "errors", data: err });
+      res.json({ status: 400, msg: 'errors', data: err });
     });
 };
 
-//Tx
+// Tx
 /**
  * @description Obtains the list of unconfirmed transactions in memory.
  *
@@ -306,23 +305,23 @@ exports.getRawMemPool = function (req, res) {
   localNode
     .getRawMemPool()
     .then(function (result) {
-      res.json({ status: 200, msg: "success", data: result });
+      res.json({ status: 200, msg: 'success', data: result });
     })
     .catch(function (err) {
-      res.json({ status: 400, msg: "errors", data: err });
+      res.json({ status: 400, msg: 'errors', data: err });
     });
 };
 
 /**
  * @description Returns the corresponding transaction information, based on the specified hash value.
- * 
+ *
  * @method GET /rawtransaction
- * 
+ *
  * @param {String} txId: "f4250dab094c38d8265acc15c366dc508d2e14bf5699e12d9df26577ed74d657"
- * 
+ *
  * @return
  * { "status": 200, "msg": "success", "data": tx }
- * 
+ *
  * tx: {
     "Txid": "f4250dab094c38d8265acc15c366dc508d2e14bf5699e12d9df26577ed74d657",
     "Size": 262,
@@ -368,25 +367,25 @@ exports.getRawTransaction = function (req, res) {
   localNode
     .getRawTransaction(txId, 1)
     .then(function (result) {
-      res.json({ status: 200, msg: "success", data: result });
+      res.json({ status: 200, msg: 'success', data: result });
     })
     .catch(function (err) {
-      res.json({ status: 400, msg: "errors", data: err });
+      res.json({ status: 400, msg: 'errors', data: err });
     });
 };
 
 /**
- * @description Returns the corresponding unspent transaction output information (returned change), based on the specified hash and index. 
+ * @description Returns the corresponding unspent transaction output information (returned change), based on the specified hash and index.
  *              If the transaction output is already spent, the result value will be null.
- * 
+ *
  * @method GET /txout
- * 
+ *
  * @param {String} txId: "f4250dab094c38d8265acc15c366dc508d2e14bf5699e12d9df26577ed74d657"
  * @param {Number} index: 0: The index of the transaction output to be obtained in the transaction (starts from 0)
  *
  * @return
  * { "status": 200, "msg": "success", "data": result }
- * 
+ *
  * result: {
      "N": 0,
      "Asset": "c56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b",
@@ -401,24 +400,24 @@ exports.getTxOut = function (req, res) {
   localNode
     .getTxOut(txId, index)
     .then(function (result) {
-      res.json({ status: 200, msg: "success", data: result });
+      res.json({ status: 200, msg: 'success', data: result });
     })
     .catch(function (err) {
-      res.json({ status: 400, msg: "errors", data: err });
+      res.json({ status: 400, msg: 'errors', data: err });
     });
 };
 
-///////////////////////////////////////////////////////////////////////////////////////////////////////
-//// Utility apis ////
-///////////////////////////////////////////////////////////////////////////////////////////////////////
+// /////////////////////////////////////////////////////////////////////////////////////////////////////
+// // Utility apis ////
+// /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**
- * GET /blocks 
+ * GET /blocks
  * Get block list
- * 
+ *
  * @param {Number} offset
  * @param {Number} count
- * 
+ *
  * @return
  * { status: 200, msg: 'success', data: [block] }
   block = {
@@ -465,7 +464,7 @@ exports.getBlocks = async function (req, res) {
     // logic
     var blockCount = await localNode.getBlockCount();
     if (!blockCount) {
-      return res.json({ status: 400, msg: "Error in getting block count" });
+      return res.json({ status: 400, msg: 'Error in getting block count' });
     }
 
     // logic
@@ -489,31 +488,31 @@ exports.getBlocks = async function (req, res) {
 
         if (block) blocks.push(block);
       } catch (error) {
-        console.log("error occured: ", error);
+        console.log('error occured: ', error);
       }
     }
 
     return res.json({
       status: 200,
-      msg: "success",
+      msg: 'success',
       data: { total: blockCount, result: blocks }
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getTx = async function (req, res) {
   var txid = req.params.txid;
   try {
-    client.call("getrawtransaction", [txid, 1], function (err, result) {
+    client.call('getrawtransaction', [txid, 1], function (err, result) {
       if (err) {
-        return res.json({ status: 400, msg: "errors", data: err });
+        return res.json({ status: 400, msg: 'errors', data: err });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
@@ -521,25 +520,25 @@ exports.getTxDetails = async function (req, res) {
   var txid = req.params.txid;
   var txdetails = await getTxDetailsFunc(txid);
   if (txdetails)
-    return res.json({ status: 200, msg: "sccuess", data: txdetails });
+    return res.json({ status: 200, msg: 'sccuess', data: txdetails });
 
-  return res.json({ status: 400, msg: "errors" });
+  return res.json({ status: 400, msg: 'errors' });
 };
 
 /**
  * GET /transactions
  * Get transaction list by offset, count, order
- * 
+ *
  * @param {Number} offset: 0
  * @param {Number} count: 10
  * @param {Number} order
  * @param {String} token_hash
- * 
+ *
  * @return
- * { "status": "200", "msg": "success", 
+ * { "status": "200", "msg": "success",
  *   "data": [tx]
  * }
- * 
+ *
  * tx: {
         "txid": "0x6d1cc3aa44b218e1fe052fa3c06c8a0009bfc2c91676c977d80e3d2d8388e2ee",
         "size": 10,
@@ -581,8 +580,8 @@ exports.getTransactions = async function (req, res) {
       .limit(count)
       .exec(async function (error, rows) {
         if (error) {
-          console.log("getTransactionList: we have a promblem: ", error); // Should dump errors here
-          return res.json({ status: 400, msg: "errors", data: error });
+          console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
+          return res.json({ status: 400, msg: 'errors', data: error });
         }
 
         var txs = [];
@@ -591,38 +590,38 @@ exports.getTransactions = async function (req, res) {
           // var tx = await getTxDetailsFunc(row.txid);
           // if (tx) txs.push(tx);
           try {
-            var tx = await promisify("getrawtransaction", [rows[i].txid, 1]);
+            var tx = await promisify('getrawtransaction', [rows[i].txid, 1]);
             txs.push(tx);
           } catch (error) {
-            console.log("get transaction error: ", error);
+            console.log('get transaction error: ', error);
           }
         }
         return res.json({
           status: 200,
-          msg: "success",
+          msg: 'success',
           data: { total, result: txs }
         });
       });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 /**
  * GET /address/txs/:address
  * Get tx list from address
- * 
+ *
  * @param {String} asset: "0xc56f33fc6ecfcd0c225c4ab356fee59390af8560be0e930faebe74a6daff7c9b"
  * @param {String} address: "AQVh2pG732YvtNaxEGkQUei3YA4cvo7d2i"
  * @param {Number} offset: 0
  * @param {Number} count: 10
  * @param {Boolean} order: If 0, newest order. If 1, oldest order.
- * 
+ *
  * @return
- * { "status": "200", "msg": "success", 
+ * { "status": "200", "msg": "success",
  *   "data": { "total": total, "txs": [tx] }
  * }
- * 
+ *
  * total: Number
  * tx: {
         "_id": "5afa852c31a9a73db264d7ff",
@@ -648,13 +647,13 @@ exports.getAddressTransactions = async function (req, res) {
   var order = Number(req.query.order);
 
   // validation
-  if (!address || address == "")
-    return res.json({ status: 400, msg: "address is empty !" });
+  if (!address || address == '')
+    return res.json({ status: 400, msg: 'address is empty !' });
   if (!offset) offset = 0;
   if (!count || count == 0) count = 10;
 
   var cond;
-  if (!asset || asset == "") cond = { address };
+  if (!asset || asset == '') cond = { address };
   else cond = { asset, address };
 
   if (order) order = { time: 1 };
@@ -683,14 +682,14 @@ exports.getAddressTransactions = async function (req, res) {
     }
     return res.json({
       status: 200,
-      msg: "success",
+      msg: 'success',
       data: { total, result }
     });
   } catch (error) {
     // return res.json({ status: 400, msg: "error occured !" });
     return res.json({
       status: 200,
-      msg: "success",
+      msg: 'success',
       data: { total: 0, result: [] }
     });
   }
@@ -703,52 +702,52 @@ exports.getSearch = async (req, res) => {
     if (key.length < 10) {
       // block process
       var block = await promisify('getblock', [Number(key), 1]);
-      if (block) return res.json({ status: 200, msg: "sccuess", data: { type: 'block' } });
+      if (block) return res.json({ status: 200, msg: 'sccuess', data: { type: 'block' } });
     } else if (key.length >= 25 && key.length <= 34) {
       // address process
-      return res.json({ status: 200, msg: "sccuess", data: { type: 'address' } });
+      return res.json({ status: 200, msg: 'sccuess', data: { type: 'address' } });
     } else if (key.length >= 64 && key.length <= 66) { // block or txid process
       try {
-        var tx = await promisify("getrawtransaction", [key, 1]);
-        if (tx) return res.json({ status: 200, msg: "sccuess", data: { type: 'transaction' } });
+        var tx = await promisify('getrawtransaction', [key, 1]);
+        if (tx) return res.json({ status: 200, msg: 'sccuess', data: { type: 'transaction' } });
       } catch (error) { }
 
       // block details
       try {
         var block = await promisify('getblock', [key, 1]);
-        if (block) return res.json({ status: 200, msg: "sccuess", data: { type: 'block' } });
+        if (block) return res.json({ status: 200, msg: 'sccuess', data: { type: 'block' } });
       } catch (error) { }
     }
-    return res.json({ status: 400, msg: "search key is not correct !" });
+    return res.json({ status: 400, msg: 'search key is not correct !' });
   } catch (error) {
-    return res.json({ status: 400, msg: "errors", data: error });
+    return res.json({ status: 400, msg: 'errors', data: error });
   }
 };
 
 exports.getMonitor = async (req, res) => {
-  return res.json({ status: 200, msg: "success", data: "Server is working now !" });
+  return res.json({ status: 200, msg: 'success', data: 'Server is working now !' });
 };
 
 exports.getMonitorDb = async (req, res) => {
   try {
-    if (require("mongoose").connection.readyState)
-      return res.json({ status: 200, msg: "success", data: "Db is working now !" });
+    if (require('mongoose').connection.readyState)
+      return res.json({ status: 200, msg: 'success', data: 'Db is working now !' });
 
     throw new Error('db error');
   } catch (err) {
-    return res.status(400).json({ status: 400, msg: "errors", data: "Db is not working now !" });
+    return res.status(400).json({ status: 400, msg: 'errors', data: 'Db is not working now !' });
   }
 };
 
 exports.getMonitorRpc = async (req, res) => {
   try {
-    client.call("getblockcount", [], function (err, result) {
+    client.call('getblockcount', [], function (err, result) {
       if (err) {
-        return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+        return res.status(400).json({ status: 400, msg: 'errors', data: err.toString() });
       }
-      return res.json({ status: 200, msg: "sccuess", data: result });
+      return res.json({ status: 200, msg: 'sccuess', data: result });
     });
   } catch (err) {
-    return res.status(400).json({ status: 400, msg: "errors", data: err.toString() });
+    return res.status(400).json({ status: 400, msg: 'errors', data: err.toString() });
   }
 };

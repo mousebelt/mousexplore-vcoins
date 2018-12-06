@@ -1,35 +1,37 @@
-var _ = require("lodash");
+const _ = require('lodash');
 
-var config = require("../config");
-var localNode = config.localNode;
+const config = require('../config');
+// const localNode = config.localNode;
 
-var ParellelInofModel = require("../model/parellelinfo");
-var TransactionModel = require("../model/transactions");
-var UtxoModel = require("../model/utxo");
+const ParellelInofModel = require('../model/parellelinfo');
+const TransactionModel = require('../model/transactions');
+const UtxoModel = require('../model/utxo');
 
-var UtilsModule = require("../modules/utils");
+const UtilsModule = require('../modules/utils');
 
-var fs = require('fs');
-var Log = require('log'),
-  log = new Log('debug', fs.createWriteStream('./cron.debug.log', { flags: 'a' }));
+const fs = require('fs');
+const Log = require('log');
+const log = new Log('debug', fs.createWriteStream('./cron.debug.log', { flags: 'a' }));
 // log = new Log('debug');
 
 function filelog(...params) {
   log.info(...params);
-};
+}
 
-var promisify = UtilsModule.promisify;
+const promisify = UtilsModule.promisify;
 
-/////////////////////////////////////////////////////////////////////////////////////
-var parellel_blocks = [];
+// ///////////////////////////////////////////////////////////////////////////////////
+const parellelBlocks = [];
+let gLastCheckedNumber = 0;
+let gTicker = 1;
 
 async function loadParellInfo() {
   try {
-    var piRows = await ParellelInofModel.find().limit(config.CHECK_PARELLEL_BLOCKS);
+    const piRows = await ParellelInofModel.find().limit(config.CHECK_PARELLEL_BLOCKS);
     if (piRows && piRows.length > 0) {
       for (let i = 0; i < piRows.length; i++) {
-        var row = piRows[i];
-        parellel_blocks[row.index] = {
+        const row = piRows[i];
+        parellelBlocks[row.index] = {
           blocknumber: row.blocknumber,
           total_txs: row.total_txs,
           synced_index: row.synced_index,
@@ -37,29 +39,27 @@ async function loadParellInfo() {
         };
       }
     }
-  }
-  catch (e) {
-    filelog("loadParellInfo error: ", e);
+  } catch (e) {
+    filelog('loadParellInfo error: ', e);
   }
 }
 
 async function initParellInfo() {
   try {
-    var rowCount = await ParellelInofModel.find().count();
+    const rowCount = await ParellelInofModel.find().count();
     if (rowCount < 50) {
       for (let i = 0; i < 50; i++) {
-        var row = new ParellelInofModel({
+        const row = new ParellelInofModel({
           index: i,
           blocknumber: -1,
           total_txs: 0,
-          synced_index: 0,	//synced transactions
+          synced_index: 0,	// synced transactions
         });
         await row.save();
       }
     }
-  }
-  catch (e) {
-    filelog("initParellInfo error: ", e);
+  } catch (e) {
+    filelog('initParellInfo error: ', e);
   }
 }
 
@@ -67,26 +67,26 @@ async function saveParellelInfo(threadIndex) {
   try {
     await ParellelInofModel.findOneAndUpdate({ index: threadIndex }, {
       index: threadIndex,
-      blocknumber: parellel_blocks[threadIndex].blocknumber,
-      total_txs: parellel_blocks[threadIndex].total_txs,
-      synced_index: parellel_blocks[threadIndex].synced_index
+      blocknumber: parellelBlocks[threadIndex].blocknumber,
+      total_txs: parellelBlocks[threadIndex].total_txs,
+      synced_index: parellelBlocks[threadIndex].synced_index
     }, { upsert: true });
 
     // var info = await ParellelInofModel.findOne({ index: threadIndex });
 
     // if (info) {
     //   info.set({
-    //     blocknumber: parellel_blocks[threadIndex].blocknumber,
-    //     total_txs: parellel_blocks[threadIndex].total_txs,
-    //     synced_index: parellel_blocks[threadIndex].synced_index
+    //     blocknumber: parellelBlocks[threadIndex].blocknumber,
+    //     total_txs: parellelBlocks[threadIndex].total_txs,
+    //     synced_index: parellelBlocks[threadIndex].synced_index
     //   });
     // }
     // else {
     //   info = new ParellelInofModel({
     //     index: threadIndex,
-    //     blocknumber: parellel_blocks[threadIndex].blocknumber,
-    //     total_txs: parellel_blocks[threadIndex].total_txs,
-    //     synced_index: parellel_blocks[threadIndex].synced_index
+    //     blocknumber: parellelBlocks[threadIndex].blocknumber,
+    //     total_txs: parellelBlocks[threadIndex].total_txs,
+    //     synced_index: parellelBlocks[threadIndex].synced_index
     //   });
     // }
     // await info.save();
@@ -99,10 +99,10 @@ function getNextBlockNum(lastnumber) {
   try {
     if (!lastnumber) return -1;
 
-    var blocknum = -1;
+    let blocknum = -1;
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
-      if (parellel_blocks[i] && blocknum < parellel_blocks[i].blocknumber) {
-        blocknum = parellel_blocks[i].blocknumber;
+      if (parellelBlocks[i] && blocknum < parellelBlocks[i].blocknumber) {
+        blocknum = parellelBlocks[i].blocknumber;
       }
     }
 
@@ -119,6 +119,120 @@ function getNextBlockNum(lastnumber) {
   }
 }
 
+async function CheckUpdatedTransactions(threadIndex, blockdata) {
+  try {
+    const txnCount = blockdata.tx.length;
+
+    for (let i = parellelBlocks[threadIndex].synced_index; i < txnCount; i++) {
+      const tx = blockdata.tx[i];
+      const { txid, size, type, version, vin, vout, sys_fee, net_fee, nonce } = tx;
+
+      // Get vin details
+      const vinDetails = [];
+      for (let j = 0; j < vin.length; j++) {
+        let item = vin[j];
+        if (vin[j].txid && vin[j].vout >= 0) {
+          let inTxInfo = await TransactionModel.findOne({ txid: vin[j].txid });
+          if (inTxInfo) inTxInfo = inTxInfo.vout[vin[j].vout];
+          else inTxInfo = await UtilsModule.getTxOutFunc(vin[j].txid, vin[j].vout);
+
+          if (inTxInfo) item = _.merge({}, item, inTxInfo);
+          else throw Error(`txout function error. txid: ${vin[j].txid}, vout: ${vin[j].vout}`);
+        }
+        vinDetails.push(item);
+      }
+
+      // //////////////////////////////////////////
+      // Save Transaction Info
+      // //////////////////////////////////////////
+      let txRow = await TransactionModel.findOne({ txid });
+      if (!txRow) {
+        txRow = new TransactionModel({
+          txid, size, type, version, vin, vout, sys_fee, net_fee, nonce,
+          blockIndex: blockdata.index,
+          blockTime: blockdata.time,
+          assets: [],
+        });
+      }
+      for (let j = 0; j < vinDetails.length; j++) {
+        const item = vinDetails[j];
+        if (!item.asset) continue;
+
+        // save asset to transaction
+        if (_.indexOf(txRow.assets, item.asset) === -1) txRow.assets.push(item.asset);
+      }
+      for (let j = 0; j < vout.length; j++) {
+        const item = vout[j];
+        if (!item.asset) continue;
+
+        // save asset to transaction
+        if (_.indexOf(txRow.assets, item.asset) === -1) txRow.assets.push(item.asset);
+      }
+      await txRow.save();
+
+      // //////////////////////////////////////////
+      // Save Address Info
+      // //////////////////////////////////////////
+      if (vout && vout.length > 0) {
+        for (let j = 0; j < vout.length; j++) {
+          const { asset, address } = vout[j];
+          const value = Number(vout[j].value);
+          if (!asset || !address || !value) continue;
+          // Save vout Info
+          let utxoRow = await UtxoModel.findOne({ txid, index: j });
+          if (!utxoRow) {
+            utxoRow = new UtxoModel({
+              txid,
+              index: j,
+              address,
+              asset,
+              amount: value,
+              time: blockdata.time,
+              createdAtBlock: blockdata.index
+            });
+            await utxoRow.save();
+          }
+        }
+      }
+
+      const inN = vout.length;
+
+      if (vinDetails && vinDetails.length > 0) {
+        for (let j = 0; j < vinDetails.length; j++) {
+          const item = vinDetails[j];
+          const { asset, address } = item;
+          const value = Number(item.value);
+          if (!asset || !address || !value) continue;
+          const index = inN + j;
+          // Save vout Info
+          let utxoRow = await UtxoModel.findOne({ txid, index });
+          if (!utxoRow) {
+            utxoRow = new UtxoModel({
+              txid,
+              index,
+              address,
+              asset,
+              amount: 0 - value,
+              time: blockdata.time,
+              createdAtBlock: blockdata.index
+            });
+            await utxoRow.save();
+          }
+        }
+      }
+      parellelBlocks[threadIndex].synced_index = i + 1;
+
+      // save
+      await saveParellelInfo(threadIndex);
+    }
+    parellelBlocks[threadIndex].inprogressing = false;
+  } catch (e) {
+    filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
+    parellelBlocks[threadIndex].inprogressing = false;
+    // return;
+  }
+}
+
 /*
  * Distribute blocks to process threads(promise).
  * If a thread finished process, build new process for new block.
@@ -126,197 +240,81 @@ function getNextBlockNum(lastnumber) {
 async function distributeBlocks() {
   try {
     for (let i = 0; i < config.CHECK_PARELLEL_BLOCKS; i++) {
-      //if a thread is finished
-      // if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs == parellel_blocks[i].synced_index)) {
-      if (!parellel_blocks[i].inprogressing && (parellel_blocks[i].total_txs <= parellel_blocks[i].synced_index) && parellel_blocks[i].total_txs > -1) {
+      // if a thread is finished
+      // if (!parellelBlocks[i].inprogressing && (parellelBlocks[i].total_txs == parellelBlocks[i].synced_index)) {
+      if (
+        !parellelBlocks[i].inprogressing
+        && (parellelBlocks[i].total_txs <= parellelBlocks[i].synced_index)
+        && parellelBlocks[i].total_txs > -1
+      ) {
 
-        let nextnumber = getNextBlockNum(g_lastCheckedNumber);
-        if (nextnumber == -1)
-          continue;
+        const nextnumber = getNextBlockNum(gLastCheckedNumber);
+        if (nextnumber === -1) continue;
 
-        parellel_blocks[i] = {
+        parellelBlocks[i] = {
           blocknumber: nextnumber,
           total_txs: -1,
           synced_index: 0,
           inprogressing: true
-        }
+        };
         await saveParellelInfo(i);
         promisify('getblock', [nextnumber, 1])
           .then(async (blockdata) => {
             try {
-              parellel_blocks[i] = {
+              parellelBlocks[i] = {
                 blocknumber: nextnumber,
                 total_txs: blockdata.tx.length,
                 synced_index: 0,
                 inprogressing: true
-              }
+              };
               await saveParellelInfo(i);
               await CheckUpdatedTransactions(i, blockdata);
             } catch (error) {
-              parellel_blocks[i].inprogressing = false;
+              parellelBlocks[i].inprogressing = false;
             }
           })
-          .catch(err => {
+          .catch(err => { // eslint-disable-line
             // filelog("distributeBlocks fails for getblockhash of block: " + nextnumber, err);
-            parellel_blocks[i].inprogressing = false;
+            parellelBlocks[i].inprogressing = false;
             // return;
-          })
-      }
-      else {
-        if (!parellel_blocks[i].inprogressing) {
-          promisify('getblock', [parellel_blocks[i].blocknumber, 1])
+          });
+      } else {
+        if (!parellelBlocks[i].inprogressing) {
+          promisify('getblock', [parellelBlocks[i].blocknumber, 1])
             .then(async (blockdata) => {
               try {
-                parellel_blocks[i].inprogressing = true;
-                if (parellel_blocks[i].total_txs != blockdata.tx.length) {
-                  parellel_blocks[i].total_txs = blockdata.tx.length;
+                parellelBlocks[i].inprogressing = true;
+                if (parellelBlocks[i].total_txs !== blockdata.tx.length) {
+                  parellelBlocks[i].total_txs = blockdata.tx.length;
                   await saveParellelInfo(i);
                 }
                 await CheckUpdatedTransactions(i, blockdata);
               } catch (error) {
-                parellel_blocks[i].inprogressing = false;
+                parellelBlocks[i].inprogressing = false;
               }
             })
-            .catch(err => {
-              // filelog("distributeBlocks fails for getblockhash of block (else): " + parellel_blocks[i].blocknumber, err);
-              parellel_blocks[i].inprogressing = false;
+            .catch(err => { // eslint-disable-line
+              // filelog("distributeBlocks fails for getblockhash of block (else): " + parellelBlocks[i].blocknumber, err);
+              parellelBlocks[i].inprogressing = false;
               // return;
             });
         }
       }
     }
   } catch (e) {
-    filelog("distributeBlocks fails: ", e)
+    filelog('distributeBlocks fails: ', e);
   }
 }
-
-async function CheckUpdatedTransactions(threadIndex, blockdata) {
-  try {
-    var txnCount = blockdata.tx.length;
-
-    for (let i = parellel_blocks[threadIndex].synced_index; i < txnCount; i++) {
-      let tx = blockdata.tx[i];
-      let { txid, size, type, version, vin, vout, sys_fee, net_fee, nonce } = tx;
-
-      // Get vin details
-      var vinDetails = [];
-      for (let j = 0; j < vin.length; j++) {
-        var item = vin[j];
-        if (vin[j].txid && vin[j].vout >= 0) {
-          var inTxInfo = await TransactionModel.findOne({ txid: vin[j].txid });
-          if (inTxInfo) inTxInfo = inTxInfo.vout[vin[j].vout];
-          else inTxInfo = await UtilsModule.getTxOutFunc(vin[j].txid, vin[j].vout);
-
-          if (inTxInfo) item = _.merge({}, item, inTxInfo);
-          else throw `txout function error. txid: ${vin[j].txid}, vout: ${vin[j].vout}`;
-        }
-        vinDetails.push(item);
-      }
-
-      ////////////////////////////////////////////
-      // Save Transaction Info
-      ////////////////////////////////////////////
-      {
-        var txRow = await TransactionModel.findOne({ txid });
-        if (!txRow) {
-          txRow = new TransactionModel({
-            txid, size, type, version, vin, vout, sys_fee, net_fee, nonce,
-            blockIndex: blockdata.index,
-            blockTime: blockdata.time,
-            assets: [],
-          });
-        }
-        for (let j = 0; j < vinDetails.length; j++) {
-          var item = vinDetails[j];
-          if (!item.asset) continue;
-
-          // save asset to transaction
-          if (_.indexOf(txRow.assets, item.asset) == -1) txRow.assets.push(item.asset);
-        }
-        for (let j = 0; j < vout.length; j++) {
-          var item = vout[j];
-          if (!item.asset) continue;
-
-          // save asset to transaction
-          if (_.indexOf(txRow.assets, item.asset) == -1) txRow.assets.push(item.asset);
-        }
-        await txRow.save();
-      }
-
-      ////////////////////////////////////////////
-      // Save Address Info
-      ////////////////////////////////////////////
-      if (vout && vout.length > 0) {
-        for (let j = 0; j < vout.length; j++) {
-          let { asset, address } = vout[j];
-          var value = Number(vout[j].value);
-          if (!asset || !address || !value) continue;
-          // Save vout Info
-          var utxoRow = await UtxoModel.findOne({ txid, index: j });
-          if (!utxoRow) {
-            utxoRow = new UtxoModel({
-              txid,
-              index: j,
-              address: address,
-              asset,
-              amount: value,
-              time: blockdata.time,
-              createdAtBlock: blockdata.index
-            })
-            await utxoRow.save();
-          }
-        }
-      }
-
-      var in_n = vout.length;
-
-      if (vinDetails && vinDetails.length > 0) {
-        for (let j = 0; j < vinDetails.length; j++) {
-          var item = vinDetails[j];
-          let { asset, address } = item;
-          var value = Number(item.value);
-          if (!asset || !address || !value) continue;
-          var index = in_n + j;
-          // Save vout Info
-          var utxoRow = await UtxoModel.findOne({ txid, index });
-          if (!utxoRow) {
-            utxoRow = new UtxoModel({
-              txid,
-              index,
-              address: address,
-              asset,
-              amount: 0 - value,
-              time: blockdata.time,
-              createdAtBlock: blockdata.index
-            })
-            await utxoRow.save();
-          }
-        }
-      }
-      parellel_blocks[threadIndex].synced_index = i + 1;
-
-      // save
-      await saveParellelInfo(threadIndex);
-    }
-    parellel_blocks[threadIndex].inprogressing = false;
-  }
-  catch (e) {
-    filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
-    parellel_blocks[threadIndex].inprogressing = false;
-    // return;
-  }
-}
-
-var g_lastCheckedNumber = 0;
-var g_ticker = 1;
 
 async function transactionService() {
-  g_ticker--;
-  if (g_ticker <= 0) {
+  gTicker--;
+  if (gTicker <= 0) {
     try {
-      g_lastCheckedNumber = await promisify("getblockcount", []);
-      g_ticker = config.TICKER_BLOCK;
-    } catch (error) { }
+      gLastCheckedNumber = await promisify('getblockcount', []);
+      gTicker = config.TICKER_BLOCK;
+    } catch (error) {
+      // console.log(error);
+    }
   }
 
   distributeBlocks();
@@ -324,7 +322,7 @@ async function transactionService() {
 }
 
 exports.start_cronService = async function () {
-  require('./init.db').start();
+  require('./init.db').start(); // eslint-disable-line
 
   await initParellInfo();
   await loadParellInfo();

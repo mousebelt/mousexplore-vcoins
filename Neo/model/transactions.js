@@ -1,6 +1,6 @@
-var mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
-var transactionSchema = new mongoose.Schema({
+const transactionSchema = new mongoose.Schema({
   txid: String,
   size: Number,
   type: String,
@@ -39,5 +39,5 @@ transactionSchema.index({
   blockTime: 1
 });
 
-var Transaction = mongoose.model("Transaction", transactionSchema);
+const Transaction = mongoose.model('Transaction', transactionSchema);
 module.exports = Transaction;

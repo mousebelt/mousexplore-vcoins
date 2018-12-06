@@ -1,10 +1,10 @@
-var rpc = require("json-rpc2");
-var client = rpc.Client.$create(
-  "10332", // RPC_PORT
-  "127.0.0.1", // RPC_HOST
+const rpc = require('json-rpc2'); // eslint-disable-line
+const client = rpc.Client.$create(
+  '10332', // RPC_PORT
+  '127.0.0.1', // RPC_HOST
 );
 
-var neo = require('neo-api');
+const neo = require('neo-api'); // eslint-disable-line
 const localNode = neo.node('http://localhost:10332');
 
 module.exports = {
@@ -13,10 +13,10 @@ module.exports = {
 
   port: 8080,
 
-  db: "mongodb://localhost:27017/neo-db",
+  db: 'mongodb://localhost:27017/neo-db',
 
-  ADDR_CRON_TIME_INTERVAL: 100,	//if we decrease this to 100ms, cronservice has trouble after some time.
-  CRON_TIME_INTERVAL: 1000,	//if we decrease this to 100ms, cronservice has trouble after some time.
-  CHECK_PARELLEL_BLOCKS: 10, //thread count for parellel block processing
+  ADDR_CRON_TIME_INTERVAL: 100,	// if we decrease this to 100ms, cronservice has trouble after some time.
+  CRON_TIME_INTERVAL: 1000,	// if we decrease this to 100ms, cronservice has trouble after some time.
+  CHECK_PARELLEL_BLOCKS: 10, // thread count for parellel block processing
   TICKER_BLOCK: 50
-}
+};
