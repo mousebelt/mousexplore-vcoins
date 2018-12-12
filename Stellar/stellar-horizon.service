@@ -1,0 +1,23 @@
+[Unit]
+Description=SDF - stellar-horizon
+#Before=multi-user.target
+#PartOf=stellar.service
+
+[Service]
+User=ubuntu
+#Group=stellar
+LimitNOFILE=8192
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=stellar-horizon
+EnvironmentFile=/etc/default/stellar-horizon
+#ExecStart=/usr/bin/stellar-horizon
+ExecStart=/usr/bin/stellar-horizon --db-url=postgres://ubuntu:a@localhost/horizon --stellar-core-db-url=postgres://ubuntu:a@localhost/stellar --stellar-core-url=http://localhost:11626 --ingest=true
+ExecReload=/bin/kill -HUP $MAINPID
+KillMode=process
+Restart=on-failure
+RestartPreventExitStatus=255
+Type=simple
+
+[Install]
+WantedBy=multi-user.target
