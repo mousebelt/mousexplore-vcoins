@@ -1,0 +1,13 @@
+## /etc/default/stellar-horizon
+# NETWORK_PASSPHRASE="Test SDF Network ; September 2015"
+# NETWORK_PASSPHRASE="Public Global Stellar Network ; September 2015"
+DATABASE_URL="dbname=horizon user=ubuntu host=/var/run/postgresql"
+STELLAR_CORE_DATABASE_URL="dbname=stellar user=ubuntu host=/var/run/postgresql"
+STELLAR_CORE_URL="http://127.0.0.1:11626"
+FRIENDBOT_SECRET=
+PORT=8000
+SENTRY_DSN=
+LOGGLY_TOKEN=
+PER_HOUR_RATE_LIMIT=9000
+INGEST=true
+# ingestion is currently only supported on 1 Horizon instance
