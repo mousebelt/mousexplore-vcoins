@@ -169,7 +169,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
             // tokenTo = inputdata.slice(10, 74);
             // tokenTo = tokenTo.replace(/^(0)*/, '');
             tokenTo = inputdata.slice(34, 74);
-            if (tokenTo) tokenTo = `0x${tokenTo}`;
+            if (tokenTo) tokenTo = `0x${tokenTo.toLowerCase()}`;
 
             tokenAmount = inputdata.slice(74, 138);
             tokenAmount = tokenAmount.replace(/^(0)*/, '');
@@ -182,12 +182,12 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
             // tokenFrom = inputdata.slice(10, 74);
             // tokenFrom = tokenFrom.replace(/^(0)*/, '');
             tokenFrom = inputdata.slice(34, 74);
-            if (tokenFrom) tokenFrom = `0x${tokenFrom}`;
+            if (tokenFrom) tokenFrom = `0x${tokenFrom.toLowerCase()}`;
 
             // tokenTo = inputdata.slice(74, 138);
             // tokenTo = tokenTo.replace(/^(0)*/, '');
             tokenTo = inputdata.slice(98, 138);
-            if (tokenTo) tokenTo = `0x${tokenTo}`;
+            if (tokenTo) tokenTo = `0x${tokenTo.toLowerCase()}`;
 
             tokenAmount = inputdata.slice(138, 202);
             tokenAmount = tokenAmount.replace(/^(0)*/, '');

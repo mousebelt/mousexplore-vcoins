@@ -46,7 +46,7 @@ async function getTransactionDetailsFunc(hash) {
         // let to = inputdata.slice(10, 74);
         // to = to.replace(/^(0)*/, '');
         let to = inputdata.slice(34, 74);
-        if (to) to = `0x${to}`;
+        if (to) to = `0x${to.toLowerCase()}`;
 
         let amount = inputdata.slice(74, 138);
 
@@ -59,12 +59,12 @@ async function getTransactionDetailsFunc(hash) {
         // let from = inputdata.slice(10, 74);
         // from = from.replace(/^(0)*/, '');
         let from = inputdata.slice(34, 74);
-        if (from) from = `0x${from}`;
+        if (from) from = `0x${from.toLowerCase()}`;
 
         // let to = inputdata.slice(74, 138);
         // to = to.replace(/^(0)*/, '');
         let to = inputdata.slice(98, 138);
-        if (to) to = `0x${to}`;
+        if (to) to = `0x${to.toLowerCase()}`;
 
         let amount = inputdata.slice(138, 202);
         amount = amount.replace(/^(0)*/, '');
