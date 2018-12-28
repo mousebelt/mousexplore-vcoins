@@ -43,22 +43,30 @@ async function getTransactionDetailsFunc(hash) {
       const methodid = inputdata.slice(0, 10);
       if (methodid === '0xa9059cbb') {
 
-        let to = inputdata.slice(10, 74);
+        // let to = inputdata.slice(10, 74);
+        // to = to.replace(/^(0)*/, '');
+        let to = inputdata.slice(34, 74);
+        if (to) to = `0x${to}`;
+
         let amount = inputdata.slice(74, 138);
 
-        to = to.replace(/^(0)*/, '');
         amount = amount.replace(/^(0)*/, '');
         amount = parseInt(`0x${amount}`, 16);
         amount = amount / Math.pow(10, token.decimal);
 
         transaction.txtoken = { symbol: token.symbol, from: txreceipt.from, to, amount };
       } else if (methodid === '0x23b872dd') {
-        let from = inputdata.slice(10, 74);
-        let to = inputdata.slice(74, 138);
-        let amount = inputdata.slice(138, 202);
+        // let from = inputdata.slice(10, 74);
+        // from = from.replace(/^(0)*/, '');
+        let from = inputdata.slice(34, 74);
+        if (from) from = `0x${from}`;
 
-        from = from.replace(/^(0)*/, '');
-        to = to.replace(/^(0)*/, '');
+        // let to = inputdata.slice(74, 138);
+        // to = to.replace(/^(0)*/, '');
+        let to = inputdata.slice(98, 138);
+        if (to) to = `0x${to}`;
+
+        let amount = inputdata.slice(138, 202);
         amount = amount.replace(/^(0)*/, '');
         amount = parseInt(`0x${amount}`, 16);
         amount = amount / Math.pow(10, token.decimal);

@@ -166,8 +166,9 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
           const methodid = inputdata.slice(0, 10);
           if (methodid === '0xa9059cbb') {
             tokenSymbol = token.symbol;
-            tokenTo = inputdata.slice(10, 74);
-            tokenTo = tokenTo.replace(/^(0)*/, '');
+            // tokenTo = inputdata.slice(10, 74);
+            // tokenTo = tokenTo.replace(/^(0)*/, '');
+            tokenTo = inputdata.slice(34, 74);
             if (tokenTo) tokenTo = `0x${tokenTo}`;
 
             tokenAmount = inputdata.slice(74, 138);
@@ -178,11 +179,14 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
             tokenFrom = txnReceipt.from;
           } else if (methodid === '0x23b872dd') {
             tokenSymbol = token.symbol;
-            tokenFrom = inputdata.slice(10, 74);
-            tokenFrom = tokenFrom.replace(/^(0)*/, '');
+            // tokenFrom = inputdata.slice(10, 74);
+            // tokenFrom = tokenFrom.replace(/^(0)*/, '');
+            tokenFrom = inputdata.slice(34, 74);
+            if (tokenFrom) tokenFrom = `0x${tokenFrom}`;
 
-            tokenTo = inputdata.slice(74, 138);
-            tokenTo = tokenTo.replace(/^(0)*/, '');
+            // tokenTo = inputdata.slice(74, 138);
+            // tokenTo = tokenTo.replace(/^(0)*/, '');
+            tokenTo = inputdata.slice(98, 138);
             if (tokenTo) tokenTo = `0x${tokenTo}`;
 
             tokenAmount = inputdata.slice(138, 202);
