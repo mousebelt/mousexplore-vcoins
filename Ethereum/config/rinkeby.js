@@ -9,6 +9,6 @@ const tokens = [
 
 const config = {
   tokens,
-  provider: 'http://127.0.0.1:8545',
+  db: 'mongodb://localhost:27017/ethereum-rinkeby-db',
 };
 module.exports = config;

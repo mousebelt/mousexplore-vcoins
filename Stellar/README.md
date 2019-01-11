@@ -171,9 +171,9 @@ Maybe only for getting transaction history, we don't need main net setting
 
 # Run Vcoins
 
-## Run stellar-core daemon
-## Run horizon daemon
-## Run project
-- configure project (config/index.js)  
-- npm install  
-- pm2 start index.js  
+1. Run stellar-core daemon
+1. Run horizon daemon
+1. Run project
+    - configure project (config/index.js)  
+    - npm install  
+    - pm2 start index.js --name stellar-vcoins

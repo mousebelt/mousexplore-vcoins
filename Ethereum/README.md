@@ -39,23 +39,14 @@ https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 
 # Run Vcoins
 
-## Run geth daemon
-## Run mongod
-
-## Run project
-
-Start the server in mainnet mode:
-
-`sudo pm2 start --env mainnet pm2.json`
-
-Start the server in ropsten-testnet mode:
-
-`sudo pm2 start --env testnet pm2.json`
-
-Start the server in rinkeby-testnet mode:
-
-`sudo pm2 start --env rinkeby pm2.json`
-
-To restart the server, run:
-
-`sudo pm2 restart ethereum-vcoins`
+1. Run geth daemon
+1. Run mongod
+1. Run project
+    - Start the server in mainnet mode:
+    `pm2 start --env mainnet pm2.json`
+    - Start the server in ropsten-testnet mode:
+    `pm2 start --env testnet pm2.json`
+    - Start the server in rinkeby-testnet mode:
+    `pm2 start --env rinkeby pm2.json`
+    - To restart the server, run:
+    `pm2 restart ethereum-vcoins`
