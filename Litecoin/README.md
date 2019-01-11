@@ -24,9 +24,12 @@ rpcport=28332
 
 # Run Vcoins
 
-## Run geth daemon
-## Run mongod
-## Run project
-- configure project (config/index.js)  
-- npm install  
-- pm2 start index.js  
+1. Run litecoin daemon
+1. Run mongod
+1. Configure project
+    - configure project (config/index.js)  
+1. Run project
+    - Start the server in mainnet mode:
+    `pm2 start pm2.json`
+    - Start the server in testnet mode:
+    `pm2 start --env testnet pm2.json`

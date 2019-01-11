@@ -8,6 +8,7 @@ const tokens = [
 ];
 
 const config = {
+  db: 'mongodb://localhost:27017/ethereum-ropsten-db',
   tokens
 };
 module.exports = config;

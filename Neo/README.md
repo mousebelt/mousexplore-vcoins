@@ -66,9 +66,9 @@ http://docs.neo.org/en-us/node/cli.html
 
 # Run Vcoins
 
-## Run neo daemon
-## Run mongod
-## Run project
-- configure project (config/index.js)  
-- npm install  
-- pm2 start index.js  
+1. Run neo daemon
+1. Run mongod
+1. Run project
+    - configure project (config/index.js)  
+    - npm install  
+    - pm2 start index.js --name neo-vcoins

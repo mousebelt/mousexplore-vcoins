@@ -11,13 +11,13 @@ After cloning this repository, switch to the folder you would like to use and fo
 ```
 npm install
 sudo npm install -g pm2
-sudo pm2 start index.js --name vcoins
+pm2 start index.js --name vcoins
 ```
 
 Then, whenever you need to restart the vcoins instance, you can run:
 
 ```
-sudo pm2 restart vcoins
+pm2 restart vcoins
 ```
 
 To view more detailed documentation regarding the API, check out the [API documentation](https://github.com/norestlabs/mousexplore-vcoins/wiki). To see more info on project setup, click the link in question above for detailed setup instructions.

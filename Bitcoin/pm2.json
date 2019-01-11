@@ -1,0 +1,13 @@
+{
+  "apps" : [{
+    "name"        : "bitcoin-vcoins",
+    "script"      : "index.js",
+    "watch"       : true,
+    "env": {
+      "NODE_ENV": "mainnet"
+    },
+    "env_testnet" : {
+       "NODE_ENV": "testnet"
+    }
+  }]
+}
