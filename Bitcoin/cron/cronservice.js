@@ -50,7 +50,7 @@ async function initParellInfo() {
   try {
     const rowCount = await ParellelInofModel.find().count();
     if (rowCount < 50) {
-      for (let i = 0; i < 50; i++) {
+      for (let i = rowCount; i < 50; i++) {
         const row = new ParellelInofModel({
           index: i,
           blocknumber: -1,
