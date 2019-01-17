@@ -3,8 +3,8 @@
     "name"        : "ethereum-vcoins",
     "script"      : "index.js",
     "watch"       : true,
-    "env": {
-      "NODE_ENV": "testnet"
+    "env_ropsten": {
+      "NODE_ENV": "ropsten"
     },
     "env_mainnet" : {
        "NODE_ENV": "mainnet"

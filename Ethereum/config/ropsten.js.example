@@ -9,6 +9,7 @@ const tokens = [
 
 const config = {
   db: 'mongodb://localhost:27017/ethereum-ropsten-db',
-  tokens
+  tokens,
+  provider: 'http://127.0.0.1:8545',
 };
 module.exports = config;
