@@ -123,8 +123,3 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/node,macos,windows,visualstudiocode
-
-# Config files
-.config/mainnet.js
-.config/rinkeby.js
-.config/ropsten.js
