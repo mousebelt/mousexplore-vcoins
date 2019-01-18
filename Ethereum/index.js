@@ -28,3 +28,4 @@ require('./route/route')(app);
 
 // start crone service
 require('./services/cronservice').start_cronService(); // eslint-disable-line
+require('./services/cron.syncing')();

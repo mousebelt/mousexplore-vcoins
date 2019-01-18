@@ -35,4 +35,5 @@ module.exports = function (app) {
   app.get('/monitor', EthereumController.getMonitor);
   app.get('/monitor/db', EthereumController.getMonitorDb);
   app.get('/monitor/rpc', EthereumController.getMonitorRpc);
+  app.get('/monitor/syncing', EthereumController.getMonitorSyncing);
 };
