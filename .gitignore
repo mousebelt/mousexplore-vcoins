@@ -126,3 +126,8 @@ $RECYCLE.BIN/
 package-lock.json
 
 # End of https://www.gitignore.io/api/node,macos,windows,visualstudiocode
+
+# Ethereum config
+Ethereum/config/mainnet.js
+Ethereum/config/ropsten.js
+Ethereum/config/rinkeby.js
