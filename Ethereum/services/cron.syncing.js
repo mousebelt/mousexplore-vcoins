@@ -9,7 +9,6 @@ function startCron() {
     if (!error) {
       ServiceinfoModel.findOne()
         .then(row => {
-          console.log(row);
           if (!row) new ServiceinfoModel({ lastblock }).save();
           else {
             row.lastblock = lastblock;
