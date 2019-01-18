@@ -8,65 +8,17 @@ const TransactionModel = require('../model/transactions');
 const UtxoModel = require('../model/utxo');
 const AddressModel = require('../model/address');
 const TokenModel = require('../model/token');
-
+const ServiceInfoModel = require('../model/serviceinfo');
 const UtilsModule = require('../modules/utils');
 
 const promisify = UtilsModule.promisify;
-// const getTxOutFunc = UtilsModule.getTxOutFunc;
 const getTxDetailsFunc = UtilsModule.getTxDetailsFunc;
 const getBlockDetailsFunc = UtilsModule.getBlockDetailsFunc;
+const { isOutOfSyncing } = UtilsModule;
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////
 // // RPC Call apis ////
 // /////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// exports.getBalance = async function (req, res) {
-//   var address = req.params.address;
-
-//   // logic
-//   try {
-//     var utxoRows = await UtxoModel.find({ address });
-
-//     var balance = [];
-//     if (utxoRows.length == 0) {
-//       if (address.length >= 25 && address.length <= 34) {
-//         var neo_token = await TokenModel.findOne({ ticker: "NEO" });
-//         balance.push({
-//           asset: neo_token.asset,
-//           value: 0,
-//           token: neo_token,
-//           ticker: neo_token.ticker
-//         })
-//         return res.json({ status: 200, msg: "success", data: { address, balance } });
-//       } else return res.json({ status: 400, msg: "Invalid address !" });
-//     }
-
-//     var tokenRows = await TokenModel.find({});
-
-//     for (let i = 0; i < utxoRows.length; i++) {
-//       let { asset, amount, createdAtBlock } = utxoRows[i];
-
-//       var _index = _.findIndex(balance, function (o) { return o.asset == asset; });
-//       if (_index == -1) {
-//         var item = {};
-//         item.asset = asset;
-//         item.value = amount;
-
-//         var tokenRow = _.find(tokenRows, { asset });
-//         if (tokenRow) {
-//           item.token = tokenRow;
-//           item.ticker = tokenRow.ticker;
-//         }
-//         balance.push(item);
-//       } else {
-//         balance[_index].value += amount;
-//       }
-//     }
-//     return res.json({ status: 200, msg: 'success', data: { address, balance } });
-//   } catch (error) {
-//     return res.json({ status: 400, msg: "error occured !" });
-//   }
-// };
 
 exports.getBalance = async function (req, res) {
   const address = req.params.address;
@@ -749,5 +701,31 @@ exports.getMonitorRpc = async (req, res) => {
     });
   } catch (err) {
     return res.status(400).json({ status: 400, msg: 'errors', data: err.toString() });
+  }
+};
+
+exports.getMonitorSyncing = async (req, res) => {
+  try {
+    return client.call('getblockcount', [], (err, lastblock) => {
+      if (err) {
+        return res.status(400).send({ result: 'error', msg: 'Rpc error occurred', error: err.toString() });
+      }
+
+      return ServiceInfoModel.findOne()
+        .then(row => {
+          if (row) {
+            if ((lastblock === row.lastblock) && isOutOfSyncing(row.updatedAt)) {
+              return res.status(400).send({ result: 'error', msg: 'Out of syncing' });
+            }
+
+            return res.status(200).send({ result: 'ok' });
+          }
+          return res.status(400).send({ result: 'error', msg: 'Db error occurred' });
+        })
+        .catch(err => res.status(400).send({ result: 'error', msg: 'Db error occurred', error: err.toString() })); // eslint-disable-line
+
+    });
+  } catch (error) {
+    return res.status(400).send({ result: 'error', msg: 'Error occurred', error: error.toString() });
   }
 };
