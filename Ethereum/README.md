@@ -7,10 +7,14 @@ This is the MouseXplore Vcoins Ethereum.
 
 # Environment
 * install node
-* install mongod
+* install mongodb
 * npm install
+* setup local geth or alchemy provider
+* update config
 
 # Install Ethereum node
+https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
+
 ## testnet
 screen
 >geth --testnet --networkid=3 –-syncmode=fast –-cache=1024 console --rpcapi eth,web3,personal,net,db
@@ -18,10 +22,6 @@ screen
 >ctrl+a and d will detach from new console.
 
 ## run as service
-
-https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
-
-# Public Rest API for Ethereum Node
  
 * using systemctl
  
@@ -35,12 +35,20 @@ https://medium.com/pactum/geth-node-via-ubuntu-quick-start-90e6cfea7a62
 ***
  
 * attach
->geth attach ipc:/root/.ethereum/testnet/geth.ipc
+>geth attach http://localhost:8545
 
 # Run Vcoins
 
 1. Run geth daemon
 1. Run mongod
+1. Update config
+    ```
+    cd config
+    cp mainnet.js.example mainnet.js
+    cp ropsten.js.example ropsten.js
+    cp rinkeby.js.example rinkeby.js
+    ```
+    Update config variables in the above file.
 1. Run project
     - Start the server in mainnet mode:
     `pm2 start --env mainnet pm2.json`
