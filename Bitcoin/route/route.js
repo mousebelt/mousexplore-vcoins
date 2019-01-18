@@ -30,6 +30,7 @@ module.exports = function (app) {
   app.get('/monitor', btcController.getMonitor);
   app.get('/monitor/db', btcController.getMonitorDb);
   app.get('/monitor/rpc', btcController.getMonitorRpc);
+  app.get('/monitor/syncing', btcController.getMonitorSyncing);
 
   app.get(`${prefix}/search/:key`, btcController.getSearch);
   app.get(`${prefix}/blocks`, btcController.getBlocks);
