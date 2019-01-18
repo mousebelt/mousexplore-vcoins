@@ -2,18 +2,14 @@
 const _ = require('lodash');
 const config = require('../config');
 const client = config.localNode;
-
 const TransactionModel = require('../model/transactions');
-// const AddressModel = require('../model/address');
 const UtxoModel = require('../model/utxo');
-
+const ServiceInfoModel = require('../model/serviceinfo');
 const UtilsModule = require('../modules/utils');
-
-// var TransactionModel = require('../model/transactions');
-
 const promisify = UtilsModule.promisify;
+const { isOutOfSyncing } = UtilsModule;
 
-// // RPC Call apis ////
+// Rpc apis
 
 exports.getnewaddress = (req, res) => {
   const account = req.body.account;
@@ -460,6 +456,32 @@ exports.getMonitorRpc = async (req, res) => {
     });
   } catch (err) {
     return res.status(400).json({ status: 400, msg: 'errors', data: err.toString() });
+  }
+};
+
+exports.getMonitorSyncing = async (req, res) => {
+  try {
+    return client.call('getblockcount', [], (err, lastblock) => {
+      if (err) {
+        return res.status(400).send({ result: 'error', msg: 'Rpc error occurred', error: err.toString() });
+      }
+
+      return ServiceInfoModel.findOne()
+        .then(row => {
+          if (row) {
+            if ((lastblock === row.lastblock) && isOutOfSyncing(row.updatedAt)) {
+              return res.status(400).send({ result: 'error', msg: 'Out of syncing' });
+            }
+
+            return res.status(200).send({ result: 'ok' });
+          }
+          return res.status(400).send({ result: 'error', msg: 'Db error occurred' });
+        })
+        .catch(err => res.status(400).send({ result: 'error', msg: 'Db error occurred', error: err.toString() })); // eslint-disable-line
+
+    });
+  } catch (error) {
+    return res.status(400).send({ result: 'error', msg: 'Error occurred', error: error.toString() });
   }
 };
 
