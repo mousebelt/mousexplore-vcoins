@@ -72,3 +72,9 @@ exports.promisify = promisify;
 exports.getTxOutFunc = getTxOutFunc;
 exports.getTxDetailsFunc = getTxDetailsFunc;
 exports.getBlockDetailsFunc = getBlockDetailsFunc;
+
+exports.isOutOfSyncing = (curMillis) => {
+  const limit = config.CRON_SYNCING_MINUTES * 60 * 1000;
+  const diff = Date.now - curMillis;
+  return diff > limit;
+};

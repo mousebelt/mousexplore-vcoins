@@ -9,6 +9,8 @@ vcoin apis
 [Get server working status](#get-server-working-status)  
 [Get db working status](#get-db-working-status)  
 [Get rpc working status](#get-rpc-working-status)  
+[Get out of syncing status](#get-out-of-syncing-status)  
+
 [Get latest blocks from offset and count](#get-latest-blocks-from-offset-and-count)  
 [Get transactions by offset, count, order](#get-transactions-by-offset-count-order)  
 [Get block by hash or height](#get-block-by-hash-or-height)  
@@ -81,6 +83,27 @@ status: 400
 { status: 400, msg: 'errors', data: err }
 ```
 
+
+## Get out of syncing status
+```
+ GET /monitor/syncing
+```
+
+* for successed case
+
+status: 200
+```javascript
+{
+    "result": "ok"
+}
+```
+
+* for failed case
+
+status: 400
+```javascript
+{ result: 'error', msg: error_message, error: error_details }
+```
 
 ## Get latest blocks from offset and count
 ```

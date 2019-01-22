@@ -7,6 +7,7 @@ neo-vcoin apis
 [Get server working status](#get-server-working-status)  
 [Get db working status](#get-db-working-status)  
 [Get rpc working status](#get-rpc-working-status)  
+[Get out of syncing status](#get-out-of-syncing-status)  
 
 [get latest blocks from offset, count](#getBlocks)  
 [get transactions by offset, count, order, contract](#getTransactions)  
@@ -343,3 +344,24 @@ hex | String | YES | undefined | raw transaction hex value
 return: { status: 200, msg: 'success', data: result }
 ```
 
+
+## Get out of syncing status
+```
+ GET /monitor/syncing
+```
+
+* for successed case
+
+status: 200
+```javascript
+{
+    "result": "ok"
+}
+```
+
+* for failed case
+
+status: 400
+```javascript
+{ result: 'error', msg: error_message, error: error_details }
+```

@@ -173,8 +173,12 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
 
             tokenAmount = inputdata.slice(74, 138);
             tokenAmount = tokenAmount.replace(/^(0)*/, '');
-            tokenAmount = parseInt(`0x${tokenAmount}`, 16);
-            tokenAmount = tokenAmount / Math.pow(10, token.decimal);
+            if (tokenAmount !== '') {
+              tokenAmount = parseInt(`0x${tokenAmount}`, 16);
+              tokenAmount = tokenAmount / Math.pow(10, token.decimal);
+            } else {
+              tokenAmount = null;
+            }
 
             tokenFrom = txnReceipt.from;
           } else if (methodid === '0x23b872dd') {
@@ -191,10 +195,17 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
 
             tokenAmount = inputdata.slice(138, 202);
             tokenAmount = tokenAmount.replace(/^(0)*/, '');
-            tokenAmount = parseInt(`0x${tokenAmount}`, 16);
-            tokenAmount = tokenAmount / Math.pow(10, token.decimal);
+            if (tokenAmount !== '') {
+              tokenAmount = parseInt(`0x${tokenAmount}`, 16);
+              tokenAmount = tokenAmount / Math.pow(10, token.decimal);
+            } else {
+              tokenAmount = null;
+            }
           }
         }
+
+        // Handle db insert error
+        if (isNaN(tokenAmount)) tokenAmount = null;
 
         await TransactionModel.findOneAndUpdate({ hash }, {
           blocknumber, hash, from, to, value, fee, timestamp,

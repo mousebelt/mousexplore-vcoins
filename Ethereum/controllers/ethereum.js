@@ -5,7 +5,8 @@ const web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 
 const TransactionModel = require('../model/transactions');
 const TokenModel = require('../model/tokens');
-
+const ServiceInfoModel = require('../model/serviceinfo');
+const { isOutOfSyncing } = require('../modules/utils');
 /*
 contract methodid
 dd62ed3e allowance(address,address)
@@ -635,6 +636,24 @@ exports.getMonitorRpc = async (req, res) => {
   } catch (err) {
     return res.status(400).json({ status: 400, msg: 'errors', data: err.toString() });
   }
+};
+
+exports.getMonitorSyncing = async (req, res) => {
+  web3.eth.getBlockNumber((error, lastblock) => {
+    if (error) return res.status(400).send({ result: 'error', msg: 'Web3 error', error: error.toString() });
+    return ServiceInfoModel.findOne()
+      .then(row => {
+        if (row) {
+          if ((lastblock === row.lastblock) && isOutOfSyncing(row.updatedAt)) {
+            return res.status(400).send({ result: 'error', msg: 'Out of syncing' });
+          }
+
+          return res.status(200).send({ result: 'ok' });
+        }
+        return res.status(400).send({ result: 'error', msg: 'Db error occurred' });
+      })
+      .catch(err => res.status(400).send({ result: 'error', msg: 'Db error occurred' })); // eslint-disable-line
+  });
 };
 
 exports.getSentReceivedTxHistory = async (req, res) => {

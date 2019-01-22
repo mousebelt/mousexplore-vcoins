@@ -30,6 +30,7 @@ module.exports = function (app) {
   app.get('/monitor', ltcController.getMonitor);
   app.get('/monitor/db', ltcController.getMonitorDb);
   app.get('/monitor/rpc', ltcController.getMonitorRpc);
+  app.get('/monitor/syncing', ltcController.getMonitorSyncing);
 
   app.get(`${prefix}/search/:key`, ltcController.getSearch);
   app.get(`${prefix}/blocks`, ltcController.getBlocks);
