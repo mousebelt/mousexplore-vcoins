@@ -1,6 +1,5 @@
 // define local node object
 const config = require('../config');
-// const localNode = config.localNode;
 const client = config.client;
 
 const promisify = function promisify(fn, args) {

@@ -1,7 +1,7 @@
 const config = require('../config');
 const ServiceinfoModel = require('../model/serviceinfo');
 const schedule = require('node-schedule');
-const client = config.localNode;
+const { client } = config;
 
 function startCron() {
   try {
