@@ -9,6 +9,8 @@
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "json-rpc2": "^1.0.2",
     "lodash": "^4.17.11",
     "log": "^1.4.0",
     "mongoose": "^5.0.17",

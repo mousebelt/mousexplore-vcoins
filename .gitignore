@@ -131,3 +131,6 @@ package-lock.json
 Ethereum/config/mainnet.js
 Ethereum/config/ropsten.js
 Ethereum/config/rinkeby.js
+
+# Loom config
+Loom/config/mainnet.js
