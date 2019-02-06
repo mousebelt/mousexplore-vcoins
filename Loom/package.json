@@ -1,7 +1,7 @@
 {
-  "name": "mousexplore-vcoins-ethereum",
+  "name": "mousexplore-vcoins-loom",
   "version": "1.0.0",
-  "description": "This is the MouseXplore Vcoins Ethereum.",
+  "description": "This is the MouseXplore Vcoins Loom.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -13,9 +13,10 @@
     "json-rpc2": "^1.0.2",
     "lodash": "^4.17.11",
     "log": "^1.4.0",
+    "loom-js": "^1.40.1",
     "mongoose": "^5.0.17",
     "node-schedule": "^1.3.1",
-    "web3": "1.0.0-beta.34"
+    "web3": "^1.0.0-beta.41"
   },
   "devDependencies": {
     "babel-eslint": "6.1.2",
