@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const ServiceInfoModel = require('../model/serviceinfo');
 const { isOutOfSyncing } = require('../modules/utils');
 const { Client, CryptoUtils, LoomProvider, LocalAddress } = require('loom-js');
-// const Web3 = require('web3');
+const Web3 = require('web3');
 
 const privateKey = CryptoUtils.generatePrivateKey();
 const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey);
@@ -18,7 +18,7 @@ const client = new Client(
 const from = LocalAddress.fromPublicKey(publicKey).toString(); // eslint-disable-line
 const loomProvider = new LoomProvider(client, privateKey);
 // Instantiate web3 client using LoomProvider as provider
-// const web3 = new Web3(new LoomProvider(client, privateKey));
+const web3 = new Web3(new LoomProvider(client, privateKey));
 
 // apis
 

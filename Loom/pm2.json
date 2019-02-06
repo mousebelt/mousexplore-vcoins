@@ -1,6 +1,6 @@
 {
   "apps" : [{
-    "name"        : "loom-vcoins",
+    "name"        : "loom-backend",
     "script"      : "index.js",
     "watch"       : true,
     "env" : {
