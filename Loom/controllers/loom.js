@@ -1,24 +1,6 @@
-const config = require('../config');
 const mongoose = require('mongoose');
 const ServiceInfoModel = require('../model/serviceinfo');
-const { isOutOfSyncing, reducedErrorMessage } = require('../modules/utils');
-const { Client, CryptoUtils, LoomProvider, LocalAddress } = require('loom-js');
-const Web3 = require('web3');
-
-const privateKey = CryptoUtils.generatePrivateKey();
-const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey);
-
-// Create the client
-const client = new Client(
-  config.client.chainId,
-  config.client.writeUrl,
-  config.client.readUrl
-);
-
-const from = LocalAddress.fromPublicKey(publicKey).toString(); // eslint-disable-line
-const loomProvider = new LoomProvider(client, privateKey);
-// Instantiate web3 client using LoomProvider as provider
-const web3 = new Web3(new LoomProvider(client, privateKey));
+const { isOutOfSyncing, reducedErrorMessage, web3, loomProvider } = require('../modules/utils');
 
 // apis
 
@@ -43,28 +25,26 @@ exports.getMonitorRpc = async (req, res) => {
     const jsonResponse = await loomProvider.sendAsync(JSON.parse(jsonRPCString));
     return res.status(200).json({ result: 'ok', data: { net_version: jsonResponse } });
   } catch (err) {
-    return res.status(400).json({ result: 'error', message: 'node rpc is not working' });
+    return res.status(400).json({ result: 'error', message: reducedErrorMessage(err) });
   }
 };
 
 exports.getMonitorSyncing = async (req, res) => {
-  try {
-    const jsonRPCString = '{"jsonrpc":"2.0","method":"eth_blockNumber","params":[],"id":83}';
-    const { result } = await loomProvider.sendAsync(JSON.parse(jsonRPCString));
+  web3.eth.getBlockNumber((error, lastblock) => {
+    if (error) return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
     return ServiceInfoModel.findOne()
       .then(row => {
         if (row) {
-          if ((result === row.lastblock) && isOutOfSyncing(row.updatedAt)) {
+          if ((lastblock === row.lastblock) && isOutOfSyncing(row.updatedAt)) {
             return res.status(400).send({ result: 'error', message: 'Out of syncing' });
           }
+
           return res.status(200).send({ result: 'ok' });
         }
-        return res.status(400).send({ result: 'error', msg: 'Db error occurred' });
+        return res.status(400).send({ result: 'error', message: 'Db error occurred' });
       })
-      .catch(err => res.status(400).send({ result: 'error', msg: 'Db error occurred' })); // eslint-disable-line
-  } catch (error) {
-    return res.status(400).send({ result: 'error', msg: 'Error occurred' });
-  }
+      .catch(err => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
+  });
 };
 
 exports.getBlocks = function (req, res) {
