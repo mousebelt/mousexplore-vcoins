@@ -1,21 +1,24 @@
+const config = require('../config');
 const mongoose = require('mongoose');
 const ServiceInfoModel = require('../model/serviceinfo');
 const { isOutOfSyncing } = require('../modules/utils');
+const { Client, CryptoUtils, LoomProvider, LocalAddress } = require('loom-js');
+// const Web3 = require('web3');
 
-const loom = require('loom-js');
-
-const privateKey = loom.CryptoUtils.generatePrivateKey();
-const publicKey = loom.CryptoUtils.publicKeyFromPrivateKey(privateKey);
+const privateKey = CryptoUtils.generatePrivateKey();
+const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey);
 
 // Create the client
-const client = new loom.Client(
-  'default',
-  'ws://68.183.20.43:46658/websocket',
-  'ws://68.183.20.43:9999/queryws'
+const client = new Client(
+  config.client.chainId,
+  config.client.writeUrl,
+  config.client.readUrl
 );
 
-const from = loom.LocalAddress.fromPublicKey(publicKey).toString(); // eslint-disable-line
-const loomProvider = new loom.LoomProvider(client, privateKey);
+const from = LocalAddress.fromPublicKey(publicKey).toString(); // eslint-disable-line
+const loomProvider = new LoomProvider(client, privateKey);
+// Instantiate web3 client using LoomProvider as provider
+// const web3 = new Web3(new LoomProvider(client, privateKey));
 
 // apis
 
@@ -62,4 +65,15 @@ exports.getMonitorSyncing = async (req, res) => {
   } catch (error) {
     return res.status(400).send({ result: 'error', msg: 'Error occurred' });
   }
+};
+
+exports.getBlocks = function (req, res) {
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
+
+  if (!offset) offset = 0;
+  if (!count || count <= 0) count = 10;
+
+  // TODO : Add latest_blocks get code
+  return res.status(400).send({ result: 'error', message: 'Not implemented yet' });
 };

@@ -9,4 +9,6 @@ module.exports = function (app) {
   app.get(`${apiPrefix}/monitor/rpc`, controller.getMonitorRpc);
   app.get(`${apiPrefix}/monitor/syncing`, controller.getMonitorSyncing);
 
+  // explorer apis
+  app.get(`${apiPrefix}/blocks`, controller.getBlocks);
 };
