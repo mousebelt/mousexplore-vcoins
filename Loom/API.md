@@ -13,6 +13,7 @@ Prefix  | Date    | Changes
 [Get out of syncing status](#get-out-of-syncing-status)  
 
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
+[Get block details by hash or height](#get-block-details-by-hash-or-height)  
 
 # Data Types
 Only *string* and *object* may be null.
@@ -148,4 +149,29 @@ count  | Number | No        | 10      | count of blocks to get
 {
   "result": "error", "message": <string>
 }
+```
+
+## Get block details by hash or height
+```
+ GET /blockdetails/:hash
+```
+
+Get block details by hash or height
+### QUERY PARAMS
+Name | Type   | Mandatory | Description
+---- | ------ | --------- | ------------
+hash | string | YES       | block hash or block height
+
+
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ "result": "ok", "data": { "block": <block_details> } }
+```
+
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
 ```
