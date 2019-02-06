@@ -4,7 +4,7 @@
   "description": "This is the MouseXplore Loom Backend.",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "license": "ISC",
   "dependencies": {
