@@ -107,3 +107,14 @@ exports.getBlockDetails = async function (req, res) {
     return res.status(400).send({ result: 'error', message: reducedErrorMessage(err) });
   }
 };
+
+exports.getBlockByHash = async function (req, res) {
+  let hash = req.params.hash;
+  try {
+    if (hash.length < 10) hash = Number(hash);
+    const block = await web3.eth.getBlock(hash, false);
+    return res.status(200).send({ result: 'ok', data: { block } });
+  } catch (err) {
+    return res.status(400).send({ result: 'error', message: reducedErrorMessage(err) });
+  }
+};

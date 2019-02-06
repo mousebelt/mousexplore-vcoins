@@ -11,6 +11,7 @@ module.exports = function (app) {
 
   // explorer apis
   app.get(`${apiPrefix}/blocks`, controller.getBlocks);
+  app.get(`${apiPrefix}/block/:hash`, controller.getBlockByHash);
   app.get(`${apiPrefix}/blockdetails/:hash`, controller.getBlockDetails);
   // app.get('/api/v1/transactions', EthereumController.getTransactions);
   // app.get('/api/v1/block/:hash', EthereumController.getBlockByHash);

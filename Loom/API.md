@@ -13,6 +13,7 @@ Prefix  | Date    | Changes
 [Get out of syncing status](#get-out-of-syncing-status)  
 
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
+[Get block by hash or height](#get-block-by-hash-or-height)  
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
 
 # Data Types
@@ -151,6 +152,28 @@ count  | Number | No        | 10      | count of blocks to get
 }
 ```
 
+## Get Block by hash or height
+```
+ GET /block/:hash
+```
+
+Get block by hash or height.
+### QUERY PARAMS
+Name | Type   | Mandatory | Description
+---- | ------ | --------- | ------------
+hash | string | YES       | block hash or block height
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ "result": "ok", "data": { "block": <block_brief> } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
 ## Get block details by hash or height
 ```
  GET /blockdetails/:hash
@@ -161,15 +184,12 @@ Get block details by hash or height
 Name | Type   | Mandatory | Description
 ---- | ------ | --------- | ------------
 hash | string | YES       | block hash or block height
-
-
 ### RETURN
 * for successed case
 `status code:` 200
 ```javascript
 { "result": "ok", "data": { "block": <block_details> } }
 ```
-
 * for failed case
 `status code:` 400
 ```javascript
