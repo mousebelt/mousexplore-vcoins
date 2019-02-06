@@ -15,6 +15,7 @@ Prefix  | Date    | Changes
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
 [Get block by hash or height](#get-block-by-hash-or-height)  
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
+[Get transaction from hash](#get-transaction-from-hash)  
 
 # Data Types
 Only *string* and *object* may be null.
@@ -189,6 +190,28 @@ hash | string | YES       | block hash or block height
 `status code:` 200
 ```javascript
 { "result": "ok", "data": { "block": <block_details> } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+## Get transaction from hash
+```
+ GET /tx/:hash
+```
+
+Get transaction from hash
+### QUERY PARAMS
+Name | Type   | Mandatory | Description
+---- | ------ | --------- | ------------
+hash | String | YES       | transaction hash
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ "result": "ok", "data": { "transaction": <transaction_data> } }
 ```
 * for failed case
 `status code:` 400

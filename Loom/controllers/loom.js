@@ -118,3 +118,13 @@ exports.getBlockByHash = async function (req, res) {
     return res.status(400).send({ result: 'error', message: reducedErrorMessage(err) });
   }
 };
+
+exports.getTransactionInfo = function (req, res) {
+  const hash = req.params.hash;
+  web3.eth.getTransaction(hash, async function (error, transaction) {
+    if (error) {
+      return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
+    }
+    return res.status(200).send({ result: 'ok', data: { transaction } });
+  });
+};
