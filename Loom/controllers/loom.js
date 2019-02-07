@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const ServiceInfoModel = require('../model/serviceinfo');
+const TransactionModel = require('../model/transactions');
 const { isOutOfSyncing, reducedErrorMessage, web3, loomProvider } = require('../modules/utils');
 
 // apis
@@ -107,4 +108,50 @@ exports.getTransactionInfo = function (req, res) {
     }
     return res.status(200).send({ result: 'ok', data: { transaction } });
   });
+};
+
+exports.getTransactions = async (req, res) => {
+  const contract = Number(req.query.contract);
+  let offset = Number(req.query.offset);
+  let count = Number(req.query.count);
+  const order = Number(req.query.order);
+
+  if (!offset) offset = 0;
+  if (!count || count <= 0) count = 10;
+  // condition
+  let condition;
+  if (order) condition = { timestamp: 1 };
+  else condition = { timestamp: -1 };
+
+  let filter = {};
+  if (contract) {
+    filter = { from: contract, to: contract };
+  }
+
+  try {
+    const total = await TransactionModel.find().or(filter).count();
+    return TransactionModel.find()
+      .or(filter)
+      .sort(condition)
+      .skip(offset)
+      .limit(count)
+      .exec(async function (error, rows) {
+        if (error) {
+          return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
+        }
+        const txs = [];
+        for (let i = 0; i < rows.length; i++) {
+          try {
+            const tx = await web3.eth.getTransaction(rows[i].hash);
+            tx.timestamp = rows[i].timestamp;
+            txs.push(tx);
+          } catch (err) {
+            console.log('get transaction error: ', err);
+          }
+        }
+        return res.status(200).send({ result: 'ok', data: { total, transactions: txs } });
+      });
+  } catch (error) {
+    return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
+  }
 };

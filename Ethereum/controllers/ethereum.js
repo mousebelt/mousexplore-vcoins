@@ -366,7 +366,7 @@ exports.getTransactions = async (req, res) => {
   }
 
   try {
-    const total = await TransactionModel.find(filter).count();
+    const total = await TransactionModel.find().or(filter).count();
     return TransactionModel.find()
       .or(filter)
       .sort(condition)
