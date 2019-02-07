@@ -205,3 +205,39 @@ exports.getTransactionsFromAccount = async (req, res) => {
     return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
   }
 };
+
+exports.getSearch = async (req, res) => {
+  let key = req.params.key;
+
+  try {
+    if (key.length < 10) {
+      // block process
+      key = Number(key);
+      const blockdata = await web3.eth.getBlock(key, true);
+      if (blockdata) return res.status(200).send({ result: 'ok', data: { type: 'block' } });
+    } else if (key.length >= 40 && key.length <= 42) {
+      // address process
+      return res.status(200).send({ result: 'ok', data: { type: 'address' } });
+    } else if (key.length >= 64 && key.length <= 66) {
+      // block or txid process
+      try {
+        const transaction = await web3.eth.getTransaction(key);
+        if (transaction) return res.status(200).send({ result: 'ok', data: { type: 'transaction' } });
+      } catch (error) {
+        // console.log(error);
+      }
+
+      // block details
+      try {
+        const block = await web3.eth.getBlock(key, false);
+        if (block) return res.status(200).send({ result: 'ok', data: { type: 'block' } });
+      } catch (error) {
+        // console.log(error);
+      }
+    }
+
+    return res.status(400).send({ result: 'error', message: 'Search key is not correct !' });
+  } catch (error) {
+    return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
+  }
+};

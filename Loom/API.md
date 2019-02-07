@@ -19,6 +19,8 @@ Prefix  | Date    | Changes
 [Get transaction from hash](#get-transaction-from-hash)  
 [Get transactions from account by offset, count, order](#get-transactions-from-account-by-offset-count-order)  
 
+[Search](#search)  
+
 # Data Types
 Only *string* and *object* may be null.
 
@@ -288,6 +290,26 @@ order  | Number | NO        | 0       | 0 => newest first, 1 => oldest first
     "result": "ok",
     "data":  { "total": <integer>, "transactions": [<transaction_brief>, ...] } 
 }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+## Search
+```
+ GET /search/:key
+```
+
+key param can be txid or blockNo, blockHash, address.
+### RETURN
+* for successed case
+```javascript
+{ "result": "ok", data: { type: <string> } }
+type = 'block'
+type = 'transaction'
+type = 'address'
 ```
 * for failed case
 `status code:` 400
