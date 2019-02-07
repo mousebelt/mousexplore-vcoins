@@ -362,7 +362,7 @@ exports.getTransactions = async (req, res) => {
 
   let filter = {};
   if (contract) {
-    filter = { from: contract, to: contract };
+    filter = [{ from: contract }, { to: contract }];
   }
 
   try {

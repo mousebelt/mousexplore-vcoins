@@ -17,6 +17,7 @@ Prefix  | Date    | Changes
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
 [Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
 [Get transaction from hash](#get-transaction-from-hash)  
+[Get transactions from account by offset, count, order](#get-transactions-from-account-by-offset-count-order)  
 
 # Data Types
 Only *string* and *object* may be null.
@@ -260,6 +261,33 @@ hash | String | YES       | transaction hash
 `status code:` 200
 ```javascript
 { "result": "ok", "data": { "transaction": <transaction_data> } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+## Get transactions from account by offset, count, order
+```
+ GET /address/txs/:address
+```
+
+Get address related transactions.
+### QUERY PARAMS
+Name   | Type   | Mandatory | Default | Description
+------ | ------ | --------- | ------- | ------------
+offset | Number | NO        | 0       | offset
+count  | Number | NO        | 10      | transaction count
+order  | Number | NO        | 0       | 0 => newest first, 1 => oldest first
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{
+    "result": "ok",
+    "data":  { "total": <integer>, "transactions": [<transaction_brief>, ...] } 
+}
 ```
 * for failed case
 `status code:` 400
