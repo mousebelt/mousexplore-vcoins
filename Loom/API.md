@@ -20,20 +20,21 @@ Prefix  | Date    | Changes
 # Data Types
 Only *string* and *object* may be null.
 
-API Type        | JSON Type  | Note
-----------------|------------|-------
-string          | string     | Nullable
-object          | object     | Nullable
-array           | array      |
-integer         | number     | 
-float           | number     | 
-bignum          | string     | Hex format *"0xNNN..."*, use BigNumber for Javascript
-hex_string      | string     | Hex format *"0xNNN..."*
-boolean         | boolean    |
-eth_date        | integer    | Seconds since Unix epoch
-datetime        | string     | ISO 8601 UTC datetime: *YYYY-MM-DDThh:mm:ss*
-url             | string     | Resource link
-block_brief     | object     | [Block Brief data](#block-brief-data)
+API Type         | JSON Type  | Note
+---------------- |------------|-------
+string           | string     | Nullable
+object           | object     | Nullable
+array            | array      |
+integer          | number     | 
+float            | number     | 
+bignum           | string     | Hex format *"0xNNN..."*, use BigNumber for Javascript
+hex_string       | string     | Hex format *"0xNNN..."*
+boolean          | boolean    |
+eth_date         | integer    | Seconds since Unix epoch
+datetime         | string     | ISO 8601 UTC datetime: *YYYY-MM-DDThh:mm:ss*
+url              | string     | Resource link
+block_brief      | object     | [Block brief data](#block-brief-data)
+transaction_brif | object     | [Transaction brief data](#transaction-brief-data)
 
 
 ### Common Objects
@@ -50,6 +51,23 @@ block_brief     | object     | [Block Brief data](#block-brief-data)
     "gasUsed": <integer>,
     "size": <integer>,
     "number": <integer>
+}
+```
+#### Transaction brief data
+```
+{
+    "hash": <hex_string>,
+    "nonce": <integer>,
+    "blockHash": <hex_string>,
+    "blockNumber": <integer>,
+    "transactionIndex": <integer>,
+    "from": <hex_string>,
+    "to": <hex_string>,
+    "value": <integer_string>,
+    "gas": <integer>,
+    "gasPrice": <integer_string>,
+    "gasPrice": <integer>,
+    "input": <hex_string>
 }
 ```
 
