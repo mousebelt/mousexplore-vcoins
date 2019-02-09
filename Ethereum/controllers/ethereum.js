@@ -362,11 +362,11 @@ exports.getTransactions = async (req, res) => {
 
   let filter = {};
   if (contract) {
-    filter = { from: contract, to: contract };
+    filter = [{ from: contract }, { to: contract }];
   }
 
   try {
-    const total = await TransactionModel.find(filter).count();
+    const total = await TransactionModel.find().or(filter).count();
     return TransactionModel.find()
       .or(filter)
       .sort(condition)

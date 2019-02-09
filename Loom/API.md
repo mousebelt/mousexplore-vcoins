@@ -15,25 +15,30 @@ Prefix  | Date    | Changes
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
 [Get block by hash or height](#get-block-by-hash-or-height)  
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
+[Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
 [Get transaction from hash](#get-transaction-from-hash)  
+[Get transactions from account by offset, count, order](#get-transactions-from-account-by-offset-count-order)  
+
+[Search](#search)  
 
 # Data Types
 Only *string* and *object* may be null.
 
-API Type        | JSON Type  | Note
-----------------|------------|-------
-string          | string     | Nullable
-object          | object     | Nullable
-array           | array      |
-integer         | number     | 
-float           | number     | 
-bignum          | string     | Hex format *"0xNNN..."*, use BigNumber for Javascript
-hex_string      | string     | Hex format *"0xNNN..."*
-boolean         | boolean    |
-eth_date        | integer    | Seconds since Unix epoch
-datetime        | string     | ISO 8601 UTC datetime: *YYYY-MM-DDThh:mm:ss*
-url             | string     | Resource link
-block_brief     | object     | [Block Brief data](#block-brief-data)
+API Type         | JSON Type  | Note
+---------------- |------------|-------
+string           | string     | Nullable
+object           | object     | Nullable
+array            | array      |
+integer          | number     | 
+float            | number     | 
+bignum           | string     | Hex format *"0xNNN..."*, use BigNumber for Javascript
+hex_string       | string     | Hex format *"0xNNN..."*
+boolean          | boolean    |
+eth_date         | integer    | Seconds since Unix epoch
+datetime         | string     | ISO 8601 UTC datetime: *YYYY-MM-DDThh:mm:ss*
+url              | string     | Resource link
+block_brief      | object     | [Block brief data](#block-brief-data)
+transaction_brif | object     | [Transaction brief data](#transaction-brief-data)
 
 
 ### Common Objects
@@ -50,6 +55,23 @@ block_brief     | object     | [Block Brief data](#block-brief-data)
     "gasUsed": <integer>,
     "size": <integer>,
     "number": <integer>
+}
+```
+#### Transaction brief data
+```
+{
+    "hash": <hex_string>,
+    "nonce": <integer>,
+    "blockHash": <hex_string>,
+    "blockNumber": <integer>,
+    "transactionIndex": <integer>,
+    "from": <hex_string>,
+    "to": <hex_string>,
+    "value": <integer_string>,
+    "gas": <integer>,
+    "gasPrice": <integer_string>,
+    "gasPrice": <integer>,
+    "input": <hex_string>
 }
 ```
 
@@ -197,6 +219,35 @@ hash | string | YES       | block hash or block height
 { "result": "error", "message": <string> }
 ```
 
+## Get transaction list by offset, count, order
+```
+ GET /transactions
+```
+
+Get transaction list.
+### QUERY PARAMS
+Name     | Type   | Mandatory | Default | Description
+-------- | ------ | --------- | ------- | ------------
+contract | String | NO        | 0       | address of specified contract
+offset   | Number | NO        | 0       | offset
+count    | Number | NO        | 10      | transaction count
+order    | Number | NO        | 0       | 0 => newest first, 1 => oldest first
+
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{
+    "result": "ok",
+    "data": { "total": <integer>, "transactions": [<transaction_brief>, ...] }
+}
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
 ## Get transaction from hash
 ```
  GET /tx/:hash
@@ -212,6 +263,53 @@ hash | String | YES       | transaction hash
 `status code:` 200
 ```javascript
 { "result": "ok", "data": { "transaction": <transaction_data> } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+## Get transactions from account by offset, count, order
+```
+ GET /address/txs/:address
+```
+
+Get address related transactions.
+### QUERY PARAMS
+Name   | Type   | Mandatory | Default | Description
+------ | ------ | --------- | ------- | ------------
+offset | Number | NO        | 0       | offset
+count  | Number | NO        | 10      | transaction count
+order  | Number | NO        | 0       | 0 => newest first, 1 => oldest first
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{
+    "result": "ok",
+    "data":  { "total": <integer>, "transactions": [<transaction_brief>, ...] } 
+}
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+## Search
+```
+ GET /search/:key
+```
+
+key param can be txid or blockNo, blockHash, address.
+### RETURN
+* for successed case
+```javascript
+{ "result": "ok", data: { type: <string> } }
+type = 'block'
+type = 'transaction'
+type = 'address'
 ```
 * for failed case
 `status code:` 400
