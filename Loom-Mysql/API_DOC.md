@@ -15,9 +15,8 @@ Prefix  | Date    | Changes
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
 [Get block by hash or height](#get-block-by-hash-or-height)  
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
-[Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
+[Get transaction list](#get-transaction-list)  
 [Get transaction from hash](#get-transaction-from-hash)  
-[Get transactions from account by offset, count, order](#get-transactions-from-account-by-offset-count-order)  
 
 [Search](#search)  
 
@@ -215,7 +214,7 @@ hash | string | YES       | block hash or block height
 { "result": "error", "message": <string> }
 ```
 
-## Get transaction list by offset, count, order
+## Get transaction list
 ```
  GET /transactions
 ```
@@ -224,10 +223,9 @@ Get transaction list.
 ### QUERY PARAMS
 Name     | Type   | Mandatory | Default | Description
 -------- | ------ | --------- | ------- | ------------
-contract | String | NO        | 0       | address of specified contract
-offset   | Number | NO        | 0       | offset
-count    | Number | NO        | 10      | transaction count
-order    | Number | NO        | 0       | 0 => newest first, 1 => oldest first
+address  | String | NO        | 0       | address of specified contract or account
+page     | Number | NO        | 0       | page
+perPage  | Number | NO        | 10      | item count per page
 
 ### RETURN
 * for successed case
@@ -235,7 +233,7 @@ order    | Number | NO        | 0       | 0 => newest first, 1 => oldest first
 ```javascript
 {
     "result": "ok",
-    "data": { "total": <integer>, "transactions": [<transaction_brief>, ...] }
+    "data": { "transactions": [<transaction_brief>, ...], "pagination": <pagination> }
 }
 ```
 * for failed case
@@ -259,33 +257,6 @@ hash | String | YES       | transaction hash
 `status code:` 200
 ```javascript
 { "result": "ok", "data": { "transaction": <transaction_data> } }
-```
-* for failed case
-`status code:` 400
-```javascript
-{ "result": "error", "message": <string> }
-```
-
-## Get transactions from account by offset, count, order
-```
- GET /address/txs/:address
-```
-
-Get address related transactions.
-### QUERY PARAMS
-Name   | Type   | Mandatory | Default | Description
------- | ------ | --------- | ------- | ------------
-offset | Number | NO        | 0       | offset
-count  | Number | NO        | 10      | transaction count
-order  | Number | NO        | 0       | 0 => newest first, 1 => oldest first
-### RETURN
-* for successed case
-`status code:` 200
-```javascript
-{
-    "result": "ok",
-    "data":  { "total": <integer>, "transactions": [<transaction_brief>, ...] } 
-}
 ```
 * for failed case
 `status code:` 400

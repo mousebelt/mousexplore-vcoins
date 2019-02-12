@@ -348,7 +348,7 @@ exports.getBlockDetails = async function (req, res) {
  * @returns transaction list
  */
 exports.getTransactions = async (req, res) => {
-  const contract = Number(req.query.contract);
+  const contract = req.query.contract;
   let offset = Number(req.query.offset);
   let count = Number(req.query.count);
   const order = Number(req.query.order);
