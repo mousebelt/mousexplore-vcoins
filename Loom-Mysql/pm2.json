@@ -1,0 +1,14 @@
+{
+  "apps" : [{
+    "name"        : "loomexplorer-backend",
+    "script"      : "server.js",
+    "watch"       : true,
+    "env": {
+      "NODE_ENV": "mainnet"
+    },
+    "env_test" : {
+       "NODE_ENV" : "mainnet",
+       "TEST"     : true
+    }
+  }]
+}

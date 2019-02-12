@@ -1,0 +1,29 @@
+extends layout
+
+block content
+	if (!user)
+		a(href='/login') Login
+		br
+		a(href='/register') Register
+	else
+		p You are currently logged in as #{user.email}
+		a(href='/auth/logout') Logout
+		br
+
+	if (user)
+		p
+			form(role='form', action='/api/v1/users/accounts', method='post', style='max-width: 300px;')
+				button.btn.btn-default(type='submit') Create Account
+		p
+			a(href='/api/v1/users/accounts')
+				button.btn.btn-default View Accounts
+		p
+			form(role='form', action='/api/v1/users/wallets', method='get', style='max-width: 300px;')
+				.form-group
+					input.form-control(type='text', name='account', placeholder='Account UUID')
+					button.btn.btn-default(type='submit') View Wallets under Account
+		//p
+			form(role='form', action='/api/v1/users/wallets/deposit_address', method='post', style='max-width: 300px;')
+				.form-group
+					input.form-control(type='text', name='wallet', placeholder='Wallet UUID')
+					button.btn.btn-default(type='submit') Generate Deposit Address for Wallet

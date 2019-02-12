@@ -1,0 +1,9 @@
+{
+  "mainnet": {
+    "username": "root",
+    "password": "password",
+    "database": "loomexplorer",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}

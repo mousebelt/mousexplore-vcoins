@@ -1,0 +1,15 @@
+extends layout
+
+block content
+	.container
+		h1 Login Page
+		//p.lead 
+		br
+		form(role='form', action="/auth/login", method="post", style='max-width: 300px;')
+			.form-group
+				input.form-control(type='text', name="email", placeholder='Email')
+			.form-group
+				input.form-control(type='password', name="password", placeholder='Password')
+			button.btn.btn-default(type='submit') Submit
+			a(href='/')
+				button.btn.btn-primary(type="button") Cancel
