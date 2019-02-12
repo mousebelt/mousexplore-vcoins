@@ -1,0 +1,27 @@
+const config = {
+  app: {
+    secret: '[1)07T]z@I!H9]c_«qIærOG$P0Np10l6Î7(25µf<j@L6};ZBÄs_î;ü0=QpC[µðo}',
+    port: 3000,
+  },
+  db: {
+    host: 'localhost',
+    database: 'loomexplorer',
+    username: 'root',
+    password: 'password',
+    dialect: 'mysql',
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000
+    },
+    logging: false
+  },
+  client: {
+    chainId: 'default',
+    writeUrl: 'ws://68.183.20.43:46658/websocket',
+    readUrl: 'ws://68.183.20.43:9999/queryws',
+  },
+  tokens: []
+};
+module.exports = config;
