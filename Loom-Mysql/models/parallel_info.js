@@ -8,7 +8,7 @@ module.exports = function (sequelize) {
     blockNumber: {
       type: Sequelize.INTEGER,
     },
-    blockTxs: {
+    totalTxs: {
       type: Sequelize.INTEGER,
     },
     syncedIndex: {
