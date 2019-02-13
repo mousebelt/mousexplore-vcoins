@@ -42,3 +42,18 @@ exports.reducedErrorMessage = function (errorDetails) {
   }
   return _.get(errorDetails, 'message', 'We have some technical difficulties. Please try again.');
 };
+
+exports.getPageParams = (data) => {
+  const defaultPage = 1;
+  const defaultPerPage = 10;
+  let page = Number(data.page);
+  let perPage = Number(data.perPage);
+
+  if (isNaN(page)) page = defaultPage;
+  if (isNaN(perPage)) perPage = defaultPerPage;
+
+  page = Math.max(page, defaultPage);
+  perPage = Math.min(perPage, defaultPerPage);
+
+  return { page, perPage };
+};
