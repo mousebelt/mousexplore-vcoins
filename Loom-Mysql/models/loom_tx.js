@@ -3,17 +3,17 @@ module.exports = function (sequelize) {
   const loomTx = sequelize.define('loom_tx', {
     hash: {
       primaryKey: true,
-      type: Sequelize.STRING(45)
+      type: Sequelize.STRING
     },
     blockNumber: {
       type: Sequelize.INTEGER
     },
     from: {
-      type: Sequelize.STRING(45),
+      type: Sequelize.STRING,
       validate: { isLowercase: true }
     },
     to: {
-      type: Sequelize.STRING(45),
+      type: Sequelize.STRING,
       validate: { isLowercase: true }
     },
     value: {
@@ -22,7 +22,9 @@ module.exports = function (sequelize) {
     fee: {
       type: Sequelize.INTEGER,
     },
-    timestamp: Number,
+    timestamp: {
+      type: Sequelize.INTEGER,
+    },
   });
 
   loomTx.upsert = (values, condition) => (

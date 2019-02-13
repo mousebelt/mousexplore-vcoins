@@ -3,7 +3,7 @@ module.exports = function (sequelize) {
   const transactionType = sequelize.define('transaction_type', {
     type: {
       primaryKey: true,
-      type: Sequelize.STRING(45)
+      type: Sequelize.STRING
     },
   });
 

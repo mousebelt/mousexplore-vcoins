@@ -3,7 +3,7 @@ module.exports = function (sequelize) {
   const user = sequelize.define('user', {
     address: {
       primaryKey: true,
-      type: Sequelize.STRING(45)
+      type: Sequelize.STRING
     }
   });
 

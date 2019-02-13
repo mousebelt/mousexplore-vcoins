@@ -29,7 +29,7 @@ function initParallInfo() {
       for (let index = count; index < CHECK_PARALLEL_BLOCKS; index++) {
         await models.parallel_info.create({
           index,
-          blockNumber: -1,
+          blockNumber: index,
           totalTxs: 0,
           syncedIndex: 0
         });
@@ -96,7 +96,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
         let from = null;
         let to = null;
         let value = null;
-        let fee = null;
+        const fee = 0;
         let timestamp = null;
 
         // handle transaction
@@ -107,9 +107,9 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
         value = transaction.value;
         timestamp = blockdata.timestamp;
 
-        const gasprice = transaction.gasPrice;
-        const txnReceipt = await web3.eth.getTransactionReceipt(hash);
-        fee = gasprice * txnReceipt.gasUsed;
+        // const gasprice = transaction.gasPrice;
+        // const txnReceipt = await web3.eth.getTransactionReceipt(hash);
+        // fee = gasprice * txnReceipt.gasUsed;
 
         await models.loom_tx.upsert({ hash, blockNumber, from, to, value, fee, timestamp }, { hash });
         gParallelBlocks[threadIndex].syncedIndex = j + 1;
