@@ -1,0 +1,147 @@
+{
+    "getters": {
+        "token": {
+            "getHash": ["/tokens/token-hash"],
+            "getTokensOf": ["/tokensOf"],
+            "getDetails": ["/tokens"],
+            "getAll": ["/tokens"]
+        },
+        "box": {
+            "getHash": ["/boxes/box-hash"],
+            "getDetails": ["/boxes"],
+            "getAll": ["/boxes"]
+        },
+        "game": {
+            "getBalanceOf": ["/games/balance"],
+            "getHash": ["/games/hash"],
+            "getDetails": ["/games"],
+            "getAll": ["/games"]
+        },
+        "loan": {
+            "getCreatedCount": ["/loans/created-loans-count"],
+            "getDeletedCount": ["/loans/deleted-loans-count"],
+            "getFreeBalanceOf": ["/loans/free-balance-of"],
+            "getLoanedBalanceOf": ["/loans/loaned-balance-of"],
+            "getSpecific": ["/loans"]
+        },
+        "shop": {
+            "getOrderCount": ["/shop/order-count"],
+            "getSpecific": ["/shop/orders"],
+            "getUserOrderCountInGame": ["/shop/orders/count"],
+            "getUserOrderDetails": ["/shop/game-orders"],
+            "getUserOrders": ["/shop/game-orders"],
+            "getUserOrder": ["/shop/game-orders"]
+        },
+        "trade": {
+            "getClosedCount": ["/trades/closed-count"],
+            "getOpenCount": ["/trades/open-count"],
+            "getTrade": ["/trades"],
+            "getUserTradeInGame": ["/trades/game"],
+            "getUserTradeCountDetails": ["/trades/user-count"],
+            "getUserTradeIdsInGame": ["/trades/game/id"]
+        }
+    },
+    "setters": {
+        "token": {
+            "add": {
+                "routes": ["/tokens"],
+                "paramKeys": ["gameAddr"]
+            },
+            "mint": {
+                "routes": ["/tokens/mint"],
+                "paramKeys": ["gameAddr", "tokenId"]
+            },
+            "transfer": {
+                "routes": ["/tokens/transfer"],
+                "paramKeys": ["gameAddr", "tokenId"]
+            }
+        },
+        "box": {
+            "add": {
+                "routes": ["/boxes"],
+                "paramKeys": ["gameAddr"]
+            },
+            "buy": {
+                "routes": ["/boxes/buy"],
+                "paramKeys": ["gameAddr",
+                    "boxId"]
+            },
+            "remove": {
+                "routes": ["/boxes/delete"],
+                "paramKeys": ["gameAddr", "boxId"]
+            },
+            "update": {
+                "routes": ["/boxes/update"],
+                "paramKeys": ["gameAddr", "boxId"]
+            }
+        },
+        "game": {
+            "deploy": {
+                "routes": ["/games"],
+                "paramKeys": []
+            },
+            "transfer": {
+                "routes": ["/games/transfer"],
+                "paramKeys": ["gameAddr"]
+            }
+        },
+        "loan": {
+            "finish": {
+                "routes": ["/loans/finish"],
+                "paramKeys": ["gameAddr", "loanId"]
+            },
+            "handlePrivate": {
+                "routes": ["/loans/handle-private"],
+                "paramKeys": ["gameAddr", "loanId"]
+            },
+            "handlePublic": {
+                "routes": ["/loans/handle-public"],
+                "paramKeys": ["gameAddr", "loanId"]
+            },
+            "offerPrivate": {
+                "routes": ["/loans/offer-private"],
+                "paramKeys": ["gameAddr", "tokenId"]
+            },
+            "offerPublic": {
+                "routes": ["/loans/offer-public"],
+                "paramKeys": ["gameAddr", "tokenId"]
+            }
+        },
+        "shop": {
+            "cashToToken": {
+                "routes": ["/shop/cash-to-token"],
+                "paramKeys": ["gameAddr"]
+            },
+            "tokenToCash": {
+                "routes": ["/shop/token-to-cash"],
+                "paramKeys": ["gameAddr"]
+            },
+            "tokenToToken": {
+                "routes": ["/shop/token-to-token"],
+                "paramKeys": ["gameAddr"]
+            }
+        },
+        "trade": {
+            "offerPrivate": {
+                "routes": ["/trades/offer-private"],
+                "paramKeys": ["gameAddr"]
+            },
+            "offerPublic": {
+                "routes": ["/trades/offer-public"],
+                "paramKeys": ["gameAddr"]
+            },
+            "remove": {
+                "routes": ["/trades/remove"],
+                "paramKeys": ["gameAddr", "index"]
+            },
+            "takePrivate": {
+                "routes": ["/trades/take-private"],
+                "paramKeys": ["gameAddr", "index"]
+            },
+            "takePublic": {
+                "routes": ["/trades/take-public"],
+                "paramKeys": ["gameAddr", "index"]
+            }
+        }
+    }
+}
