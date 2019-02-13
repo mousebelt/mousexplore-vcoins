@@ -3,10 +3,10 @@ module.exports = function (sequelize) {
   const item = sequelize.define('item', {
     tokenId: {
       primaryKey: true,
-      type: Sequelize.STRING(45)
+      type: Sequelize.STRING
     },
     name: {
-      type: Sequelize.STRING(45)
+      type: Sequelize.STRING
     },
     circulatingSupply: {
       type: Sequelize.INTEGER,

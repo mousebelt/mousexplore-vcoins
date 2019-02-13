@@ -3,7 +3,7 @@ module.exports = function (sequelize) {
   const transaction = sequelize.define('transaction', {
     hash: {
       primaryKey: true,
-      type: Sequelize.STRING(45)
+      type: Sequelize.STRING
     },
   });
 
