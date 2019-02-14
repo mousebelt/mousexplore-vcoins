@@ -23,6 +23,7 @@ const config = {
   CHECK_PARALLEL_BLOCKS: 10, // thread count for parallel block processing
   TICKER_BLOCK: 10,
   CRON_SYNCING_MINUTES: 30, // minutes,
+  CRON_STARDUST_CACHE_MINUTES: 1, // minutes
 };
 
 module.exports = config;
