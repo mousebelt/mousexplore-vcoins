@@ -46,7 +46,7 @@ async function gameCacheRunner() {
 
       try {
         await Game.findOneAndUpdate(query, game, { upsert: true });
-        console.log('Cached a game data ( gameAddr: %s )', game.gameAddr);
+        // console.log('Cached a game data ( gameAddr: %s )', game.gameAddr);
       } catch (err) {
         console.log('Failed to save a game data ( gameAddr: %s, error: %s )', game.gameAddr, err.message);
       }
@@ -78,7 +78,7 @@ async function tokenCacheRunner() {
         const query = { gameAddr, tokenId: token.tokenId };
         try {
           await Token.findOneAndUpdate(query, token, { upsert: true });
-          console.log('Cached a game item ( gameAddr: %s, tokenId: %d )', gameAddr, token.tokenId);
+          // console.log('Cached a game item ( gameAddr: %s, tokenId: %d )', gameAddr, token.tokenId);
         } catch (err) {
           console.log('Failed to save a game item ( gameAddr: %s, tokenId: %d, error: %s )', gameAddr, token.tokenId, err.message);
         }

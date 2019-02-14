@@ -8,6 +8,5 @@ function startCron() {
   cronStardustGame();
 }
 module.exports = function () {
-  // setTimeout(startCron, 5 * 1000); // Wait 5 seconds while creating models
   startCron();
 };

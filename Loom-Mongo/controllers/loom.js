@@ -129,53 +129,6 @@ exports.getTransactions = async (req, res) => {
   }
 };
 
-
-exports.getTransactionsFromAccount = async (req, res) => {
-  const address = req.params.address;
-  // if (address) address = address.toLowerCase();
-
-  let offset = Number(req.query.offset);
-  let count = Number(req.query.count);
-  const order = Number(req.query.order);
-
-  if (!offset) offset = 0;
-  if (!count || count <= 0) count = 10;
-
-  let cond;
-  if (order > 0) cond = { timestamp: 1 };
-  else cond = { timestamp: -1 };
-
-  try {
-    const total = await TransactionModel.find()
-      .or([{ from: address }, { to: address }])
-      .count();
-
-    return TransactionModel.find()
-      .or([{ from: address }, { to: address }])
-      .sort(cond)
-      .skip(offset)
-      .limit(count)
-      .exec(async function (error, rows) {
-        if (error) {
-          return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
-        }
-        const txs = [];
-        for (let i = 0; i < rows.length; i++) {
-          try {
-            const tx = await web3.eth.getTransaction(rows[i].hash);
-            tx.timestamp = rows[i].timestamp;
-            txs.push(tx);
-          } catch (e) {
-            console.log('get transaction error: ', e);
-          }
-        }
-        return res.status(200).send({ result: 'ok', data: { total, transactions: txs } });
-      });
-  } catch (error) {
-    return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
-  }
-};
-
 exports.getSearch = async (req, res) => {
   let key = req.params.key;
 
