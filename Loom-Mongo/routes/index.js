@@ -3,5 +3,5 @@ const apiRouter = require('./api');
 
 module.exports = function (app) {
   app.use('/api/v1/monitor', monitorRouter);
-  app.use('/api/v1', apiRouter);
+  app.use('/api/v1/loom', apiRouter);
 };

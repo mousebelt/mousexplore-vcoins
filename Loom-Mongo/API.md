@@ -7,17 +7,19 @@ Prefix  | Date    | Changes
  - [Data Types](#data-types)
 
 # Summary
+
+## Monitor Apis
 [Get server working status](#get-server-working-status)  
 [Get db working status](#get-db-working-status)  
 [Get rpc working status](#get-rpc-working-status)  
 [Get out of syncing status](#get-out-of-syncing-status)  
 
+## Loom Explorer Apis
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
 [Get block by hash or height](#get-block-by-hash-or-height)  
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
 [Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
 [Get transaction from hash](#get-transaction-from-hash)  
-
 [Search](#search)  
 
 # Data Types
@@ -74,12 +76,11 @@ transaction_brif | object     | [Transaction brief data](#transaction-brief-data
 }
 ```
 
-# API Details
-
+# Monitor Api Details
 
 ## Get server working status
 ```
- GET /monitor
+ GET /monitor/service
 ```
 
 * for successed case
@@ -144,6 +145,9 @@ status: 400
 ```javascript
 { result: 'error', msg: error_message, error: error_details }
 ```
+
+# Loom Explorer Api Details
+*Prefix: `/loom`*
 
 ## Get Block list from offset and count
 ```
