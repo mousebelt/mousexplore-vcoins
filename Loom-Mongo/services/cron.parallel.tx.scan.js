@@ -111,8 +111,8 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
         // handle transaction
         const transaction = blockdata.transactions[j];
         hash = transaction.hash;
-        from = String(transaction.from).toLowerCase();
-        to = String(transaction.to).toLowerCase();
+        from = transaction.from;
+        to = transaction.to;
         value = transaction.value;
         timestamp = blockdata.timestamp;
 

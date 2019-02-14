@@ -131,11 +131,8 @@ exports.getTransactions = async (req, res) => {
 
 
 exports.getTransactionsFromAccount = async (req, res) => {
-  let address = req.params.address;
-
-  if (address) {
-    address = address.toLowerCase();
-  }
+  const address = req.params.address;
+  // if (address) address = address.toLowerCase();
 
   let offset = Number(req.query.offset);
   let count = Number(req.query.count);
