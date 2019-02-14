@@ -7,18 +7,19 @@ Prefix  | Date    | Changes
  - [Data Types](#data-types)
 
 # Summary
+
+## Monitor Apis
 [Get server working status](#get-server-working-status)  
 [Get db working status](#get-db-working-status)  
 [Get rpc working status](#get-rpc-working-status)  
 [Get out of syncing status](#get-out-of-syncing-status)  
 
+## Loom Explorer Apis
 [Get block list from offset and count](#get-block-list-from-offset-and-count)  
 [Get block by hash or height](#get-block-by-hash-or-height)  
 [Get block details by hash or height](#get-block-details-by-hash-or-height)  
 [Get transaction list by offset, count, order](#get-transaction-list-by-offset-count-order)  
 [Get transaction from hash](#get-transaction-from-hash)  
-[Get transactions from account by offset, count, order](#get-transactions-from-account-by-offset-count-order)  
-
 [Search](#search)  
 
 # Data Types
@@ -75,12 +76,11 @@ transaction_brif | object     | [Transaction brief data](#transaction-brief-data
 }
 ```
 
-# API Details
-
+# Monitor Api Details
 
 ## Get server working status
 ```
- GET /monitor
+ GET /monitor/service
 ```
 
 * for successed case
@@ -145,6 +145,9 @@ status: 400
 ```javascript
 { result: 'error', msg: error_message, error: error_details }
 ```
+
+# Loom Explorer Api Details
+*Prefix: `/loom`*
 
 ## Get Block list from offset and count
 ```
@@ -226,12 +229,12 @@ hash | string | YES       | block hash or block height
 
 Get transaction list.
 ### QUERY PARAMS
-Name     | Type   | Mandatory | Default | Description
--------- | ------ | --------- | ------- | ------------
-contract | String | NO        | 0       | address of specified contract
-offset   | Number | NO        | 0       | offset
-count    | Number | NO        | 10      | transaction count
-order    | Number | NO        | 0       | 0 => newest first, 1 => oldest first
+Name     | Type   | Mandatory | Description
+-------- | ------ | --------- | ------------
+address  | String | NO        | address of specified contract
+offset   | Number | NO        | offset. Default: 0
+count    | Number | NO        | transaction count. Default: 10
+order    | Number | NO        | default: 0. 0 => newest first, 1 => oldest first
 
 ### RETURN
 * for successed case
@@ -263,33 +266,6 @@ hash | String | YES       | transaction hash
 `status code:` 200
 ```javascript
 { "result": "ok", "data": { "transaction": <transaction_data> } }
-```
-* for failed case
-`status code:` 400
-```javascript
-{ "result": "error", "message": <string> }
-```
-
-## Get transactions from account by offset, count, order
-```
- GET /address/txs/:address
-```
-
-Get address related transactions.
-### QUERY PARAMS
-Name   | Type   | Mandatory | Default | Description
------- | ------ | --------- | ------- | ------------
-offset | Number | NO        | 0       | offset
-count  | Number | NO        | 10      | transaction count
-order  | Number | NO        | 0       | 0 => newest first, 1 => oldest first
-### RETURN
-* for successed case
-`status code:` 200
-```javascript
-{
-    "result": "ok",
-    "data":  { "total": <integer>, "transactions": [<transaction_brief>, ...] } 
-}
 ```
 * for failed case
 `status code:` 400

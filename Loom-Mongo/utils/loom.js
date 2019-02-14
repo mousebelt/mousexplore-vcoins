@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const config = require('../config');
 const { Client, CryptoUtils, LoomProvider, LocalAddress } = require('loom-js');
 const Web3 = require('web3');
@@ -18,17 +17,3 @@ const loomProvider = new LoomProvider(client, privateKey);
 exports.loomProvider = loomProvider;
 const web3 = new Web3(loomProvider);
 exports.web3 = web3;
-
-
-exports.isOutOfSyncing = (curMillis) => {
-  const limit = config.CRON_SYNCING_MINUTES * 60 * 1000;
-  const diff = Date.now - curMillis;
-  return diff > limit;
-};
-
-exports.reducedErrorMessage = function (errorDetails) {
-  if (errorDetails.errors && errorDetails.errors.length > 0) {
-    return _.get(errorDetails, 'errors[0].message', 'We have some technical difficulties. Please try again.');
-  }
-  return _.get(errorDetails, 'message', 'We have some technical difficulties. Please try again.');
-};
