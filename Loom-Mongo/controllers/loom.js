@@ -1,34 +1,7 @@
-const mongoose = require('mongoose');
-const ServiceInfoModel = require('../model/serviceinfo');
-const TransactionModel = require('../model/transactions');
-const { isOutOfSyncing, reducedErrorMessage, web3, loomProvider } = require('../modules/utils');
-
-// apis
-
-exports.getMonitor = async (req, res) => { // eslint-disable-line
-  return res.status(200).send({ result: 'ok', message: 'Server is working now !' });
-};
-
-exports.getMonitorDb = async (req, res) => {
-  try {
-    if (mongoose.connection.readyState) {
-      return res.status(200).send({ result: 'ok', message: 'Db is working now !' });
-    }
-    throw new Error('db error');
-  } catch (error) {
-    return res.status(400).send({ result: 'error', message: 'Db is not working now !' });
-  }
-};
-
-exports.getMonitorRpc = async (req, res) => {
-  try {
-    const jsonRPCString = '{"jsonrpc":"2.0","method":"net_version","params":[],"id":67}';
-    const jsonResponse = await loomProvider.sendAsync(JSON.parse(jsonRPCString));
-    return res.status(200).json({ result: 'ok', data: { net_version: jsonResponse } });
-  } catch (err) {
-    return res.status(400).json({ result: 'error', message: reducedErrorMessage(err) });
-  }
-};
+const ServiceInfoModel = require('../models/serviceInfo');
+const TransactionModel = require('../models/transactions');
+const { isOutOfSyncing, reducedErrorMessage } = require('../utils');
+const { web3 } = require('../utils/loom');
 
 exports.getMonitorSyncing = async (req, res) => {
   web3.eth.getBlockNumber((error, lastblock) => {
@@ -111,7 +84,7 @@ exports.getTransactionInfo = function (req, res) {
 };
 
 exports.getTransactions = async (req, res) => {
-  const contract = req.query.contract;
+  const address = req.query.address;
   let offset = Number(req.query.offset);
   let count = Number(req.query.count);
   const order = Number(req.query.order);
@@ -124,8 +97,8 @@ exports.getTransactions = async (req, res) => {
   else condition = { timestamp: -1 };
 
   let filter = {};
-  if (contract) {
-    filter = [{ from: contract }, { to: contract }];
+  if (address) {
+    filter = [{ from: address }, { to: address }];
   }
 
   try {

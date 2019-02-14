@@ -226,12 +226,12 @@ hash | string | YES       | block hash or block height
 
 Get transaction list.
 ### QUERY PARAMS
-Name     | Type   | Mandatory | Default | Description
--------- | ------ | --------- | ------- | ------------
-contract | String | NO        | 0       | address of specified contract
-offset   | Number | NO        | 0       | offset
-count    | Number | NO        | 10      | transaction count
-order    | Number | NO        | 0       | 0 => newest first, 1 => oldest first
+Name     | Type   | Mandatory | Description
+-------- | ------ | --------- | ------------
+address  | String | NO        | address of specified contract
+offset   | Number | NO        | offset. Default: 0
+count    | Number | NO        | transaction count. Default: 10
+order    | Number | NO        | default: 0. 0 => newest first, 1 => oldest first
 
 ### RETURN
 * for successed case

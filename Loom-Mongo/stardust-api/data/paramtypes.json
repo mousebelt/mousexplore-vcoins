@@ -1,0 +1,36 @@
+{
+    "game": {
+        "deploy": ["owner", "name", "symbol", "desc", "image", "timestamp"],
+        "transfer": ["gameAddr", "from", "to", "timestamp"]
+    },
+    "token": {
+        "add": ["gameAddr", "name", "rarity", "cap", "val", "desc", "image", "timestamp"],
+        "mint": ["gameAddr", "tokenId", "to", "amount", "timestamp"],
+        "transfer": ["gameAddr", "tokenId", "from", "to", "amount", "timestamp"]
+    },
+    "loan": {
+        "offerPrivate": ["gameAddr", "lender", "borrower", "tokenId", "amount", "length", "timestamp"],
+        "offerPublic": ["gameAddr", "lender", "tokenId", "amount", "length", "timestamp"],
+        "handlePrivate": ["gameAddr", "loanId", "decision", "timestamp"],
+        "handlePublic": ["gameAddr", "loanId", "timestamp"],
+        "finish": ["gameAddr", "loanId", "timestamp"]
+    },
+    "box": {
+        "add": ["gameAddr", "name", "desc", "image", "tokens", "timestamp"],
+        "update": ["gameAddr", "boxId", "isValid", "name", "desc", "image", "tokens", "timestamp"],
+        "buy": ["gameAddr", "boxId", "timestamp"],
+        "remove": ["gameAddr", "boxId", "timestamp"]
+    },
+    "shop": {
+        "tokenToCash": ["gameAddr", "tokenId", "amount", "timestamp"],
+        "cashToToken": ["gameAddr", "tokenId", "amount", "timestamp"],
+        "tokenToToken": ["gameAddr", "fromId", "fromAmount", "toId", "toAmount", "timestamp"]
+    },
+    "trade": {
+        "offerPrivate": ["gameAddr", "taker", "offeredId", "offeredAmount", "wantedId", "wantedAmount", "timestamp"],
+        "offerPublic": ["gameAddr", "offeredId", "offeredAmount", "wantedId", "wantedAmount", "timestamp"],
+        "takePrivate": ["gameAddr", "index", "timestamp"],
+        "takePublic": ["gameAddr", "index", "timestamp"],
+        "remove": ["gameAddr", "index", "timestamp"]
+    }
+}

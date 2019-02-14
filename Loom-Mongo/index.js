@@ -5,6 +5,9 @@ const mongoose = require('mongoose');
 const server = require('http').createServer(app);
 const bodyParser = require('body-parser');
 const config = require('./config');
+const logger = require('./utils/logger');
+const routeInitialize = require('./routes');
+const cronService = require('./services/cron.service');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.db, { useNewUrlParser: true }, (err, db) => { // eslint-disable-line
@@ -12,20 +15,13 @@ mongoose.connect(config.db, { useNewUrlParser: true }, (err, db) => { // eslint-
 
   // listen the server port
   const port = config.port || 80;
-
   server.listen(port, () => {
     console.log('Server listening at port %d', port);
   });
 });
-
+app.logger = logger;
 app.use(require('cors')());
-
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
-require('./route/route')(app);
-
-// start crone service
-require('./services/cron.parallel.scan')();
-require('./services/cron.syncing')();
+app.use(bodyParser.urlencoded({ extended: true }));
+routeInitialize(app);
+cronService();

@@ -1,13 +1,9 @@
 const mongoose = require('mongoose');
 
 const serviceInfoSchema = new mongoose.Schema({
-  lastblock: Number,
-  updatedAt: Number
-});
-
-serviceInfoSchema.pre('save', function (next) {
-  this.updatedAt = Date.now();
-  next();
+  key: String,
+  data: Object,
+  updated: { type: Date, default: Date.now }
 });
 
 const ServiceInfo = mongoose.model('ServiceInfo', serviceInfoSchema);
