@@ -14,7 +14,7 @@ mongoose.connect(config.db, { useNewUrlParser: true }, (err, db) => { // eslint-
   if (err) throw err;
 
   // listen the server port
-  const port = config.port || 80;
+  const port = config.app.port || 80;
   server.listen(port, () => {
     console.log('Server listening at port %d', port);
   });
