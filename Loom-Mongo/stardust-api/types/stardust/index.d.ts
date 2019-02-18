@@ -1,27 +1,15 @@
 import { AxiosPromise } from 'axios';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 export declare type valueof<T> = T[keyof T];
 export declare type rarityType = 1 | 2 | 3 | 4 | 5;
 type solidityParamSingle = 'bytes32' | 'uint256' | 'address' | 'string' | 'bytes' | 'bool';
 type solidityParamArray = 'bytes32[]' | 'uint256[]' | 'address[]' | 'string[]';
 export declare type solidityParam = solidityParamArray | solidityParamSingle;
-export declare type address = string;
-export declare type base64 = string;
-export declare type hexString = string;
-export declare type signedMessage = hexString;
-export declare type keccak256Hash = hexString;
 export declare type solidityValue = number | string | boolean | ReadonlyArray<number> | ReadonlyArray<string> | ReadonlyArray<boolean>;
 export declare type maybePromise<T> = Promise<T> | T;
 export declare type maybePromisedProps<T> = {
     [P in keyof T]: maybePromise<T[P]>;
 };
-export declare type ThenArg<T> = T extends Promise<infer U> ? U : T;
-export declare type unMaybePromisedProps<T> = {
-    [P in keyof T]: ThenArg<T[P]>;
-};
-export interface map<T> {
-    readonly [key: string]: T;
-}
 export declare type logLevel = 'silly' | 'debug' | 'verbose' | 'info' | 'warn' | 'error';
 export interface JOICheck<T = any> {
     readonly valid: boolean;
@@ -30,222 +18,406 @@ export interface JOICheck<T = any> {
 interface baseData {
     readonly gameAddr: addr;
 }
-export interface hashCheck {
-    readonly correctHash: boolean;
-    readonly suppliedHash: keccak256Hash;
+interface timed {
+    readonly timestamp: number;
 }
-export interface sigCheck {
-    readonly correctSigner: boolean;
-    readonly signer: addr;
+interface Meta extends Readonly<{
+    name: string;
+    desc: string;
+    image: string;
+}> {
 }
 export interface Wallet {
     readonly address: addr;
-    readonly privateKey: hexString;
+    readonly privateKey: string;
 }
+export declare type Signed<T> = T & {
+    readonly signedMessage: string;
+};
+export declare type BulkSigned<T> = T & {
+    readonly signedMessages: string[];
+};
 export declare namespace API {
-    type endpoint = (req: Request, res: Response) => void;
-    type endpointAsync = (req: Request, res: Response) => Promise<void>;
-    type endpointNew<T> = (data: T, res: Response) => Promise<void>;
+    type Endpoint<T> = (data: T, res: Response) => Promise<void>;
+    interface S {
+        token: {
+            add: Token.deployDataSigned;
+            mint: Token.mintDataSigned;
+            transfer: Token.transferDataSigned;
+            burn: Token.burnDataSigned;
+        };
+        box: {
+            add: Box.deployDataSigned;
+            buy: Box.buyDataSigned;
+            remove: Box.removeDataSigned;
+            update: Box.updateDataSigned;
+        };
+        game: {
+            deploy: Game.deployDataSigned;
+            transfer: Game.transferDataSigned;
+        };
+        loan: {
+            finish: Loan.finishDataSigned;
+            handlePrivate: Loan.handlePrivateDataSigned;
+            handlePublic: Loan.handlePrivateDataSigned;
+            offerPrivate: Loan.offerPrivateDataSigned;
+            offerPublic: Loan.offerPublicDataSigned;
+        };
+        shop: {
+            cashToToken: Shop.cashToTokenDataSigned;
+            tokenToCash: Shop.tokenToCashDataSigned;
+            tokenToToken: Shop.tokenToTokenDataSigned;
+        };
+        trade: {
+            offerPrivate: Trade.offerPrivateDataSigned;
+            offerPublic: Trade.offerPublicDataSigned;
+            remove: Trade.removeTradeDataSigned;
+            takePrivate: Trade.takePrivateDataSigned;
+            takePublic: Trade.takePublicDataSigned;
+        };
+        user: {
+            generate: {
+                gameAddr: string;
+            };
+        };
+    }
+    type Setter<K1 extends keyof S, K2 extends keyof S[K1]> = Endpoint<S[K1][K2]>;
+    interface G {
+        token: {
+            getAll: {
+                gameAddr: addr;
+            };
+            getOne: {
+                gameAddr: addr;
+                tokenId: number;
+            };
+            getDetails: {
+                gameAddr: addr;
+                tokenId?: number;
+            };
+            getTokensOf: {
+                gameAddr: addr;
+                userAddr: addr;
+            };
+            getAllTokensOf: {
+                userAddr: addr;
+            };
+        };
+        box: {
+            getOne: {
+                gameAddr: addr;
+                boxId: number;
+            };
+            getAll: {
+                gameAddr: addr;
+            };
+            getDetails: {
+                gameAddr: addr;
+                boxId?: number;
+            };
+        };
+        game: {
+            getAll: {};
+            getOne: {
+                gameAddr: addr;
+            };
+            getBalanceOf: {
+                gameAddr: addr;
+                userAddr: addr;
+            };
+            getDetails: {
+                gameAddr?: addr;
+            };
+        };
+        loan: {
+            getCreatedCount: {
+                gameAddr: addr;
+            };
+            getDeletedCount: {
+                gameAddr: addr;
+            };
+            getSpecific: {
+                gameAddr: addr;
+                loanId: number;
+            };
+            getLoanedBalanceOf: {
+                gameAddr: addr;
+                userAddr: addr;
+                tokenId: number;
+            };
+            getFreeBalanceOf: {
+                gameAddr: addr;
+                userAddr: addr;
+                tokenId: number;
+            };
+        };
+        shop: {
+            getOrderCount: {
+                gameAddr: addr;
+            };
+            getUserOrderCount: {
+                userAddr: addr;
+            };
+            getUserOrderCountInGame: {
+                gameAddr: addr;
+                userAddr: addr;
+            };
+            getSpecific: {
+                gameAddr: addr;
+                orderId: number;
+            };
+            getOneUserOrder: {
+                gameAddr: addr;
+                userAddr: addr;
+                orderId: number;
+            };
+            getAllUserOrders: {
+                gameAddr: addr;
+                userAddr: addr;
+            };
+            getUserOrderDetails: {
+                gameAddr: addr;
+                userAddr: addr;
+                orderId?: number;
+            };
+        };
+        trade: {
+            getAll: {};
+            getGameOpenCount: {
+                gameAddr: addr;
+            };
+            getGameClosedCount: {
+                gameAddr: addr;
+            };
+            getGameTrade: {
+                gameAddr: addr;
+                index: number;
+            };
+            getGameTrades: {
+                gameAddr: addr;
+            };
+            getGameDetails: {
+                gameAddr: addr;
+                index?: number;
+            };
+            getUserTradeCount: {
+                userAddr: addr;
+            };
+            getUserTradeCountInGame: {
+                gameAddr: addr;
+                userAddr: addr;
+            };
+            getUserTradeCountDetails: {
+                gameAddr?: addr;
+                userAddr: addr;
+            };
+            getUserTradeIds: {
+                userAddr: addr;
+            };
+            getUserTradeIdsInGame: {
+                gameAddr: addr;
+                userAddr: addr;
+            };
+            getUserTradeInGame: {
+                gameAddr: addr;
+                userAddr: addr;
+                index: number;
+            };
+            getUserTradesInGame: {
+                gameAddr: addr;
+                userAddr: addr;
+            };
+            getUserTrades: {
+                userAddr: addr;
+            };
+        };
+        tx: {
+            getStatus: {
+                txId: string;
+                blocking?: boolean;
+            };
+            getData: {
+                txId: string;
+                blocking?: boolean;
+            };
+        };
+    }
+    type Getter<K1 extends keyof G, K2 extends keyof G[K1]> = Endpoint<G[K1][K2]>;
     interface baseErrorsObj {
         readonly timestamp?: string;
         readonly signer?: string;
         readonly hash?: string;
-    }
-    interface signedData {
-        readonly signedMessage: hexString;
+        readonly rarity_cap?: string;
+        readonly tokens?: string;
     }
 }
 export declare namespace IPFSMeta {
-    type TokenData = Readonly<{
+    type TokenData = Meta & Readonly<{
         tokenId: number;
-        name: string;
-        desc: string;
-        image: string;
         rarity: number;
         cap: number;
     }>;
-    interface BoxData {
-        readonly boxId: number;
-        readonly name: string;
-        readonly desc: string;
-        readonly image: string;
-    }
-    interface GameData extends baseData {
-        readonly name: string;
-        readonly symbol: string;
-        readonly desc: string;
-        readonly image: string;
-    }
-    interface GameDataFile {
-        readonly game: GameData;
-        readonly tokens: ReadonlyArray<TokenData>;
-        readonly boxes: ReadonlyArray<BoxData>;
-    }
+    type BoxData = Meta & Readonly<{
+        boxId: number;
+    }>;
+    type GameData = Meta & baseData & Readonly<{
+        symbol: string;
+        rarityNames: ReadonlyArray<string>;
+    }>;
+    type GameDataFile = Readonly<{
+        game: GameData;
+        tokens: ReadonlyArray<TokenData>;
+        boxes: ReadonlyArray<BoxData>;
+    }>;
 }
 export declare namespace Token {
-    interface metaData extends baseData {
-        readonly tokenId: number;
-        readonly name: string;
-        readonly desc: string;
-        readonly image: string;
-        readonly rarity: number;
-        readonly cap: number;
-        readonly val: number;
-        readonly owners: ReadonlyArray<address>;
-        readonly totalSupply: number;
+    interface metaData extends baseData, Meta, Readonly<{
+        tokenId: number;
+        rarity: number;
+        cap: number;
+        val: number;
+        owners: ReadonlyArray<addr>;
+        totalSupply: number;
+    }> {
     }
     interface promisedMetaData extends maybePromisedProps<metaData> {
     }
-    interface deployData extends baseData {
-        readonly cap: number;
-        readonly desc: string;
-        readonly image: string;
-        readonly name: string;
-        readonly rarity: rarityType;
-        readonly val: number;
-        readonly timestamp: number;
+    interface deployData extends baseData, timed, Meta, Readonly<{
+        cap: number;
+        rarity: number;
+        val: number;
+    }> {
     }
-    interface deployDataContract extends baseData {
-        readonly cap: number;
-        readonly rarity: rarityType;
-        readonly val: number;
-        readonly timestamp: number;
+    interface deployDataContract extends baseData, timed, Readonly<{
+        cap: number;
+        rarity: number;
+        val: number;
+    }> {
     }
-    interface deployDataSigned extends deployData, API.signedData {
+    interface deployDataSigned extends Signed<deployData> {
     }
-    interface deployErrorObj extends API.baseErrorsObj {
-        readonly rarity_cap?: string;
+    interface mintData extends baseData, timed, Readonly<{
+        tokenId: number;
+        to: addr;
+        amount: number;
+    }> {
     }
-    interface mintData extends baseData {
-        readonly tokenId: number;
-        readonly to: addr;
-        readonly amount: number;
-        readonly timestamp: number;
+    interface mintDataSigned extends Signed<mintData> {
     }
-    interface mintDataSigned extends mintData, API.signedData {
+    interface transferData extends baseData, timed, Readonly<{
+        from: addr;
+        to: addr;
+        amount: number;
+        tokenId: number;
+    }> {
     }
-    interface transferData {
+    interface transferDataSigned extends Signed<transferData> {
+    }
+    interface burnData extends baseData {
         readonly from: addr;
-        readonly to: addr;
         readonly amount: number;
         readonly timestamp: number;
         readonly tokenId: number;
         readonly gameAddr: addr;
     }
-    interface transferDataSigned extends transferData, API.signedData {
+    interface burnDataSigned extends Signed<burnData> {
     }
 }
 export declare namespace Box {
-    interface metaData extends baseData {
-        readonly boxId: number;
-        readonly isValid: boolean;
-        readonly name: string;
-        readonly desc: string;
-        readonly image: string;
-        readonly tokens: ReadonlyArray<number>;
+    interface metaData extends baseData, Meta, Readonly<{
+        boxId: number;
+        isValid: boolean;
+        tokens: ReadonlyArray<number>;
+    }> {
     }
     interface promisedMetaData extends maybePromisedProps<metaData> {
     }
-    interface deployData extends baseData {
-        readonly name: string;
-        readonly desc: string;
-        readonly image: string;
+    interface deployDataContract extends baseData, timed {
         readonly tokens: number[];
-        readonly timestamp: number;
     }
-    interface deployDataContract extends baseData {
-        readonly tokens: number[];
-        readonly timestamp: number;
+    interface deployData extends Meta, deployDataContract {
     }
-    interface deployDataSigned extends deployData, API.signedData {
+    interface deployDataSigned extends Signed<deployData> {
     }
-    interface deployErrorObj extends API.baseErrorsObj {
-        readonly tokens?: string;
-    }
-    interface removeData extends baseData {
+    interface removeData extends baseData, timed {
         readonly boxId: number;
-        readonly timestamp: number;
     }
-    interface removeDataSigned extends removeData, API.signedData {
+    interface removeDataSigned extends Signed<removeData> {
     }
-    interface updateData extends baseData {
+    interface updateData extends baseData, timed, Meta, Readonly<{
+        boxId: number;
+        isValid: boolean;
+        tokens: number[];
+    }> {
+    }
+    interface updateDataContract extends baseData, timed, Readonly<{
+        boxId: number;
+        isValid: boolean;
+        tokens: number[];
+    }> {
+    }
+    interface updateDataSigned extends Signed<updateData> {
+    }
+    interface buyData extends baseData, timed {
         readonly boxId: number;
-        readonly isValid: boolean;
-        readonly name: string;
-        readonly desc: string;
-        readonly image: string;
-        readonly tokens: number[];
-        readonly timestamp: number;
     }
-    interface updateDataContract extends baseData {
-        readonly boxId: number;
-        readonly isValid: boolean;
-        readonly tokens: number[];
-        readonly timestamp: number;
-    }
-    interface updateDataSigned extends updateData, API.signedData {
-    }
-    interface buyData extends baseData {
-        readonly boxId: number;
-        readonly timestamp: number;
-    }
-    interface buyDataSigned extends buyData, API.signedData {
+    interface buyDataSigned extends Signed<buyData> {
     }
 }
 export declare namespace Game {
-    interface metaData extends baseData {
-        readonly desc: string;
-        readonly gameOwner: addr;
-        readonly image: string;
-        readonly name: string;
-        readonly rarityNames: ReadonlyArray<string>;
-        readonly rarityPercs: ReadonlyArray<number>;
-        readonly symbol: string;
-        readonly totalSupply: number;
+    interface metaData extends baseData, Meta, Readonly<{
+        gameOwner: addr;
+        rarityNames: ReadonlyArray<string>;
+        rarityPercs: ReadonlyArray<number>;
+        symbol: string;
+        totalSupply: number;
+    }> {
     }
     interface promisedMetaData extends maybePromisedProps<metaData> {
     }
-    interface unpromisedMetaData extends unMaybePromisedProps<maybePromisedProps<metaData>> {
+    interface deployData extends timed, Readonly<{
+        name: string;
+        symbol: string;
+        desc: string;
+        image: string;
+        owner: addr;
+        rarityPercs: ReadonlyArray<number>;
+        rarityNames: ReadonlyArray<string>;
+    }> {
     }
-    interface deployData {
-        readonly name: string;
-        readonly symbol: string;
-        readonly desc: string;
-        readonly image: string;
-        readonly owner: addr;
-        readonly timestamp: number;
-    }
-    interface deployDataSigned extends deployData, API.signedData {
+    interface deployDataSigned extends Signed<deployData> {
     }
     interface transferData extends baseData {
         readonly from: addr;
         readonly to: addr;
         timestamp: number;
     }
-    interface transferDataSigned extends transferData, API.signedData {
+    interface transferDataSigned extends Signed<transferData> {
     }
 }
 export declare namespace Loan {
-    interface metaData extends baseData {
-        readonly loanId: number;
-        readonly isActive: boolean;
-        readonly lender: addr;
-        readonly borrower: addr;
-        readonly tokenId: number;
-        readonly amount: number;
-        readonly start: number;
-        readonly length: number;
+    interface metaData extends baseData, Readonly<{
+        loanId: number;
+        isActive: boolean;
+        lender: addr;
+        borrower: addr;
+        tokenId: number;
+        amount: number;
+        start: number;
+        length: number;
+    }> {
     }
     interface promisedMetaData extends maybePromisedProps<metaData> {
     }
-    interface metaDataArray extends baseData {
-        readonly isActive: ReadonlyArray<boolean>;
-        readonly lender: ReadonlyArray<address>;
-        readonly borrower: ReadonlyArray<address>;
-        readonly tokenId: ReadonlyArray<number>;
-        readonly amount: ReadonlyArray<number>;
-        readonly start: ReadonlyArray<number>;
-        readonly length: ReadonlyArray<number>;
+    interface metaDataArray extends baseData, Readonly<{
+        isActive: ReadonlyArray<boolean>;
+        lender: ReadonlyArray<addr>;
+        borrower: ReadonlyArray<addr>;
+        tokenId: ReadonlyArray<number>;
+        amount: ReadonlyArray<number>;
+        start: ReadonlyArray<number>;
+        length: ReadonlyArray<number>;
+    }> {
     }
     interface offerPrivateData extends baseData {
         readonly lender: addr;
@@ -255,146 +427,149 @@ export declare namespace Loan {
         readonly length: number;
         timestamp: number;
     }
-    interface offerPrivateDataSigned extends offerPrivateData, API.signedData {
+    interface offerPrivateDataSigned extends Signed<offerPrivateData> {
     }
-    interface offerPublicData extends baseData {
-        readonly lender: addr;
-        readonly tokenId: number;
-        readonly amount: number;
-        readonly length: number;
-        readonly timestamp: number;
+    interface offerPublicData extends baseData, timed, Readonly<{
+        lender: addr;
+        tokenId: number;
+        amount: number;
+        length: number;
+    }> {
     }
-    interface offerPublicDataSigned extends offerPublicData, API.signedData {
+    interface offerPublicDataSigned extends Signed<offerPublicData> {
     }
-    interface handlePublicData extends baseData {
-        readonly loanId: number;
-        readonly timestamp: number;
+    interface handlePublicData extends baseData, timed, Readonly<{
+        loanId: number;
+    }> {
+    }
+    interface handlePublicDataSigned extends Signed<handlePublicData> {
+    }
+    interface handlePrivateData extends baseData, timed, Readonly<{
+        loanId: number;
         decision: boolean;
+    }> {
     }
-    interface handlePublicDataSigned extends handlePublicData, API.signedData {
+    interface handlePrivateDataSigned extends Signed<handlePrivateData> {
     }
-    interface handlePrivateData extends baseData {
+    interface finishData extends baseData, timed {
         readonly loanId: number;
-        readonly decision: boolean;
-        readonly timestamp: number;
     }
-    interface handlePrivateDataSigned extends handlePrivateData, API.signedData {
-    }
-    interface finishData extends baseData {
-        readonly loanId: number;
-        readonly timestamp: number;
-    }
-    interface finishDataSigned extends finishData, API.signedData {
+    interface finishDataSigned extends Signed<finishData> {
     }
 }
 export declare namespace Shop {
-    interface metaData extends baseData {
-        readonly id: number;
-        readonly tokenId: number;
-        readonly amount: number;
-        readonly created: number;
-        readonly gameAddr: addr;
-        readonly caller: addr;
+    interface metaData extends baseData, Readonly<{
+        id: number;
+        tokenId: number;
+        amount: number;
+        created: number;
+        gameAddr: addr;
+        caller: addr;
+    }> {
     }
     interface promisedMetaData extends maybePromisedProps<metaData> {
     }
-    interface metaDataArray {
-        readonly ids: number[];
-        readonly tokenIds: number[];
-        readonly amounts: number[];
-        readonly createds: number[];
-        readonly gameAddrs: addr[];
-        readonly callers: addr[];
+    interface metaDataArray extends Readonly<{
+        ids: number[];
+        tokenIds: number[];
+        amounts: number[];
+        createds: number[];
+        gameAddrs: addr[];
+        callers: addr[];
+    }> {
     }
-    interface tokenToCashData extends baseData {
-        readonly tokenId: number;
-        readonly amount: number;
-        readonly timestamp: number;
+    interface tokenToCashData extends baseData, timed, Readonly<{
+        tokenId: number;
+        amount: number;
+    }> {
     }
-    interface tokenToCashDataSigned extends tokenToCashData, API.signedData {
+    interface tokenToCashDataSigned extends Signed<tokenToCashData> {
     }
-    interface cashToTokenData extends baseData {
-        readonly tokenId: number;
-        readonly amount: number;
-        readonly timestamp: number;
+    interface cashToTokenData extends baseData, timed, Readonly<{
+        tokenId: number;
+        amount: number;
+    }> {
     }
-    interface cashToTokenDataSigned extends cashToTokenData, API.signedData {
+    interface cashToTokenDataSigned extends Signed<cashToTokenData> {
     }
-    interface tokenToTokenData extends baseData {
-        readonly fromId: number;
-        readonly fromAmount: number;
-        readonly toId: number;
-        readonly toAmount: number;
-        readonly timestamp: number;
+    interface tokenToTokenData extends baseData, timed, Readonly<{
+        fromId: number;
+        fromAmount: number;
+        toId: number;
+        toAmount: number;
+    }> {
     }
-    interface tokenToTokenDataSigned extends tokenToTokenData, API.signedData {
+    interface tokenToTokenDataSigned extends Signed<tokenToTokenData> {
     }
 }
 export declare namespace Trade {
-    interface metaData extends baseData {
-        readonly taker: addr;
-        readonly trader: addr;
-        readonly offeredId: num;
-        readonly offeredAmount: num;
-        readonly wantedId: num;
-        readonly wantedAmount: num;
-        readonly createdOn: num;
-        readonly state: num;
+    interface metaData extends baseData, Readonly<{
+        taker: addr;
+        trader: addr;
+        offeredId: number;
+        offeredAmount: number;
+        wantedId: number;
+        wantedAmount: number;
+        createdOn: number;
+        state: number;
+    }> {
     }
-    interface promiedMetaData extends maybePromisedProps<metaData> {
+    interface promisedMetaData extends maybePromisedProps<metaData> {
     }
-    interface metaDataArray extends baseData {
-        readonly takers: addr[];
-        readonly traders: addr[];
-        readonly offeredIds: num[];
-        readonly offeredAmounts: num[];
-        readonly wantedIds: num[];
-        readonly wantedAmounts: num[];
-        readonly createdOns: num[];
-        readonly states: num[];
+    interface metaDataArray extends baseData, Readonly<{
+        takers: addr[];
+        traders: addr[];
+        offeredIds: number[];
+        offeredAmounts: number[];
+        wantedIds: number[];
+        wantedAmounts: number[];
+        createdOns: number[];
+        states: number[];
+    }> {
     }
-    interface offerPrivateData extends baseData {
-        readonly taker: addr;
-        readonly offeredId: num;
-        readonly offeredAmount: num;
-        readonly wantedId: num;
-        readonly wantedAmount: num;
-        readonly timestamp: num;
+    interface offerPrivateData extends baseData, timed, Readonly<{
+        taker: addr;
+        offeredId: number;
+        offeredAmount: number;
+        wantedId: number;
+        wantedAmount: number;
+    }> {
     }
-    interface offerPrivateDataSigned extends offerPrivateData, API.signedData {
+    interface offerPrivateDataSigned extends Signed<offerPrivateData> {
     }
-    interface offerPublicData extends baseData {
-        readonly offeredId: num;
-        readonly offeredAmount: num;
-        readonly wantedId: num;
-        readonly wantedAmount: num;
-        readonly timestamp: num;
+    interface offerPublicData extends baseData, timed, Readonly<{
+        offeredId: number;
+        offeredAmount: number;
+        wantedId: number;
+        wantedAmount: number;
+    }> {
     }
-    interface offerPublicDataSigned extends offerPublicData, API.signedData {
+    interface offerPublicDataSigned extends Signed<offerPublicData> {
     }
-    interface takePrivateData extends baseData {
-        readonly index: num;
-        readonly timestamp: num;
+    interface takePrivateData extends baseData, timed, Readonly<{
+        index: number;
+    }> {
     }
-    interface takePrivateDataSigned extends takePrivateData, API.signedData {
+    interface takePrivateDataSigned extends Signed<takePrivateData> {
     }
-    interface takePublicData extends baseData {
-        readonly index: num;
-        readonly timestamp: num;
+    interface takePublicData extends baseData, timed, Readonly<{
+        index: number;
+    }> {
     }
-    interface takePublicDataSigned extends takePublicData, API.signedData {
+    interface takePublicDataSigned extends Signed<takePublicData> {
     }
-    interface removeTradeData extends baseData {
-        readonly index: num;
-        readonly timestamp: num;
+    interface removeTradeData extends baseData, timed, Readonly<{
+        index: number;
+    }> {
     }
-    interface removeTradeDataSigned extends removeTradeData, API.signedData {
+    interface removeTradeDataSigned extends Signed<removeTradeData> {
     }
 }
 export declare namespace Wrapper {
     interface Setters {
         token: {
             add: Token.deployData;
+            burn: Token.burnData;
             mint: Token.mintData;
             transfer: Token.transferData;
         };
@@ -411,7 +586,7 @@ export declare namespace Wrapper {
         loan: {
             finish: Loan.finishData;
             handlePrivate: Loan.handlePrivateData;
-            handlePublic: Loan.handlePrivateData;
+            handlePublic: Loan.handlePublicData;
             offerPrivate: Loan.offerPrivateData;
             offerPublic: Loan.offerPublicData;
         };
@@ -427,141 +602,59 @@ export declare namespace Wrapper {
             takePrivate: Trade.takePrivateData;
             takePublic: Trade.takePublicData;
         };
-    }
-    interface Getters {
-        token: {
-            getAll: {
-                gameAddr: addr;
-            };
-            getSpecific: {
-                gameAddr: addr;
-                tokenId: num;
-            };
-            getTokensOf: {
-                gameAddr: addr;
-                userAddr: addr;
-            };
-        };
-        box: {
-            getAll: {
-                gameAddr: addr;
-            };
-            getDetails: {
-                gameAddr: addr;
-                boxId: num;
-            };
-        };
-        game: {
-            getAll: {};
-            getBalanceOf: {
-                gameAddr: addr;
-                userAddr: addr;
-            };
-            getDetails: {
-                gameAddr: addr;
-            };
-        };
-        loan: {
-            getSpecific: {
-                gameAddr: addr;
-                loanId: num;
-            };
-            getFreeBalanceOf: {
-                gameAddr: addr;
-                userAddr: addr;
-                tokenId: num;
-            };
-            getLoanedBalanceOf: {
-                gameAddr: addr;
-                userAddr: addr;
-                tokenId: num;
-            };
-            getCreatedCount: {
-                gameAddr: addr;
-            };
-            getDeletedCount: {
-                gameAddr: addr;
-            };
-        };
-        shop: {
-            getOrderCount: {
-                gameAddr: addr;
-            };
-            getSpecific: {
-                gameAddr: addr;
-                orderId: num;
-            };
-            getUserOrder: {
-                gameAddr: addr;
-                userAddr: addr;
-                orderId: num;
-            };
-            getUserOrderCountInGame: {
-                gameAddr: addr;
-                userAddr: addr;
-            };
-            getUserOrders: {
-                gameAddr: addr;
-                userAddr: addr;
-            };
-        };
-        trade: {
-            getClosedCount: {
-                gameAddr: addr;
-            };
-            getOpenCount: {
-                gameAddr: addr;
-            };
-            getSpecific: {
-                gameAddr: addr;
-                index: num;
-            };
-            getUserTradeInGame: {
-                gameAddr: addr;
-                userAddr: addr;
-                index: num;
-            };
-            getUserTradeCount: {
-                gameAddr: addr;
-                userAddr: addr;
-            };
-            getUserTradeIdsInGame: {
-                gameAddr: addr;
-                userAddr: addr;
+        user: {
+            generate: {
+                gameAddr: string;
             };
         };
     }
     type APICall<T> = <U = any>(data: T, privKey: str) => AxiosPromise<U>;
     type APICallGet<T> = <U = any>(params: T) => AxiosPromise<U>;
+    type APICallGet2<T> = <U = any>(params: T) => U;
     type SetterMap = {
         [key in keyof Setters]: {
             [key2 in keyof Setters[key]]: APICall<Setters[key][key2]>;
         };
     };
-    type SetterObj<T> = {
-        [key in keyof Setters]: {
-            [key2 in keyof Setters[key]]: T;
+    type GetterMap = {
+        [key in keyof API.G]: {
+            [key2 in keyof API.G[key]]: APICallGet<API.G[key][key2]>;
         };
     };
-    type GetterMap = {
-        [key in keyof Getters]: {
-            [key2 in keyof Getters[key]]: APICallGet<Getters[key][key2]>;
+    type GetterMap2 = {
+        [key in keyof API.G]: {
+            [key2 in keyof API.G[key]]: APICallGet2<API.G[key][key2]>;
+        };
+    };
+    type SetterOf<T> = {
+        [key in keyof API.S]: {
+            [key2 in keyof API.S[key]]: T;
+        };
+    };
+    type hashFunc<T> = (data: T) => string;
+    type hashAndSignFunc<T> = (data: T, privKey: string) => string;
+    type postJSONFunc<T> = (data: T, privKey: string) => T & {
+        signedMessage: string;
+    };
+    type HashObjType = {
+        [key1 in keyof Setters]: {
+            [key2 in keyof Setters[key1]]: hashFunc<Setters[key1][key2]>;
+        };
+    };
+    type HashAndSignObjType = {
+        [key1 in keyof Setters]: {
+            [key2 in keyof Setters[key1]]: hashAndSignFunc<Setters[key1][key2]>;
+        };
+    };
+    type PostJSONObjType = {
+        [key1 in keyof Setters]: {
+            [key2 in keyof Setters[key1]]: postJSONFunc<Setters[key1][key2]>;
         };
     };
 }
-export declare type chainFunction<T, U = void> = (user: addr, data: T, ts: num, tsExtra: num, unit: num) => Promise<U>;
-export declare type chainFunction2<T, U = void> = (user: addr, data: T, unit: num) => Promise<U>;
-export declare type chainCall<U = void> = (user: addr, ...args: any[]) => Promise<U>;
-export declare type chainSend<T> = chainFunction<T>;
-export declare type chainSend2<T> = chainFunction2<T>;
 export declare type num = number;
 export declare type str = string;
-export declare type addr = address;
-declare type GameTypes = Game.deployData | Game.transferData;
-declare type TokenTypes = Token.deployData | Token.mintData | Token.transferData;
-declare type LoanTypes = Loan.offerPublicData | Loan.offerPrivateData | Loan.handlePrivateData | Loan.handlePublicData | Loan.finishData;
-declare type BoxTypes = Box.deployData | Box.updateData | Box.buyData | Box.removeData;
-declare type ShopTypes = Shop.tokenToCashData | Shop.cashToTokenData | Shop.tokenToTokenData;
-export declare type DataTypes = GameTypes | BoxTypes | LoanTypes | TokenTypes | ShopTypes;
-export declare type ArgsTuple<T, U> = T extends () => U ? [] : T extends (arg0: infer A) => U ? [A] : T extends (arg0: infer A, arg1: infer B) => U ? [A, B] : T extends (arg0: infer A, arg1: infer B, arg2: infer C) => U ? [A, B, C] : T extends (arg0: infer A, arg1: infer B, arg2: infer C, arg3: infer D) => U ? [A, B, C, D] : T extends (arg0: infer A, arg1: infer B, arg2: infer C, arg3: infer D, arg4: infer E) => U ? [A, B, C, D, E] : T extends (arg0: infer A, arg1: infer B, arg2: infer C, arg3: infer D, arg4: infer E, arg5: infer F) => U ? [A, B, C, D, E, F] : [U];
+export declare type addr = string;
+declare type DataTypesOf<T extends keyof Wrapper.Setters> = valueof<Wrapper.Setters[T]>;
+export declare type DataTypes = DataTypesOf<'game'> | DataTypesOf<'token'> | DataTypesOf<'shop'> | DataTypesOf<'box'> | DataTypesOf<'loan'> | DataTypesOf<'trade'>;
 export {};

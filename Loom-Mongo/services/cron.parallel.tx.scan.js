@@ -1,5 +1,5 @@
 const { PARALLEL_BLOCK_COUNT, CRON_TX_SCAN_INTERVAL, TICKER_BLOCK_COUNT } = require('../config');
-const { web3 } = require('../utils/loom');
+const { web3 } = require('../modules/loom');
 const TransactionModel = require('../models/transactions');
 const ParallelInofModel = require('../models/parallelInfo');
 const Log = require('log');

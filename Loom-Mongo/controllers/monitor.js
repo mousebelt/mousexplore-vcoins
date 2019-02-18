@@ -1,6 +1,6 @@
-const { reducedErrorMessage, isOutOfSyncing } = require('../utils');
-const { web3, loomProvider } = require('../utils/loom');
-const { SYNCING_MONITOR_INFO_KEY } = require('../utils/constants');
+const { reducedErrorMessage, isOutOfSyncing } = require('../modules');
+const { web3, loomProvider } = require('../modules/loom');
+const { SYNCING_MONITOR_INFO_KEY } = require('../modules/constants');
 const mongoose = require('mongoose');
 const ServiceInfoModel = require('../models/serviceInfo');
 
