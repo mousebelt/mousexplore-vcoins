@@ -58,16 +58,16 @@ async function gameCacheRunner() {
  * Game items (tokens) caching runner
  */
 async function tokenCacheRunner() {
-  // const whitelistedGames = getWhitelistedGames();
-  // const games = Object.keys(whitelistedGames).map(gameAddr => ({ gameAddr }));
+  const whitelistedGames = getWhitelistedGames();
+  const games = Object.keys(whitelistedGames).map(gameAddr => ({ gameAddr }));
 
-  let games = [];
-  try {
-    games = await Game.find();
-  } catch (err) {
-    console.log('Failed to get games (error: %s)', err.message);
-    return;
-  }
+  // let games = [];
+  // try {
+  //   games = await Game.find();
+  // } catch (err) {
+  //   console.log('Failed to get games (error: %s)', err.message);
+  //   return;
+  // }
 
   for (let i = 0; i < games.length; i++) {
     const { gameAddr } = games[i];

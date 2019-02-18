@@ -83,7 +83,7 @@ function getNextBlockNum(lastnumber) {
     blockNumber++;
     if (blockNumber > lastnumber) return -1;
 
-    return blockNumber;
+    return Math.max(blockNumber, 1); // min block number is 1 in loom chain
   } catch (error) {
     filelog('getNextBlockNum error: ', error);
     return -1;

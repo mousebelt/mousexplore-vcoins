@@ -6,7 +6,7 @@ exports.getGame = (req, res) => {
   const { gameAddr } = req.params;
   const query = {
     gameAddr,
-    // isWhitelisted: true
+    isWhitelisted: true
   };
 
   Game.findOne(query)
@@ -15,14 +15,18 @@ exports.getGame = (req, res) => {
 };
 
 exports.getAllGames = (req, res) => {
-  Game.find()
+  Game.find({
+    isWhitelisted: true
+  })
     .then(games => res.status(200).send({ result: 'ok', games }))
     .catch(err => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
 };
 
 exports.getGameItems = (req, res) => {
   const { gameAddr } = req.params;
-  const query = { gameAddr };
+  const query = {
+    gameAddr,
+  };
 
   Token.find(query)
     .then(tokens => res.status(200).send({ result: 'ok', tokens }))
@@ -39,7 +43,7 @@ exports.getSearch = (req, res) => {
   const { q, orderBy } = req.query;
   const gameQuery = {
     $and: [
-      // { isWhitelisted: true }
+      { isWhitelisted: true }
     ]
   };
 
