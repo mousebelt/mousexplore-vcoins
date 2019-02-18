@@ -1,6 +1,6 @@
 const Game = require('../models/game');
 const Token = require('../models/token');
-const { reducedErrorMessage } = require('../utils');
+const { reducedErrorMessage } = require('../modules');
 
 exports.getGame = (req, res) => {
   const { gameAddr } = req.params;

@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const server = require('http').createServer(app);
 const bodyParser = require('body-parser');
 const config = require('./config');
-const logger = require('./utils/logger');
+const logger = require('./modules/logger');
 const routeInitialize = require('./routes');
 const cronService = require('./services/cron.service');
 

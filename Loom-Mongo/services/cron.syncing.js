@@ -1,8 +1,8 @@
 const config = require('../config');
 const schedule = require('node-schedule');
 const ServiceinfoModel = require('../models/serviceInfo');
-const { web3 } = require('../utils/loom');
-const { SYNCING_MONITOR_INFO_KEY } = require('../utils/constants');
+const { web3 } = require('../modules/loom');
+const { SYNCING_MONITOR_INFO_KEY } = require('../modules/constants');
 
 function startCron() {
   web3.eth.getBlockNumber((error, lastblock) => {
