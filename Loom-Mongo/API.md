@@ -22,6 +22,13 @@ Prefix  | Date    | Changes
 [Get transaction from hash](#get-transaction-from-hash)  
 [Search](#search)  
 
+## Game Explorer Apis
+[Get game data](#get-game-data)  
+[Get all game data](#get-all-game-data)  
+[Get items of the game](#get-items-of-the-game)  
+[Get all items](#get-all-items)  
+[Search games](#search-games)  
+
 # Data Types
 Only *string* and *object* may be null.
 
@@ -40,6 +47,8 @@ datetime         | string     | ISO 8601 UTC datetime: *YYYY-MM-DDThh:mm:ss*
 url              | string     | Resource link
 block_brief      | object     | [Block brief data](#block-brief-data)
 transaction_brif | object     | [Transaction brief data](#transaction-brief-data)
+game             | object     | [game data](#game-data)
+item             | object     | [item data](#item-data)
 
 
 ### Common Objects
@@ -75,6 +84,55 @@ transaction_brif | object     | [Transaction brief data](#transaction-brief-data
     "input": <hex_string>
 }
 ```
+#### Game data
+```
+{
+    "rarityNames": [
+        "Common",
+        "Rare",
+        "Super Rare",
+        "Limited Edition",
+        "Unique"
+    ],
+    "rarityPercs": [
+        80,
+        15,
+        4,
+        0.85,
+        0.15
+    ],
+    "isWhitelisted": true,
+    "_id": "5c6a07c96d0a17905f55d164",
+    "gameAddr": "0x41Ca6FB527D1061f17CC977dBdE2407B8c722DF7",
+    "__v": 0,
+    "desc": "HTML5/JavaScript multiplayer game experiment.",
+    "gameOwner": "0x7D5BEc74d5D72cf00BF359b89553D121F714B92d",
+    "image": "BrowserQuest",
+    "name": "BrowserQuest",
+    "symbol": "BQG",
+    "totalSupply": 0,
+    "updated": "2019-02-18T01:44:51.843Z"
+}
+```
+#### Item data
+```
+{
+    "owners": [],
+    "_id": "5c6a07a46d0a17905f55d0fa",
+    "gameAddr": "0x773b0bE4844a76F9078bcC99edB41fC50CF60a2b",
+    "tokenId": 0,
+    "__v": 0,
+    "cap": 0,
+    "desc": "Token Description",
+    "image": "Token Image",
+    "name": "Token Name",
+    "rarity": 1,
+    "totalSupply": 0,
+    "val": 100,
+    "updated": "2019-02-18T02:02:06.017Z"
+}
+```
+
 
 # Monitor Api Details
 
@@ -286,6 +344,112 @@ key param can be txid or blockNo, blockHash, address.
 type = 'block'
 type = 'transaction'
 type = 'address'
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+
+# Game Explorer Api Details
+
+*Prefix: `/games`*
+
+## Get game data
+```
+ GET /data/:gameAddr
+```
+
+Get game data by address.
+### QUERY PARAMS
+Name     | Type   | Mandatory | Description
+-------- | ------ | --------- | ------------
+gameAddr | string | Yes       | game address
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ result: 'ok', data: { game: <game> } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+## Get all game data
+```
+ GET /data
+```
+
+Get all game data.
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ result: 'ok', data: { games: [<game>, ...] } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+## Get items of the game
+```
+ GET /items/:gameAddr
+```
+
+Get items of the game.
+### QUERY PARAMS
+Name     | Type   | Mandatory | Description
+-------- | ------ | --------- | ------------
+gameAddr | string | Yes       | game address
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ result: 'ok', data: { tokens: [<item>, ...] } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+## Get all items
+```
+ GET /items
+```
+
+Get all items.
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ result: 'ok', data: { tokens: [<item>, ...] } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+## Search games
+```
+ GET /search
+```
+
+Search games.
+### QUERY PARAMS
+Name | Type   | Mandatory | Description
+---- | ------ | --------- | ------------
+q    | string | No        | Search query
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ result: 'ok', data: { games: [<game>, ...] } }
 ```
 * for failed case
 `status code:` 400
