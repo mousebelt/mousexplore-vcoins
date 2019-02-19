@@ -39,6 +39,12 @@ exports.getAllItems = (req, res) => {
     .catch(err => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
 };
 
+exports.getHighestPricedItems = (req, res) => {
+  Token.find().sort({ val: -1 })
+    .then(tokens => res.status(200).send({ result: 'ok', data: { tokens } }))
+    .catch(err => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
+};
+
 exports.getSearch = (req, res) => {
   const { q, orderBy } = req.query;
   const gameQuery = {
@@ -61,5 +67,26 @@ exports.getSearch = (req, res) => {
   }
   Game.find(gameQuery)
     .then(games => res.status(200).send({ result: 'ok', data: { games } }))
+    .catch(err => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
+};
+
+exports.getSearchItems = (req, res) => {
+  const { q, orderBy } = req.query;
+  let query = {};
+
+  if (q && q.length) {
+    query = {
+      $or: [
+        { name: { $regex: q, $options: 'i' } },
+        { desc: { $regex: q, $options: 'i' } }
+      ]
+    };
+  }
+
+  if (orderBy === 'popularity') {
+    // TODO: sort by popularity
+  }
+  Token.find(query)
+    .then(tokens => res.status(200).send({ result: 'ok', data: { tokens } }))
     .catch(err => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
 };
