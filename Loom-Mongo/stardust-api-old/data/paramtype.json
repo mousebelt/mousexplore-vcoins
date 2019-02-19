@@ -1,7 +1,0 @@
-{
-    "address": ["borrower", "owner", "lender", "taker", "to", "from", "gameAddr"],
-    "bool": ["decision", "isValid"],
-    "string": ["name", "image", "desc", "symbol"],
-    "uint256": ["tokenId", "amount", "boxId", "cap", "loanId", "index", "offeredAmount", "offeredId", "rarity", "timestamp", "val", "wantedAmount", "wantedId", "length", "fromId", "toId", "toAmount", "fromAmount"],
-    "uint256[]": ["tokens"]
-}
