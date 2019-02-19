@@ -27,7 +27,9 @@ Prefix  | Date    | Changes
 [Get all game data](#get-all-game-data)  
 [Get items of the game](#get-items-of-the-game)  
 [Get all items](#get-all-items)  
+[Get highest priced items](#get-highest-priced-items)  
 [Search games](#search-games)  
+[Search items](#search-items)  
 
 # Data Types
 Only *string* and *object* may be null.
@@ -398,7 +400,7 @@ Get all game data.
 
 ## Get items of the game
 ```
- GET /items/:gameAddr
+ GET /items/gameAddr/:gameAddr
 ```
 
 Get items of the game.
@@ -435,6 +437,24 @@ Get all items.
 ```javascript
 { "result": "error", "message": <string> }
 ```
+
+## Get highest priced items
+```
+ GET /items/highestPriced
+```
+Get highest priced items.
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ result: 'ok', data: { tokens: [<item>, ...] } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
 ## Search games
 ```
  GET /search
@@ -450,6 +470,27 @@ q    | string | No        | Search query
 `status code:` 200
 ```javascript
 { result: 'ok', data: { games: [<game>, ...] } }
+```
+* for failed case
+`status code:` 400
+```javascript
+{ "result": "error", "message": <string> }
+```
+
+## Search items
+```
+ GET /search/items
+```
+Search items.
+### QUERY PARAMS
+Name | Type   | Mandatory | Description
+---- | ------ | --------- | ------------
+q    | string | No        | Search query
+### RETURN
+* for successed case
+`status code:` 200
+```javascript
+{ result: 'ok', data: { tokens: [<item>, ...] } }
 ```
 * for failed case
 `status code:` 400

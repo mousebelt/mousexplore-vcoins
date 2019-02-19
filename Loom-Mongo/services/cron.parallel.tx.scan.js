@@ -2,12 +2,11 @@ const { PARALLEL_BLOCK_COUNT, CRON_TX_SCAN_INTERVAL, TICKER_BLOCK_COUNT } = requ
 const { web3 } = require('../modules/loom');
 const TransactionModel = require('../models/transactions');
 const ParallelInofModel = require('../models/parallelInfo');
-const Log = require('log');
-const fs = require('fs');
-const log = new Log('debug', fs.createWriteStream(`${__dirname}/debug.log`, { flags: 'a' }));
-// const log = new Log('debug');
+const { createLogger } = require('../modules/logger');
+const logger = createLogger('cron.parallel.tx.scan');
+
 function filelog(...params) {
-  log.info(...params);
+  logger.info(...params);
 }
 
 /*

@@ -1,5 +1,6 @@
 const winston = require('winston');
 
+const LOGLEVEL = (process.env.LOGLEVEL || 'debug').toLowerCase();
 const logTransports = [
   new (winston.transports.Console)({
     timestamp: () => new Date().toISOString(),
@@ -8,11 +9,17 @@ const logTransports = [
     ),
   }),
 ];
-
-const LOGLEVEL = (process.env.LOGLEVEL || 'debug').toLowerCase();
-const logger = winston.createLogger({
+exports.logger = winston.createLogger({
   transports: logTransports,
   level: LOGLEVEL,
 });
 
-module.exports = logger;
+
+exports.createLogger = (name) => winston.createLogger({
+  transports: [
+    new winston.transports.File({ filename: '../logs/error.log', level: 'error' }),
+    new winston.transports.File({ filename: `../logs/${name}.log` })
+  ],
+  level: 'info',
+  // format: winston.format.json(),
+});
