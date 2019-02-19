@@ -2,9 +2,12 @@ const fs = require('fs');
 const path = require('path');
 const Game = require('../models/game');
 const Token = require('../models/token');
+const Trade = require('../models/trade');
 const { CRON_STARDUST_CACHE_MINUTES } = require('../config');
 const schedule = require('node-schedule');
 const { API } = require('../modules/stardust');
+const { createLogger } = require('../modules/logger');
+const logger = createLogger('cron.stardust.cache');
 
 // Read whitelisted games
 function getWhitelistedGames() {
@@ -88,9 +91,45 @@ async function tokenCacheRunner() {
   }
 }
 
+/**
+ * Game trades caching runner
+ */
+async function tradeCacheRunner() {
+  const whitelistedGames = getWhitelistedGames();
+  const games = Object.keys(whitelistedGames).map(gameAddr => ({ gameAddr }));
+
+  for (let i = 0; i < games.length; i++) {
+    const { gameAddr } = games[i];
+    let trades = [];
+
+    try {
+      const response = await API.getters.trade.getGameDetails({ gameAddr });
+      trades = response.data.trades;
+      logger.debug(trades);
+    } catch (err) {
+      console.log('Failed to get a game trades data ( gameAddr: %s, error: %s )', gameAddr, err.message);
+    }
+
+    if (trades && trades.length) {
+      for (let j = 0; j < trades.length; j++) {
+        const trade = trades[i];
+        const query = { gameAddr, index: j };
+        try {
+          await Trade.findOneAndUpdate(query, { ...trade, index: j }, { upsert: true });
+          logger.info('Cached a game trade ( gameAddr: %s, index: %d )', gameAddr, j);
+        } catch (err) {
+          logger.error('Failed to save a game trade ( gameAddr: %s, index: %d, error: %s )', gameAddr, j, err.message);
+        }
+      }
+    }
+    await delay(1); // Delay 1 second after getting items of a game.
+  }
+}
+
 module.exports = function () {
   schedule.scheduleJob(`*/${CRON_STARDUST_CACHE_MINUTES} * * * *`, () => {
     gameCacheRunner();
     tokenCacheRunner();
+    tradeCacheRunner();
   });
 };
