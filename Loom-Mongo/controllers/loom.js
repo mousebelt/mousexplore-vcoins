@@ -1,7 +1,7 @@
 const ServiceInfoModel = require('../models/serviceInfo');
 const TransactionModel = require('../models/transactions');
-const { isOutOfSyncing, reducedErrorMessage } = require('../modules');
 const { web3 } = require('../modules/loom');
+const { isOutOfSyncing, reducedErrorMessage } = require('../modules/utils');
 
 exports.getMonitorSyncing = async (req, res) => {
   web3.eth.getBlockNumber((error, lastblock) => {

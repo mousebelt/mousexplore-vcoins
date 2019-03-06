@@ -16,11 +16,17 @@ This is the MouseXplore Loom Backend.
 1. Run mongod
 
 1. Update config
+    Create `.env` file, and add the following variables to `.env`.
     ```
-    cd config
-    cp mainnet.js.example mainnet.js
+    NODE_ENV=development
+    APP_SECRET='your_app_secret'
+    APP_PORT=3000
+    DATABASE_URI='mongodb://localhost:27017/loom-db'
+    CLIENT_CHAIN_ID=default
+    CLIENT_WRITE_URL='ws://68.183.20.43:46658/websocket'
+    CLIENT_READ_URL='ws://68.183.20.43:9999/queryws'
+    STARDUST_API_URL='http://68.183.20.43:3000'
     ```
-    Update config variables in the above file.
 
 1. Run project
     - Start the server:
