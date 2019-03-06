@@ -1,8 +1,8 @@
-const { reducedErrorMessage, isOutOfSyncing } = require('../modules');
-const { web3, loomProvider } = require('../modules/loom');
-const { SYNCING_MONITOR_INFO_KEY } = require('../modules/constants');
 const mongoose = require('mongoose');
 const ServiceInfoModel = require('../models/serviceInfo');
+const { reducedErrorMessage, isOutOfSyncing } = require('../modules/utils');
+const { web3, loomProvider } = require('../modules/loom');
+const { SYNCING_MONITOR_INFO_KEY } = require('../modules/constants');
 
 exports.getServiceMonitor = async (req, res) => { // eslint-disable-line
   return res.status(200).send({ result: 'ok' });

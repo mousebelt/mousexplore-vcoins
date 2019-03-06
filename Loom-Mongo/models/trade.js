@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const TokenSchema = new mongoose.Schema({
+const TradeSchema = new mongoose.Schema({
   index: Number,
   gameAddr: String,
   offeredId: Number,
@@ -12,4 +12,4 @@ const TokenSchema = new mongoose.Schema({
   state: Number
 });
 
-module.exports = mongoose.model('Token', TokenSchema);
+module.exports = mongoose.model('Trade', TradeSchema);

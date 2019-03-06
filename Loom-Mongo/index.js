@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 // Setup basic express server
 const express = require('express');
 const app = express();
