@@ -16,6 +16,7 @@ This is the MouseXplore Loom Backend.
 1. Run mongod
 
 1. Update config
+    
     Create `.env` file, and add the following variables to `.env`.
     ```
     NODE_ENV=development
