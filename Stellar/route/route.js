@@ -27,4 +27,5 @@ module.exports = function (app) {
   app.get('/monitor', StellarController.getMonitor);
   app.get('/monitor/horizon', StellarController.getMonitorHorizon);
   app.get('/monitor/stellar-core', StellarController.getMonitorStellarCore);
+  app.get('/monitor/diskspace', StellarController.getMonitorDiskspace);
 };

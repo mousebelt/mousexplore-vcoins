@@ -5,6 +5,7 @@ Stellar apis
 [Get server working status](#get-server-working-status)  
 [Get horizon service status](#get-horizon-service-status)  
 [Get stellar-core service status](#get-stellar-core-service-status)  
+[Get storage available size status](#get-storage-available-size-status)  
 
 [Get ledgers](#get-ledgers)  
 [Get transactions](#get-transactions)  
@@ -87,6 +88,19 @@ status: 400
 { status: 400, msg: 'errors', data: err }
 ```
 
+## Get storage available size status
+```
+ GET /monitor/diskspace
+```
+
+* for successed case `status 200`
+```javascript
+{ result: 'ok' }
+```
+* for failed case `status 400`
+```javascript
+{ result: 'error', message: <string> }
+```
 
 ## Get ledgers
 

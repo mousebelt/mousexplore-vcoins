@@ -8,6 +8,8 @@
   },
   "dependencies": {
     "cors": "^2.8.4",
+    "diskusage": "^1.0.0",
+    "dotenv": "^7.0.0",
     "express": "^4.16.3",
     "mongoose": "^5.1.0",
     "request": "^2.85.0",
