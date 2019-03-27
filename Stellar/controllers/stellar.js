@@ -1,3 +1,4 @@
+const disk = require('diskusage');
 const StellarSdk = require('stellar-sdk');
 const request = require('request');
 const requestpromise = require('request-promise');
@@ -6,11 +7,9 @@ const URL = require('url');
 const URI = require('urijs');
 
 const config = require('../config');
-const urlAPI = config.url;
+const urlAPI = config.stellarApiUrl;
 
-const runtype = config.RUN_TYPE;
-
-if (runtype === 'test') {
+if (config.network === 'testnet') {
   StellarSdk.Network.useTestNetwork();
 } else {
   StellarSdk.Network.usePublicNetwork();
@@ -68,7 +67,7 @@ exports.createAccount = function (req, res) {
   console.log('Secret is ', pair.secret());
   console.log('PublicKey is ', receiverPublicKey);
 
-  if (runtype === 'test') {
+  if (config.network === 'testnet') {
     request.get(
       {
         url: 'https://friendbot.stellar.org',
@@ -1234,4 +1233,15 @@ exports.getMonitorStellarCore = async (req, res) => {
   } catch (err) {
     return res.status(400).json({ status: 400, msg: err.toString() });
   }
+};
+
+exports.getMonitorDiskspace = async (req, res) => {
+  disk.check(config.storagePath, (err, info) => {
+    if (err) return res.status(400).json({ result: 'error', message: 'Error occured' });
+
+    console.log(info);
+    if (info.available > config.lowSpaceSize) return res.status(200).json({ result: 'ok' });
+
+    return res.status(500).json({ result: 'error', message: 'Low storage space', data: info });
+  });
 };
