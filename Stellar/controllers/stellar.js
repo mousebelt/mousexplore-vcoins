@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop, no-console, no-plusplus */
 const disk = require('diskusage');
 const StellarSdk = require('stellar-sdk');
 const request = require('request');
@@ -5,8 +6,8 @@ const requestpromise = require('request-promise');
 const axios = require('axios');
 const URL = require('url');
 const URI = require('urijs');
-
 const config = require('../config');
+
 const urlAPI = config.stellarApiUrl;
 
 if (config.network === 'testnet') {
@@ -22,7 +23,7 @@ const server = new StellarSdk.Server('http://127.0.0.1:8000', {
 // var server = new StellarSdk.Server('https://horizon-testnet.stellar.org');
 
 exports.getBalance = function (req, res) {
-  const address = req.params.address;
+  const { address } = req.params;
 
   const url = `${urlAPI}accounts/${address}`;
 
@@ -161,7 +162,7 @@ exports.createAccount = function (req, res) {
 */
 function getCursor(url) {
   const urlParts = URL.parse(url, true);
-  const query = urlParts.query;
+  const { query } = urlParts;
   const c = query.cursor;
 
   return c;
@@ -179,7 +180,7 @@ function getCursor(url) {
 exports.getLatestLedgers = async function (req, res) {
   let count = Number(req.query.count);
   let order = Number(req.query.order);
-  const cursor = req.query.cursor;
+  const { cursor } = req.query;
   if (!count || count <= 0) count = 10;
   if (order > 0) order = 'asc';
   else order = 'desc';
@@ -213,7 +214,7 @@ exports.getLatestLedgers = async function (req, res) {
       next = getCursor(next);
       prev = getCursor(prev);
 
-      const records = body._embedded.records;
+      const { records } = body._embedded;
 
       res.json({
         status: 200,
@@ -270,7 +271,7 @@ exports.getLatestLedgers = async function (req, res) {
 };
 
 exports.getLedgerBySequence = function (req, res) {
-  let sequence = req.params.sequence;
+  let { sequence } = req.params;
   if (sequence.length < 10) sequence = Number(sequence);
   try {
     server
@@ -300,7 +301,7 @@ exports.getLedgerBySequence = function (req, res) {
 exports.getLatestTransactions = function (req, res) {
   let count = Number(req.query.count);
   let order = Number(req.query.order);
-  const cursor = req.query.cursor;
+  const { cursor } = req.query;
 
   if (!count || count <= 0) count = 10;
   if (order > 0) order = 'asc';
@@ -319,7 +320,7 @@ exports.getLatestTransactions = function (req, res) {
       next = getCursor(next);
       prev = getCursor(prev);
 
-      const records = body._embedded.records;
+      const { records } = body._embedded;
 
       res.json({
         status: 200,
@@ -372,9 +373,9 @@ exports.getLatestTransactions = function (req, res) {
 * @return transactions of ledger
 */
 exports.getTransactionsForLedger = function (req, res) {
-  const sequence = req.params.sequence;
+  const { sequence } = req.params;
   let count = Number(req.query.count);
-  const cursor = req.query.cursor;
+  const { cursor } = req.query;
 
   if (!count) count = 10;
 
@@ -400,7 +401,7 @@ exports.getTransactionsForLedger = function (req, res) {
         next = getCursor(next);
         prev = getCursor(prev);
 
-        const records = body._embedded.records;
+        const { records } = body._embedded;
         return res.json({
           status: 200,
           msg: 'success',
@@ -422,7 +423,7 @@ exports.getTransactionsForLedger = function (req, res) {
 */
 exports.getOperations = function (req, res) {
   let count = Number(req.query.count);
-  const cursor = req.query.cursor;
+  const { cursor } = req.query;
 
   if (!count) count = 10;
 
@@ -439,7 +440,7 @@ exports.getOperations = function (req, res) {
       next = getCursor(next);
       prev = getCursor(prev);
 
-      const records = body._embedded.records;
+      const { records } = body._embedded;
 
       res.json({
         status: 200,
@@ -489,14 +490,14 @@ exports.getOperations = function (req, res) {
 * @return operations of transaction
 */
 exports.getOperationsForTransaction = function (req, res) {
-  const hash = req.params.hash;
+  const { hash } = req.params;
 
   server
     .operations()
     .forTransaction(hash)
     .call()
     .then((operationResult) => {
-      const records = operationResult.records;
+      const { records } = operationResult;
 
       // var operations = [];
       // for (let i = 0; i < records.length; i++) {
@@ -531,7 +532,7 @@ exports.getOperationsForTransaction = function (req, res) {
 * @return transaction info
 */
 exports.getTransaction = function (req, res) {
-  const hash = req.params.hash;
+  const { hash } = req.params;
 
   server
     .transactions()
@@ -558,7 +559,7 @@ exports.getTransaction = function (req, res) {
 * @return account info
 */
 exports.getAccount = function (req, res) {
-  const account = req.params.account;
+  const { account } = req.params;
 
   const url = `${urlAPI}accounts/${account}`;
 
@@ -606,9 +607,9 @@ exports.getAccount = function (req, res) {
 * @return operation list
 */
 exports.getOperationsForAccount = function (req, res) {
-  const account = req.params.account;
+  const { account } = req.params;
   let count = Number(req.query.count);
-  const cursor = req.query.cursor;
+  const { cursor } = req.query;
 
   if (!count) count = 10;
 
@@ -625,7 +626,7 @@ exports.getOperationsForAccount = function (req, res) {
       next = getCursor(next);
       prev = getCursor(prev);
 
-      const records = body._embedded.records;
+      const { records } = body._embedded;
 
       res.json({
         status: 200,
@@ -677,9 +678,9 @@ exports.getOperationsForAccount = function (req, res) {
 * @return transactions of account
 */
 exports.getTransactionsForAccount = function (req, res) {
-  const account = req.params.account;
+  const { account } = req.params;
   let count = Number(req.query.count);
-  const cursor = req.query.cursor;
+  const { cursor } = req.query;
   if (!count) count = 10;
 
   let url = `${urlAPI}accounts/${account}/transactions?limit=${count}&order=desc`;
@@ -704,7 +705,7 @@ exports.getTransactionsForAccount = function (req, res) {
         next = getCursor(next);
         prev = getCursor(prev);
 
-        const records = body._embedded.records;
+        const { records } = body._embedded;
 
         return res.json({
           status: 200,
@@ -758,9 +759,9 @@ exports.getTransactionsForAccount = function (req, res) {
 * @return payment list
 */
 exports.getPaymentsForAccount = function (req, res) {
-  const account = req.params.account;
+  const { account } = req.params;
   let count = Number(req.query.count);
-  const cursor = req.query.cursor;
+  const { cursor } = req.query;
   if (!count) count = 10;
 
   let url = `${urlAPI}accounts/${account}/payments?limit=${count}&order=desc`;
@@ -785,7 +786,7 @@ exports.getPaymentsForAccount = function (req, res) {
         next = getCursor(next);
         prev = getCursor(prev);
 
-        const records = body._embedded.records;
+        const { records } = body._embedded;
 
         // var operations = [];
         // for (let i = 0; i < records.length; i++) {
@@ -856,9 +857,9 @@ exports.getPaymentsForAccount = function (req, res) {
 * @return payment list
 */
 exports.getOffersForAccount = function (req, res) {
-  const account = req.body.account;
-  const count = req.body.count;
-  const cursor = req.body.cursor;
+  const { account } = req.body;
+  const { count } = req.body;
+  const { cursor } = req.body;
 
   let url = `${urlAPI}accounts/${account}/offers?limit=${count}&order=desc`;
   url += cursor ? `&cursor=${cursor}` : '';
@@ -877,7 +878,7 @@ exports.getOffersForAccount = function (req, res) {
 
       console.log('next= ', next);
 
-      const records = body._embedded.records;
+      const { records } = body._embedded;
 
       const operations = [];
       for (let i = 0; i < records.length; i++) {
@@ -911,9 +912,9 @@ exports.getOffersForAccount = function (req, res) {
 * @return effect list
 */
 exports.getEffectsForAccount = function (req, res) {
-  const account = req.body.account;
-  const count = req.body.count;
-  const cursor = req.body.cursor;
+  const { account } = req.body;
+  const { count } = req.body;
+  const { cursor } = req.body;
 
   let url = `${urlAPI}accounts/${account}/effects?limit=${count}&order=desc`;
   url += cursor ? `&cursor=${cursor}` : '';
@@ -932,7 +933,7 @@ exports.getEffectsForAccount = function (req, res) {
 
       console.log('next= ', next);
 
-      const records = body._embedded.records;
+      const { records } = body._embedded;
 
       const operations = [];
       for (let i = 0; i < records.length; i++) {
@@ -966,13 +967,13 @@ exports.getEffectsForAccount = function (req, res) {
 * @return effect list
 */
 exports.getLatestEffects = function (req, res) {
-  const count = req.body.count;
-  const cursor = req.body.cursor;
+  const { count } = req.body;
+  const { cursor } = req.body;
 
   let url = `${urlAPI}/effects?limit=${count}&order=desc`;
   url += cursor ? `&cursor=${cursor}` : '';
   console.log(url);
-  request(url, async function (error, response, body) {
+  request(url, async (error, response, body) => {
     if (!error) {
       body = JSON.parse(body);
       // console.log("response: ", body);
@@ -983,7 +984,7 @@ exports.getLatestEffects = function (req, res) {
       next = getCursor(next);
       prev = getCursor(prev);
 
-      const records = body._embedded.records;
+      const { records } = body._embedded;
 
       const operations = [];
       for (let i = 0; i < records.length; i++) {
@@ -1031,7 +1032,7 @@ exports.getLatestEffects = function (req, res) {
 };
 
 exports.getSearch = (req, res) => {
-  let key = req.params.key;
+  let { key } = req.params;
   try {
     if (key.length >= 64 && key.length <= 66) {
       // transaction
@@ -1053,7 +1054,7 @@ exports.getSearch = (req, res) => {
             data: err
           });
         });
-    } else if (key.length < 10) {
+    } if (key.length < 10) {
       key = Number(key);
       return server
         .ledgers()
@@ -1073,7 +1074,7 @@ exports.getSearch = (req, res) => {
             data: err
           });
         });
-    } else if (key.length <= 56) {
+    } if (key.length <= 56) {
       // address
       return res.json({
         status: 200,
@@ -1088,7 +1089,7 @@ exports.getSearch = (req, res) => {
 };
 
 exports.postTransaction = async (req, res) => {
-  let tx = req.body.tx;
+  let { tx } = req.body;
   if (!tx) return res.json({ status: 400, msg: 'Empty transaction !' });
 
   try {
@@ -1224,9 +1225,7 @@ exports.getMonitorStellarCore = async (req, res) => {
     return server.ledgers()
       .limit(1)
       .call()
-      .then(async function (ledgerResult) {
-        return res.json({ status: 200, msg: 'Stellar-Core service is working !', data: ledgerResult });
-      })
+      .then(async ledgerResult => res.json({ status: 200, msg: 'Stellar-Core service is working !', data: ledgerResult }))
       .catch((err) => { // eslint-disable-line
         return res.status(400).json({ status: 400, msg: 'Stellar-Core service is not working !' });
       });
