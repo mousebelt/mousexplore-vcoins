@@ -1,10 +1,10 @@
 const mongoose = require('mongoose');
 
 const parellelInfoSchema = new mongoose.Schema({
-  index: Number,	// 0 ~ config.CHECK_PARELLEL_BLOCKS - 1
+  index: Number, // 0 ~ config.CHECK_PARELLEL_BLOCKS - 1
   blocknumber: Number,
   total_txs: Number,
-  synced_index: Number,	// synced transactions
+  synced_index: Number, // synced transactions
   updatedAt: Number
 });
 

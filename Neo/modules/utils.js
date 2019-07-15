@@ -1,6 +1,7 @@
-// define local node object
+/* eslint-disable no-plusplus, no-await-in-loop */
 const config = require('../config');
-const client = config.client;
+
+const { client } = config;
 
 const promisify = function promisify(fn, args) {
   return new Promise((resolve, reject) => {
@@ -24,6 +25,7 @@ async function getTxOutFunc(txid, vout) {
       return out.vout[vout] ? out.vout[vout] : undefined;
     }
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log(error);
   }
   return undefined;
@@ -46,6 +48,7 @@ async function getTxDetailsFunc(txid) {
     }
     return tx;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log(error);
   }
   return undefined;
