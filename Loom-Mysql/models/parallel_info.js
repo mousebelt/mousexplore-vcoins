@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+
 module.exports = function (sequelize) {
   const parallelInfo = sequelize.define('parallel_info', {
     index: {

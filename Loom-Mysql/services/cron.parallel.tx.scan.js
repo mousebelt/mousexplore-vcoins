@@ -1,8 +1,9 @@
+/* eslint-disable no-continue, prefer-destructuring, no-await-in-loop, no-plusplus */
+const Log = require('log');
 const { CHECK_PARALLEL_BLOCKS, TICKER_BLOCK, CRON_TIME_INTERVAL } = require('../config');
 const models = require('../models');
 const { web3 } = require('../utils/loom');
 
-const Log = require('log');
 // const fs = require('fs');
 // const log = new Log('debug', fs.createWriteStream(`${__dirname}/debug.log`, { flags: 'a' }));
 const log = new Log('debug');
@@ -25,7 +26,7 @@ function filelog(...params) {
 function initParallInfo() {
   return models.parallel_info.findAndCountAll({})
     .then(async (data) => {
-      const count = data.count;
+      const { count } = data;
       for (let index = count; index < CHECK_PARALLEL_BLOCKS; index++) {
         await models.parallel_info.create({
           index,
@@ -35,7 +36,7 @@ function initParallInfo() {
         });
       }
     })
-    .catch((err) => filelog('init parallel info error: ', err));
+    .catch(err => filelog('init parallel info error: ', err));
 }
 
 function loadParallelInfo() {
@@ -45,7 +46,9 @@ function loadParallelInfo() {
   })
     .then((rows) => {
       for (let i = 0; i < CHECK_PARALLEL_BLOCKS; i++) {
-        const { index, blockNumber, totalTxs, syncedIndex } = rows[i];
+        const {
+          index, blockNumber, totalTxs, syncedIndex
+        } = rows[i];
         gParallelBlocks[index] = {
           blockNumber,
           totalTxs,
@@ -54,7 +57,7 @@ function loadParallelInfo() {
         };
       }
     })
-    .catch((err) => filelog('load parallel info error: ', err));
+    .catch(err => filelog('load parallel info error: ', err));
 }
 
 function saveParallelInfo(index) {
@@ -91,7 +94,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
     } else {
       for (let j = gParallelBlocks[threadIndex].syncedIndex; j < txnCount; j++) {
         // transaction model data init
-        const blockNumber = gParallelBlocks[threadIndex].blockNumber;
+        const { blockNumber } = gParallelBlocks[threadIndex];
         let hash = null;
         let from = null;
         let to = null;
@@ -111,7 +114,9 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
         // const txnReceipt = await web3.eth.getTransactionReceipt(hash);
         // fee = gasprice * txnReceipt.gasUsed;
 
-        await models.loom_tx.upsert({ hash, blockNumber, from, to, value, fee, timestamp }, { hash });
+        await models.loom_tx.upsert({
+          hash, blockNumber, from, to, value, fee, timestamp
+        }, { hash });
         gParallelBlocks[threadIndex].syncedIndex = j + 1;
         await saveParallelInfo(threadIndex);
       }
@@ -146,7 +151,7 @@ async function distributeBlocks() {
           inProgress: true
         };
         await saveParallelInfo(i);
-        web3.eth.getBlock(nextNumber, true, async function (error, blockdata) {
+        web3.eth.getBlock(nextNumber, true, async (error, blockdata) => {
           try {
             if (error) throw error;
             gParallelBlocks[i] = {
@@ -162,22 +167,20 @@ async function distributeBlocks() {
             gParallelBlocks[i].inProgress = false;
           }
         });
-      } else {
-        if (!gParallelBlocks[i].inProgress) {
-          web3.eth.getBlock(gParallelBlocks[i].blockNumber, true, async function (error, blockdata) {
-            try {
-              if (error) throw error;
+      } else if (!gParallelBlocks[i].inProgress) {
+        web3.eth.getBlock(gParallelBlocks[i].blockNumber, true, async (error, blockdata) => {
+          try {
+            if (error) throw error;
 
-              gParallelBlocks[i].inProgress = true;
-              gParallelBlocks[i].totalTxs = blockdata.transactions.length;
-              await saveParallelInfo(i);
+            gParallelBlocks[i].inProgress = true;
+            gParallelBlocks[i].totalTxs = blockdata.transactions.length;
+            await saveParallelInfo(i);
 
-              await CheckUpdatedTransactions(i, blockdata);
-            } catch (err) {
-              gParallelBlocks[i].inProgress = false;
-            }
-          });
-        }
+            await CheckUpdatedTransactions(i, blockdata);
+          } catch (err) {
+            gParallelBlocks[i].inProgress = false;
+          }
+        });
       }
     }
   } catch (e) {

@@ -7,6 +7,7 @@ module.exports = function (app) {
   models.sequelize.sync()
     .then(() => app.logger.info('Sequelize synced'))
     .catch((error) => {
+      // eslint-disable-next-line no-console
       console.log(error);
       app.logger.error('Sequelize sync failed: ', error.message);
     });

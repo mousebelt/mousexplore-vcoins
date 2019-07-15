@@ -1,6 +1,8 @@
-const config = require('../config');
-const { Client, CryptoUtils, LoomProvider, LocalAddress } = require('loom-js');
+const {
+  Client, CryptoUtils, LoomProvider, LocalAddress
+} = require('loom-js');
 const Web3 = require('web3');
+const config = require('../config');
 
 const privateKey = CryptoUtils.generatePrivateKey();
 const publicKey = CryptoUtils.publicKeyFromPrivateKey(privateKey);

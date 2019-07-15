@@ -1,4 +1,6 @@
+/* eslint-disable react/no-this-in-sfc */
 const Sequelize = require('sequelize');
+
 module.exports = function (sequelize) {
   const serviceInfo = sequelize.define('service_info', {
     key: {
@@ -8,6 +10,7 @@ module.exports = function (sequelize) {
     data: {
       type: Sequelize.TEXT,
       get() {
+        // eslint-disable-next-line react/no-this-in-sfc
         if (this.getDataValue('data')) {
           return JSON.parse(this.getDataValue('data'));
         }
@@ -18,9 +21,9 @@ module.exports = function (sequelize) {
       },
     },
   },
-    {
-      timestamps: true,
-    });
+  {
+    timestamps: true,
+  });
 
   serviceInfo.upsert = (values, condition) => (
     serviceInfo.findOne({ where: condition })

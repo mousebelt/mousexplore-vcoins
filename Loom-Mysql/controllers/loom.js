@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop, no-plusplus */
 const models = require('../models');
 const { reducedErrorMessage, getPageParams } = require('../utils');
 const { web3 } = require('../utils/loom');
@@ -9,7 +10,7 @@ exports.getBlocks = function (req, res) {
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async (error, number) => {
     if (!error) {
       try {
         const blocks = [];
@@ -32,7 +33,7 @@ exports.getBlocks = function (req, res) {
 };
 
 exports.getBlockDetails = async function (req, res) {
-  let hash = req.params.hash;
+  let { hash } = req.params;
   try {
     if (hash.length < 10) hash = Number(hash);
     const block = await web3.eth.getBlock(hash, true);
@@ -44,7 +45,7 @@ exports.getBlockDetails = async function (req, res) {
 };
 
 exports.getBlockByHash = async function (req, res) {
-  let hash = req.params.hash;
+  let { hash } = req.params;
   try {
     if (hash.length < 10) hash = Number(hash);
     const block = await web3.eth.getBlock(hash, false);
@@ -55,8 +56,8 @@ exports.getBlockByHash = async function (req, res) {
 };
 
 exports.getTransactionInfo = function (req, res) {
-  const hash = req.params.hash;
-  web3.eth.getTransaction(hash, async function (error, transaction) {
+  const { hash } = req.params;
+  web3.eth.getTransaction(hash, async (error, transaction) => {
     if (error) {
       return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
     }
@@ -66,7 +67,7 @@ exports.getTransactionInfo = function (req, res) {
 
 exports.getTransactions = async (req, res) => {
   const { page, perPage } = getPageParams(req.query);
-  let address = req.query.address;
+  let { address } = req.query;
 
   let where = {};
   if (address) {
@@ -96,18 +97,19 @@ exports.getTransactions = async (req, res) => {
               tx.timestamp = objs[i].timestamp;
               transactions.push(tx);
             } catch (err) {
+              // eslint-disable-next-line no-console
               console.log('get transaction error: ', err);
             }
           }
           return res.status(200).send({ result: 'ok', data: { pagination, transactions } });
         })
-        .catch((err) => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
+        .catch(err => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
     })
-    .catch((err) => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
+    .catch(err => res.status(400).send({ result: 'error', message: reducedErrorMessage(err) }));
 };
 
 exports.getSearch = async (req, res) => {
-  let key = req.params.key;
+  let { key } = req.params;
 
   try {
     if (key.length < 10) {
