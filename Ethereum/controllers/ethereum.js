@@ -1,6 +1,7 @@
-// const _ = require('lodash');
-const config = require('../config');
+/* eslint-disable no-console, no-restricted-properties, no-await-in-loop, no-plusplus */
 const Web3 = require('web3');
+const config = require('../config');
+
 const web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 
 const TransactionModel = require('../model/transactions');
@@ -53,9 +54,11 @@ async function getTransactionDetailsFunc(hash) {
 
         amount = amount.replace(/^(0)*/, '');
         amount = parseInt(`0x${amount}`, 16);
-        amount = amount / Math.pow(10, token.decimal);
+        amount /= Math.pow(10, token.decimal);
 
-        transaction.txtoken = { symbol: token.symbol, from: txreceipt.from, to, amount };
+        transaction.txtoken = {
+          symbol: token.symbol, from: txreceipt.from, to, amount
+        };
       } else if (methodid === '0x23b872dd') {
         // let from = inputdata.slice(10, 74);
         // from = from.replace(/^(0)*/, '');
@@ -70,9 +73,11 @@ async function getTransactionDetailsFunc(hash) {
         let amount = inputdata.slice(138, 202);
         amount = amount.replace(/^(0)*/, '');
         amount = parseInt(`0x${amount}`, 16);
-        amount = amount / Math.pow(10, token.decimal);
+        amount /= Math.pow(10, token.decimal);
 
-        transaction.txtoken = { symbol: token.symbol, from, to, amount };
+        transaction.txtoken = {
+          symbol: token.symbol, from, to, amount
+        };
       }
     }
     return transaction;
@@ -83,7 +88,7 @@ async function getTransactionDetailsFunc(hash) {
 }
 
 exports.getBalance = async (req, res) => {
-  let address = req.params.address;
+  let { address } = req.params;
 
   const balances = [];
   try {
@@ -114,7 +119,7 @@ exports.getBalance = async (req, res) => {
       if (tokenBalance > 0) {
         // Change the string to be in Ether not Wei
         // tokenBalance = web3.utils.fromWei(tokenBalance, 'ether')
-        tokenBalance = tokenBalance / Math.pow(10, token.decimal);
+        tokenBalance /= Math.pow(10, token.decimal);
         balances.push({ symbol: token.symbol, balance: tokenBalance.toString() });
       }
     }
@@ -138,9 +143,9 @@ exports.createAccount = function (req, res) {
 
 // to enable calls of personal functions, need to set --rpcapi eth,web3,personal when call geth
 exports.sendTransaction = function (req, res) {
-  const from = req.body.from;
-  const to = req.body.to;
-  const value = req.body.value;
+  const { from } = req.body;
+  const { to } = req.body;
+  const { value } = req.body;
   // Use Wb3 to get the balance of the address, convert it and then show it in the console.
   web3.eth.personal.unlockAccount(from, config.mainpass, (error, result) => { // eslint-disable-line
     if (!error) {
@@ -173,9 +178,9 @@ exports.sendTransaction = function (req, res) {
 };
 
 exports.getUpdatedTransactions = function (req, res) {
-  const blocknum = req.body.blocknum;
+  const { blocknum } = req.body;
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async (error, number) => {
 
     if (!error) {
       try {
@@ -214,10 +219,10 @@ exports.getUpdatedTransactions = function (req, res) {
 *   Reward cannot be retrieved from node. Maybe should get it from etherscan
 */
 exports.blocklist = function (req, res) {
-  const blocknum = req.body.blocknum;
-  const count = req.body.count;
+  const { blocknum } = req.body;
+  const { count } = req.body;
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async (error, number) => {
     if (!error) {
       try {
         const blocks = [];
@@ -235,7 +240,7 @@ exports.blocklist = function (req, res) {
           let Reward = 0;
           let gas = 0;
           for (let j = 0; j < txn; j++) {
-            const hash = blockdata.transactions[j].hash;
+            const { hash } = blockdata.transactions[j];
             const gasprice = blockdata.transactions[j].gasPrice;
             const transaction = await web3.eth.getTransactionReceipt(hash);
 
@@ -245,7 +250,7 @@ exports.blocklist = function (req, res) {
           }
 
           const GasPrice = txn ? Reward / gas : 0;
-          Reward = Reward / 1000000000;
+          Reward /= 1000000000;
 
           blocks.push({
             blockNumber: Height,
@@ -286,7 +291,7 @@ exports.getBlocks = function (req, res) {
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async (error, number) => {
     if (!error) {
       try {
         const blocks = [];
@@ -315,7 +320,7 @@ exports.getBlocks = function (req, res) {
 };
 
 exports.getBlockByHash = async function (req, res) {
-  let hash = req.params.hash;
+  let { hash } = req.params;
   try {
     if (hash.length < 10) hash = Number(hash);
     const blockdata = await web3.eth.getBlock(hash, false);
@@ -326,7 +331,7 @@ exports.getBlockByHash = async function (req, res) {
 };
 
 exports.getBlockDetails = async function (req, res) {
-  let hash = req.params.hash;
+  let { hash } = req.params;
   try {
     if (hash.length < 10) hash = Number(hash);
     const blockdata = await web3.eth.getBlock(hash, true);
@@ -348,7 +353,7 @@ exports.getBlockDetails = async function (req, res) {
  * @returns transaction list
  */
 exports.getTransactions = async (req, res) => {
-  const contract = req.query.contract;
+  const { contract } = req.query;
   let offset = Number(req.query.offset);
   let count = Number(req.query.count);
   const order = Number(req.query.order);
@@ -372,7 +377,7 @@ exports.getTransactions = async (req, res) => {
       .sort(condition)
       .skip(offset)
       .limit(count)
-      .exec(async function (error, rows) {
+      .exec(async (error, rows) => {
         if (error) {
           console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
           return res.json({ status: 400, msg: 'DB error !', data: error });
@@ -399,7 +404,7 @@ exports.getTransactions = async (req, res) => {
 };
 
 exports.getTransactionsFromAccount = async (req, res) => {
-  let address = req.params.address;
+  let { address } = req.params;
 
   if (address) {
     address = address.toLowerCase();
@@ -426,7 +431,7 @@ exports.getTransactionsFromAccount = async (req, res) => {
       .sort(cond)
       .skip(offset)
       .limit(count)
-      .exec(async function (error, rows) {
+      .exec(async (error, rows) => {
         if (error) {
           console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
           return res.json({ status: 400, msg: 'DB error !', data: error });
@@ -463,9 +468,9 @@ exports.getTransactionsFromAccount = async (req, res) => {
 * @return transaction count
 */
 exports.getTransactionCount = async function (req, res) {
-  const address = req.params.address;
+  const { address } = req.params;
 
-  web3.eth.getTransactionCount(address, 'pending', async function (error, count) {
+  web3.eth.getTransactionCount(address, 'pending', async (error, count) => {
     if (!error) {
       return res.json({
         status: 200,
@@ -479,8 +484,8 @@ exports.getTransactionCount = async function (req, res) {
 };
 
 exports.getTransactionInfo = function (req, res) {
-  const hash = req.params.hash;
-  web3.eth.getTransaction(hash, async function (error, transaction) {
+  const { hash } = req.params;
+  web3.eth.getTransaction(hash, async (error, transaction) => {
     if (error) {
       console.log('getTransactionInfo: we have a promblem: ', error); // Should dump errors here
       return res.json({
@@ -494,7 +499,7 @@ exports.getTransactionInfo = function (req, res) {
 };
 
 exports.getTransactionDetails = async function (req, res) {
-  const hash = req.params.hash;
+  const { hash } = req.params;
 
   const transaction = await getTransactionDetailsFunc(hash);
   if (transaction) return res.json({ status: 200, msg: 'success', data: transaction });
@@ -515,8 +520,8 @@ exports.getTokenList = function (req, res) {
 };
 
 exports.addToken = function (req, res) {
-  const symbol = req.body.symbol;
-  let address = req.body.address;
+  const { symbol } = req.body;
+  let { address } = req.body;
 
   if (address) {
     address = address.toLowerCase();
@@ -540,8 +545,8 @@ exports.addToken = function (req, res) {
 };
 
 exports.removeToken = function (req, res) {
-  const symbol = req.body.symbol;
-  let address = req.body.address;
+  const { symbol } = req.body;
+  let { address } = req.body;
 
   if (address) {
     address = address.toLowerCase();
@@ -559,7 +564,7 @@ exports.removeToken = function (req, res) {
 };
 
 exports.getSearch = async (req, res) => {
-  let key = req.params.key;
+  let { key } = req.params;
 
   try {
     if (key.length < 10) {
@@ -595,7 +600,7 @@ exports.getSearch = async (req, res) => {
 };
 
 exports.postSendSignedTransaction = async (req, res) => {
-  let raw = req.body.raw;
+  let { raw } = req.body;
   try {
     if (String(raw).substring(0, 2) !== '0x') raw = `0x${raw}`;
 
@@ -642,7 +647,7 @@ exports.getMonitorSyncing = async (req, res) => {
   web3.eth.getBlockNumber((error, lastblock) => {
     if (error) return res.status(400).send({ result: 'error', msg: 'Web3 error', error: error.toString() });
     return ServiceInfoModel.findOne()
-      .then(row => {
+      .then((row) => {
         if (row) {
           if ((lastblock === row.lastblock) && isOutOfSyncing(row.updatedAt)) {
             return res.status(400).send({ result: 'error', msg: 'Out of syncing' });
@@ -689,7 +694,7 @@ exports.getSentReceivedTxHistory = async (req, res) => {
       .sort(querySort)
       .skip(offset)
       .limit(count)
-      .exec(async function (error, rows) {
+      .exec(async (error, rows) => {
         if (error) {
           console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
           return res.json({ status: 400, msg: 'Error occurred !' });
@@ -734,7 +739,7 @@ exports.getTxHistoryByTicker = async (req, res) => {
         .sort(querySort)
         .skip(offset)
         .limit(count)
-        .exec(async function (error, rows) {
+        .exec(async (error, rows) => {
           if (error) {
             console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
             return res.json({ status: 400, msg: 'Error occurred !' });
@@ -772,7 +777,7 @@ exports.getTxHistoryByTicker = async (req, res) => {
       .sort(querySort)
       .skip(offset)
       .limit(count)
-      .exec(async function (error, rows) {
+      .exec(async (error, rows) => {
         if (error) {
           console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
           return res.json({ status: 400, msg: 'Error occurred !' });

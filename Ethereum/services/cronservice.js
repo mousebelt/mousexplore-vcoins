@@ -1,14 +1,18 @@
+/* eslint-disable prefer-destructuring, no-restricted-globals, no-restricted-properties,
+no-continue, no-await-in-loop, no-console, no-plusplus */
+
 const _ = require('lodash');
-const config = require('../config');
 const Web3 = require('web3');
+const fs = require('fs');
+const Log = require('log');
+const config = require('../config');
+
 const web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 
 const TransactionModel = require('../model/transactions');
 const tokenModel = require('../model/tokens');
 const ParellelInofModel = require('../model/parellelinfo');
 
-const fs = require('fs');
-const Log = require('log');
 const log = new Log('debug', fs.createWriteStream(`${__dirname}/debug.log`, { flags: 'a' }));
 // const log = new Log('debug');
 
@@ -43,7 +47,7 @@ async function initTokenDb() {
 async function loadTokens() {
   try {
     const rows = await tokenModel.find();
-    gTokens = _.map(rows, (row) => ({ symbol: row.symbol, address: row.address, decimal: row.decimal }));
+    gTokens = _.map(rows, row => ({ symbol: row.symbol, address: row.address, decimal: row.decimal }));
   } catch (e) {
     filelog('load tokens error: ', e);
   }
@@ -135,7 +139,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
     } else {
       for (let j = gParellelBlocks[threadIndex].synced_index; j < txnCount; j++) {
         // transaction model data init
-        const blocknumber = gParellelBlocks[threadIndex].blocknumber;
+        const { blocknumber } = gParellelBlocks[threadIndex];
         let hash = null;
         let from = null;
         let to = null;
@@ -160,7 +164,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
         fee = gasprice * txnReceipt.gasUsed;
 
         //
-        const token = _.find(gTokens, (o) => (o.address === to));
+        const token = _.find(gTokens, o => (o.address === to));
         if (token !== undefined) {
           const inputdata = transaction.input;
           const methodid = inputdata.slice(0, 10);
@@ -175,7 +179,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
             tokenAmount = tokenAmount.replace(/^(0)*/, '');
             if (tokenAmount !== '') {
               tokenAmount = parseInt(`0x${tokenAmount}`, 16);
-              tokenAmount = tokenAmount / Math.pow(10, token.decimal);
+              tokenAmount /= Math.pow(10, token.decimal);
             } else {
               tokenAmount = null;
             }
@@ -197,7 +201,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
             tokenAmount = tokenAmount.replace(/^(0)*/, '');
             if (tokenAmount !== '') {
               tokenAmount = parseInt(`0x${tokenAmount}`, 16);
-              tokenAmount = tokenAmount / Math.pow(10, token.decimal);
+              tokenAmount /= Math.pow(10, token.decimal);
             } else {
               tokenAmount = null;
             }
@@ -208,8 +212,17 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
         if (isNaN(tokenAmount)) tokenAmount = null;
 
         await TransactionModel.findOneAndUpdate({ hash }, {
-          blocknumber, hash, from, to, value, fee, timestamp,
-          tokenSymbol, tokenFrom, tokenTo, tokenAmount
+          blocknumber,
+          hash,
+          from,
+          to,
+          value,
+          fee,
+          timestamp,
+          tokenSymbol,
+          tokenFrom,
+          tokenTo,
+          tokenAmount
         }, { upsert: true });
 
         gParellelBlocks[threadIndex].synced_index = j + 1;
@@ -222,7 +235,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
   } catch (e) {
     // filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
     gParellelBlocks[threadIndex].inprogressing = false;
-    return;
+
   }
 }
 
@@ -250,7 +263,7 @@ async function distributeBlocks() {
           inprogressing: true
         };
         await saveParellelInfo(i);
-        web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
+        web3.eth.getBlock(nextnumber, true, async (error, blockdata) => {
           try {
             if (error) throw error;
 
@@ -269,22 +282,20 @@ async function distributeBlocks() {
             gParellelBlocks[i].inprogressing = false;
           }
         });
-      } else {
-        if (!gParellelBlocks[i].inprogressing) {
-          web3.eth.getBlock(gParellelBlocks[i].blocknumber, true, async function (error, blockdata) {
-            try {
-              if (error) throw error;
+      } else if (!gParellelBlocks[i].inprogressing) {
+        web3.eth.getBlock(gParellelBlocks[i].blocknumber, true, async (error, blockdata) => {
+          try {
+            if (error) throw error;
 
-              gParellelBlocks[i].inprogressing = true;
-              gParellelBlocks[i].total_txs = blockdata.transactions.length;
-              await saveParellelInfo(i);
+            gParellelBlocks[i].inprogressing = true;
+            gParellelBlocks[i].total_txs = blockdata.transactions.length;
+            await saveParellelInfo(i);
 
-              await CheckUpdatedTransactions(i, blockdata);
-            } catch (err) {
-              gParellelBlocks[i].inprogressing = false;
-            }
-          });
-        }
+            await CheckUpdatedTransactions(i, blockdata);
+          } catch (err) {
+            gParellelBlocks[i].inprogressing = false;
+          }
+        });
       }
     }
   } catch (e) {
