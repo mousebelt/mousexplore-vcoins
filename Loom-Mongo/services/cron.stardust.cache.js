@@ -1,12 +1,14 @@
+/* eslint-disable no-await-in-loop, no-console, no-plusplus, prefer-destructuring */
 const fs = require('fs');
 const path = require('path');
+const schedule = require('node-schedule');
 const Game = require('../models/game');
 const Token = require('../models/token');
 const Trade = require('../models/trade');
 const { CRON_STARDUST_CACHE_MINUTES } = require('../config');
-const schedule = require('node-schedule');
 const { API } = require('../modules/stardust');
 const { createLogger } = require('../modules/logger');
+
 const logger = createLogger('cron.stardust.cache');
 
 // Read whitelisted games
@@ -22,7 +24,7 @@ function getWhitelistedGames() {
 
 // Sleep for a specified seconds
 function delay(secs = 60) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(resolve, secs * 1000);
   });
 }

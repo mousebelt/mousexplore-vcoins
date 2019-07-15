@@ -34,7 +34,7 @@ exports.getSyncingMonitor = async (req, res) => { // eslint-disable-line
     if (error) return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
 
     return ServiceInfoModel.findOne({ key: SYNCING_MONITOR_INFO_KEY })
-      .then(row => {
+      .then((row) => {
         if (row) {
           if ((lastblock === row.data) && isOutOfSyncing(row.updated)) {
             return res.status(400).send({ result: 'error', message: 'Out of syncing' });

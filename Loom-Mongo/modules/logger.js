@@ -4,7 +4,7 @@ const LOGLEVEL = (process.env.LOGLEVEL || 'debug').toLowerCase();
 const logTransports = [
   new (winston.transports.Console)({
     timestamp: () => new Date().toISOString(),
-    formatter: (options) => (
+    formatter: options => (
       `${options.timestamp()}  ${options.level.toUpperCase()}: ${options.message ? options.message : ''} ${(options.meta && Object.keys(options.meta).length ? `\n\t${JSON.stringify(options.meta)}` : '')}` // eslint-disable-line
     ),
   }),
@@ -23,6 +23,7 @@ exports.createLogger = (name = 'default') =>
   //   level: 'info',
   //   // format: winston.format.json(),
   // });
+  // eslint-disable-next-line implicit-arrow-linebreak
   winston.createLogger({
     level: 'debug',
     exitOnError: false,

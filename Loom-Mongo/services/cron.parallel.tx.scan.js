@@ -1,8 +1,10 @@
+/* eslint-disable no-continue, prefer-destructuring, no-await-in-loop, no-plusplus */
 const { PARALLEL_BLOCK_COUNT, CRON_TX_SCAN_INTERVAL, TICKER_BLOCK_COUNT } = require('../config');
 const { web3 } = require('../modules/loom');
 const TransactionModel = require('../models/transactions');
 const ParallelInofModel = require('../models/parallelInfo');
 const { createLogger } = require('../modules/logger');
+
 const logger = createLogger('cron.parallel.tx.scan');
 
 function filelog(...params) {
@@ -129,7 +131,6 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
   } catch (e) {
     filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
     gParallelBlocks[threadIndex].inProgress = false;
-    return;
   }
 }
 
@@ -157,7 +158,7 @@ async function distributeBlocks() {
           inProgress: true
         };
         await saveParallelInfo(i);
-        web3.eth.getBlock(nextnumber, true, async function (error, blockdata) {
+        web3.eth.getBlock(nextnumber, true, async (error, blockdata) => {
           try {
             if (error) throw error;
 
@@ -175,21 +176,19 @@ async function distributeBlocks() {
             gParallelBlocks[i].inProgress = false;
           }
         });
-      } else {
-        if (!gParallelBlocks[i].inProgress) {
-          web3.eth.getBlock(gParallelBlocks[i].blockNumber, true, async function (error, blockdata) {
-            try {
-              if (error) throw error;
+      } else if (!gParallelBlocks[i].inProgress) {
+        web3.eth.getBlock(gParallelBlocks[i].blockNumber, true, async (error, blockdata) => {
+          try {
+            if (error) throw error;
 
-              gParallelBlocks[i].inProgress = true;
-              gParallelBlocks[i].totalTxs = blockdata.transactions.length;
-              await saveParallelInfo(i);
-              await CheckUpdatedTransactions(i, blockdata);
-            } catch (err) {
-              gParallelBlocks[i].inProgress = false;
-            }
-          });
-        }
+            gParallelBlocks[i].inProgress = true;
+            gParallelBlocks[i].totalTxs = blockdata.transactions.length;
+            await saveParallelInfo(i);
+            await CheckUpdatedTransactions(i, blockdata);
+          } catch (err) {
+            gParallelBlocks[i].inProgress = false;
+          }
+        });
       }
     }
   } catch (e) {

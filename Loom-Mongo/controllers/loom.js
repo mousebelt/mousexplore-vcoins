@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop, no-plusplus */
 const ServiceInfoModel = require('../models/serviceInfo');
 const TransactionModel = require('../models/transactions');
 const { web3 } = require('../modules/loom');
@@ -7,7 +8,7 @@ exports.getMonitorSyncing = async (req, res) => {
   web3.eth.getBlockNumber((error, lastblock) => {
     if (error) return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
     return ServiceInfoModel.findOne()
-      .then(row => {
+      .then((row) => {
         if (row) {
           if ((lastblock === row.lastblock) && isOutOfSyncing(row.updatedAt)) {
             return res.status(400).send({ result: 'error', message: 'Out of syncing' });
@@ -28,7 +29,7 @@ exports.getBlocks = function (req, res) {
   if (!offset) offset = 0;
   if (!count || count <= 0) count = 10;
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async (error, number) => {
     if (!error) {
       try {
         const blocks = [];
@@ -51,7 +52,7 @@ exports.getBlocks = function (req, res) {
 };
 
 exports.getBlockDetails = async function (req, res) {
-  let hash = req.params.hash;
+  let { hash } = req.params;
   try {
     if (hash.length < 10) hash = Number(hash);
     const block = await web3.eth.getBlock(hash, true);
@@ -63,7 +64,7 @@ exports.getBlockDetails = async function (req, res) {
 };
 
 exports.getBlockByHash = async function (req, res) {
-  let hash = req.params.hash;
+  let { hash } = req.params;
   try {
     if (hash.length < 10) hash = Number(hash);
     const block = await web3.eth.getBlock(hash, false);
@@ -74,8 +75,8 @@ exports.getBlockByHash = async function (req, res) {
 };
 
 exports.getTransactionInfo = function (req, res) {
-  const hash = req.params.hash;
-  web3.eth.getTransaction(hash, async function (error, transaction) {
+  const { hash } = req.params;
+  web3.eth.getTransaction(hash, async (error, transaction) => {
     if (error) {
       return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
     }
@@ -84,7 +85,7 @@ exports.getTransactionInfo = function (req, res) {
 };
 
 exports.getTransactions = async (req, res) => {
-  const address = req.query.address;
+  const { address } = req.query;
   let offset = Number(req.query.offset);
   let count = Number(req.query.count);
   const order = Number(req.query.order);
@@ -108,7 +109,7 @@ exports.getTransactions = async (req, res) => {
       .sort(condition)
       .skip(offset)
       .limit(count)
-      .exec(async function (error, rows) {
+      .exec(async (error, rows) => {
         if (error) {
           return res.status(400).send({ result: 'error', message: reducedErrorMessage(error) });
         }
@@ -119,6 +120,7 @@ exports.getTransactions = async (req, res) => {
             tx.timestamp = rows[i].timestamp;
             txs.push(tx);
           } catch (err) {
+            // eslint-disable-next-line no-console
             console.log('get transaction error: ', err);
           }
         }
@@ -130,7 +132,7 @@ exports.getTransactions = async (req, res) => {
 };
 
 exports.getSearch = async (req, res) => {
-  let key = req.params.key;
+  let { key } = req.params;
 
   try {
     if (key.length < 10) {
