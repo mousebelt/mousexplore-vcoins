@@ -1,6 +1,7 @@
+const schedule = require('node-schedule');
 const config = require('../config');
 const ServiceinfoModel = require('../model/serviceinfo');
-const schedule = require('node-schedule');
+
 const client = config.localNode;
 
 function startCron() {
@@ -8,7 +9,7 @@ function startCron() {
     return client.call('getblockcount', [], (err, lastblock) => {
       if (!err) {
         ServiceinfoModel.findOne()
-          .then(row => {
+          .then((row) => {
             if (!row) new ServiceinfoModel({ lastblock }).save();
             else {
               row.lastblock = lastblock;
@@ -18,6 +19,7 @@ function startCron() {
       }
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     return console.log(error);
   }
 }

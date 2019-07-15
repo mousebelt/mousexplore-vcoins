@@ -1,18 +1,20 @@
-// define local node object
+/* eslint-disable no-await-in-loop, no-plusplus */
 const _ = require('lodash');
 const config = require('../config');
+
 const client = config.localNode;
 const TransactionModel = require('../model/transactions');
 const UtxoModel = require('../model/utxo');
 const ServiceInfoModel = require('../model/serviceinfo');
 const UtilsModule = require('../modules/utils');
-const promisify = UtilsModule.promisify;
+
+const { promisify } = UtilsModule;
 const { isOutOfSyncing } = UtilsModule;
 
 // Rpc apis
 
 exports.getnewaddress = (req, res) => {
-  const account = req.body.account;
+  const { account } = req.body;
 
   try {
     return client.call('getnewaddress', [account], (err, result) => {
@@ -27,8 +29,8 @@ exports.getnewaddress = (req, res) => {
 };
 
 exports.setaccount = (req, res) => {
-  const account = req.body.account;
-  const address = req.body.address;
+  const { account } = req.body;
+  const { address } = req.body;
 
   try {
     return client.call('setaccount', [address, account], (err, result) => {
@@ -43,7 +45,7 @@ exports.setaccount = (req, res) => {
 };
 
 exports.setTxFee = (req, res) => {
-  const fee = req.body.fee;
+  const { fee } = req.body;
 
   try {
     return client.call('settxfee', [Number(fee)], (err, result) => {
@@ -58,8 +60,8 @@ exports.setTxFee = (req, res) => {
 };
 
 exports.getReceivedByAccount = (req, res) => {
-  const account = req.body.account;
-  let minconf = req.body.minconf;
+  const { account } = req.body;
+  let { minconf } = req.body;
 
   if (!minconf) minconf = 1;
 
@@ -79,8 +81,8 @@ exports.getReceivedByAccount = (req, res) => {
 };
 
 exports.getReceivedByAddress = (req, res) => {
-  const address = req.body.address;
-  let minconf = req.body.minconf;
+  const { address } = req.body;
+  let { minconf } = req.body;
 
   if (!minconf) minconf = 1;
 
@@ -100,8 +102,8 @@ exports.getReceivedByAddress = (req, res) => {
 };
 
 exports.getAccountBalance = (req, res) => {
-  const account = req.query.account;
-  let minconf = req.query.minconf;
+  const { account } = req.query;
+  let { minconf } = req.query;
 
   if (!minconf) minconf = 1;
 
@@ -121,9 +123,9 @@ exports.getAccountBalance = (req, res) => {
 };
 
 exports.getAllTransactionsByAccount = (req, res) => {
-  const account = req.query.account;
-  let count = req.query.count;
-  let from = req.query.from;
+  const { account } = req.query;
+  let { count } = req.query;
+  let { from } = req.query;
 
   if (!count) count = 10;
   if (!from) from = 0;
@@ -145,7 +147,7 @@ exports.getAllTransactionsByAccount = (req, res) => {
 };
 
 exports.getAccount = (req, res) => {
-  const address = req.params.address;
+  const { address } = req.params;
 
   try {
     return client.call('getaccount', [address], (err, result) => {
@@ -160,7 +162,7 @@ exports.getAccount = (req, res) => {
 };
 
 exports.getAccountAddress = (req, res) => {
-  const account = req.params.account;
+  const { account } = req.params;
 
   try {
     return client.call('getaccountaddress', [account], (err, result) => {
@@ -175,7 +177,7 @@ exports.getAccountAddress = (req, res) => {
 };
 
 exports.getAccountByAddress = (req, res) => {
-  const account = req.params.account;
+  const { account } = req.params;
 
   try {
     return client.call('getaddressesbyaccount', [account], (err, result) => {
@@ -216,7 +218,7 @@ exports.getBestBlockHash = (req, res) => {
 };
 
 exports.getBlock = async (req, res) => {
-  let hash = req.params.hash;
+  let { hash } = req.params;
 
   try {
     if (hash.length < 10) {
@@ -236,7 +238,7 @@ exports.getBlock = async (req, res) => {
 };
 
 exports.getBlockDetails = async (req, res) => {
-  const hash = req.params.hash;
+  const { hash } = req.params;
 
   const block = await UtilsModule.getBlockDetailsFunc(hash);
   if (block) return res.json({ status: 200, msg: 'sccuess', data: block });
@@ -244,7 +246,7 @@ exports.getBlockDetails = async (req, res) => {
 };
 
 exports.getBlockHash = (req, res) => {
-  const index = req.params.index;
+  const { index } = req.params;
 
   try {
     return client.call('getblockhash', [Number(index)], (err, result) => {
@@ -259,7 +261,7 @@ exports.getBlockHash = (req, res) => {
 };
 
 exports.getTransaction = (req, res) => {
-  const txid = req.params.txid;
+  const { txid } = req.params;
 
   try {
     return client.call('gettransaction', [txid], (err, result) => {
@@ -274,8 +276,8 @@ exports.getTransaction = (req, res) => {
 };
 
 exports.getRawTransaction = (req, res) => {
-  const txid = req.params.txid;
-  const verbose = req.query.verbose;
+  const { txid } = req.params;
+  const { verbose } = req.query;
 
   try {
     return client.call('getrawtransaction', [txid, Number(verbose)], (
@@ -293,7 +295,7 @@ exports.getRawTransaction = (req, res) => {
 };
 
 exports.listAccounts = (req, res) => {
-  let minconf = req.query.minconf;
+  let { minconf } = req.query;
   if (!minconf) minconf = 1;
 
   try {
@@ -309,12 +311,12 @@ exports.listAccounts = (req, res) => {
 };
 
 exports.sendFrom = (req, res) => {
-  const fromaccount = req.body.fromaccount;
-  const toaddress = req.body.toaddress;
-  const amount = req.body.amount;
-  let minconf = req.body.minconf;
-  const comment = req.body.comment;
-  const commentto = req.body.commentto;
+  const { fromaccount } = req.body;
+  const { toaddress } = req.body;
+  const { amount } = req.body;
+  let { minconf } = req.body;
+  const { comment } = req.body;
+  const { commentto } = req.body;
 
   if (!minconf) minconf = 1;
 
@@ -342,10 +344,10 @@ exports.sendFrom = (req, res) => {
 };
 
 exports.sendMany = (req, res) => {
-  const fromaccount = req.body.fromaccount;
-  const toaddresses = req.body.toaddresses;
-  let minconf = req.body.minconf;
-  const comment = req.body.comment;
+  const { fromaccount } = req.body;
+  const { toaddresses } = req.body;
+  let { minconf } = req.body;
+  const { comment } = req.body;
 
   if (!minconf) minconf = 1;
 
@@ -366,10 +368,10 @@ exports.sendMany = (req, res) => {
 };
 
 exports.sendToAddress = (req, res) => {
-  const toaddress = req.body.toaddress;
-  const amount = req.body.amount;
-  const comment = req.body.comment;
-  const commentto = req.body.commentto;
+  const { toaddress } = req.body;
+  const { amount } = req.body;
+  const { comment } = req.body;
+  const { commentto } = req.body;
   try {
     return client.call(
       'sendtoaddress',
@@ -387,9 +389,9 @@ exports.sendToAddress = (req, res) => {
 };
 
 exports.listTransactions = (req, res) => {
-  const account = req.body.account;
-  let count = req.body.count;
-  let from = req.body.from;
+  const { account } = req.body;
+  let { count } = req.body;
+  let { from } = req.body;
 
   if (!count) count = 10;
   if (!from) from = 0;
@@ -411,8 +413,8 @@ exports.listTransactions = (req, res) => {
 };
 
 exports.listSinceBlock = (req, res) => {
-  const blockhash = req.query.blockhash;
-  const confirm = req.query.confirm;
+  const { blockhash } = req.query;
+  const { confirm } = req.query;
 
   try {
     return client.call('listsinceblock', [blockhash, Number(confirm)], (
@@ -467,7 +469,7 @@ exports.getMonitorSyncing = async (req, res) => {
       }
 
       return ServiceInfoModel.findOne()
-        .then(row => {
+        .then((row) => {
           if (row) {
             if ((lastblock === row.lastblock) && isOutOfSyncing(row.updatedAt)) {
               return res.status(400).send({ result: 'error', msg: 'Out of syncing' });
@@ -486,7 +488,7 @@ exports.getMonitorSyncing = async (req, res) => {
 };
 
 exports.getSearch = async (req, res) => {
-  const key = req.params.key;
+  const { key } = req.params;
 
   try {
     if (key.length < 10) {
@@ -561,7 +563,7 @@ exports.getBlocks = async (req, res) => {
 };
 
 exports.getTransactionInfo = (req, res) => {
-  const txid = req.params.txid;
+  const { txid } = req.params;
   try {
     return client.call('getrawtransaction', [txid, 1], (err, result) => {
       if (err) {
@@ -575,7 +577,7 @@ exports.getTransactionInfo = (req, res) => {
 };
 
 exports.getTransactionDetails = async (req, res) => {
-  const txid = req.params.txid;
+  const { txid } = req.params;
   const txdetails = await UtilsModule.getTxDetailsFunc(txid);
   if (txdetails) return res.json({ status: 200, msg: 'sccuess', data: txdetails });
 
@@ -601,7 +603,7 @@ exports.getTransactions = async function (req, res) {
       .sort(condition)
       .skip(offset)
       .limit(count)
-      .exec(async function (error, rows) {
+      .exec(async (error, rows) => {
         if (!error) {
           const txs = [];
           for (let i = 0; i < rows.length; i++) {
@@ -619,6 +621,7 @@ exports.getTransactions = async function (req, res) {
             data: { total, result: txs }
           });
         }
+        // eslint-disable-next-line no-console
         console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
         return res.json({ status: 400, msg: 'errors', data: error });
       });
@@ -628,7 +631,7 @@ exports.getTransactions = async function (req, res) {
 };
 
 exports.getAddressTransactions = async function (req, res) {
-  const address = req.params.address;
+  const { address } = req.params;
   let offset = Number(req.query.offset);
   let count = Number(req.query.count);
   let order = Number(req.query.order);
@@ -645,7 +648,7 @@ exports.getAddressTransactions = async function (req, res) {
       .sort(order);
 
     let arrTxid = _.map(rows, 'txid');
-    arrTxid = _.uniqBy(arrTxid, (e) => e);
+    arrTxid = _.uniqBy(arrTxid, e => e);
 
     // response
     const total = arrTxid.length;
@@ -673,7 +676,7 @@ exports.getAddressTransactions = async function (req, res) {
 };
 
 exports.getBalance = async function (req, res) {
-  const address = req.params.address;
+  const { address } = req.params;
 
   // logic
   try {

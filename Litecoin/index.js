@@ -1,5 +1,6 @@
 // Setup basic express server
 const express = require('express');
+
 const app = express();
 const mongoose = require('mongoose');
 const server = require('http').createServer(app);
@@ -14,6 +15,7 @@ mongoose.connect(config.db, (err, db) => { // eslint-disable-line
   const port = config.port || 80;
 
   server.listen(port, () => {
+    // eslint-disable-next-line no-console
     console.log('Server listening at port %d', port);
   });
 });
