@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const GameSchema = new mongoose.Schema({
   desc: String,
   gameAddr: String,

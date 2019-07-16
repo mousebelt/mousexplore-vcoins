@@ -1,12 +1,12 @@
 // const _ = require('lodash');
 
+const fs = require('fs');
+const Log = require('log');
 const config = require('../config');
 const UtxoModel = require('../model/utxo');
 const AddressModel = require('../model/address');
 const AddrServiceInfoModel = require('../model/addServiceInfo');
 
-const fs = require('fs');
-const Log = require('log');
 const log = new Log('debug', fs.createWriteStream('./addr.cron.debug.log', { flags: 'a' }));
 // log = new Log('debug');
 
@@ -16,7 +16,7 @@ function filelog(...params) {
 
 // ///////////////////////////////////////////////////////////////////////////////////
 
-let gAddrServiceInfoRow = undefined;
+let gAddrServiceInfoRow;
 
 async function initAddrServiceInfo() {
   try {
@@ -37,9 +37,11 @@ async function handleUtxo() {
     let utxoRow;
     if (!gAddrServiceInfoRow || !gAddrServiceInfoRow.utxo_id) {
       const _rows = await UtxoModel.find().limit(1);
+      // eslint-disable-next-line prefer-destructuring
       utxoRow = _rows[0];
     } else {
       const _rows = await UtxoModel.find({ _id: { $gt: gAddrServiceInfoRow.utxo_id } }).limit(1);
+      // eslint-disable-next-line prefer-destructuring
       utxoRow = _rows[0];
     }
     if (!utxoRow) return;

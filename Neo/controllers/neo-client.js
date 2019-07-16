@@ -1,14 +1,14 @@
 // define local node object
 const config = require('../config');
 // const localNode = config.localNode;
-const client = config.client;
+const { client } = config;
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////
 // // Client RPC Call apis ////
 // /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 exports.dumpprivkey = (req, res) => {
-  const address = req.body.address;
+  const { address } = req.body;
 
   try {
     return client.call('dumpprivkey', [address], (err, result) => {
@@ -23,7 +23,7 @@ exports.dumpprivkey = (req, res) => {
 };
 
 exports.getaccountstate = (req, res) => {
-  const address = req.body.address;
+  const { address } = req.body;
 
   try {
     return client.call('getaccountstate', [address], (err, result) => {
@@ -38,7 +38,7 @@ exports.getaccountstate = (req, res) => {
 };
 
 exports.getapplicationlog = (req, res) => {
-  const txid = req.body.txid;
+  const { txid } = req.body;
   let verbose = Number(req.body.verbose);
 
   if (!verbose) verbose = 0;
@@ -99,7 +99,7 @@ exports.getbestblockhash = (req, res) => {
 };
 
 exports.getblock = (req, res) => {
-  let hash = req.body.hash;
+  let { hash } = req.body;
   const index = Number(req.body.index);
   let verbose = Number(req.body.verbose);
   if (!verbose) verbose = 0;
@@ -212,7 +212,7 @@ exports.getrawmempool = (req, res) => {
 };
 
 exports.getrawtransaction = (req, res) => {
-  const txid = req.body.txid;
+  const { txid } = req.body;
   let verbose = Number(req.body.verbose);
   if (!verbose) verbose = 0;
 
@@ -230,7 +230,7 @@ exports.getrawtransaction = (req, res) => {
 
 exports.getstorage = (req, res) => {
   const scriptHash = req.body.script_hash;
-  const key = req.body.key;
+  const { key } = req.body;
   try {
     return client.call('getstorage', [scriptHash, key], (err, result) => {
       if (err) {
@@ -244,7 +244,7 @@ exports.getstorage = (req, res) => {
 };
 
 exports.gettxout = (req, res) => {
-  const txid = req.body.txid;
+  const { txid } = req.body;
   const n = Number(req.body.n);
 
   try {
@@ -287,7 +287,7 @@ exports.getversion = (req, res) => {
 
 exports.invoke = (req, res) => {
   const scriptHash = req.body.script_hash;
-  const params = req.body.params;
+  const { params } = req.body;
 
   try {
     return client.call('invoke', [scriptHash, params], (err, result) => {
@@ -303,8 +303,8 @@ exports.invoke = (req, res) => {
 
 exports.invokefunction = (req, res) => {
   const scriptHash = req.body.script_hash;
-  const operation = req.body.operation;
-  const params = req.body.params;
+  const { operation } = req.body;
+  const { params } = req.body;
   try {
     return client.call('invokefunction', [scriptHash, operation, params], (err, result) => {
       if (err) {
@@ -318,7 +318,7 @@ exports.invokefunction = (req, res) => {
 };
 
 exports.invokescript = (req, res) => {
-  const script = req.body.script;
+  const { script } = req.body;
   try {
     return client.call('invokescript', [script], (err, result) => {
       if (err) {
@@ -345,7 +345,7 @@ exports.listaddress = (req, res) => {
 };
 
 exports.sendrawtransaction = (req, res) => {
-  const hex = req.body.hex;
+  const { hex } = req.body;
 
   try {
     return client.call('sendrawtransaction', [hex], (err, result) => {
@@ -361,7 +361,7 @@ exports.sendrawtransaction = (req, res) => {
 
 exports.sendtoaddress = (req, res) => {
   const assetId = req.body.asset_id;
-  const address = req.body.address;
+  const { address } = req.body;
   const value = Number(req.body.value);
   let fee = Number(req.body.fee);
 
@@ -399,7 +399,7 @@ exports.sendmany = (req, res) => {
 };
 
 exports.submitblock = (req, res) => {
-  const hex = req.body.hex;
+  const { hex } = req.body;
 
   try {
     return client.call('submitblock', [hex], (err, result) => {
@@ -414,7 +414,7 @@ exports.submitblock = (req, res) => {
 };
 
 exports.validateaddress = (req, res) => {
-  const address = req.body.address;
+  const { address } = req.body;
 
   try {
     return client.call('validateaddress', [address], (err, result) => {

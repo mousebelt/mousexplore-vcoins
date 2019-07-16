@@ -1,11 +1,12 @@
 const app = require('express')();
 const cors = require('cors');
+const http = require('http');
 const config = require('./config');
 const logger = require('./utils/logger');
 const dbInitialize = require('./services/dbInitialize');
-const http = require('http');
 const routeInitialize = require('./routes');
 const cronService = require('./services/cron.service');
+
 const server = http.createServer(app);
 app.logger = logger;
 app.options('*', cors());
@@ -23,16 +24,19 @@ app.use(require('body-parser').urlencoded({ extended: true }));
 app.use(require('body-parser').json());
 app.use(require('express-session')({ secret: config.app.secret, resave: true, saveUninitialized: true }));
 app.use(require('cookie-parser')());
+
 dbInitialize(app);
 routeInitialize(app);
 cronService();
 
 if (process.env.NODE_ENV === 'development') {
   server.listen(config.app.port, () => {
+    // eslint-disable-next-line no-console
     console.log('Server listening at port %d', config.app.port);
   });
 } else {
   server.listen(config.app.port, () => {
+    // eslint-disable-next-line no-console
     console.log('SSL server is running at ', config.app.port);
   });
 }

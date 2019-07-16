@@ -1,5 +1,6 @@
-const config = require('../config');
+/* eslint-disable no-console, no-plusplus, no-await-in-loop */
 const mongoose = require('mongoose');
+const config = require('../config');
 
 mongoose.Promise = global.Promise;
 mongoose.connect(config.db, async function (err, db) { // eslint-disable-line
@@ -14,7 +15,7 @@ mongoose.connect(config.db, async function (err, db) { // eslint-disable-line
   const limit = 100000;
   let count = 0;
   let docs = [];
-  let lastId = undefined;
+  let lastId;
 
   do {
     try {

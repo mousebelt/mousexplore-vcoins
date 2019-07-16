@@ -1,11 +1,14 @@
-const config = require('../config');
+/* eslint-disable no-continue, no-plusplus, no-await-in-loop, no-console */
+
 const Web3 = require('web3');
+const config = require('../config');
+
 const web3 = new Web3(new Web3.providers.HttpProvider(config.provider));
 
 function getblockTest(blocknum, count) { // eslint-disable-line
   console.log('------------ test blocklist API -------------');
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async (error, number) => {
     if (!error) {
       try {
         console.log(`last number ${number}`);
@@ -24,7 +27,7 @@ function getblockTest(blocknum, count) { // eslint-disable-line
           let Reward = 0;
           let gas = 0;
           for (let j = 0; j < txn; j++) {
-            const hash = blockdata.transactions[j].hash;
+            const { hash } = blockdata.transactions[j];
             const gasprice = blockdata.transactions[j].gasPrice;
             const transaction = await web3.eth.getTransactionReceipt(hash);
 
@@ -34,7 +37,7 @@ function getblockTest(blocknum, count) { // eslint-disable-line
           }
 
           const GasPrice = txn ? Reward / gas : 0;
-          Reward = Reward / 1000000000;
+          Reward /= 1000000000;
 
           blocks.push({
             blockNumber: Height,
@@ -61,7 +64,7 @@ function getblockTest(blocknum, count) { // eslint-disable-line
 function latestblocks(count) { // eslint-disable-line
   console.log('------------ test latestblocks API -------------');
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async (error, number) => {
     if (!error) {
       try {
         console.log('last number ', number);
@@ -83,7 +86,7 @@ function latestblocks(count) { // eslint-disable-line
           let Reward = 0;
           let gas = 0;
           for (let j = 0; j < txn; j++) {
-            const hash = blockdata.transactions[j].hash;
+            const { hash } = blockdata.transactions[j];
             const gasprice = blockdata.transactions[j].gasPrice;
             const transaction = await web3.eth.getTransactionReceipt(hash);
 
@@ -93,7 +96,7 @@ function latestblocks(count) { // eslint-disable-line
           }
 
           const GasPrice = txn ? Reward / gas : 0;
-          Reward = Reward / 1000000000;
+          Reward /= 1000000000;
 
           blocks.push({
             blockNumber: Height,
@@ -123,18 +126,18 @@ async function getblockdetail(blockNumber) { // eslint-disable-line
   try {
     const blockdata = await web3.eth.getBlock(blockNumber, true);
 
-    const timestamp = blockdata.timestamp;
+    const { timestamp } = blockdata;
     const txn = blockdata.transactions.length;
     // const Uncles = blockdata.uncles.length;
-    const hash = blockdata.hash;
-    const parentHash = blockdata.parentHash;
-    const sha3Uncles = blockdata.sha3Uncles;
+    const { hash } = blockdata;
+    const { parentHash } = blockdata;
+    const { sha3Uncles } = blockdata;
     const Miner = blockdata.miner;
-    const difficulty = blockdata.difficulty;
-    const totalDifficulty = blockdata.totalDifficulty;
-    const size = blockdata.size;
-    const nonce = blockdata.nonce;
-    const extraData = blockdata.extraData;
+    const { difficulty } = blockdata;
+    const { totalDifficulty } = blockdata;
+    const { size } = blockdata;
+    const { nonce } = blockdata;
+    const { extraData } = blockdata;
     const GasUsed = blockdata.gasUsed;
     const GasLimit = blockdata.gasLimit;
 
@@ -165,8 +168,8 @@ async function getTransactions(blockNumber) { // eslint-disable-line
 
   try {
     const blockdata = await web3.eth.getBlock(blockNumber, true);
-    const timestamp = blockdata.timestamp;
-    const transactions = blockdata.transactions;
+    const { timestamp } = blockdata;
+    const { transactions } = blockdata;
 
     const txnlist = [];
     for (let i = 0; i < transactions.length; i++) {
@@ -175,7 +178,7 @@ async function getTransactions(blockNumber) { // eslint-disable-line
       const txreceipt = await web3.eth.getTransactionReceipt(transaction.hash);
 
       let fee = txreceipt.gasUsed * transaction.gasPrice;
-      fee = fee / 1e18;
+      fee /= 1e18;
 
       txnlist.push({
         blockNumber,
@@ -196,7 +199,7 @@ async function getTransactions(blockNumber) { // eslint-disable-line
 
 function getTransactionList(offset, count) { // eslint-disable-line
 
-  web3.eth.getBlockNumber(async function (error, number) {
+  web3.eth.getBlockNumber(async (error, number) => {
     if (!error) {
       try {
         console.log('last number ', number);
@@ -206,7 +209,7 @@ function getTransactionList(offset, count) { // eslint-disable-line
           const blockdata = await web3.eth.getBlock(i, true);
 
           const blocknumber = blockdata.number;
-          const timestamp = blockdata.timestamp;
+          const { timestamp } = blockdata;
           const txn = blockdata.transactions.length;
 
           if (txn <= offset) {
@@ -220,7 +223,7 @@ function getTransactionList(offset, count) { // eslint-disable-line
 
             const transaction = blockdata.transactions[j];
 
-            const hash = transaction.hash;
+            const { hash } = transaction;
             // const from = transaction.from;
             // const to = transaction.to;
             // const value = transaction.value / 1e18;
@@ -232,7 +235,7 @@ function getTransactionList(offset, count) { // eslint-disable-line
             console.log(`receipt gas=${txreceipt.gasUsed}`);
 
             let fee = txreceipt.gasUsed * transaction.gasPrice;
-            fee = fee / 1e18;
+            fee /= 1e18;
 
             txnlist.push({
               blockNumber: blocknumber,
@@ -263,19 +266,19 @@ function getTransactionList(offset, count) { // eslint-disable-line
 
 function getTransactionInfo(txHash) {
 
-  web3.eth.getTransaction(txHash, async function (error, transaction) {
+  web3.eth.getTransaction(txHash, async (error, transaction) => {
     if (!error) {
       try {
         const blocknumber = transaction.blockNumber;
 
         const blockdata = await web3.eth.getBlock(blocknumber, true);
 
-        const timestamp = blockdata.timestamp;
+        const { timestamp } = blockdata;
 
         const txreceipt = await web3.eth.getTransactionReceipt(txHash);
 
         let fee = txreceipt.gasUsed * transaction.gasPrice;
-        fee = fee / 1e18;
+        fee /= 1e18;
 
         const txinfo = {
           txHash: transaction.hash,

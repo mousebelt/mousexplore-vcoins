@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+
+const { Schema } = mongoose;
 
 const addrServiceInfoSchema = new mongoose.Schema({
   utxo_id: Schema.ObjectId,

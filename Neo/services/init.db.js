@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const TokenModel = require('../model/token');
 
 exports.start = () => {

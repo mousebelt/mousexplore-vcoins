@@ -1,5 +1,5 @@
-const config = require('../config');
 const schedule = require('node-schedule');
+const config = require('../config');
 const models = require('../models');
 const { web3 } = require('../utils/loom');
 const { SYNCING_MONITOR_INFO_KEY } = require('../utils/constants');

@@ -17,6 +17,7 @@ const limiterMiddleware = (req, res, next) => {
       next();
     })
     .catch(() => {
+      // eslint-disable-next-line no-console
       console.log(ip);
       res.status(429).send('Too many requests');
     });

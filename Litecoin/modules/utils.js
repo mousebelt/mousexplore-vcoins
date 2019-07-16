@@ -1,4 +1,6 @@
+/* eslint-disable no-await-in-loop, no-plusplus */
 const config = require('../config');
+
 const client = config.localNode;
 
 function promisify(fn, args) {
@@ -44,6 +46,7 @@ async function getTxDetailsFunc(txid) {
     }
     return tx;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log(error);
   }
   return undefined;

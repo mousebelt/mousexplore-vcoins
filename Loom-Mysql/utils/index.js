@@ -1,17 +1,18 @@
+/* eslint-disable no-restricted-globals */
 const moment = require('moment');
 const _ = require('lodash');
 const bcrypt = require('bcrypt-nodejs');
 const config = require('../config');
 
-exports.generateHash = (pwd) => (bcrypt.hashSync(pwd, bcrypt.genSaltSync(8), null));
+exports.generateHash = pwd => (bcrypt.hashSync(pwd, bcrypt.genSaltSync(8), null));
 
 exports.getMissingFields = (data, fields) => {
   const keys = _.keys(data);
   return _.difference(fields, keys);
 };
 
-exports.validateEmail = email => {
-  // eslint-disable-next-line max-len
+exports.validateEmail = (email) => {
+  // eslint-disable-next-line max-len, no-useless-escape
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
 };

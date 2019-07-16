@@ -1,4 +1,7 @@
+/* eslint-disable no-continue, no-await-in-loop, no-plusplus */
 const _ = require('lodash');
+const fs = require('fs');
+const Log = require('log');
 const config = require('../config');
 // const client = config.localNode;
 
@@ -7,8 +10,7 @@ const ParellelInofModel = require('../model/parellelinfo');
 const UtxoModel = require('../model/utxo');
 // var AddressModel = require("../model/address");
 const UtilsModule = require('../modules/utils');
-const fs = require('fs');
-const Log = require('log');
+
 const log = new Log('debug', fs.createWriteStream(__dirname + '/debug.log', { flags: 'a' })); // eslint-disable-line
 // log = new Log('debug');
 
@@ -16,7 +18,7 @@ function filelog(...params) {
   log.info(...params);
 }
 
-const promisify = UtilsModule.promisify;
+const { promisify } = UtilsModule;
 
 /*
  * length: CHECK_PARELLEL_BLOCKS
@@ -55,7 +57,7 @@ async function initParellInfo() {
           index: i,
           blocknumber: -1,
           total_txs: 0,
-          synced_index: 0,	// synced transactions
+          synced_index: 0, // synced transactions
         });
         await row.save();
       }
@@ -157,14 +159,14 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
       }
 
       // Handle utxo
-      const vin = txInfo.vin;
-      const vout = txInfo.vout;
+      const { vin } = txInfo;
+      const { vout } = txInfo;
 
       const inN = vout.length;
       // handle vout
       if (vout && vout.length > 0) {
         for (let j = 0; j < vout.length; j++) {
-          const addresses = vout[j].scriptPubKey.addresses;
+          const { addresses } = vout[j].scriptPubKey;
           const value = Number(vout[j].value);
           if (addresses && addresses.length > 0 && value > 0) {
             // Save Info
@@ -203,7 +205,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
           }
           const inTxInfo = inTxResult.vout[inVout];
 
-          const addresses = inTxInfo.scriptPubKey.addresses;
+          const { addresses } = inTxInfo.scriptPubKey;
           const value = Number(inTxInfo.value);
           const index = inN + j;
 
@@ -233,7 +235,7 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
   } catch (e) {
     filelog('CheckUpdatedTransactions: error: ', e); // Should dump errors here
     parellelBlocks[threadIndex].inprogressing = false;
-    return;
+
   }
 }
 
@@ -283,29 +285,27 @@ async function distributeBlocks() {
             parellelBlocks[i].inprogressing = false;
             // return;
           });
-      } else {
-        if (!parellelBlocks[i].inprogressing) {
-          promisify('getblockhash', [parellelBlocks[i].blocknumber])
-            .then(async (hash) => {
-              try {
-                parellelBlocks[i].inprogressing = true;
-                const blockdata = await promisify('getblock', [hash]);
-                if (parellelBlocks[i].total_txs !== blockdata.tx.length) {
-                  parellelBlocks[i].total_txs = blockdata.tx.length;
-                  await saveParellelInfo(i);
-                }
-                await CheckUpdatedTransactions(i, blockdata);
-              } catch (error) {
-                filelog('distributeBlocks fails for getblock, hash, i: ', parellelBlocks[i].blocknumber, hash, i, error);
-                parellelBlocks[i].inprogressing = false;
+      } else if (!parellelBlocks[i].inprogressing) {
+        promisify('getblockhash', [parellelBlocks[i].blocknumber])
+          .then(async (hash) => {
+            try {
+              parellelBlocks[i].inprogressing = true;
+              const blockdata = await promisify('getblock', [hash]);
+              if (parellelBlocks[i].total_txs !== blockdata.tx.length) {
+                parellelBlocks[i].total_txs = blockdata.tx.length;
+                await saveParellelInfo(i);
               }
-            })
-            .catch(err => { // eslint-disable-line
-              filelog('distributeBlocks fails for getblockhash of block: ', parellelBlocks[i].blocknumber);
+              await CheckUpdatedTransactions(i, blockdata);
+            } catch (error) {
+              filelog('distributeBlocks fails for getblock, hash, i: ', parellelBlocks[i].blocknumber, hash, i, error);
               parellelBlocks[i].inprogressing = false;
-              // return;
-            });
-        }
+            }
+          })
+            .catch(err => { // eslint-disable-line
+            filelog('distributeBlocks fails for getblockhash of block: ', parellelBlocks[i].blocknumber);
+            parellelBlocks[i].inprogressing = false;
+            // return;
+          });
       }
     }
   } catch (e) {

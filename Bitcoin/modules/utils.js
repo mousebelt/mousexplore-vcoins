@@ -1,5 +1,6 @@
-// define local node object
+/* eslint-disable no-await-in-loop, no-plusplus */
 const config = require('../config');
+
 const client = config.localNode;
 
 function promisify(fn, args) {

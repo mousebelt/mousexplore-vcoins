@@ -1,5 +1,6 @@
-const { CRON_STARDUST_CACHE_MINUTES } = require('../config');
+/* eslint-disable no-console, no-plusplus, prefer-destructuring */
 const schedule = require('node-schedule');
+const { CRON_STARDUST_CACHE_MINUTES } = require('../config');
 // const models = require('../models');
 const { API } = require('../utils/stardust');
 

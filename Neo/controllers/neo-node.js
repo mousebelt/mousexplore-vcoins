@@ -1,8 +1,9 @@
-// define local node object
+/* eslint-disable no-console, no-await-in-loop, no-plusplus */
 const _ = require('lodash');
 const config = require('../config');
-const localNode = config.localNode;
-const client = config.client;
+
+const { localNode } = config;
+const { client } = config;
 
 const TransactionModel = require('../model/transactions');
 const UtxoModel = require('../model/utxo');
@@ -11,9 +12,9 @@ const TokenModel = require('../model/token');
 const ServiceInfoModel = require('../model/serviceinfo');
 const UtilsModule = require('../modules/utils');
 
-const promisify = UtilsModule.promisify;
-const getTxDetailsFunc = UtilsModule.getTxDetailsFunc;
-const getBlockDetailsFunc = UtilsModule.getBlockDetailsFunc;
+const { promisify } = UtilsModule;
+const { getTxDetailsFunc } = UtilsModule;
+const { getBlockDetailsFunc } = UtilsModule;
 const { isOutOfSyncing } = UtilsModule;
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -21,7 +22,7 @@ const { isOutOfSyncing } = UtilsModule;
 // /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 exports.getBalance = async function (req, res) {
-  const address = req.params.address;
+  const { address } = req.params;
 
   // logic
   try {
@@ -45,7 +46,7 @@ exports.getBalance = async function (req, res) {
     const tokenRows = await TokenModel.find({});
 
     for (let i = 0; i < addressRows.length; i++) {
-      const asset = addressRows[i].asset;
+      const { asset } = addressRows[i];
       const amount = addressRows[i].balance;
 
       const item = {};
@@ -66,15 +67,15 @@ exports.getBalance = async function (req, res) {
 };
 
 exports.getAddressUTXO = async function (req, res) {
-  const address = req.params.address;
+  const { address } = req.params;
 
   // logic
   try {
     const utxoRows = await UtxoModel.find({ address });
     if (utxoRows.length === 0) return res.json({ status: 400, msg: 'No address in db !' });
 
-    const data = _.filter(utxoRows, (o) => (o.amount > 0));
-    const _minusData = _.filter(utxoRows, (o) => (o.amount < 0));
+    const data = _.filter(utxoRows, o => (o.amount > 0));
+    const _minusData = _.filter(utxoRows, o => (o.amount < 0));
 
     for (let i = 0; i < _minusData.length; i++) {
       const _item = _minusData[i];
@@ -86,7 +87,7 @@ exports.getAddressUTXO = async function (req, res) {
       const _txid = _inItem.txid;
       const _vout = _inItem.vout;
 
-      _.remove(data, (o) => ((o.txid === _txid) && (o.index === _vout)));
+      _.remove(data, o => ((o.txid === _txid) && (o.index === _vout)));
     }
     return res.json({ status: 200, msg: 'success', data });
   } catch (error) {
@@ -117,7 +118,7 @@ exports.getLastBlockHash = function (req, res) {
 };
 
 exports.getBlockByHash = (req, res) => {
-  let hash = req.params.hash;
+  let { hash } = req.params;
   try {
     if (hash.length < 10) hash = Number(hash);
     return client.call('getblock', [hash, 1], (err, block) => {
@@ -142,7 +143,7 @@ exports.getBlockByHash = (req, res) => {
 };
 
 exports.getBlockDetails = async (req, res) => {
-  const hash = req.params.hash;
+  const { hash } = req.params;
 
   const block = await getBlockDetailsFunc(hash);
   if (block) return res.json({ status: 200, msg: 'sccuess', data: block });
@@ -183,7 +184,7 @@ exports.getBlockCount = function (req, res) {
  * hash: "4c1e879872344349067c3b1a30781eeb4f9040d3795db7922f513f6f9660b9b2"
  */
 exports.getBlockHashByHeight = function (req, res) {
-  const height = req.params.height;
+  const { height } = req.params;
 
   localNode
     .getBlockHashByHeight(height)
@@ -315,7 +316,7 @@ exports.getRawMemPool = function (req, res) {
   }
  */
 exports.getRawTransaction = function (req, res) {
-  const txId = req.params.txId;
+  const { txId } = req.params;
 
   localNode
     .getRawTransaction(txId, 1)
@@ -347,8 +348,8 @@ exports.getRawTransaction = function (req, res) {
    }
  */
 exports.getTxOut = function (req, res) {
-  const txId = req.params.txId;
-  const index = req.params.index;
+  const { txId } = req.params;
+  const { index } = req.params;
 
   localNode
     .getTxOut(txId, index)
@@ -456,7 +457,7 @@ exports.getBlocks = async function (req, res) {
 };
 
 exports.getTx = async function (req, res) {
-  const txid = req.params.txid;
+  const { txid } = req.params;
   try {
     return client.call('getrawtransaction', [txid, 1], (err, result) => {
       if (err) {
@@ -470,7 +471,7 @@ exports.getTx = async function (req, res) {
 };
 
 exports.getTxDetails = async function (req, res) {
-  const txid = req.params.txid;
+  const { txid } = req.params;
   const txdetails = await getTxDetailsFunc(txid);
   if (txdetails) return res.json({ status: 200, msg: 'sccuess', data: txdetails });
 
@@ -509,7 +510,7 @@ exports.getTxDetails = async function (req, res) {
     }
  */
 exports.getTransactions = async function (req, res) {
-  const contract = req.query.contract;
+  const { contract } = req.query;
   let offset = Number(req.query.offset);
   let count = Number(req.query.count);
   const order = Number(req.query.order);
@@ -530,7 +531,7 @@ exports.getTransactions = async function (req, res) {
       .sort(condition)
       .skip(offset)
       .limit(count)
-      .exec(async function (error, rows) {
+      .exec(async (error, rows) => {
         if (error) {
           console.log('getTransactionList: we have a promblem: ', error); // Should dump errors here
           return res.json({ status: 400, msg: 'errors', data: error });
@@ -592,8 +593,8 @@ exports.getTransactions = async function (req, res) {
     }
  */
 exports.getAddressTransactions = async function (req, res) {
-  const address = req.params.address;
-  const asset = req.query.asset;
+  const { address } = req.params;
+  const { asset } = req.query;
   let offset = Number(req.query.offset);
   let count = Number(req.query.count);
   let order = Number(req.query.order);
@@ -616,7 +617,7 @@ exports.getAddressTransactions = async function (req, res) {
       .sort(order);
 
     let arrTxid = _.map(rows, 'txid');
-    arrTxid = _.uniqBy(arrTxid, (e) => e);
+    arrTxid = _.uniqBy(arrTxid, e => e);
 
     // response
     const total = arrTxid.length;
@@ -645,7 +646,7 @@ exports.getAddressTransactions = async function (req, res) {
 };
 
 exports.getSearch = async (req, res) => {
-  const key = req.params.key;
+  const { key } = req.params;
 
   try {
     if (key.length < 10) {
@@ -712,7 +713,7 @@ exports.getMonitorSyncing = async (req, res) => {
       }
 
       return ServiceInfoModel.findOne()
-        .then(row => {
+        .then((row) => {
           if (row) {
             if ((lastblock === row.lastblock) && isOutOfSyncing(row.updatedAt)) {
               return res.status(400).send({ result: 'error', msg: 'Out of syncing' });

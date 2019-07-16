@@ -1,5 +1,8 @@
+/* eslint-disable no-continue, camelcase, no-await-in-loop, no-plusplus */
 const _ = require('lodash');
 
+const fs = require('fs');
+const Log = require('log');
 const config = require('../config');
 // const localNode = config.localNode;
 
@@ -9,8 +12,6 @@ const UtxoModel = require('../model/utxo');
 
 const UtilsModule = require('../modules/utils');
 
-const fs = require('fs');
-const Log = require('log');
 const log = new Log('debug', fs.createWriteStream('./cron.debug.log', { flags: 'a' }));
 // log = new Log('debug');
 
@@ -18,7 +19,7 @@ function filelog(...params) {
   log.info(...params);
 }
 
-const promisify = UtilsModule.promisify;
+const { promisify } = UtilsModule;
 
 // ///////////////////////////////////////////////////////////////////////////////////
 const parellelBlocks = [];
@@ -53,7 +54,7 @@ async function initParellInfo() {
           index: i,
           blocknumber: -1,
           total_txs: 0,
-          synced_index: 0,	// synced transactions
+          synced_index: 0, // synced transactions
         });
         await row.save();
       }
@@ -125,7 +126,9 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
 
     for (let i = parellelBlocks[threadIndex].synced_index; i < txnCount; i++) {
       const tx = blockdata.tx[i];
-      const { txid, size, type, version, vin, vout, sys_fee, net_fee, nonce } = tx;
+      const {
+        txid, size, type, version, vin, vout, sys_fee, net_fee, nonce
+      } = tx;
 
       // Get vin details
       const vinDetails = [];
@@ -148,7 +151,15 @@ async function CheckUpdatedTransactions(threadIndex, blockdata) {
       let txRow = await TransactionModel.findOne({ txid });
       if (!txRow) {
         txRow = new TransactionModel({
-          txid, size, type, version, vin, vout, sys_fee, net_fee, nonce,
+          txid,
+          size,
+          type,
+          version,
+          vin,
+          vout,
+          sys_fee,
+          net_fee,
+          nonce,
           blockIndex: blockdata.index,
           blockTime: blockdata.time,
           assets: [],
@@ -278,27 +289,25 @@ async function distributeBlocks() {
             parellelBlocks[i].inprogressing = false;
             // return;
           });
-      } else {
-        if (!parellelBlocks[i].inprogressing) {
-          promisify('getblock', [parellelBlocks[i].blocknumber, 1])
-            .then(async (blockdata) => {
-              try {
-                parellelBlocks[i].inprogressing = true;
-                if (parellelBlocks[i].total_txs !== blockdata.tx.length) {
-                  parellelBlocks[i].total_txs = blockdata.tx.length;
-                  await saveParellelInfo(i);
-                }
-                await CheckUpdatedTransactions(i, blockdata);
-              } catch (error) {
-                parellelBlocks[i].inprogressing = false;
+      } else if (!parellelBlocks[i].inprogressing) {
+        promisify('getblock', [parellelBlocks[i].blocknumber, 1])
+          .then(async (blockdata) => {
+            try {
+              parellelBlocks[i].inprogressing = true;
+              if (parellelBlocks[i].total_txs !== blockdata.tx.length) {
+                parellelBlocks[i].total_txs = blockdata.tx.length;
+                await saveParellelInfo(i);
               }
-            })
-            .catch(err => { // eslint-disable-line
-              // filelog("distributeBlocks fails for getblockhash of block (else): " + parellelBlocks[i].blocknumber, err);
+              await CheckUpdatedTransactions(i, blockdata);
+            } catch (error) {
               parellelBlocks[i].inprogressing = false;
-              // return;
-            });
-        }
+            }
+          })
+            .catch(err => { // eslint-disable-line
+            // filelog("distributeBlocks fails for getblockhash of block (else): " + parellelBlocks[i].blocknumber, err);
+            parellelBlocks[i].inprogressing = false;
+            // return;
+          });
       }
     }
   } catch (e) {

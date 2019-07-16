@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+
 module.exports = function (sequelize) {
   const loomTx = sequelize.define('loom_tx', {
     hash: {
