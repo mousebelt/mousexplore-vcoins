@@ -1,0 +1,17 @@
+{
+  "name": "mousexplore-vcoins-ethereum",
+  "version": "1.0.0",
+  "description": "This is the MouseXplore Vcoins Ethereum.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.4",
+    "log": "^1.4.0",
+    "mongoose": "^5.0.17",
+    "wan3": "^1.0.0-beta.37",
+    "web3": "1.0.0-beta.34"
+  }
+}
